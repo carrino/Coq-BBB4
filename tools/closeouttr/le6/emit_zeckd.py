@@ -74,6 +74,14 @@ def closure_data_zeck(cert, tab):
     AA = A + A
     PL = {0: (), 1: A}
     PR = {0: A, 1: B}
+    mode = cert.get('mode', ['dec', 0])
+    dw = int(mode[1][1:]) - 1 if isinstance(mode[1], str) else 0
+    if not isinstance(mode[1], str) and mode[1] != 0:
+        raise NoClosure('countdown mode %r: no checker' % (mode,))
+
+    def BR(u):
+        toks = [(u + dw) % 2 == 1] + [True] * ((u + dw) // 2)
+        return tuple(c for t in toks for c in (B if t else A))
 
     def grid_arms(kind, n0, st):
         got = []
@@ -91,7 +99,7 @@ def closure_data_zeck(cert, tab):
                     c0, c1 = conf(blk(lp, AA, s_, B + T)), conf(blk(rp, B, s_, A + T))
                     e = (True, True)
                 else:
-                    c0, c1 = conf(blk(lp, AA, s_, T)), conf(blk(rp, B, s_, T))
+                    c0, c1 = conf(blk(lp, AA, s_, T)), conf(blk(pre + BR(i) + B * r, B, s_, T))
                     e = (True, True)
                 try:
                     got.append((i, r, c0, c1, derive(e[0], e[1], c0, c1,
@@ -125,7 +133,7 @@ def closure_data_zeck(cert, tab):
         raise NoClosure('bottom arm: no program, or an instruction no bottom anchor fires')
     return dict(nest=True, el=el, er=er, inter=inter, n0i=n0i, sti=sti,
                 endc=endc, n0e=n0e, ste=ste, top=top, n0t=n0t, stt=stt,
-                nvis=nvis, tau=tau, t0=boot['steps_from_blank'], T=T, A=A, B=B,
+                nvis=nvis, tau=tau, t0=boot['steps_from_blank'], T=T, A=A, B=B, dw=dw,
                 fill=top)  # emit_ladder's report line
 
 
@@ -135,7 +143,7 @@ HEAD = '''
     Tokens [0 -> ZA], [10 -> ZB].  Interior arms at threshold %(n0i)d stride
     %(sti)d, end arms at %(n0e)d / %(ste)d, bottom arms at %(n0t)d / %(stt)d,
     each in two kinds.  Every arm is a [LadderNest] segment program. *)
-From BBB4.Checkers Require Import LadderCheckZeckDTr.
+From BBB4.Checkers Require Import LadderCheckZeckDTr%(dwimp)s.
 
 Definition zt_%(mid)s : list Sym := %(T)s.
 Local Notation ZT := zt_%(mid)s.
@@ -195,7 +203,7 @@ Proof. intros i r Hi Hr H0.
 Qed.
 
 Lemma tarm_rhs_%(mid)s : forall i r, i < 2 -> r < %(n0t)d + %(stt)d -> (i = 0 -> 0 < r) ->
-  lr_rhs (tarm_%(mid)s i r) = cls_conf FAM (zdside FAM (zdPR ZA ZB i) ZB r (astride %(n0t)d %(stt)d r) ZT).
+  lr_rhs (tarm_%(mid)s i r) = %(botrhs)s.
 Proof. intros i r Hi Hr H0.
 %(tcomp)s  exfalso; lia.
 Qed.
@@ -240,7 +248,7 @@ ARGS = '''  - discriminate.
 
 CALL = '''(%(board)s tm_%(mid)s pins_%(mid)s FAM ZA ZB ZT
                  iarm_%(mid)s %(n0i)d %(sti)d earm_%(mid)s %(n0e)d %(ste)d
-                 tarm_%(mid)s %(n0t)d %(stt)d nrules vsegs_%(mid)s vis_%(mid)s %(x0)s)'''
+                 tarm_%(mid)s %(n0t)d %(stt)d nrules vsegs_%(mid)s vis_%(mid)s %(dwarg)s%(x0)s)'''
 
 NQH = '''Theorem nqhtr_%(mid)s : NeverQuasiHaltsTr tm_%(mid)s.
 Proof.
@@ -274,7 +282,8 @@ def emit_closure_zeck(cert, tab, mid):
     L = [HEAD % dict(n0i=n0i, sti=sti, n0e=n0e, ste=ste, n0t=n0t, stt=stt, mid=mid,
                      T=clist(cd['T'], lambda c: 'S%d' % c),
                      A=clist(cd['A'], lambda c: 'S%d' % c),
-                     B=clist(cd['B'], lambda c: 'S%d' % c))]
+                     B=clist(cd['B'], lambda c: 'S%d' % c),
+                     dwimp=' LadderCheckZeckDwTr' if cd['dw'] else '')]
     inner, arms = [], []
     for nm, grp, e in (('iarm', cd['inter'], (el, er)), ('earm', cd['endc'], (True, True))):
         for i, r, c0, c1, ch in grp:
@@ -341,16 +350,22 @@ Definition vsegs_%(mid)s (i r : nat) (t : Instr) : list nseg :=
         isound=br(n0i + sti, reach('iarm')), icomp=br(n0i + sti, vm),
         esound=br(n0e + ste, reach('earm')), ecomp=br(n0e + ste, vm),
         tsound=br(n0t + stt, reach('tarm'), sk), tcomp=br(n0t + stt, vm, sk),
+        botrhs=('cls_conf FAM (zdside FAM (zdBR ZA ZB %d i) ZB r (astride %d %d r) ZT)' % (cd['dw'], n0t, stt)
+                if cd['dw'] else
+                'cls_conf FAM (zdside FAM (zdPR ZA ZB i) ZB r (astride %d %d r) ZT)' % (n0t, stt)),
         fvis=br(n0t + stt, fv, sk),
         t0=t0, x0=clist(cd['tau'], lambda b: 'true' if b else 'false'),
         tmb=('tm_%s' % mid) if E.TR_QH is not None else 'tm'))
     common = dict(mid=mid, n0i=n0i, sti=sti, n0e=n0e, ste=ste, n0t=n0t, stt=stt,
+                  dwarg=('%d ' % cd['dw']) if cd['dw'] else '',
                   x0=clist(cd['tau'], lambda b: 'true' if b else 'false'), t0=t0)
     args = ARGS % common
     if E.TR_QH is not None:
-        L.append(QH % dict(mid=mid, t0=t0, args=args, call=CALL % dict(common, board='boardZD_qhtr')))
+        L.append(QH % dict(mid=mid, t0=t0, args=args, call=CALL % dict(
+            common, board='boardZDw_qhtr' if cd['dw'] else 'boardZD_qhtr')))
     else:
-        L.append(NQH % dict(mid=mid, args=args, call=CALL % dict(common, board='boardZD_neverqhtr')))
+        L.append(NQH % dict(mid=mid, args=args, call=CALL % dict(
+            common, board='boardZDw_neverqhtr' if cd['dw'] else 'boardZD_neverqhtr')))
     return ''.join(L), cd
 
 

@@ -27,6 +27,11 @@ SB.KINDS['zeckd'] = (
     lambda f: f.get('numeration') == 'zeckd',
     'Zeckendorf countdowns over two token words, by LadderCheckZeckDTr')
 
+SB.KINDS['zeckdw'] = (
+    os.path.join(HERE, 'emit_zeckd.py'), 'theories/Checkers/LadderCheckZeckDTr.v', 'LDRZD',
+    lambda f: f.get('numeration') == 'zeckd',
+    'Zeckendorf countdowns whose bottom widens by two digits, by LadderCheckZeckDwTr')
+
 TMP = None
 
 

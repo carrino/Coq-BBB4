@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 from zeck2_detect import parse, rstrip0, zinc, zok, visits
 
 NCHECK = 150
-MODES = [('inc', 0), ('dec', 0), ('dec', 1)]
+MODES = [('inc', 0), ('dec', 0), ('dec', 1), ('dec', 'w2'), ('dec', 'w3')]
 WORDS = [list(w) for n in range(1, 5) for w in itertools.product([0, 1], repeat=n)]
 
 
@@ -40,6 +40,8 @@ def zstep(x, mode):
         return zinc(x)
     if any(x):
         return zdec(x)
+    if isinstance(mode[1], str):          # ('dec', 'wN'): the bottom widens by N digits
+        return ztop(len(x) + int(mode[1][1:]), 0)
     return ztop(len(x) + 1, mode[1])
 
 
