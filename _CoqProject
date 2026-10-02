@@ -467,6 +467,8 @@ theories/Tests/IRulesBatch_Corruption.v
 # --- fuel mass-board ---
 theories/Checkers/FuelSCC.v
 theories/Checkers/FuelWide.v
+theories/Checkers/FuelSCCTr.v
+theories/Checkers/FuelWideTr.v
 theories/Machines/Fuel_Batch_01.v
 theories/Machines/Fuel_Batch_02.v
 theories/Machines/Fuel_Batch_03.v
@@ -2808,6 +2810,9 @@ theories/Machines/LadderTr/LDRP_1RB0LD_0LC1RA_1LA1LA_0RB1LD.v
 theories/Machines/LadderTr/LDRP_1RB0LD_0LC1RA_1RB1LA_0RB1LD.v
 theories/Machines/LadderTr/LDRP_1RB1LC_0LA1RC_1RB0LD_0RB1LD.v
 theories/Machines/LadderTr/LDRP_1RB1RB_1LC0RD_0RA1LB_0LC1RD.v
+theories/Machines/LadderTr/LDRP_0RB0RC_1RC1LB_1LD1RD_0LB1RA.v
+theories/Machines/LadderTr/LDRP_0RB1LD_1LC1RB_1RA1LA_0LB0LC.v
+theories/Machines/LadderTr/LDRP_1RB1LA_1LC1RC_0LA1RD_0RA0RB.v
 theories/Machines/LadderTr/LDR3_0RB0LC_1LA1RC_1RB0LD_0RB1LD.v
 theories/Machines/LadderTr/LDR3_0RB0LD_0RC1LB_1LA1RD_1RC0LB.v
 theories/Machines/LadderTr/LDR3_0RB1LA_1LC1RD_0RA0LD_1RB0LA.v
@@ -2967,6 +2972,14 @@ theories/Counters/KpWallScan.v
 theories/Checkers/LapAvoid.v
 theories/Counters/LapCertGlue.v
 theories/Counters/LapGlueTr.v
+theories/Counters/ValueLapTr.v
+theories/Counters/MutualTokenTr.v
+theories/Counters/TokenSweepTr.v
+theories/Counters/MovingTokenTr.v
+theories/Counters/MovingSweepTr.v
+theories/Counters/FrontierTokenTr.v
+theories/Counters/CConjugateTr.v
+theories/Counters/TokenLapTr.v
 theories/Counters/LapGlueQHTr.v
 theories/Counters/SweepGlueTr.v
 theories/Counters/HybridGlueTr.v
@@ -11759,6 +11772,23 @@ theories/CloseoutTr/CBT_AST_00.v
 theories/CloseoutTr/CBT_AST_01.v
 theories/CloseoutTr/CBT_AST_02.v
 theories/CloseoutTr/CBT_AST_03.v
+theories/CloseoutTr/CBT_AST_04.v
+theories/CloseoutTr/CBT_AST_05.v
+theories/CloseoutTr/CBT_AST_06.v
+theories/CloseoutTr/CBT_AST_07.v
+theories/CloseoutTr/CBT_AST_08.v
+theories/CloseoutTr/CBT_AST_09.v
+theories/CloseoutTr/CBT_AST_10.v
+theories/CloseoutTr/CBT_AST_11.v
+theories/CloseoutTr/CBT_AST_12.v
+theories/CloseoutTr/CBT_AST_13.v
+theories/CloseoutTr/CBT_AST_14.v
+theories/CloseoutTr/CBT_AST_15.v
+theories/CloseoutTr/CBT_AST_16.v
+theories/CloseoutTr/CBT_AST_17.v
+theories/CloseoutTr/CBT_AST_30.v
+theories/CloseoutTr/CBT_AST_31.v
+theories/CloseoutTr/CBT_AST_50.v
 theories/CloseoutTr/CBT_BLC3_00.v
 theories/CloseoutTr/CBT_BLC3_01.v
 theories/CloseoutTr/CBT_BLC3_02.v
@@ -11909,6 +11939,7 @@ theories/CloseoutTr/CBT_LE4_05.v
 theories/CloseoutTr/CBT_LE4_06.v
 theories/CloseoutTr/CBT_LE5_00.v
 theories/CloseoutTr/CBT_LE5_01.v
+theories/CloseoutTr/CBT_LE5_02.v
 theories/CloseoutTr/CBT_LEFQ_00.v
 theories/CloseoutTr/CBT_LEF_00.v
 theories/CloseoutTr/CBT_LEF_01.v

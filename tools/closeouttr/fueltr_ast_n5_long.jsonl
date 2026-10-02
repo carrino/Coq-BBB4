@@ -1,0 +1,75 @@
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.031, "spec": "0RB1LB_0LC1RD_1LA1LB_1LB0RD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.038, "spec": "0RB0LD_1LC1RB_0LD0LA_1RD0RB", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.038, "spec": "0RB0RD_1RC1LB_0RD0RA_1LD0LB", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.038, "spec": "0RB0RD_1LC1RC_1RA0LC_0LB1RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.005, "spec": "0RB1LC_1RC1LC_1LD0RC_0LB0LA", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.005, "spec": "0RB1LD_1RC0LA_1LA1RA_1RA0LD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.006, "spec": "0RB1LD_1RC0RD_1LA0RD_1RA0LD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.009, "spec": "0RB1LD_1RC1RA_0LA1RA_1RA0LD", "status": "timeout"}
+{"first_fail": {"contexts": 1247, "mirrored": true, "n": 5, "t": 0, "target": [1, 1]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 3.076, "spec": "0RB1RA_1RC1RD_1LD0LA_1RB0LC", "status": "no certificate"}
+{"first_fail": {"contexts": 627, "mirrored": true, "n": 5, "t": 0, "target": [2, 0]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 6.115, "spec": "0RB1LD_1RC1RB_1LA1RA_1LC0LA", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.005, "spec": "0RB1RD_1LC1RA_1LA0LC_1RA1LC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "0RB1RD_1LC1RA_1LA0LC_1RB1LC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "0RB1RD_1LC1RD_1LA0LC_1RA1LC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0LA_0RC0RD_1LA0RA_0LC1RA", "status": "timeout"}
+{"first_fail": {"contexts": 860, "mirrored": true, "n": 5, "t": 0, "target": [1, 1]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 3.04, "spec": "1RB0LA_0RC1RB_0RD1RC_1LD1LA", "status": "no certificate"}
+{"first_fail": {"contexts": 2044, "mirrored": true, "n": 5, "t": 0, "target": [0, 1]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 8.388, "spec": "1RB0LA_1LC0RD_1LA0LB_1RB0RD", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB0LA_0RC0RD_1LA1RA_0LC1RA", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB0LA_0RC1LA_1RD0RA_1LB0RA", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0LC_0LC0LA_1RC0RD_1LB1RD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0LC_1LC1RC_0RA1LD_1RC0LD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB0LC_1LC1RD_1LA0LB_0RB0RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0LC_1RC0RA_1LA0LD_1LC0RB", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0LD_0LC1RD_1LA0LD_1LB0RD", "status": "timeout"}
+{"first_fail": {"contexts": 536, "mirrored": true, "n": 5, "t": 0, "target": [2, 0]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 8.23, "spec": "1RB0LD_0RC0RA_1LC1LA_1LA1LD", "status": "no certificate"}
+{"first_fail": {"contexts": 2094, "mirrored": true, "n": 5, "t": 0, "target": [2, 1]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 9.479, "spec": "1RB0LD_1RC0RA_1LA0RC_1LA0LD", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0LD_0RC0RA_1LC0LA_1LA1RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB0LD_1RC0RA_1LD0RB_1LB0LC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB0LD_1RC1RB_1LC0RA_1LA1LD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB0RA_0LC1LD_1RA1LB_1LB1RA", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0RA_0LC1LD_1RA1LB_1LC1RA", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0RA_0LC1LD_1RA1LD_1LB1RA", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.005, "spec": "1RB0RA_0LC1LD_1RC1LD_1LB1RA", "status": "timeout"}
+{"first_fail": {"contexts": 562, "mirrored": true, "n": 5, "t": 0, "target": [3, 1]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 0.704, "spec": "1RB0RB_0LC0RA_1RA0LD_1LC1RD", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0RA_0LC1RA_0LD1LC_1LA0LB", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB0RA_0RC0LD_1LD1RA_1LB0LD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.005, "spec": "1RB0RA_1LC0RA_1LD0LB_1RB0LD", "status": "timeout"}
+{"first_fail": {"contexts": 420, "mirrored": true, "n": 5, "t": 0, "target": [1, 0]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 13.417, "spec": "1RB0RC_0LC1RA_0LD1LC_1LA1LB", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0RC_0RC0RA_1LC0LD_1RB1LD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0RC_1LC0LD_1RA0LB_1LB0RA", "status": "timeout"}
+{"first_fail": {"contexts": 450, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 9.308, "spec": "1RB0RC_1LC0LD_1RA1RD_1RC1LB", "status": "no certificate"}
+{"first_fail": {"contexts": 2043, "mirrored": true, "n": 5, "t": 0, "target": [1, 1]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 10.087, "spec": "1RB0RC_1LC0RB_1RA0LD_1LC0LD", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0RC_1LC0RA_1RA1LD_0LC0LA", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0RD_0RC0LB_1LD1RD_1LB1RA", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.005, "spec": "1RB0RD_1LC0RA_1LA0LB_1RA0LC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.005, "spec": "1RB0RD_1LC0RA_1LA1LB_0LC1LD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0RD_1LC0RD_0RA1LD_1RC0LD", "status": "timeout"}
+{"first_fail": {"contexts": 504, "mirrored": true, "n": 5, "t": 0, "target": [2, 0]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 9.6, "spec": "1RB0RD_1LC1LD_0RD0LB_1LB1RA", "status": "no certificate"}
+{"first_fail": {"contexts": 431, "mirrored": true, "n": 5, "t": 0, "target": [2, 0]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 9.38, "spec": "1RB0RD_1LC1LD_1LA0LB_1LB1RA", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB0RD_1LC1RA_0LD1LA_1RA0LB", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.005, "spec": "1RB0RD_1RC1LB_0RD0RA_1LD0LB", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB1LA_0RC0RD_1LC0LA_0LA0RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB1LA_0RC0RD_1LC0LA_0LB0RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB1LA_0RC0RD_1LC0LA_0RA0RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB1LA_0RC0RD_1LC0LA_0RC0RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB1LA_0RC0RD_1LC0LA_1LA0RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB1LA_0RC0RD_1LC0LA_1LB0RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB1LA_0RC0RD_1LC0LA_1LC0RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB1LA_0RC0RD_1LC0LA_1LD0RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB1LA_0RC0RD_1LC0LA_1RA0RC", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB1LA_0RC0RD_1LC0LA_1RB0RC", "status": "timeout"}
+{"first_fail": {"contexts": 813, "mirrored": true, "n": 5, "t": 0, "target": [1, 0]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 9.076, "spec": "1RB1LA_1LB0RC_1LD1RC_0LC0LA", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB1LA_0RC0RD_1LC0LA_1RD0RC", "status": "timeout"}
+{"first_fail": {"contexts": 949, "mirrored": true, "n": 5, "t": 0, "target": [0, 1]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 1.711, "spec": "1RB1LD_1RC0RB_0LD1RB_0LA1LD", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB1LA_1LB0RC_1LD1RC_0LD0LA", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB1LB_1LC0RB_0LA0LD_0RA1LB", "status": "timeout"}
+{"first_fail": {"contexts": 435, "mirrored": true, "n": 5, "t": 0, "target": [2, 0]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 8.63, "spec": "1RB1LD_1RC1RA_1RD0RB_1LB0LA", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB1LC_1RC0RB_0LA1LD_1LA1RB", "status": "timeout"}
+{"first_fail": {"contexts": 498, "mirrored": true, "n": 5, "t": 0, "target": [1, 0]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 8.866, "spec": "1RB1RC_0LC0RA_1RA1LD_1LA0LC", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB1RA_1LB0RC_1RA0LD_1LC1LD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.005, "spec": "1RB1RA_1LC0RA_1LD1LC_1RD0LB", "status": "timeout"}
+{"first_fail": {"contexts": 1246, "mirrored": true, "n": 5, "t": 0, "target": [0, 1]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 2.878, "spec": "1RB1RC_1LC0LD_1RA0LB_0RA1RD", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.004, "spec": "1RB1RC_0LC1RC_0RA1LD_1RC0LD", "status": "timeout"}
+{"first_fail": {"contexts": 434, "mirrored": true, "n": 5, "t": 0, "target": [1, 0]}, "probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 9.614, "spec": "1RB1RD_1RC0RA_1LA0LD_1RA1LC", "status": "no certificate"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.005, "spec": "1RB1RC_1LC0RA_0LB0LD_1LA1LD", "status": "timeout"}
+{"probe_n0": 5, "probe_n_extra": 0, "probe_timeout": 15, "probe_warmups": [0], "seconds": 15.003, "spec": "1RB1RC_1LC1RA_1LD0RA_1RA0LB", "status": "timeout"}
