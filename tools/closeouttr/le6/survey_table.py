@@ -36,6 +36,12 @@ def group(d):
     return 'I: irregular event ratios (a second level: the ratio cycles with an outer count)'
 
 
+ROUTE = {'CBT_LE6_00': 'conjugate', 'CBT_LE6_01': 'conjugate', 'CBT_LE6_08': 'conjugate',
+         'CBT_LE6_02': 'Zeck2 (increment)', 'CBT_LE6_03': 'ZeckD (countdown)',
+         'CBT_LE6_04': 'ZeckD (countdown)', 'CBT_LE6_07': 'ZeckD (countdown)',
+         'CBT_LE6_05': 'ZeckDw (wider bottom)', 'CBT_LE6_06': 'ZeckDw (wider bottom)'}
+
+
 def main():
     a = sys.argv[1:]
     rows = open(a[a.index('--rows') + 1] if '--rows' in a else os.path.join(HERE, 'rows.txt')).read().split()
@@ -45,26 +51,19 @@ def main():
         f = l.split()
         if len(f) >= 2 and f[1].startswith('CBT_LE6'):
             boarded[f[0]] = f[1]
-    zeck2 = {s for s, d in load('zeck2.jsonl').items() if d.get('closed')}
-    zw = load('zeckw.jsonl')
     G = defaultdict(list)
     for r in rows:
         G[group(sv[r]) if r in sv else 'C: conjugate of a boarded row (boarded before the survey)'].append(r)
     out = []
     for g, rs in sorted(G.items(), key=lambda kv: -len(kv[1])):
-        rd = Counter()
-        for r in rs:
-            if r in zeck2:
-                rd['zeck2'] += 1
-            elif zw.get(r, {}).get('closed'):
-                rd['countdown %s' % tuple(zw[r]['mode'])[1]] += 1
+        rd = Counter(ROUTE[boarded[r]] for r in rs if r in boarded)
         b = sum(1 for r in rs if r in boarded)
         out.append((g, len(rs), dict(rd), b))
     if '--md' in a:
-        print('| group | rows | read | boarded |')
+        print('| group | rows | boarded, by route | open |')
         print('|---|---:|---|---:|')
         for g, n, rd, b in out:
-            print('| %s | %d | %s | %d |' % (g, n, ', '.join('%s %d' % kv for kv in sorted(rd.items())) or '-', b))
+            print('| %s | %d | %s | %d |' % (g, n, ', '.join('%s %d' % kv for kv in sorted(rd.items())) or '-', n - b))
     else:
         for x in out:
             print(x)
