@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Find and emit long-phase binary hybrids using the landed HybridGlueTr checker.
 
-The four seeds have seven right-end phases. The existing finder considers
+The seeds have five or seven right-end phases. The existing finder considers
 only one phase at a fixed instruction and at most four at a variable anchor;
 no new trusted proof rule is needed for longer cycles.
 
@@ -19,6 +19,8 @@ from cbt import write_batch
 
 # Machine, mirror, (state, symbol, position), transient cutoff, phase count.
 SEEDS = [
+    ("1RB0LD_0RC0RA_1LC1LA_1LA1LD", True, (1, 1, 4), 1000, 5),
+    ("1RB1RA_1LC0RA_0LD0LB_1RD1RB", False, (2, 1, 6), 1000, 5),
     ("0RB1RD_1LC0RA_1LD1LC_1RB0LC", False, (3, 1, 2), 338, 7),
     ("1RB0LC_1LC0RD_1LA1LC_0RB1RA", False, (2, 1, 0), 1000, 7),
     ("1RB0LD_1RC1RB_1LA0RB_0LA1LC", True, (1, 1, 0), 1000, 7),
@@ -57,13 +59,14 @@ def main():
     sub = parser.add_subparsers(dest="command", required=True)
     finder = sub.add_parser("find")
     finder.add_argument("output", type=Path)
+    finder.add_argument("--phases", type=int, choices=(5, 7), default=7)
     emitter = sub.add_parser("batch")
     emitter.add_argument("certificates", type=Path)
     emitter.add_argument("--number", type=int, default=58)
     emitter.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
     if args.command == "find":
-        records = [find(*seed) for seed in SEEDS]
+        records = [find(*seed) for seed in SEEDS if seed[4] == args.phases]
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text("".join(json.dumps(record, sort_keys=True) + "\n"
                                       for record in records))
@@ -74,7 +77,8 @@ def main():
                     ["From BBB4.Checkers Require Import LapDecider.",
                      "From BBB4.Counters Require Import HybridGlueTr."],
                     [(record["spec"], hy.render(record)) for record in records],
-                    "seven-phase binary hybrids by HybridGlueTr",
+                    ({5: "five", 7: "seven"}.get(records[0]["L"], "long") +
+                     "-phase binary hybrids by HybridGlueTr"),
                     overwrite=args.overwrite)
 
 
