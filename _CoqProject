@@ -2998,6 +2998,9 @@ theories/Counters/GeometricCounterTr.v
 theories/Counters/ReflectedLapTr.v
 theories/Counters/SweepResetTr.v
 theories/Counters/RightScanReturnTr.v
+theories/Counters/UnaryFrontierTr.v
+theories/Counters/PairTransferTr.v
+theories/Counters/OnesBudgetTr.v
 theories/Counters/LapGlueQHTr.v
 theories/Counters/SweepGlueTr.v
 theories/Counters/HybridGlueTr.v
@@ -11833,6 +11836,9 @@ theories/CloseoutTr/CBT_AST_37.v
 theories/CloseoutTr/CBT_AST_38.v
 theories/CloseoutTr/CBT_AST_39.v
 theories/CloseoutTr/CBT_AST_40.v
+theories/CloseoutTr/CBT_AST_41.v
+theories/CloseoutTr/CBT_AST_42.v
+theories/CloseoutTr/CBT_AST_43.v
 theories/CloseoutTr/CBT_AST_50.v
 theories/CloseoutTr/CBT_AST_51.v
 theories/CloseoutTr/CBT_AST_52.v
@@ -11872,6 +11878,8 @@ theories/CloseoutTr/CBT_AST_90.v
 theories/CloseoutTr/CBT_AST_91.v
 theories/CloseoutTr/CBT_AST_92.v
 theories/CloseoutTr/CBT_AST_93.v
+theories/CloseoutTr/CBT_AST_94.v
+theories/CloseoutTr/CBT_AST_97.v
 theories/CloseoutTr/CBT_BLC3_00.v
 theories/CloseoutTr/CBT_BLC3_01.v
 theories/CloseoutTr/CBT_BLC3_02.v

@@ -6748,3 +6748,73 @@ gives a positive A1 return, and window-three Fuel handles the other
 seven targets. The helper and batch compile in 0.4 and 2.9 seconds.
 `right_scan_batch.py` and `fuelmixtr_right_scan.jsonl` reproduce the
 checked certificate.
+
+
+#### 7.4.AST8 Wider digits, finite transfers, and reflected seed alignment (2026-10-01)
+
+This checkpoint adds **twelve requested rows** in five batches. The
+follow-up now totals **155 new rows**; including the six earlier AST rows,
+**161 of the requested 164** are proved. The full closeout has **498**
+rows left, including **three** requested rows. All five batch coverage
+lemmas are kernel-checked with only `functional_extensionality_dep`.
+
+**Seven-cell ternary digits (`CBT_AST_41`, four rows).** The landed
+`HybridCtrTr` closes the family of
+`1RB0LA_1LC0RD_1LA0LB_1RB0RD` once the finder considers digit widths above
+its previous cap of six. The final reading has digits
+`0100101/0100010/0100110`, prefix `10`, and three top words
+`01001/010001001/010011001`. Every second A1 visit at cell -3 exposes the
+counter; each full lap grows the right `(10)` block by three units.
+The four state-renamed/reflected rows have independently checked boots
+169, 142, 169 and 198. The batch compiles in about 0.4 seconds.
+`hy2_wide_seed.py` and `hy2_wide_seed.jsonl` reproduce the certificates;
+no new trusted checker is needed.
+
+**A unary frontier (`CBT_AST_42`).** `UnaryFrontierTr` proves
+`1RB0LB_0RC0RD_1LC1LA_1RA1RD`. At the D0 right frontier, the left word is
+`0^a 1^b 0 L`. The short turn sends `(0,3k+2)` to `(4,3k+1)`;
+each transfer sends `(a,b)` to `(a+6,b-3)`. After exactly k transfers,
+b=1 and a reset produces `1^(a+4) 0 1 L`. Thus the outer parameters
+change by `k -> 2k+2`, `n -> n+1`. Every instruction fires in the reset.
+The local sweep and drain lemmas are axiom-free; `ValueLapTr` closes the
+proof. The helper and batch compile in about 0.5 and 0.3 seconds.
+`unary_frontier_batch.py` reproduces the batch.
+
+**A pair-block transfer (`CBT_AST_43`, two rows).** `PairTransferTr`
+proves a positive return from A0 with empty left tape and right word
+`(10)^m 11`, changing m to `2m+10`. Three sweeps, a finite drain, and a
+reset establish the return, with explicit witnesses for all eight
+instructions. The two graph-conjugate machines use boots 5150 (m=46)
+and 79717 (m=163), each checked independently. The helper compiles in
+about 0.7 seconds and the batch in 0.6 seconds. Its inner transfer and
+lap lemmas are axiom-free. `pair_transfer_batch.py` preserves both
+instantiations.
+
+**Reflected RepWL seeds (`CBT_AST_94`, two rows).** The machines
+`1RB0RD_1LC0LC_1LD1LC_1RA0RB` and
+`1RB1RA_1LC0LD_1LD0LB_1RA0RA` close under the existing `RepWLTr` tier
+with L=6, T=2, and warmup zero after reflection. The previous search used
+the original orientation; seed-buffer alignment changes which closure
+it explores. The reflected closures have 28,206 and 25,008 nodes, with
+checked fueled rankings for every instruction. `neverqhtr_mirror`
+transports the result, so no alternate-seed checker is added. The
+combined batch compiles in about 384 seconds in isolation and 699 seconds
+under concurrent load; its CI cost entry is a conservative 700 seconds.
+A reflected L6 survey over the remaining requested rows found no further
+closure.
+
+**A budget of ones (`CBT_AST_97`, three rows).** `OnesBudgetTr` closes
+`0RB0RC_1LC1RC_1LD1RA_1RA0LD` and two state-renamed/reflected machines.
+A0 with a finite left word L and right word `0 R` reaches A at the head
+of R, with exactly two additional ones on the left and a prefix `10` or
+`110`. This is proved by strong induction on the number of ones in L.
+A D scan erases m ones; each nested crossing restores two, but every
+recursive call starts strictly below the original number. The word
+length can grow, so length induction would not justify these calls.
+The returned prefix supplies all eight liveness witnesses after short
+additional paths. Positive frontier returns give the full theorem,
+transported by `CConjugateReachTr` for the variants with boots 1 and 5.
+The core scan lemma is axiom-free; only the final lifted recurrence uses
+functional extensionality. The helper and batch each compile in about
+2.6 seconds under concurrent load. An n11 partial-potential probe did not
+close this family; the finite-word argument avoids a large certificate.
