@@ -11,6 +11,7 @@ from pathlib import Path
 import tempfile
 import cbt
 import fuelphasetr_batch as phase
+import shared_phase_batch as shared
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
@@ -22,6 +23,14 @@ def main():
                  'fuelphasetr_blocklists_mates.jsonl'):
         for r in map(json.loads, (HERE / name).read_text().splitlines()):
             if r['status'] != 'found':
+                continue
+            if r.get('certificate_retired'):
+                replacement = ROOT / 'theories/CloseoutTr' / (r['superseded_by'] + '.v')
+                assert f"(* spec {r['spec']} *)" in replacement.read_text(), r['spec']
+                print('retired', r['certificate_batch'], 'covered by', r['superseded_by'])
+                continue
+            if r.get('certificate_format') in ('hex-delta-target-v1',):
+                shared.replay(r)
                 continue
             batch, index = r['certificate_batch'], r['certificate_index']
             text = (ROOT / 'theories/CloseoutTr' / (batch+'.v')).read_text()
