@@ -7099,6 +7099,8 @@ lockstep transport cannot take; the boot is computed.
 | `CBT_LE10_12` | 1 | the same read leftwards from the right end, a five-state top (`1RB1LC_1LA0RD_0RC1LB_0LC1RD`) | `cc`, `t1`..`t5` |
 | `CBT_LE10_13` | 1 | mirror counter: one count on both sides of the head (`1RB0LA_1LC1RC_1RD1LB_1LA0RD`) | `LoopMirrorTr.mirror_iter`, `armR`/`armL`, `ovf` |
 | `CBT_LE10_14`..`_16` | 3 | mirror counters whose markers are digits: one count from `2^m` to `2^(m+1)` is a lap | `mirror_iter1`, blank-padded widths (`nb_extend`) |
+| `CBT_LE10_17` | 1 | mirror counter with an offset (left `n`, right `n + 1`) and a two-bit top held by four tails (`0RB0RA_1RC0LD_1LB1RA_1LB1LD`) | `mirror_inc`, `iter`, `top0`..`top3`, `fin` |
+| `CBT_LE10_18` | 1 | its lockstep conjugate | `CConjCoverTr` |
 
 `theories/Counters/LoopMirrorTr.v` covers LE7's "one counter held on both sides of
 the head".  The state is one number `n` (left `n + a`, right `n`) and
@@ -7108,18 +7110,24 @@ hypotheses (right carry to a junction configuration `mk2`, left carry back
 to `mk1`).  A numerical search over encodings, junction shapes and offsets
 (`reach` on random tails) finds the arms' law before any Coq is written.
 
-Every batch compiles alone in 8-11 s at about 470 MB.  `Print Assumptions`
+Every batch compiles alone in 7-11 s at about 470 MB.  `Print Assumptions`
 on every batch shows `functional_extensionality_dep` only.
 
-**Boarded so far: 23 of 42.**
+**Boarded so far: 25 of 42.**
 
-**Left (19), by shape:**
+The offset mirror row (`CBT_LE10_17`) reads with head-aligned digits:
+`A [1]` at the junction `JL = 1101111`, left digits `00`/`11` holding `n`
+plus the marker `11`, and right digits `10111`/`10101` holding `n + 1`
+modulo `2^mR`.  The right zero digit is not blank, so bits `mR` and `mR+1`
+live in the tail: `T0 = 10101`, `T1 = 10110101`, `T2 = 10100101`,
+`T3 = 10101101`, and a carry into `T3` gives `10111 T0`, one digit wider.
+A lap is four `mirror_inc` runs (offsets `0`, `2^mR - 1`, `2^(mR+1) - 1`,
+`3*2^mR - 1`) and four top steps.  The last increment carries the left
+side onto blank tape, where the blank is the digit `00` and the old marker
+becomes a digit.
 
-* mirror counters with offset sides and a truncated top digit
-  (`0RB0RA_1RC0LD_1LB1RA_1LB1LD` and its conjugate `1RB0LC_1LA1RD_1LA1LC_0RA0RD`):
-  the increment law holds (left `11`/`00`, right `10110`/`11110`, junction
-  `0 [A0]`), but the right side's zero digit is not blank, so its top grows
-  by its own transitions;
+**Left (17), by shape:**
+
 * a structured left region beside a growing run, which changes irregularly
   from lap to lap (ratio 3 per lap), so a third level that is not yet read
   (9 rows: `1RB0LA_1LC0RB_1RD1LA_1RA1RC` and its classes,
