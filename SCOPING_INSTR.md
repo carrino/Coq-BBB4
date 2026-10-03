@@ -7391,6 +7391,42 @@ needs arithmetic: `inc` holds for any pair of digit strings.
   `Closeout/CB_*`, census lists): they regenerate from tools once the
   checker layer lands.
 
+#### 7.4.LE12 LE9's five open rows: recursive erasers, a nested overflow, the heavy sweepers (2026-10-03)
+
+Workstream LE12 (batch tag `LE12`) takes the five rows LE9 left open
+(§7.4.LE9 Part 11), with LE10's route: hand-stated `Reach0` / `Reach1`
+lemmas over opaque tails (`LoopRunTr`), the board `BoardSeqTr`, one file
+per row (`theories/Machines/LoopTr/LP_<spec>.v`), batches by
+`tools/closeouttr/le12/batch.py`.
+
+**1. The moving-one rows are recursive ERASERS, and need no count.**
+LE9 read the cells left of the marker as a Hanoi-like count and planned an
+inner count by induction on the marker distance.  The count never has to be
+stated: what recurs is an erase of the block between a left `1` (the wall)
+and the marker, and an erase of a block is a few erases of smaller blocks.
+
+* `1RB0RB_1LC1LD_0LC1RA_0LD0RA`: `Cf i = 1 0^(i+3) [B0]`.  The lap writes
+  the marker, `C` sweeps back to the wall, and `ee N` erases:
+  `1 0^c [A] 0^N 1 R ->+ 1 0^(c+N+1) [B] R` for every `c`, `R` and the
+  far left opaque.  For `N >= 3`, `ee N` is 7 steps (the wall moves one
+  cell in), `ee 1`, a `loop` erasing `0^j 1` for `j = 2 .. N-1` (each a
+  smaller `ee`, the `B0` before it writing the next marker), a `D` sweep
+  that clears the moved wall, and `ee (N-1)` from the old wall with
+  `c + 1`.  Strong induction on `N`; `N = 0, 1, 2` are concrete runs.
+* `1RB1RC_1LA1LD_0RC0RB_0LD0LA` (same step counts, not a conjugate):
+  `Cf i = 1 0^(i+4) [B0]`, worked from the right with two mutually
+  recursive erasers.  `EA a b`: `1 0^a [A] 0^(b+1) 1 R ->+ 1 0^(a+b+2)
+  [B] R` (the marker erased) runs `EB 0 b` and then `EA (a-1) (b+1)` (or,
+  at `a = 0`, a `C` sweep onto the marker).  `EB a b`: `X 1 0^a [B] 0^b 1
+  R ->+ [A] X | 0^(a+b+1) 1 R` (the wall erased) runs `EA (a-1) 0` and
+  then `EB (a+1) (b-1)` (or, at `b = 0`, a `D` sweep onto the wall).
+  Strong induction on `a + b`, then on `a` or `b`.
+
+The fire witnesses are the first concrete steps from `Cf i` (with enough
+concrete zeros), plus, in the first row, the configuration just before the
+outer `D` sweep.  **2 boarded** (`CBT_LE12_00`), 8.7 s and 470 MB for the
+batch alone.
+
 #### 7.4.TA follow-up: cube counters at moduli 9 and 27 (2026-10-01)
 
 The suggested larger-residue search was run on the 15 cube rows for which

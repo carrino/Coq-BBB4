@@ -3044,6 +3044,8 @@ theories/Machines/LadderTr/LDRZU_1RB1LC_1LC1RA_0RB0LD_0RA1LD.v
 theories/Machines/LadderTr/LDRZU_1RB1LD_1LC1RA_0RA1LC_0RB0LC.v
 theories/Counters/NestCountTr.v
 theories/Counters/LoopRunTr.v
+theories/Machines/LoopTr/LP_1RB0RB_1LC1LD_0LC1RA_0LD0RA.v
+theories/Machines/LoopTr/LP_1RB1RC_1LA1LD_0RC0RB_0LD0LA.v
 theories/Machines/LoopTr/LP_1RB1LD_1RC1RA_1LA0RC_1RC0LD.v
 theories/Machines/LoopTr/LP_1RB1RD_1RC0LB_1LD0RC_1RA1LB.v
 theories/Machines/LoopTr/LP_1RB0LA_1LC0RB_1RD1LA_1RB1RC.v
@@ -12373,6 +12375,7 @@ theories/CloseoutTr/CBT_LE10_19.v
 theories/CloseoutTr/CBT_LE10_20.v
 theories/CloseoutTr/CBT_LE10_21.v
 theories/CloseoutTr/CBT_LE10_22.v
+theories/CloseoutTr/CBT_LE12_00.v
 theories/CloseoutTr/CBT_LE2_00.v
 theories/CloseoutTr/CBT_LE2_01.v
 theories/CloseoutTr/CBT_LE3_00.v
