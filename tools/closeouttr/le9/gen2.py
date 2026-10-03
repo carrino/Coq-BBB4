@@ -4,8 +4,9 @@
 
 A form is (q, h, L, R): L and R are item lists nearest-first, items
 ('c', cells), ('r', word, base) for word^(base + n), ('X',) for the opaque
-tail (last item only).  At most one side carries a block, and an arm's two
-forms carry it on the same side.  Coq statements are in the exact shape of
+tail (last item only).  At most one side carries a block; an arm's two
+forms carry it on the same side, or on opposite sides when the pass carries
+it across the head ([armfam2_lr] / [armfam2_rl]).  Coq statements are in the exact shape of
 [armfam2_r] / [armfam2_l] / [arm2_flat]:
 
     (q, (L1 ++ XL, h, P1 ++ rep w (b + n) ++ W1 ++ XR))
@@ -132,6 +133,9 @@ class Gen2:
         self.validate(f0, f1, what)
         el, er = not has_x(f0[2]), not has_x(f0[3])
         side = 'R' if rep_of(f0[3]) is not None else ('L' if rep_of(f0[2]) is not None else None)
+        side1 = 'R' if rep_of(f1[3]) is not None else ('L' if rep_of(f1[2]) is not None else None)
+        if side1 != side and None in (side, side1):
+            raise NoClosure('%s: only one of the two forms carries a block' % what)
         flagL = '(fun H => False_ind _ (diff_false_true H))' if not el else '(fun _ => eq_refl)'
         flagR = '(fun H => False_ind _ (diff_false_true H))' if not er else '(fun _ => eq_refl)'
         xl = 'XL' if not el else '[]'
@@ -219,7 +223,8 @@ Qed.
            cmp=br(lambda r: 'vm_compute; reflexivity')))
         # the block's base folds into P: armfam2 counts the block from P ++ rep w b
         lem = self.fresh('tpa')
-        lemma = 'armfam2_r' if side == 'R' else 'armfam2_l'
+        lemma = {('R', 'R'): 'armfam2_r', ('L', 'L'): 'armfam2_l',
+                 ('L', 'R'): 'armfam2_lr', ('R', 'L'): 'armfam2_rl'}[(side, side1)]
         self.out.append('''Lemma %(lem)s : forall (n : nat) (XL XR : list Sym), Reach1 tm %(f0)s %(f1)s.
 Proof.
   intros n XL XR.

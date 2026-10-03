@@ -7155,9 +7155,21 @@ over `1 + n` ones is six passes (flat, right copy `01 -> 11`, left copy
 `01 -> 00`, flat, right copy `11 -> 00`, flat), the carry over no ones is
 one flat arm, and the left pass fires every instruction.  Two-sided arm
 generator `le9/gen2.py`, row model in `le9/emit_zz.py` (`ROWS`);
-**1 boarded** (`CBT_LE9_06`), ~2 s and ~460 MB.  `1RB1RC_0RC1RB_0LD0RB_1LD0LA`
-differs at `A1` only but is NOT the same shape (its A0 tapes are not two
-copies), so it stays open with the rest.
+**1 boarded** (`CBT_LE9_06`), ~2 s and ~460 MB.
+
+Two more mirrors carry the block ACROSS the head in a pass (the zig-zag
+consumes one copy's digits on one side and leaves them on the other):
+`armfam2_lr` / `armfam2_rl` state those arms (the `SCycL` / `SCycR` steps
+already derive them).  `1RB1RC_0RC1RB_0LD0RB_1LD0LA` is ZZ1's counter (the
+two copies agree at one A0 visit per increment) carried in five passes: flat, a bounce over the right copy (`01 -> 11`), a
+bounce over the left copy (`01 -> 00`, the 0 digit `-> 01`), right across
+the right copy's ones carrying them left, back left carrying them right as
+`00`.  `1RB0LA_1LC0RB_1RD1LA_1LA1RC` holds its copies in different words:
+left (outward) `Z = 00`, `O = 10`, terminator `1`; right `00 ++ cells x ++
+01` with `O = 01`; the carry over `n` ones is four crossing passes, and the
+top (all ones) is the same carry at `n = k + 1` over the blank ends, so the
+counter widens to `0^(k+1)`.  Models in `le9/emit_zz.py` (`ZZ2`, `ZZ3`);
+**2 boarded** (`CBT_LE9_07`), ~1.6 s and ~460 MB each.
 
 ## 8. What we deliberately do NOT redo
 

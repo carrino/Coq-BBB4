@@ -2871,6 +2871,8 @@ theories/Machines/LadderTr/LDTM_1RB0RD_1LB1LC_1RC0RA_0LB1RD.v
 theories/Counters/TwoSideArmTr.v
 theories/Counters/TopMapGTr.v
 theories/Machines/LadderTr/LDZZ_1RB0LA_0RC1RB_0LD0RB_1LD0LA.v
+theories/Machines/LadderTr/LDZZ_1RB0LA_1LC0RB_1RD1LA_1LA1RC.v
+theories/Machines/LadderTr/LDZZ_1RB1RC_0RC1RB_0LD0RB_1LD0LA.v
 theories/Machines/LadderTr/LDTPH_1RB0LC_0LA1RC_1RD1LA_1RB0RD.v
 theories/Machines/LadderTr/LDTPH_1RB0RA_0LC1RD_1RB0LD_1RA1LC.v
 theories/Machines/LadderTr/LDTPH_1RB1LD_1RC0RB_0LD1RA_1RC0LA.v
@@ -12367,6 +12369,7 @@ theories/CloseoutTr/CBT_LE9_03.v
 theories/CloseoutTr/CBT_LE9_04.v
 theories/CloseoutTr/CBT_LE9_05.v
 theories/CloseoutTr/CBT_LE9_06.v
+theories/CloseoutTr/CBT_LE9_07.v
 theories/CloseoutTr/CBT_LEFQ_00.v
 theories/CloseoutTr/CBT_LEF_00.v
 theories/CloseoutTr/CBT_LEF_01.v
