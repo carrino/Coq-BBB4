@@ -158,7 +158,7 @@ Proof.
 Qed.
 
 Lemma nxtB_lt : forall p, p < P -> nxtB p < P.
-Proof. intros p Hp. unfold nxtB. destruct (Nat.eqb_spec (S p) P); lia. Qed.
+Proof using. intros p Hp. clear -Hp. unfold nxtB. destruct (Nat.eqb_spec (S p) P); lia. Qed.
 
 Lemma bsucc_inv : forall s, BInv s -> BInv (bsucc s).
 Proof.
