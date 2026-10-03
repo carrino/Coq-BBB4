@@ -143,4 +143,37 @@ Proof.
     unfold mconf. cbn [Nat.add]. rewrite (nb_succ mL (n + a)) by lia. rewrite (nb_succ mR n) by lia.
     apply mirror_inc; apply nb_split; lia.
 Qed.
+(** the same with a right arm of at least one step: the laps are [Reach1] *)
+Hypothesis HR1 : forall k r Lc R',
+  Reach1 tm (mk1 Lc (bcells ZR OR (repeat true k ++ false :: r) ++ R'))
+            (mk2 Lc (bcells ZR OR (repeat false k ++ true :: r) ++ R')).
+
+Lemma mirror_iter1 : forall d n, n + S d + a < 2 ^ mL -> n + S d < 2 ^ mR ->
+  Reach1 tm (mconf n) (mconf (n + S d)).
+Proof.
+  intros d n HL' HR'.
+  apply (reach10 tm _ (mconf (S n))); [|replace (n + S d) with (S n + d) by lia; apply mirror_iter; lia].
+  unfold mconf. cbn [Nat.add]. rewrite (nb_succ mL (n + a)) by lia. rewrite (nb_succ mR n) by lia.
+  destruct (nb_split mL (n + a) ltac:(lia)) as (kx & rx & ->).
+  destruct (nb_split mR n ltac:(lia)) as (ky & ry & ->). rewrite !binc_int.
+  eapply reach10; [apply HR1|]. apply HL.
+Qed.
 End Mirror.
+
+Lemma nb_extend : forall w n, n < 2 ^ w -> nb (S w) n = nb w n ++ [false].
+Proof.
+  induction w as [|w IH]; intros n Hn.
+  - cbn in Hn. replace n with 0 by lia. reflexivity.
+  - change (nb (S (S w)) n) with (Nat.odd n :: nb (S w) (Nat.div2 n)).
+    change (nb (S w) n) with (Nat.odd n :: nb w (Nat.div2 n)).
+    rewrite (IH (Nat.div2 n)); [reflexivity|].
+    rewrite pow2_S in Hn. pose proof (Nat.div2_odd n) as E. destruct (Nat.odd n); cbn [Nat.b2n] in E; lia.
+Qed.
+
+Lemma nb_pow : forall m, nb (S m) (2 ^ m) = repeat false m ++ [true].
+Proof.
+  induction m as [|m IH]; [reflexivity|].
+  replace (2 ^ S m) with (2 * 2 ^ m) by reflexivity.
+  change (nb (S (S m)) (2 * 2 ^ m)) with (Nat.odd (2 * 2 ^ m) :: nb (S m) (Nat.div2 (2 * 2 ^ m))).
+  rewrite odd_double, Nat.div2_double, IH. reflexivity.
+Qed.
