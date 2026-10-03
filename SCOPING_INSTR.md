@@ -7220,6 +7220,33 @@ the left counter in phases 0, 1 or 3, so the board proves (by counting,
 `bval`) that the left counter tops within `2^w` rounds and then reaches
 every phase.  **2 boarded** (`CBT_LE9_10`), ~3.8 s and ~480 MB each.
 
+**Part 11: the five rows LE9 leaves open, and why.**  Each was read at its
+pivot or turn with a fast C simulator; none is a fixed set of counters
+stepped by bounded rounds, which is what every LE9 board needs.
+* *Moving-one* (`1RB0RB_1LC1LD_0LC1RA_0LD0RA`, `1RB1RC_1LA1LD_0RC0RB_0LD0LA`;
+  both grow one cell per doubling of time).  In the first, at the moments
+  `11000 c 0^a 1 0^b 1` the marker 1 walks one cell per doubling of time
+  (`+64, +128, ..., +8192` steps), and at the right end
+  the tape grows by a cell and the walk restarts.  Between two marker steps
+  the cells left of the marker do NOT count in plain binary (the low bits
+  run `000, 100, 010, 110, 010, 110, 010, 110, 010, 001, ...`): a 2-4 cell
+  gadget at the left end runs its own sub-cycle per inner step, a
+  recursive (Hanoi-like) count.  A board would need an inner count proved
+  by induction on the marker distance, then an outer one over the width.
+* *Other* (`1RB0RB_1LC1RA_0LD0LC_1RD0RB`): for its first ~335M steps it is
+  two counters at a pivot (left over `01` / `11`, 24 digits; right over
+  `00` / `10`, widening), which `emit_abg.py` could state.  But the left
+  counter's first overflow (at ~2^24 rounds) is not a top transition: it
+  takes ~47M steps (a nested count of the same order), moves the pivot 48
+  cells right and leaves a second 24-digit counter.  The overflow event
+  is itself a counter run, so no bounded round covers it.
+* *Heavy* (`0RB1RD_1LC0RD_1LD0LC_1RA0LB`, `1RB0LC_0RC1RA_1LD0RA_1LA0LD`,
+  the same tapes up to state names): sweepers growing like `sqrt t` with
+  THREE growing regions (`01111111` words, `111111101010101` words, and a counter-like
+  left part over `111010` words) whose boundaries move at different
+  rates.  That is the multi-block-sweep shape of the BL rows, whose routes
+  (BLC3-BLC6) are out of scope here.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
