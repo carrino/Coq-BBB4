@@ -7450,6 +7450,42 @@ each step.  It fires `D1` only when `y` is odd.
 
 **Boarded so far: 2 of 12.**
 
+**The 3-cell pair (`1RB1LD_1RC0RB_1LA1RC_1LC0LA` and its lockstep
+conjugate `1RB1LA_1LC1RD_1LA0LC_1RA0RB`, `le6/conj_find.py`: `p = 1203`,
+mirrored, `m = 7`, `n0 = 9`): the law is read, the safety argument is
+not.**  The right side and the B0 anchor are those of `_00`; the left
+digits are 3 cells (`100` / `000`), and there are TWO separators: `1`
+(phase P1, `xc3 u ++ 1 :: xc3 v`) and `10` (phase P2, `xc3 u ++ 1 :: 0
+:: xc3 v`).  With `D0 = 1LC` the walk can turn round (`C1` sweeps right),
+so the absorption depends on the parity of `k = |u|`.  The exact step
+(`tools/closeouttr/le11/two_level3.py`; matched against the machine over
+187,000 macro steps and a full pass by `check_two_level3.py`):
+
+| case (`y` has a 0; `y+1` below) | result |
+|---|---|
+| `u` has a 0 | `(P, u+1, v)` |
+| `u = 1^k`, `v = []` | `(P1, 0^(k+1), [])` (both phases) |
+| `u = 1^k`, `v = 0 :: v1` | `(P, 0^(k+1), v1)` |
+| P1, `v = 1 :: v1`, `k` even | `(P2, [], v1)`, `y := 1^(3k/2) 0 ++ y+1` |
+| P1, `v = 1 :: v1`, `k` odd | `(P1, [], v1)`, `y := 0^((3k+1)/2) 1 ++ y+1` (two B0 visits: the first leaves the right one cell out of step) |
+| P2, `v = 1 :: v1`, `k` odd | `(P2, [], v1)`, `y := 0^((3k+1)/2) 1 ++ y+1` (a turn-round and a second A/D walk) |
+| P2, `v = 1 :: v1`, `k` even | ERA `(P1, 0 :: init (v1+1), [])`, `y := 0^(3k/2) 1 ++ y+1` (the second walk increments `v1`) |
+| `y` full, P1, `v = []` | as `_00`: `u = 0 :: u1` gives `(P1, [0], u1 ++ [1], 0^w)`, `u = 1 :: u1` gives `(P2, [], u1 ++ [1], 0^(w+1))` |
+
+So a pass ends at the first `1` of `v` that follows an even run of `0`s in
+phase P2, usually long before `v` is used up, and the rest of `v` (plus 1)
+becomes the next era's left counter.  `_00`'s invariant does NOT carry
+over.  From an overflow with `|u| <= W - 1` it holds throughout the pass
+(checked exhaustively for `W <= 10`, `pass_safety3.py`).  But the real
+orbit overflows with `|u| = W` (eras 4, 5 and 7 of the projection
+`eras3.py`: `W = 35, 49, 83`).  There the invariant fails for a quarter of
+the `u`, yet the pass is still safe for every `u` except `0^W`
+(exhaustive for `W <= 11`).  A proof needs a pass cost bounded by the
+zero runs of `v` (the pass ends early), plus the era fact `X_ovf <
+2^(W+1)`, `X_ovf <> 2^W`.  The second holds by parity when the era starts
+with `k >= 2`, and needs `val v1 <> val y + 1` when `k = 0`.  Not boarded.
+
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
