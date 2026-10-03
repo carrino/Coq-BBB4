@@ -8759,3 +8759,82 @@ group; the other instruction certificates would still need Coq checking.
 the baseline diagnostics and checks all state-renaming/reflection maps.
 Its optional `--verify-spec` reruns recorded successful target searches;
 the two D1 certificates for `1RB0RA_0LC0RD_1RA0LD_1LC1RD` were replayed.
+
+
+#### 7.4.AST18 — All eight balanced counter holdouts (2026-10-03)
+
+Scope: the eleven non-block-list holdouts in `counters11_rows.txt`:
+LE11's three-cell mirror pair and eight balanced rows, plus LE12's nested
+overflow row. First merged main `5f8aa734`, including LE11/12's six boards.
+The resulting baseline was 603 batches, 10,872 boarded, 52 remaining.
+
+**Eight new boards**, all eight balanced rows. Their full-run visit
+profiles need not be explained. The window-3 FuelMix certificate
+already handles six or seven instructions; a finite-tape reachability or
+return argument supplies the others.
+
+| Batch | Row | Manual instruction(s) |
+|---|---|---|
+| AST140 | `0RB0LD_0RC1RB_1LD1RC_0LA1LA` | B1 |
+| AST140 | `0RB1RA_1LC1RB_0LD1LD_0RA0LC` | A1 |
+| AST140 | `0RB1RB_0LC0RA_0LD1LC_1RA1LD` | C1 |
+| AST140 | `1RB1LA_0RC1RC_0LD0RB_0LA1LD` | D1 |
+| AST141 | `0RB0LA_1RC0RC_1LD1RB_1LA0LD` | A1 |
+| AST141 | `1RB0RB_1LC1RA_1LD0LC_0RA0LD` | D1 |
+| AST142 | `0RB0LA_1LC1RD_1LA0LC_1RB0RD` | A1, D1 |
+| AST142 | `1RB1LD_1RC0RB_0LA0RC_1LA0LD` | C1, D1 |
+
+`AlternatingCarryFiniteTr` leaves B1 unspecified and proves that the other
+seven transitions force B1 from every finite configuration. At an A0
+anchor followed by another zero, pairs 01/11 undergo ordinary binary
+carries. A zero in a pair's second cell forces an odd return sweep and B1.
+Induction on the finite right suffix, including implicit blanks, finds
+such a zero. Arbitrary starting states reduce to these anchors. The four
+rows use `FiniteInstrTr` and checked state-renaming/reflection maps.
+
+`MarkedCarryReturnTr` proves a positive return to A1 for the second core.
+Its C/B scan flips the second cell of a pair; a 01 marker forces a return
+through A1. Leaving A1 either returns immediately or creates a seed whose
+first left sweep produces that marker. Only returns from A1 are needed;
+an arbitrary finite configuration need not reach A1.
+
+`WanderingCarryReturnTr` proves positive A1 returns and eventual D1 visits
+from every A1 configuration for the last core. At D, the left word is
+`1^k 0^n 1 L`, with `n > 0`. Nested induction uses
+`(n + number_of_ones(R), n)` for `k > 0`. The 01 right scan reduces the
+first component, a 00 turn preserves it and reduces the second, and a D1
+step exposes a closer protected marker. The `k = 0` case first scans a
+finite one run, then enters the already proved positive case. Implicit
+blank padding adds no ones. The independent D1 witness is an induction
+on the finite left word. `FiniteReturnFireTr` transports such witnesses
+from arbitrarily late return points through conjugacy.
+
+All batches reuse `FuelMixPartialTr` for their other instructions and
+`LoopRunTr` for sweeps and finite binary counts. The three emitters
+`balanced_carry_batch.py`, `marked_carry_batch.py`, and
+`wandering_carry_batch.py` support `--find` and byte-for-byte `--check`.
+Certificate payloads occur only in the Coq batches; the JSON metadata
+records SHA-256 values, parameters, conjugacies and computed boots.
+
+Local Coq 8.18 batch builds: AST140 6.9 s / 877,920,256 bytes peak RSS;
+AST141 4.0 s / 688,586,752 bytes; AST142 3.8 s / 665,419,776 bytes.
+The generic lemmas and all three aggregate batch theorems were audited
+with `Print Assumptions`: only `functional_extensionality_dep`.
+
+**Three still open**, listed in `counters11_remaining.txt`. A combined
+weighted/nonincreasing-potential pass on all eleven, windows 3--5,
+patterns up to 8, boot 0 and 45 seconds per row, found no complete
+certificate. A per-instruction pass at windows 3--6, both orientations,
+with 20 seconds per window records the successful targets separately in
+`counters11_partial.jsonl`. For the remaining mirror pair it leaves
+C1/D1 and A1/D1 respectively. For the nested-overflow row, combining
+orientations leaves only **A1**, so A0 is no longer the sole useful target
+identified in LE12. These partial results are search diagnostics, not
+additional boarded rows. A phase-aware combined pass on the three open
+rows, windows 3--6, patterns up to 8 and 90 seconds per row, also found
+no complete certificate. All 14 whole-row outcomes are in
+`counters11_probe.jsonl`.
+
+The split now has **606 batches, 10,880 boarded, 44 remaining**: 41 from
+the block-list scope and these three counter holdouts. Required split,
+project, frozen census-cache and six-shard checks pass.
