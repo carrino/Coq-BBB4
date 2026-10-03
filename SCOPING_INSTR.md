@@ -7992,3 +7992,54 @@ one uncertified instruction in the saved window-3 diagnostic.
 `blocklists114_residue.tsv` is filtered to this combined residue; the
 historical search records and core grouping remain unchanged. The
 regenerated split has **560 batches, 10,800 boarded, 124 remaining**.
+
+
+#### 7.4.AST15 Triple sweeps: four more block-list rows (2026-10-02)
+
+`TripleSweepFiniteTr.v` proves C1 is reachable from every finite
+configuration under seven equations, leaving C1 unrestricted:
+
+```
+A0=0LB  A1=1LA
+B0=1RC  B1=0LA
+C0=1RD
+D0=1LB  D1=0RB
+```
+
+The D scan consumes right-hand `100` triples, pushing `110` triples onto
+the nearest-first left word. A zero or `11` turns the scan back; the A
+return drains the written triples. At a blank left frontier, the return
+leaves a `101` marker, possibly after one extra lap. D scanning that marker
+reaches C1. Strong induction on the finite left word extends the frontier
+argument to arbitrary finite configurations, with blank padding handled
+through `lift` equality.
+
+`CBT_AST_133` applies this theorem to all four conjugates of the core in
+`blocklists_single_cores.json`. `FiniteInstrTr` supplies recurrence, and
+partial window-3 FuelMix certificates cover the other seven instructions.
+`triple_sweep_ast.json` retains the certificates and conjugacies;
+`triple_sweep_batch.py --check` verifies the maps and reproduces the batch.
+The generic theorem and all four row proofs compile; their assumption
+audits list only `functional_extensionality_dep`. The batch took about
+2.7 seconds of compiler CPU time; its CI cost is conservatively 10 seconds.
+
+Additional searches found no certificates:
+
+- The thirty rows with multiple missing window-3 instructions: parity
+  grammars at windows 5--7, pattern length up to 8, boot 0, 60 seconds per
+  row; 18 failures and 12 timeouts (`fuelphasetr_blocklists_multi30.jsonl`).
+- An experimental position-modulo-three version of the closure on all
+  46 remaining rows: windows 3--5, pattern length up to 6, boot 0,
+  45 seconds per row; 46 failures (`fuelphasetr_blocklists_mod3.jsonl`).
+  This used `fuelphasetr_batch.closure` with modulus 3 and phase keys
+  `4 * base_fenc + phase`; no new Coq checker is claimed for this probe.
+- Four representatives of the remaining universal finite-tape cores:
+  parity grammars at window 8, pattern length up to 10, boot 0,
+  180 seconds per row; two failures and two timeouts
+  (`fuelphasetr_blocklists_n8.jsonl`).
+
+The requested 114-row scope now has **68 proved and 46 open**. Sixteen
+open rows have one missing instruction in the saved window-3 diagnostic;
+the largest core still has five rows. The generated split has
+**561 batches, 10,804 boarded, 120 remaining**. These negative search
+results only record the search limits, not failure of recurrence.
