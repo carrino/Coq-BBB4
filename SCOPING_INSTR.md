@@ -7427,6 +7427,34 @@ concrete zeros), plus, in the first row, the configuration just before the
 outer `D` sweep.  **2 boarded** (`CBT_LE12_00`), 8.7 s and 470 MB for the
 batch alone.
 
+
+**2. The heavy sweepers: the n = 6 Fuel certificate was never heavy to CHECK,
+only to elaborate.**  `0RB1RD_1LC0RD_1LD0LC_1RA0LB` and
+`1RB0LC_0RC1RA_1LD0RA_1LA0LD` have FuelWideTr certificates at n = 6
+(`fueltr_fta_box_heavy.jsonl`), which were set aside as needing ~11 GB.  With
+the certificate already a compiled constant, `vm_compute` of the check takes
+11.6 s and 694 MB; elaborating the 6 MB term in the same file is what costs
+(138 s and 4 GB for the bare `Definition`, and typing a big list literal in
+place as the argument of `NgRankE` is a further ~6x slower than typing it as
+a stand-alone `list (positive * nat)`).  So `le12/fuel_split.py` writes every
+list inside the certificate as its own typed constant, cut into pieces of at
+most 250 KB, over 30 part files (`theories/Machines/FuelSplitTr/FS_<spec>_<k>.v`,
+each <= ~620 MB and a few seconds), and `FS_<spec>.v` rebuilds the same
+certificate with `++` and proves `check_<spec>` (32.6 s, 737 MB).  The
+checker and the checked statement are FuelWideTr's, unchanged.  The other
+row is a lockstep conjugate (`p = [3,0,1,2]`, boots 15 / 9), boarded in the
+same batch by `cconj_cover_run` (`le12/fuel_batch.py --conj`), so CI builds
+the parts once.  **2 boarded** (`CBT_LE12_01`); the whole chain (parts,
+check, batch) builds serially in 178 s at 801 MB peak.
+
+What the sweepers ARE, for the record: at a left turn the tape reads
+`[a counter-like left part] (101000)^a W1 (10101010000000)^b 010 (10101110)^c W2`;
+the right end grows 4 cells per sweep, three sweeps in four turn near the
+`(10101110)` region's left end (a turn point that drifts one word per cycle),
+every fourth goes into the middle region, and rarer ones reach the left
+part, which grows like a counter.  A hand lap would need that whole
+hierarchy; the split certificate needs none of it.
+
 #### 7.4.TA follow-up: cube counters at moduli 9 and 27 (2026-10-01)
 
 The suggested larger-residue search was run on the 15 cube rows for which
