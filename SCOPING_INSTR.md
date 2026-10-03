@@ -7101,6 +7101,10 @@ lockstep transport cannot take; the boot is computed.
 | `CBT_LE10_14`..`_16` | 3 | mirror counters whose markers are digits: one count from `2^m` to `2^(m+1)` is a lap | `mirror_iter1`, blank-padded widths (`nb_extend`) |
 | `CBT_LE10_17` | 1 | mirror counter with an offset (left `n`, right `n + 1`) and a two-bit top held by four tails (`0RB0RA_1RC0LD_1LB1RA_1LB1LD`) | `mirror_inc`, `iter`, `top0`..`top3`, `fin` |
 | `CBT_LE10_18` | 1 | its lockstep conjugate | `CConjCoverTr` |
+| `CBT_LE10_19` | 1 | binary / base-3 mirror counter from blank tape (`1RB0LA_1LC0RB_1RD1LA_1RA1RC`) | `armL`, `tloop`, `armR`, `inc` on any digit strings |
+| `CBT_LE10_20` | 1 | the same with 4-cell base-3 digits (`1RB0LA_1LC0RB_1RD1LA_1RB1RC`) | as `_19`; `fires_g` looks one increment ahead for `D0` |
+| `CBT_LE10_21` | 2 | conjugates of `_19` / `_20` entering the family off the source's orbit | `LoopConjTr` with `inc`, `fires_g` |
+| `CBT_LE10_22` | 1 | lockstep conjugate of `_20` | `CConjCoverTr` |
 
 `theories/Counters/LoopMirrorTr.v` covers LE7's "one counter held on both sides of
 the head".  The state is one number `n` (left `n + a`, right `n`) and
@@ -7113,7 +7117,7 @@ to `mk1`).  A numerical search over encodings, junction shapes and offsets
 Every batch compiles alone in 7-11 s at about 470 MB.  `Print Assumptions`
 on every batch shows `functional_extensionality_dep` only.
 
-**Boarded so far: 25 of 42.**
+**Boarded so far: 30 of 42.**
 
 The offset mirror row (`CBT_LE10_17`) reads with head-aligned digits:
 `A [1]` at the junction `JL = 1101111`, left digits `00`/`11` holding `n`
@@ -7126,16 +7130,29 @@ A lap is four `mirror_inc` runs (offsets `0`, `2^mR - 1`, `2^(mR+1) - 1`,
 side onto blank tape, where the blank is the digit `00` and the old marker
 becomes a digit.
 
-**Left (17), by shape:**
+The "structured left region beside a growing run" of five rows is a
+mirror counter in two bases (`CBT_LE10_19`..`_22`).  `A [0]` sits between
+a binary counter on the left (`10` / `00`, LSB nearest) and a base-3
+counter on the right (a junction cell, then `00000` / `00011` / `00001`,
+or 4-cell digits).  Both hold the same count, and both zero digits are
+blank, so neither has a width: the blank tape is the anchor at count 0.
+Each increment is a binary carry and then a base-3 carry, and the lap
+family is the iterates of `binc` / `tinc`.  The "ratio 3" records are the
+carries that run through every base-3 digit, when the count is `3^j`.  So
+the region reads as `3^j` in binary at each right record.  Neither lemma
+needs arithmetic: `inc` holds for any pair of digit strings.
 
-* a structured left region beside a growing run, which changes irregularly
-  from lap to lap (ratio 3 per lap), so a third level that is not yet read
-  (9 rows: `1RB0LA_1LC0RB_1RD1LA_1RA1RC` and its classes,
-  `1RB1LD_1RC0RB_1LA1RC_1LA0LA`, `1RB1LD_0RC0RB_1LC0LA_1LA0LA`,
-  `1RB1LD_1RC0RB_1LA1RC_1LC0LA`, `1RB1LA_1LC1RD_1LA0LC_1RA0RB`);
+**Left (12), by shape:**
+
+* a doubling family of 4 (`1RB1LD_1RC0RB_1LA1RC_1LA0LA`,
+  `1RB1LD_0RC0RB_1LC0LA_1LA0LA`, `1RB1LD_1RC0RB_1LA1RC_1LC0LA`,
+  `1RB1LA_1LC1RD_1LA0LC_1RA0RB`): a run of 1s that grows by 2 per lap
+  beside a region of `1` / `10` blocks whose change point moves right;
 * 8 rows with no visible counter: `0RB0LA_1LC1RD_1LA0LC_1RB0RD` and
   `0RB0LA_1RC0RC_1LD1RB_1LA0LD` with their conjugates, and the 4-row class
-  of `0RB0LD_0RC1RB_1LD1RC_0LA1LA`.
+  of `0RB0LD_0RC1RB_1LD1RC_0LA1LA`.  The right-growing ones keep every 0
+  isolated (`00 (1|10)*`), but the run lengths look random and no anchor
+  recurs (`le10` scratch reads), so a lap stated by hand does not apply.
 
 ## 8. What we deliberately do NOT redo
 
