@@ -72,7 +72,7 @@ def find_boot(spec, m, lastf, kmin, steps=600000):
                 L = ''.join(str(tape.get(i, 0)) for i in range(h + 1, (cs[-1] if cs else h) + 1))
                 R = ''.join(str(tape.get(i, 0)) for i in range(h - 1, (cs[0] if cs else h) - 1, -1))
             r = read(m, L, R)
-            if r is not None and len(r[0]) >= kmin:
+            if r is not None and len(r[0]) >= kmin and len(r[0]) % m.get('W', 1) == 0:
                 return (t,) + tuple(r)
         w, d, nq = tab[(q, s)]
         tape[h] = w
@@ -122,6 +122,7 @@ def emit_closure_phbin(cert, tab, mid):
     phs = m['phases']
     P = len(phs)
     kmin = cert['kmin']
+    W = m.get('W', 1)
     carries, fills, ffams = [], [], []
     try:
         for i, ph in enumerate(phs):
@@ -133,9 +134,10 @@ def emit_closure_phbin(cert, tab, mid):
         for i, ph in enumerate(phs):
             nx = phs[(i + 1) % P]
             bb = ph['zcut']
+            assert bb % W == 0, 'zcut must be a multiple of W'
             zc = tuple(c for d in ph['zpre'] for c in (O if d else Z))
-            a = F(q, side, cells(ph['fix']), [('c', (0,)), ('r', O, bb), ('c', cells(ph['T']))])
-            b = F(q, side, cells(nx['fix']), [('c', (0,) + zc), ('r', Z, 0), ('c', cells(nx['T']))])
+            a = F(q, side, cells(ph['fix']), [('c', (0,)), ('r', O * W, bb // W), ('c', cells(ph['T']))])
+            b = F(q, side, cells(nx['fix']), [('c', (0,) + zc), ('r', Z * W, 0), ('c', cells(nx['T']))])
             N.validate(vtab, a, b, 'fill %d' % i)
             fills.append(g.arm(a, b, 'fill %d' % i))
             ffams.append(a)
@@ -184,14 +186,19 @@ def emit_closure_phbin(cert, tab, mid):
     else:
         mkb = pmatch(lambda i: 'cfgL %s (S0 :: l) %s' % (Qs, syms(cells(phs[i]['fix']))))
     carry_cases = ''.join('  destruct p as [|p]; [exact (%s k X)|].\n' % carries[i] for i in range(P))
+    dec = ('pose proof (kdecomp %(W)d %(b)d k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; '
+           'change (%(b)d / %(W)d) with %(bw)d in Ek; set (n := (k - %(b)d) / %(W)d) in Ek; clearbody n; subst k')
     fill_cases = ''.join(
-        '  destruct p as [|p].\n  { replace k with (%(b)d + (k - %(b)d)) by lia.\n'
-        '    replace (%(b)d + (k - %(b)d) - zcut_%(mid)s %(i)d) with (k - %(b)d) by (cbn; lia).\n'
-        '    exact (%(lem)s (k - %(b)d) []). }\n' % dict(b=phs[i]['zcut'], mid=mid, i=i, lem=fills[i])
+        ('  destruct p as [|p].\n  { ' + dec + '.\n'
+         '    replace (%(W)d * (%(bw)d + n) - zcut_%(mid)s %(i)d) with (%(W)d * n) by (cbn [zcut_%(mid)s]; lia).\n'
+         '    rewrite <- !rep_pow. exact (%(lem)s n []). }\n')
+        % dict(b=phs[i]['zcut'], bw=phs[i]['zcut'] // W, W=W, mid=mid, i=i, lem=fills[i])
         for i in range(P))
     fire_cases = '\n'.join(
-        '  - exists %(i)d. split; [lia|]. intros k Hk. replace k with (%(b)d + (k - %(b)d)) by lia.\n'
-        '    exact (%(nm)s (k - %(b)d) []).' % dict(i=which[w][0], b=phs[which[w][0]]['zcut'], nm=which[w][1])
+        ('  - exists %(i)d. split; [lia|]. intros k Hk Hm. ' + dec + '.\n'
+         '    rewrite <- !rep_pow. exact (%(nm)s n []).')
+        % dict(i=which[w][0], b=phs[which[w][0]]['zcut'], bw=phs[which[w][0]]['zcut'] // W, W=W,
+               nm=which[w][1])
         for w in g.want)
     body = """Definition pmk_%(mid)s (p : nat) (l : list Sym) : cconf := match p with %(mkb)s end.
 Definition T_%(mid)s (p : nat) : list Sym := match p with %(Tb)s end.
@@ -205,27 +212,33 @@ Proof.
 %(carry)s  exfalso; lia.
 Qed.
 
-Lemma fill_%(mid)s : forall p k, p < %(P)d -> %(kmin)d <= k ->
+Lemma fill_%(mid)s : forall p k, p < %(P)d -> %(kmin)d <= k -> k mod %(W)d = 0 ->
   Reach1 tm (pmk_%(mid)s p (rep %(O)s k ++ T_%(mid)s p))
             (pmk_%(mid)s (nxtB %(P)d p) (bcells %(Z)s %(O)s (zpre_%(mid)s p) ++ rep %(Z)s (k - zcut_%(mid)s p)
                  ++ T_%(mid)s (nxtB %(P)d p))).
 Proof.
-  intros p k Hp Hk.
+  intros p k Hp Hk Hm.
 %(fill)s  exfalso; lia.
 Qed.
 
 Lemma zcut_ok_%(mid)s : forall p, p < %(P)d -> zcut_%(mid)s p <= length (zpre_%(mid)s p).
 Proof. intros p Hp. do %(P)d (destruct p as [|p]; [cbn; lia|]). exfalso; lia. Qed.
 
+Lemma zmod_ok_%(mid)s : forall p, p < %(P)d -> (length (zpre_%(mid)s p) - zcut_%(mid)s p) mod %(W)d = 0.
+Proof. intros p Hp. do %(P)d (destruct p as [|p]; [reflexivity|]). exfalso; lia. Qed.
+
+Lemma kz_ok_%(mid)s : forall p, p < %(P)d -> zcut_%(mid)s p <= %(kmin)d.
+Proof. intros p Hp. do %(P)d (destruct p as [|p]; [cbn; lia|]). exfalso; lia. Qed.
+
 Lemma fire_%(mid)s : forall t, ~ In t pins_%(mid)s -> exists p, p < %(P)d /\\
-  forall k, %(kmin)d <= k -> Fires tm (pmk_%(mid)s p (rep %(O)s k ++ T_%(mid)s p)) t.
+  forall k, %(kmin)d <= k -> k mod %(W)d = 0 -> Fires tm (pmk_%(mid)s p (rep %(O)s k ++ T_%(mid)s p)) t.
 Proof.
   intros [q s] Hnp. destruct q, s; try (exfalso; apply Hnp; simpl; tauto).
 %(fires)s
 Qed.
 
-Lemma inv0_%(mid)s : BInv %(P)d %(kmin)d (%(x0)s, %(p0)d).
-Proof. split; cbn; lia. Qed.
+Lemma inv0_%(mid)s : BInv %(P)d %(kmin)d %(W)d (%(x0)s, %(p0)d).
+Proof. split; [|split]; cbn; [lia | reflexivity | lia]. Qed.
 
 Lemma bootl_%(mid)s :
   stepn %(tmb)s %(t0)d InitES = Some (lift (pbcfg pmk_%(mid)s %(Z)s %(O)s T_%(mid)s %(p0)d %(x0)s)).
@@ -242,11 +255,12 @@ Qed.
            zb=pmatch(lambda i: clist([bool(d) for d in phs[i]['zpre']], lambda b: 'true' if b else 'false')),
            cb=pmatch(lambda i: str(phs[i]['zcut'])),
            carry=carry_cases, fill=fill_cases, fires=fire_cases,
-           x0=clist(x0, lambda b: 'true' if b else 'false'), p0=p0, t0=t0,
+           x0=clist(x0, lambda b: 'true' if b else 'false'), p0=p0, t0=t0, W=W,
            tmb=('tm_%s' % mid) if E.TR_QH is not None else 'tm')
-    call = ('%%s tm_%(mid)s pins_%(mid)s %(P)d pmk_%(mid)s %(Z)s %(O)s T_%(mid)s zpre_%(mid)s zcut_%(mid)s %(kmin)d '
-            'ltac:(lia) carry_%(mid)s fill_%(mid)s zcut_ok_%(mid)s fire_%(mid)s %(x0)s %(p0)d inv0_%(mid)s %(t0)d'
-            % dict(mid=mid, P=P, Z=syms(Z), O=syms(O), kmin=kmin,
+    call = ('%%s tm_%(mid)s pins_%(mid)s %(P)d pmk_%(mid)s %(Z)s %(O)s T_%(mid)s zpre_%(mid)s zcut_%(mid)s %(kmin)d %(W)d '
+            'ltac:(lia) ltac:(lia) carry_%(mid)s fill_%(mid)s zcut_ok_%(mid)s zmod_ok_%(mid)s kz_ok_%(mid)s '
+            'fire_%(mid)s %(x0)s %(p0)d inv0_%(mid)s %(t0)d'
+            % dict(mid=mid, P=P, Z=syms(Z), O=syms(O), kmin=kmin, W=W,
                    x0=clist(x0, lambda b: 'true' if b else 'false'), p0=p0, t0=t0))
     if E.TR_QH is not None:
         body += """Lemma wit_%(mid)s :
@@ -305,7 +319,9 @@ def main():
         E.TR_PINS, lastf = E.quiet_pins(spec, row)
     else:
         E.TR_PINS = E.unfired(spec, 10 ** 6)
+    W = m.get('W', 1)
     kmin = max(1, max(ph['zcut'] for ph in m['phases']))
+    kmin = -(-kmin // W) * W
     t0, x0, p0 = find_boot(spec, m, lastf, kmin)
     if a.qh:
         E.TR_QH = t0

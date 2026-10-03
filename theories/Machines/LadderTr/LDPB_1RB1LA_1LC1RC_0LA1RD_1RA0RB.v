@@ -444,50 +444,56 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma fill_1RB1LA_1LC1RC_0LA1RD_1RA0RB : forall p k, p < 2 -> 1 <= k ->
+Lemma fill_1RB1LA_1LC1RC_0LA1RD_1RA0RB : forall p k, p < 2 -> 1 <= k -> k mod 1 = 0 ->
   Reach1 tm (pmk_1RB1LA_1LC1RC_0LA1RD_1RA0RB p (rep [S1;S1;S1] k ++ T_1RB1LA_1LC1RC_0LA1RD_1RA0RB p))
             (pmk_1RB1LA_1LC1RC_0LA1RD_1RA0RB (nxtB 2 p) (bcells [S1;S0;S1] [S1;S1;S1] (zpre_1RB1LA_1LC1RC_0LA1RD_1RA0RB p) ++ rep [S1;S0;S1] (k - zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB p)
                  ++ T_1RB1LA_1LC1RC_0LA1RD_1RA0RB (nxtB 2 p))).
 Proof.
-  intros p k Hp Hk.
+  intros p k Hp Hk Hm.
   destruct p as [|p].
-  { replace k with (0 + (k - 0)) by lia.
-    replace (0 + (k - 0) - zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB 0) with (k - 0) by (cbn; lia).
-    exact (pa6_1RB1LA_1LC1RC_0LA1RD_1RA0RB (k - 0) []). }
+  { pose proof (kdecomp 1 0 k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; change (0 / 1) with 0 in Ek; set (n := (k - 0) / 1) in Ek; clearbody n; subst k.
+    replace (1 * (0 + n) - zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB 0) with (1 * n) by (cbn [zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB]; lia).
+    rewrite <- !rep_pow. exact (pa6_1RB1LA_1LC1RC_0LA1RD_1RA0RB n []). }
   destruct p as [|p].
-  { replace k with (1 + (k - 1)) by lia.
-    replace (1 + (k - 1) - zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB 1) with (k - 1) by (cbn; lia).
-    exact (pa8_1RB1LA_1LC1RC_0LA1RD_1RA0RB (k - 1) []). }
+  { pose proof (kdecomp 1 1 k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; change (1 / 1) with 1 in Ek; set (n := (k - 1) / 1) in Ek; clearbody n; subst k.
+    replace (1 * (1 + n) - zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB 1) with (1 * n) by (cbn [zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB]; lia).
+    rewrite <- !rep_pow. exact (pa8_1RB1LA_1LC1RC_0LA1RD_1RA0RB n []). }
   exfalso; lia.
 Qed.
 
 Lemma zcut_ok_1RB1LA_1LC1RC_0LA1RD_1RA0RB : forall p, p < 2 -> zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB p <= length (zpre_1RB1LA_1LC1RC_0LA1RD_1RA0RB p).
 Proof. intros p Hp. do 2 (destruct p as [|p]; [cbn; lia|]). exfalso; lia. Qed.
 
+Lemma zmod_ok_1RB1LA_1LC1RC_0LA1RD_1RA0RB : forall p, p < 2 -> (length (zpre_1RB1LA_1LC1RC_0LA1RD_1RA0RB p) - zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB p) mod 1 = 0.
+Proof. intros p Hp. do 2 (destruct p as [|p]; [reflexivity|]). exfalso; lia. Qed.
+
+Lemma kz_ok_1RB1LA_1LC1RC_0LA1RD_1RA0RB : forall p, p < 2 -> zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB p <= 1.
+Proof. intros p Hp. do 2 (destruct p as [|p]; [cbn; lia|]). exfalso; lia. Qed.
+
 Lemma fire_1RB1LA_1LC1RC_0LA1RD_1RA0RB : forall t, ~ In t pins_1RB1LA_1LC1RC_0LA1RD_1RA0RB -> exists p, p < 2 /\
-  forall k, 1 <= k -> Fires tm (pmk_1RB1LA_1LC1RC_0LA1RD_1RA0RB p (rep [S1;S1;S1] k ++ T_1RB1LA_1LC1RC_0LA1RD_1RA0RB p)) t.
+  forall k, 1 <= k -> k mod 1 = 0 -> Fires tm (pmk_1RB1LA_1LC1RC_0LA1RD_1RA0RB p (rep [S1;S1;S1] k ++ T_1RB1LA_1LC1RC_0LA1RD_1RA0RB p)) t.
 Proof.
   intros [q s] Hnp. destruct q, s; try (exfalso; apply Hnp; simpl; tauto).
-  - exists 0. split; [lia|]. intros k Hk. replace k with (0 + (k - 0)) by lia.
-    exact (fire_A0_1RB1LA_1LC1RC_0LA1RD_1RA0RB (k - 0) []).
-  - exists 0. split; [lia|]. intros k Hk. replace k with (0 + (k - 0)) by lia.
-    exact (fire_A1_1RB1LA_1LC1RC_0LA1RD_1RA0RB (k - 0) []).
-  - exists 0. split; [lia|]. intros k Hk. replace k with (0 + (k - 0)) by lia.
-    exact (fire_B0_1RB1LA_1LC1RC_0LA1RD_1RA0RB (k - 0) []).
-  - exists 0. split; [lia|]. intros k Hk. replace k with (0 + (k - 0)) by lia.
-    exact (fire_B1_1RB1LA_1LC1RC_0LA1RD_1RA0RB (k - 0) []).
-  - exists 0. split; [lia|]. intros k Hk. replace k with (0 + (k - 0)) by lia.
-    exact (fire_C0_1RB1LA_1LC1RC_0LA1RD_1RA0RB (k - 0) []).
-  - exists 0. split; [lia|]. intros k Hk. replace k with (0 + (k - 0)) by lia.
-    exact (fire_C1_1RB1LA_1LC1RC_0LA1RD_1RA0RB (k - 0) []).
-  - exists 0. split; [lia|]. intros k Hk. replace k with (0 + (k - 0)) by lia.
-    exact (fire_D0_1RB1LA_1LC1RC_0LA1RD_1RA0RB (k - 0) []).
-  - exists 0. split; [lia|]. intros k Hk. replace k with (0 + (k - 0)) by lia.
-    exact (fire_D1_1RB1LA_1LC1RC_0LA1RD_1RA0RB (k - 0) []).
+  - exists 0. split; [lia|]. intros k Hk Hm. pose proof (kdecomp 1 0 k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; change (0 / 1) with 0 in Ek; set (n := (k - 0) / 1) in Ek; clearbody n; subst k.
+    rewrite <- !rep_pow. exact (fire_A0_1RB1LA_1LC1RC_0LA1RD_1RA0RB n []).
+  - exists 0. split; [lia|]. intros k Hk Hm. pose proof (kdecomp 1 0 k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; change (0 / 1) with 0 in Ek; set (n := (k - 0) / 1) in Ek; clearbody n; subst k.
+    rewrite <- !rep_pow. exact (fire_A1_1RB1LA_1LC1RC_0LA1RD_1RA0RB n []).
+  - exists 0. split; [lia|]. intros k Hk Hm. pose proof (kdecomp 1 0 k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; change (0 / 1) with 0 in Ek; set (n := (k - 0) / 1) in Ek; clearbody n; subst k.
+    rewrite <- !rep_pow. exact (fire_B0_1RB1LA_1LC1RC_0LA1RD_1RA0RB n []).
+  - exists 0. split; [lia|]. intros k Hk Hm. pose proof (kdecomp 1 0 k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; change (0 / 1) with 0 in Ek; set (n := (k - 0) / 1) in Ek; clearbody n; subst k.
+    rewrite <- !rep_pow. exact (fire_B1_1RB1LA_1LC1RC_0LA1RD_1RA0RB n []).
+  - exists 0. split; [lia|]. intros k Hk Hm. pose proof (kdecomp 1 0 k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; change (0 / 1) with 0 in Ek; set (n := (k - 0) / 1) in Ek; clearbody n; subst k.
+    rewrite <- !rep_pow. exact (fire_C0_1RB1LA_1LC1RC_0LA1RD_1RA0RB n []).
+  - exists 0. split; [lia|]. intros k Hk Hm. pose proof (kdecomp 1 0 k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; change (0 / 1) with 0 in Ek; set (n := (k - 0) / 1) in Ek; clearbody n; subst k.
+    rewrite <- !rep_pow. exact (fire_C1_1RB1LA_1LC1RC_0LA1RD_1RA0RB n []).
+  - exists 0. split; [lia|]. intros k Hk Hm. pose proof (kdecomp 1 0 k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; change (0 / 1) with 0 in Ek; set (n := (k - 0) / 1) in Ek; clearbody n; subst k.
+    rewrite <- !rep_pow. exact (fire_D0_1RB1LA_1LC1RC_0LA1RD_1RA0RB n []).
+  - exists 0. split; [lia|]. intros k Hk Hm. pose proof (kdecomp 1 0 k ltac:(lia) ltac:(lia) eq_refl Hm) as Ek; change (0 / 1) with 0 in Ek; set (n := (k - 0) / 1) in Ek; clearbody n; subst k.
+    rewrite <- !rep_pow. exact (fire_D1_1RB1LA_1LC1RC_0LA1RD_1RA0RB n []).
 Qed.
 
-Lemma inv0_1RB1LA_1LC1RC_0LA1RD_1RA0RB : BInv 2 1 ([true;false], 1).
-Proof. split; cbn; lia. Qed.
+Lemma inv0_1RB1LA_1LC1RC_0LA1RD_1RA0RB : BInv 2 1 1 ([true;false], 1).
+Proof. split; [|split]; cbn; [lia | reflexivity | lia]. Qed.
 
 Lemma bootl_1RB1LA_1LC1RC_0LA1RD_1RA0RB :
   stepn tm 33 InitES = Some (lift (pbcfg pmk_1RB1LA_1LC1RC_0LA1RD_1RA0RB [S1;S0;S1] [S1;S1;S1] T_1RB1LA_1LC1RC_0LA1RD_1RA0RB 1 [true;false])).
@@ -502,4 +508,4 @@ Qed.
 (** The machine-level theorem, at the INSTRUCTION level, through
     [PhBinCountTr.phbin_neverqhtr]. *)
 Theorem nqhtr_1RB1LA_1LC1RC_0LA1RD_1RA0RB : NeverQuasiHaltsTr tm_1RB1LA_1LC1RC_0LA1RD_1RA0RB.
-Proof. exact (phbin_neverqhtr tm_1RB1LA_1LC1RC_0LA1RD_1RA0RB pins_1RB1LA_1LC1RC_0LA1RD_1RA0RB 2 pmk_1RB1LA_1LC1RC_0LA1RD_1RA0RB [S1;S0;S1] [S1;S1;S1] T_1RB1LA_1LC1RC_0LA1RD_1RA0RB zpre_1RB1LA_1LC1RC_0LA1RD_1RA0RB zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB 1 ltac:(lia) carry_1RB1LA_1LC1RC_0LA1RD_1RA0RB fill_1RB1LA_1LC1RC_0LA1RD_1RA0RB zcut_ok_1RB1LA_1LC1RC_0LA1RD_1RA0RB fire_1RB1LA_1LC1RC_0LA1RD_1RA0RB [true;false] 1 inv0_1RB1LA_1LC1RC_0LA1RD_1RA0RB 33 bootl_1RB1LA_1LC1RC_0LA1RD_1RA0RB). Qed.
+Proof. exact (phbin_neverqhtr tm_1RB1LA_1LC1RC_0LA1RD_1RA0RB pins_1RB1LA_1LC1RC_0LA1RD_1RA0RB 2 pmk_1RB1LA_1LC1RC_0LA1RD_1RA0RB [S1;S0;S1] [S1;S1;S1] T_1RB1LA_1LC1RC_0LA1RD_1RA0RB zpre_1RB1LA_1LC1RC_0LA1RD_1RA0RB zcut_1RB1LA_1LC1RC_0LA1RD_1RA0RB 1 1 ltac:(lia) ltac:(lia) carry_1RB1LA_1LC1RC_0LA1RD_1RA0RB fill_1RB1LA_1LC1RC_0LA1RD_1RA0RB zcut_ok_1RB1LA_1LC1RC_0LA1RD_1RA0RB zmod_ok_1RB1LA_1LC1RC_0LA1RD_1RA0RB kz_ok_1RB1LA_1LC1RC_0LA1RD_1RA0RB fire_1RB1LA_1LC1RC_0LA1RD_1RA0RB [true;false] 1 inv0_1RB1LA_1LC1RC_0LA1RD_1RA0RB 33 bootl_1RB1LA_1LC1RC_0LA1RD_1RA0RB). Qed.

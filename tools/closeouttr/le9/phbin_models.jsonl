@@ -1,3 +1,6 @@
 {"spec": "0RB1LD_1LC1RB_1RA1LA_1LB0LC", "q": "A", "side": "R", "Z": "101", "O": "111", "phases": [{"fix": "", "T": "11", "zpre": [1], "zcut": 0}, {"fix": "1", "T": "11", "zpre": [0, 1], "zcut": 1}]}
 {"spec": "1RB0RC_1RC1LB_1LD1RD_0LB1RA", "q": "D", "side": "L", "Z": "101", "O": "111", "phases": [{"fix": "", "T": "11", "zpre": [1], "zcut": 0}, {"fix": "1", "T": "11", "zpre": [0, 1], "zcut": 1}]}
 {"spec": "1RB1LA_1LC1RC_0LA1RD_1RA0RB", "q": "C", "side": "L", "Z": "101", "O": "111", "phases": [{"fix": "", "T": "11", "zpre": [1], "zcut": 0}, {"fix": "1", "T": "11", "zpre": [0, 1], "zcut": 1}]}
+{"spec": "1RB1LC_0LC0RB_1LD1LA_1RA1RD", "q": "B", "side": "L", "Z": "000", "O": "001", "phases": [{"fix": "", "T": "1", "zpre": [], "zcut": 0}, {"fix": "", "T": "01", "zpre": [0, 0], "zcut": 0}], "W": 2}
+{"spec": "1RB1RA_1RC1LD_0LD0RC_1LA1LB", "q": "C", "side": "L", "Z": "000", "O": "001", "phases": [{"fix": "", "T": "1", "zpre": [], "zcut": 0}, {"fix": "", "T": "01", "zpre": [0, 0], "zcut": 0}], "W": 2}
+{"spec": "1RB1RA_1RC1LD_0LB0RC_1LA1LB", "q": "C", "side": "L", "Z": "000", "O": "100", "phases": [{"fix": "", "T": "01", "zpre": [], "zcut": 0}, {"fix": "", "T": "11", "zpre": [], "zcut": 0}, {"fix": "", "T": "001", "zpre": [], "zcut": 0}, {"fix": "", "T": "101", "zpre": [0, 0], "zcut": 0}], "W": 2}

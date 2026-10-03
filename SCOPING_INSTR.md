@@ -7112,6 +7112,18 @@ differ (`[] -> 0^m 1`, `[1] -> 0^(m+1)`).  New generic board
 `RunPhCountTr` (a carry, a narrowing, a refill per phase, all `Reach1`
 facts); emitter `le9/emit_runph.py`.  **2 boarded** (`CBT_LE9_03`).
 
+**5. Three "irregular" rows are the same phased binary counter.**
+`1RB1LC_0LC0RB_1LD1LA_1RA1RD`, `1RB1RA_1RC1LD_0LD0RC_1LA1LB` (3-cell words
+`000`/`001`, terminators `1` -> `01` -> refill two digits wider) and
+`1RB1RA_1RC1LD_0LB0RC_1LA1LB` (`000`/`100`, terminators `01` -> `11` ->
+`001` -> `101` -> refill): LE7's "alternating ratios" are the phase lengths.
+The refill only exists at EVEN widths (an odd width refills elsewhere, and
+the machine never builds one), so `PhBinCountTr` takes a width modulus `Wm`:
+every width is a multiple of it, fills and fires are asked for those widths
+only, the fill arms are stated over `Wm`-digit units (`rep_pow`,
+`kdecomp`).  **3 boarded** (`CBT_LE9_04`); the three mixed-digit boards are
+regenerated at `Wm = 1`.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

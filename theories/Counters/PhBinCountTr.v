@@ -67,6 +67,22 @@ Qed.
 Lemma alltrue_int : forall k r, alltrue (repeat true k ++ false :: r) = false.
 Proof. induction k as [|k IH]; intros r; [reflexivity|]. exact (IH r). Qed.
 
+Lemma rep_pow : forall (u : list Sym) W j, rep (rep u W) j = rep u (W * j).
+Proof.
+  intros u W j. induction j as [|j IH]; [rewrite Nat.mul_0_r; reflexivity|].
+  replace (W * S j) with (W + W * j) by lia. rewrite rep_add, <- IH. reflexivity.
+Qed.
+
+Lemma kdecomp : forall W b k, 0 < W -> b <= k -> b mod W = 0 -> k mod W = 0 ->
+  k = W * (b / W + (k - b) / W).
+Proof.
+  intros W b k HW Hbk Hb Hk.
+  pose proof (Nat.div_mod b W ltac:(lia)) as Eb. pose proof (Nat.div_mod k W ltac:(lia)) as Ek.
+  rewrite Hb in Eb. rewrite Hk in Ek.
+  assert (E : k - b = (k / W - b / W) * W) by nia.
+  rewrite E, Nat.div_mul by lia. nia.
+Qed.
+
 (** ** 2. The board *)
 
 Section PhBin.
@@ -82,6 +98,7 @@ Variable T    : nat -> list Sym.
 Variable zpre : nat -> list bool.     (** a fill's low digits *)
 Variable zcut : nat -> nat.           (** ... then [k - zcut p] zeros *)
 Variable Kmin : nat.
+Variable Wm   : nat.                  (** every width is a multiple of [Wm] *)
 
 Definition fz (p k : nat) : list bool := zpre p ++ repeat false (k - zcut p).
 
@@ -101,17 +118,21 @@ Fixpoint biterP (s : BSt) (n : nat) : BSt :=
 Lemma biterP_add : forall n1 n2 s, biterP s (n1 + n2) = biterP (biterP s n1) n2.
 Proof. induction n1 as [|n1 IH]; intros n2 s; [reflexivity | apply IH]. Qed.
 
-Definition BInv (s : BSt) : Prop := let '(x, p) := s in Kmin <= length x /\ p < P.
+Definition BInv (s : BSt) : Prop :=
+  let '(x, p) := s in Kmin <= length x /\ length x mod Wm = 0 /\ p < P.
 
 Hypothesis HP : 0 < P.
+Hypothesis HWm : 0 < Wm.
 Hypothesis Hcarry : forall p k X, p < P ->
   Reach1 tm (mk p (rep O k ++ Z ++ X)) (mk p (rep Z k ++ O ++ X)).
-Hypothesis Hfill : forall p k, p < P -> Kmin <= k ->
+Hypothesis Hfill : forall p k, p < P -> Kmin <= k -> k mod Wm = 0 ->
   Reach1 tm (mk p (rep O k ++ T p))
             (mk (nxtB p) (bcells Z O (zpre p) ++ rep Z (k - zcut p) ++ T (nxtB p))).
 Hypothesis Hzcut : forall p, p < P -> zcut p <= length (zpre p).
+Hypothesis Hzmod : forall p, p < P -> (length (zpre p) - zcut p) mod Wm = 0.
+Hypothesis Hkz : forall p, p < P -> zcut p <= Kmin.
 Hypothesis Hfire : forall t, ~ In t pins -> exists p, p < P /\
-  forall k, Kmin <= k -> Fires tm (mk p (rep O k ++ T p)) t.
+  forall k, Kmin <= k -> k mod Wm = 0 -> Fires tm (mk p (rep O k ++ T p)) t.
 
 Lemma bcells_app : forall a b, bcells Z O (a ++ b) = bcells Z O a ++ bcells Z O b.
 Proof. intros a b. unfold bcells. apply flat_map_app. Qed.
@@ -127,15 +148,24 @@ Proof.
   pose proof (Hzcut p Hp). lia.
 Qed.
 
+Lemma Hfzmod : forall p k, p < P -> Kmin <= k -> k mod Wm = 0 -> length (fz p k) mod Wm = 0.
+Proof.
+  intros p k Hp Hk Hm. unfold fz. rewrite app_length, repeat_length.
+  pose proof (Hzmod p Hp) as Hz. pose proof (Hkz p Hp) as Hc.
+  replace (length (zpre p) + (k - zcut p)) with ((length (zpre p) - zcut p) + k)
+    by (pose proof (Hzcut p Hp); lia).
+  rewrite Nat.Div0.add_mod, Hz, Hm. apply Nat.Div0.mod_0_l.
+Qed.
+
 Lemma nxtB_lt : forall p, p < P -> nxtB p < P.
 Proof. intros p Hp. unfold nxtB. destruct (Nat.eqb_spec (S p) P); lia. Qed.
 
 Lemma bsucc_inv : forall s, BInv s -> BInv (bsucc s).
 Proof.
-  intros [x p] [Hl Hp]. cbn [bsucc].
+  intros [x p] (Hl & Hm & Hp). cbn [bsucc].
   destruct (alltrue x) eqn:E.
-  - split; [apply Hfzlen; assumption | apply nxtB_lt, Hp].
-  - destruct (binc_val x E) as [_ H2]. cbn. rewrite H2. split; assumption.
+  - split; [apply Hfzlen; assumption|]. split; [apply Hfzmod; assumption | apply nxtB_lt, Hp].
+  - destruct (binc_val x E) as [_ H2]. cbn. rewrite H2. split; [|split]; assumption.
 Qed.
 
 Lemma biterP_inv : forall n s, BInv s -> BInv (biterP s n).
@@ -150,12 +180,12 @@ Qed.
 Lemma bstep : forall s, BInv s ->
   Reach1 tm (let '(x, p) := s in pbcfg p x) (let '(x, p) := bsucc s in pbcfg p x).
 Proof.
-  intros [x p] [Hl Hp]. cbn [bsucc].
+  intros [x p] (Hl & Hm & Hp). cbn [bsucc].
   destruct (alltrue x) eqn:E.
   - rewrite (alltrue_eq x E) at 1. unfold pbcfg at 1 2. rewrite bcells_rep_true.
     unfold fz. rewrite bcells_app, bcells_rep_false, <- app_assoc.
-    apply Hfill; [exact Hp|].
-    rewrite (alltrue_eq x E) in Hl. rewrite repeat_length in Hl. exact Hl.
+    rewrite (alltrue_eq x E), repeat_length in Hl, Hm.
+    apply Hfill; assumption.
   - destruct (ttdecomp x) as [(k & r & ->) | (k & ->)].
     2:{ rewrite alltrue_repeat in E. discriminate. }
     rewrite binc_int. unfold pbcfg.
@@ -175,7 +205,7 @@ Proof.
   - destruct (alltrue x) eqn:E.
     + exists 0. cbn. split; [exact E | split; [reflexivity | exact Hs]].
     + destruct (binc_val x E) as [H1 H2].
-      assert (Hi : BInv (binc x, p)) by (destruct Hs; split; [rewrite H2|]; assumption).
+      assert (Hi : BInv (binc x, p)) by (destruct Hs as (? & ? & ?); split; [|split]; [rewrite H2 | rewrite H2 |]; assumption).
       destruct (IH (binc x) p Hi) as (n & Hn).
       * rewrite H1, H2. lia.
       * exists (S n). cbn [biterP bsucc]. rewrite E. exact Hn.
@@ -218,7 +248,7 @@ Proof.
   intros s N pt Hs Hpt.
   pose proof (biterP_inv N s Hs) as HsN.
   destruct (biterP s N) as [x p] eqn:EN.
-  assert (Hp : p < P) by exact (proj2 HsN).
+  assert (Hp : p < P) by exact (proj2 (proj2 HsN)).
   destruct (top_phase (pt + P - p) (x, p) HsN) as (n & Ht & Hph & Hi).
   exists (N + n). rewrite biterP_add, EN. split; [lia|]. split; [exact Ht|]. split; [|exact Hi].
   rewrite Hph. cbn [snd]. rewrite nxtB_iter_mod by exact Hp.
@@ -251,9 +281,9 @@ Proof.
   destruct (top_cofinal (x0, p0) N pt Hinv0 Hpt) as (n & HN & Ht & Hph & Hi).
   exists n. unfold bCf.
   destruct (biterP (x0, p0) n) as [x p] eqn:E. cbn [fst snd] in Ht, Hph. subst p.
-  rewrite (alltrue_eq x Ht). destruct Hi as [Hl _].
+  rewrite (alltrue_eq x Ht). destruct Hi as (Hl & Hm & _).
   unfold pbcfg. rewrite bcells_rep_true.
-  destruct (Hf (length x) Hl) as (k & c' & Hc & Hct).
+  destruct (Hf (length x) Hl Hm) as (k & c' & Hc & Hct).
   exists k, c'. split; [exact HN | split; assumption].
 Qed.
 
