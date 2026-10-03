@@ -229,3 +229,38 @@ Proof.
   intros a b k. induction k as [|k IH]; intros l; [reflexivity|].
   cbn [rep app]. f_equal. f_equal. apply IH.
 Qed.
+
+(** a sweep in any configuration shape [F L R] (the head's neighbourhood
+    fixed by [F]): one word [u] off [L] becomes [v] on [R], and conversely *)
+Lemma sweepFL : forall tm (F : list Sym -> list Sym -> cconf) (u v : list Sym),
+  (forall L R, Reach0 tm (F (u ++ L) R) (F L (v ++ R))) ->
+  forall n L R, Reach0 tm (F (rep u n ++ L) R) (F L (rep v n ++ R)).
+Proof.
+  intros tm F u v H n. induction n as [|n IH]; intros L R; [apply reach0_refl|].
+  cbn [rep]. rewrite <- app_assoc.
+  eapply reach0_trans; [apply H|]. eapply reach0_trans; [apply IH|].
+  rewrite app_assoc, rep_comm. apply reach0_refl.
+Qed.
+
+Lemma sweepFR : forall tm (F : list Sym -> list Sym -> cconf) (u v : list Sym),
+  (forall L R, Reach0 tm (F L (u ++ R)) (F (v ++ L) R)) ->
+  forall n L R, Reach0 tm (F L (rep u n ++ R)) (F (rep v n ++ L) R).
+Proof.
+  intros tm F u v H n. induction n as [|n IH]; intros L R; [apply reach0_refl|].
+  cbn [rep]. rewrite <- app_assoc.
+  eapply reach0_trans; [apply H|]. eapply reach0_trans; [apply IH|].
+  rewrite app_assoc, rep_comm. apply reach0_refl.
+Qed.
+
+(** a repeated word read one cell later *)
+Lemma rep_rot : forall (a : Sym) w k l, rep (a :: w) k ++ a :: l = a :: rep (w ++ [a]) k ++ l.
+Proof.
+  intros a w k. induction k as [|k IH]; intros l; [reflexivity|].
+  cbn [rep]. rewrite <- app_assoc. cbn [app]. f_equal. rewrite IH, <- !app_assoc. reflexivity.
+Qed.
+
+Lemma rep_app_dbl : forall (w : list Sym) k, rep (w ++ w) k = rep w (k + k).
+Proof.
+  intros w k. induction k as [|k IH]; [reflexivity|].
+  replace (S k + S k) with (S (S (k + k))) by lia. cbn [rep]. rewrite IH, app_assoc. reflexivity.
+Qed.
