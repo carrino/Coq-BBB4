@@ -7035,6 +7035,71 @@ overflow is setup, count, middle, count, exit.  Carries were tested first:
 
 Boarded so far by LE8: **21** (14 ZeckU, 7 nested counters).
 
+#### 7.4.LE10 LE8's open counters: hand-stated laps checked by concrete runs (2026-10-03)
+
+Workstream LE10 (batch tag `LE10`) covers the 42 counter rows LE8 left open
+(`tools/closeouttr/le10/rows42.txt`): LE8's 41 plus
+`1RB1RD_0LC0LA_1LC1LA_0RB0RD`, which LE8's table does not list.  That row
+is a hole moving through a run of 1s, and each move runs a binary count of
+the cells behind the hole: a loop of inner counts, LE8's group 1.
+Branched from `claude/instruction-beeping-proof-scope-ww7zdk`.
+
+**Conjugates first.**  Since LE8 ran, LE7 has boarded rows of which two of
+the 42 are exact conjugates in lockstep (`le6/conj_find.py`, 200,000
+steps): `CBT_LE10_00`, by `CConjCoverTr`.  Three more are conjugates of LE7
+boards but never fall into lockstep (different orbits).
+
+**The route: no finder, a lap stated by hand.**  LE8's missing piece was an
+iteration lemma over a loop of inner counts.  The loops differ from row to
+row (holes, cascades, frontiers that move one digit per round, counts at a
+second anchor), so a single fitted family does not cover them.  Instead,
+each row's lap is a short set of Coq lemmas about `Reach0` / `Reach1`
+(`NestCountTr`) on configurations whose far parts are opaque lists.  They
+are proved by induction from three primitives in the new
+`theories/Counters/LoopRunTr.v`:
+
+* `rr n`: `n` concrete steps computed by `cbn` (a step that reads an
+  opaque tail is stuck, so the proof fails); `rgo` / `rr_upto` step until
+  the target or a lemma's left-hand side is reached;
+* sweeps: `sweepR` / `sweepL` (one state crossing `rep w n`), and
+  `sweepFL` / `sweepFR` for any configuration shape `F L R` (a walk that
+  moves two pairs per round in a fixed state pattern);
+* counts: `count_from_carry_lt` (a binary count from its carries below the
+  width), with list lemmas `rep_pair`, `rep_shift`, `rep_rot`,
+  `rep_app_dbl` (re-reading an alternating word one cell later).
+
+`BoardSeqTr` turns any `Cf i ->+ Cf (S i)` with every instruction firing
+from every `Cf i` into `NeverQuasiHaltsTr`.  `fire_find` steps from a lap
+point until the asked instruction fires, so fire witnesses take one line.
+The searching (traces, anchor visits, a greedy decomposition of a run into
+hypothesised lemma instances, numerical checks of each lemma over a range
+of widths and tails) is untrusted Python in the scratch tools; only the
+lemmas are kept.  A row's proof is `theories/Machines/LoopTr/LP_<spec>.v`
+and the batch is `le10/batch.py SPEC ...`.
+
+`theories/Counters/LoopConjTr.v` (`conj_family_neverqhtr`) carries a lap
+proved for EVERY member of a family to a conjugate whose blank run enters
+the family at a width the source never visits.  That is the case LE6's
+lockstep transport cannot take; the boot is computed.
+
+| batch | rows | shape | lemmas |
+|---|---:|---|---|
+| `CBT_LE10_00` | 2 | conjugates of LE7 boards | `CConjCoverTr` |
+| `CBT_LE10_01` | 1 | hole in `1^n`, each move a width-`p` count | `pp` by strong induction on the width, `uu` |
+| `CBT_LE10_02` | 2 | Gray-style flips (`1RB0RB_0RC1RC_0LD1LA_1LD0LA`); ratio-3 cascade (`0RB0RA_1RC1LD_1LC1RB_0LD0LA`) | `E1..E4` mutual induction; `CA k = setup; QQ (k-2); fin`, `QQ (j+1) = QQ j; t1; count; t2; QQ j` |
+| `CBT_LE10_03` | 1 | conjugate of the cascade | `CConjCoverTr` |
+| `CBT_LE10_04` | 2 | second ratio-3 class (same lemmas); the "ruler" counter (a full `D`-anchor count inside each carry) | as `_02`; `dc` / `ic` / `ca` |
+| `CBT_LE10_05` | 2 | their conjugates | `CConjCoverTr` |
+| `CBT_LE10_06` | 1 | mixed encoding: low `01`/`11`, a frontier pair, untouched `10` pairs | `loopstep` (count, carry into the frontier, count, frontier moves), `loop` |
+| `CBT_LE10_07` | 1 | lockstep conjugate | `CConjCoverTr` |
+| `CBT_LE10_08` | 2 | conjugates entering the family elsewhere | `LoopConjTr` |
+| `CBT_LE10_09` | 2 | 4-cell digits `1111`/`1011`/`0111`, three overflow passes | `awalk` (`sweepFL`), `loop`, `pa`/`pb`/`pc` |
+
+Every batch compiles alone in 8-11 s at about 470 MB.  `Print Assumptions`
+on every batch shows `functional_extensionality_dep` only.
+
+**Boarded so far: 16 of 42.**
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
