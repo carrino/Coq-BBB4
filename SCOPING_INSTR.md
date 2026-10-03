@@ -7035,6 +7035,352 @@ overflow is setup, count, middle, count, exit.  Carries were tested first:
 
 Boarded so far by LE8: **21** (14 ZeckU, 7 nested counters).
 
+#### 7.4.LE9 LE7's residue and three unsurveyed rows: the tanks are phased (2026-10-02)
+
+Workstream LE9 (batch tag `LE9`), over 32 rows: LE7's 27 open rows
+(`le7/residue.tsv`), three counters no survey had looked at
+(`1RB0LC_1LA1RD_1LA1LC_0RC0LD`, `1RB0LC_1RC1RD_1LA1LC_0RC0LD`,
+`1RB1RD_1LC1LB_1RA0LB_0RB0LD`) and two more of the four rows whose
+FuelWideTr certificate needs ~11 GB.  Branched from
+`claude/instruction-beeping-proof-scope-ww7zdk` at 124 open; the sibling
+session LE10 has the other counter rows, Astra (`AST`) the block lists.
+
+**1. LE7's six tanks are one counter with PHASES.**  LE7 read
+`1RB0LC_0LA1RC_1RD1LA_1RB0RD` as `(1011|1111)^k (0111)^m` with one refill,
+and the refill law it fitted (`z = 0^9 1`, `m = k - 9`) was a one-sample
+fit: no refill arm exists because no such refill happens.  Read at `B0`
+with the counter on the left, the tape between two refills passes through
+three far-end suffixes: with the tank empty and `x` at its top the machine
+does not refill, it rewrites `x` to zeros and appends a cell (`[] -> [1] ->
+[1;1]`), and only the third top refills the tank (`x = [1]`, `m = k`).  The
+other three tanks are a second shape, `(1110|1111)^k (1101)^m` with suffixes
+`[1;1]` (tank), `[1;1;1]` (fill to `0^k 1`, one digit wider) and `[]` (fill
+to an EMPTY counter and a full tank: the next widening starts from `x = []`):
+
+    (x, m, p)          -> (x + 1, m, p)               x not all-top
+    (top^k, m + 1, p)  -> (0^k 1, m, p)               the widening eats a tank word
+    (top^k, 0, p)      -> fill_p(k), phase p + 1      kz: (0^k ++ z_p, a_p), else (z_p, k + a_p)
+
+Every arm of all six is a plain chain at stride 1 (the two-pass refill LE7
+could not find is `SCycL; SWinL; SCycR`, once the target is right).  The
+checker is `LadderCheckTankPhTr` (`LadderCheckTankTr` with a phase index:
+per-phase suffix and fill, the widening from every width including the
+empty counter, the fires read off the fill arms of one phase per
+instruction, the phases cycling; `Print Assumptions`:
+`functional_extensionality_dep`); models `le9/tankph_models.jsonl`, arm
+check `le9/tankph_arms.py`, emitter `le9/emit_tankph.py`, batch
+`le9/le9_batch.py --kind tankph`.  **6 boarded** (`CBT_LE9_00`), each board
+~1.1 s and ~460 MB alone.
+
+**2. The three unsurveyed rows are doubling BOUNCERS, not counters.**
+`1RB0LC_1LA1RD_1LA1LC_0RC0LD`, `1RB0LC_1RC1RD_1LA1LC_0RC0LD` and
+`1RB1RD_1LC1LB_1RA0LB_0RB0LD` (all QH: one instruction fires only in the
+first steps; on the machine wrapped at it the three are one machine up to
+state names) run, at the left end with the head on a blank,
+`R(n, m) = q | 0 1^n 0 1^m ->+ R(2n, m+1)`: the round eats `1^n` one cell at
+a time writing `00` per cell at the left (`S(j,k+1,m) -> S(j+1,k,m)`, one
+arm family in `j`), then turns (`S(j,0,m+1) -> R(2j+2, m+2)`, `(00)^j ->
+(11)^j`, the separator one cell left; the arm reads the first cell of
+`1^m`).  TriGlue's finder does not close them (its blocks decouple the
+parity of the zero run from the eaten count, and the odd residue explodes).
+New checker `DoubleBounceTr` (`Counters/`): the two families as `Reach1`
+hypotheses, the round by induction on the eaten count, never-QH and QH
+closers.  Emitter `le9/emit_dbounce.py` (LE8's arm search, `emit_nest.Gen`);
+**3 boarded** (`CBT_LE9_01`), ~2 s and ~800 MB a board.
+
+**3. The "mixed-digit" rows are a plain binary counter at two anchors.**
+`0RB1LD_1LC1RB_1RA1LA_1LB0LC` (and its conjugate-class rows
+`1RB0RC_1RC1LB_1LD1RD_0LB1RA`, `1RB1LA_1LC1RC_0LA1RD_1RA0RB`, mirrored) read
+from the head as 3-cell words `101`/`111` (LSB first) and a terminator `11`
+is an ordinary binary counter; LE7's "1-cell low digit under 3-cell
+digits" is the same tape cut one cell off.  What no landed counter states is
+that it lives at TWO anchors one cell apart: phase A counts `x` (k digits)
+to its top and fills to phase B, the far side one cell longer (`[1]`), at
+`x = 1 0^k`; B counts and fills back to A at `x = 0 1 0^k` (the "refill that
+doubles" LE7 measured is B's whole count).  New generic board
+`PhBinCountTr` (`Counters/`): phases with their own `mk p`, carry and fill
+`Reach1` facts per phase, fires off one phase's fills; emitter
+`le9/emit_phbin.py`, models `le9/phbin_models.jsonl`.  **3 boarded**
+(`CBT_LE9_02`), ~1 s and ~460 MB a board.
+
+**4. LE5's "growing tail" is a marker run with phases.**  `0RB1LA_1LC1RD_1RB0LD_1RB0LA`
+(and its mirror `1RB1LC_1LA0RC_1LA0RD_0LA1RD`) at `A0` reads `x ++ 0 ++
+(01)^m ++ suf_p`, `x` over `11`/`10`: the top of `x` drops into the run
+(`(10)^(k+1) 0 -> (11)^k 0 01`, LE4's marker run), and an empty `x` refills;
+but the suffix alternates `[]` / `[1]` between refills and the two refills
+differ (`[] -> 0^m 1`, `[1] -> 0^(m+1)`).  New generic board
+`RunPhCountTr` (a carry, a narrowing, a refill per phase, all `Reach1`
+facts); emitter `le9/emit_runph.py`.  **2 boarded** (`CBT_LE9_03`).
+
+**5. Three "irregular" rows are the same phased binary counter.**
+`1RB1LC_0LC0RB_1LD1LA_1RA1RD`, `1RB1RA_1RC1LD_0LD0RC_1LA1LB` (3-cell words
+`000`/`001`, terminators `1` -> `01` -> refill two digits wider) and
+`1RB1RA_1RC1LD_0LB0RC_1LA1LB` (`000`/`100`, terminators `01` -> `11` ->
+`001` -> `101` -> refill): LE7's "alternating ratios" are the phase lengths.
+The refill only exists at EVEN widths (an odd width refills elsewhere, and
+the machine never builds one), so `PhBinCountTr` takes a width modulus `Wm`:
+every width is a multiple of it, fills and fires are asked for those widths
+only, the fill arms are stated over `Wm`-digit units (`rep_pow`,
+`kdecomp`).  **3 boarded** (`CBT_LE9_04`); the three mixed-digit boards are
+regenerated at `Wm = 1`.
+
+**6. A general board for the rest: `TopMapTr`.**  The phased boards all
+share one skeleton (a binary counter counts inside its width; at its top
+something depending on a small state beside it happens), so `TopMapTr`
+takes the top transitions as a MAP `G p k m = (x', m', p')` on (phase,
+width, run), the configurations as `base (bcells x ++ tail p m)`, an
+invariant `G` preserves, and the liveness as a hypothesis on the macro
+dynamics `(k, m, p) |-> (|x'|, m', p')`: per instruction a predicate `Q`
+on macro states whose tops fire it, and a proof that every invariant state
+reaches `Q` (a hand induction per row).  `1RB0RD_1LB1LC_1RC0RA_0LB1RD`
+(LE7's "other") is a binary COUNTDOWN over `11`/`00` (an up-counter with the
+words swapped) with three phases: W (tail `(01)^m`, `m` odd: each top
+widens `x` two digits into the run, `m - 2`; at `m = 1` one digit and the
+tail becomes `1`), X (the top narrows `x` beside a new tail `1001`), N (each
+top narrows `x` and the run grows; an empty `x` restarts W at `x = [1;0]`).
+Row model, `G`, invariant (parities) and macro proofs in
+`le9/emit_topmap.py` (`ROWS`); **1 boarded** (`CBT_LE9_05`).
+
+**Part 7: zig-zag mirrors.**  LE7's "mirror" rows read at their A0 anchor
+hold ONE binary counter twice, a copy on each side of the head, both LSB
+at the head (`cells x | h | 0 cells x`).  The carry is a fixed sequence of
+passes, each crossing one copy while the other copy is an opaque tail on
+the far side, so the existing one-sided arm families do not state it.
+`TwoSideArmTr` (`armfam2_r/l`, `arm2_flat`, `fire2_*`) are the same arm
+lemmas with BOTH tails opaque, and `TopMapGTr` is `TopMapTr` with the
+configuration an arbitrary `C x m p` (here `C x = (A, (cells x ++ [0], 0,
+0 :: cells x ++ [0]))`; the blank pad makes the carry past the top end the
+same chain).  `1RB0LA_0RC1RB_0LD0RB_1LD0LA`: `Z = 00`, `O = 01`, the carry
+over `1 + n` ones is six passes (flat, right copy `01 -> 11`, left copy
+`01 -> 00`, flat, right copy `11 -> 00`, flat), the carry over no ones is
+one flat arm, and the left pass fires every instruction.  Two-sided arm
+generator `le9/gen2.py`, row model in `le9/emit_zz.py` (`ROWS`);
+**1 boarded** (`CBT_LE9_06`), ~2 s and ~460 MB.
+
+Two more mirrors carry the block ACROSS the head in a pass (the zig-zag
+consumes one copy's digits on one side and leaves them on the other):
+`armfam2_lr` / `armfam2_rl` state those arms (the `SCycL` / `SCycR` steps
+already derive them).  `1RB1RC_0RC1RB_0LD0RB_1LD0LA` is ZZ1's counter (the
+two copies agree at one A0 visit per increment) carried in five passes: flat, a bounce over the right copy (`01 -> 11`), a
+bounce over the left copy (`01 -> 00`, the 0 digit `-> 01`), right across
+the right copy's ones carrying them left, back left carrying them right as
+`00`.  `1RB0LA_1LC0RB_1RD1LA_1LA1RC` holds its copies in different words:
+left (outward) `Z = 00`, `O = 10`, terminator `1`; right `00 ++ cells x ++
+01` with `O = 01`; the carry over `n` ones is four crossing passes, and the
+top (all ones) is the same carry at `n = k + 1` over the blank ends, so the
+counter widens to `0^(k+1)`.  Models in `le9/emit_zz.py` (`ZZ2`, `ZZ3`);
+**2 boarded** (`CBT_LE9_07`), ~1.6 s and ~460 MB each.
+
+**Part 8: the out-of-step mirrors are TWO counters.**  LE7's last two ~11 GB
+Fuel rows (`1RB1LD_1RC0RB_1RD1RC_1LA0LD`, `1RB1RA_1LC0LB_1RD1LB_1RA0RD`)
+hold a counter each side of a fixed pivot cell (LSB at the pivot, left over
+`00`/`01`, right over `00`/`11`), and a round is two halves through the
+pivot: the right counter steps (`B0 -> D1`, resp. `D0 -> B1`), then the
+left.  They are out of step because they are NOT the same number: on this
+orbit the right one is the left one plus a constant (`+2`, resp. `-2`) below
+its top, and the two tops fall at different rounds.  In
+`1RB1LD_1RC0RB_1RD1RC_1LA0LD` the right top is also two-phase (`1^j 1 ->
+0^j 011`, `1^j 011 -> 0^(j+1) 1`).  No one-counter board states that, so
+`AbsStepTr` takes ANY abstract state, configuration and round
+(`Hstep: C s ->+ C (F s)` under an invariant, `Hfire`: from every invariant
+state some later round fires each instruction); here the state is
+`(x, z, p)`, each half is one arm family per case (carry over `j` ones, the
+top), and every instruction fires in each round's halves or the next
+round's (the right top in phase 1, or a right counter ending in 0).
+Emitter `le9/emit_ab.py` (`ROWS`, two top modes); **2 boarded**
+(`CBT_LE9_08`), ~2.5 s and ~470 MB each, where Fuel needed ~11 GB.
+
+**Part 9: "base3-side" is a ternary counter beside a binary one.**  LE7's
+two base3-side rows (`1RB0LA_1LC1RD_1LA1LB_1LA0RD`,
+`1RB0LA_1LC1RD_1LD1LB_1LA0RD`) are the same two-counter shape with the left
+counter in BASE 3: at the pivot (`D1`, cell `1` left of it) the left is
+`0 ++ tcells x`, digit words `0000` / `0110` / `0010` (resp. `00000` /
+`00110` / `00010`, each a word plus a blank separator), the right is
+binary over `00` / `01`.  A round: the binary counter steps (`D1 -> B0`,
+the cell beside the pivot `0 -> 1`), then the ternary one (`B0 -> D1`).
+Both blank-digit words are blank, so each top is the carry into the blank
+end and the round is plainly `(x, z) |-> (x + 1, z + 1)`.  Ternary carries
+are three arm families (over `2^k`, then a 0, a 1, or the blank end).  The
+right half fires seven instructions; `C0` fires in the ternary half when
+its low digit is 0, which happens within two rounds.  Emitter
+`le9/emit_ab3.py`; **2 boarded** (`CBT_LE9_09`), ~2.4 s and ~470 MB each.
+
+**Part 10: the "irregular slow" pair is two counters, the left one phased.**
+`1RB1LC_1LA0RD_0LB0LC_1RB1RD` and `1RB1RA_1LC0RA_1RB1LD_0LB0LD` (identical
+tapes; pivot `B1 / C0`, resp. `B1 / D0`; the cell right of the pivot `1 /
+0`) hold a binary counter right of the pivot over `00` / `11` (widening) and
+one left of it over the NON-blank words `11110` (0) / `10110` (1).  LE7's
+"ratios 1.6 / 1.25 alternating" are the left counter's four end phases:
+its top runs `1^w 1 -> 0^w 101 -> 0^w 110101 -> 0^w 100101 -> 0^w 1 1`
+(the last grows a top digit 1), so the left widens once per four of its
+overflows.  `le9/emit_abg.py` is `emit_ab.py` made general: per side a
+prefix that the half toggles, words, a list of end phases, and whether the
+last phase grows a 0 or a 1 digit.  Liveness: `A0` fires only at a top of
+the left counter in phases 0, 1 or 3, so the board proves (by counting,
+`bval`) that the left counter tops within `2^w` rounds and then reaches
+every phase.  **2 boarded** (`CBT_LE9_10`), ~3.8 s and ~480 MB each.
+
+**Part 11: the five rows LE9 leaves open, and why.**  Each was read at its
+pivot or turn with a fast C simulator; none is a fixed set of counters
+stepped by bounded rounds, which is what every LE9 board needs.
+* *Moving-one* (`1RB0RB_1LC1LD_0LC1RA_0LD0RA`, `1RB1RC_1LA1LD_0RC0RB_0LD0LA`;
+  both grow one cell per doubling of time).  In the first, at the moments
+  `11000 c 0^a 1 0^b 1` the marker 1 walks one cell per doubling of time
+  (`+64, +128, ..., +8192` steps), and at the right end
+  the tape grows by a cell and the walk restarts.  Between two marker steps
+  the cells left of the marker do NOT count in plain binary (the low bits
+  run `000, 100, 010, 110, 010, 110, 010, 110, 010, 001, ...`): a 2-4 cell
+  gadget at the left end runs its own sub-cycle per inner step, a
+  recursive (Hanoi-like) count.  A board would need an inner count proved
+  by induction on the marker distance, then an outer one over the width.
+* *Other* (`1RB0RB_1LC1RA_0LD0LC_1RD0RB`): for its first ~335M steps it is
+  two counters at a pivot (left over `01` / `11`, 24 digits; right over
+  `00` / `10`, widening), which `emit_abg.py` could state.  But the left
+  counter's first overflow (at ~2^24 rounds) is not a top transition: it
+  takes ~47M steps (a nested count of the same order), moves the pivot 48
+  cells right and leaves a second 24-digit counter.  The overflow event
+  is itself a counter run, so no bounded round covers it.
+* *Heavy* (`0RB1RD_1LC0RD_1LD0LC_1RA0LB`, `1RB0LC_0RC1RA_1LD0RA_1LA0LD`,
+  the same tapes up to state names): sweepers growing like `sqrt t` with
+  THREE growing regions (`01111111` words, `111111101010101` words, and a counter-like
+  left part over `111010` words) whose boundaries move at different
+  rates.  That is the multi-block-sweep shape of the BL rows, whose routes
+  (BLC3-BLC6) are out of scope here.
+#### 7.4.LE10 LE8's open counters: hand-stated laps checked by concrete runs (2026-10-03)
+
+Workstream LE10 (batch tag `LE10`) covers the 42 counter rows LE8 left open
+(`tools/closeouttr/le10/rows42.txt`): LE8's 41 plus
+`1RB1RD_0LC0LA_1LC1LA_0RB0RD`, which LE8's table does not list.  That row
+is a hole moving through a run of 1s, and each move runs a binary count of
+the cells behind the hole: a loop of inner counts, LE8's group 1.
+Branched from `claude/instruction-beeping-proof-scope-ww7zdk`.
+
+**Conjugates first.**  Since LE8 ran, LE7 has boarded rows of which two of
+the 42 are exact conjugates in lockstep (`le6/conj_find.py`, 200,000
+steps): `CBT_LE10_00`, by `CConjCoverTr`.  Three more are conjugates of LE7
+boards but never fall into lockstep (different orbits).
+
+**The route: no finder, a lap stated by hand.**  LE8's missing piece was an
+iteration lemma over a loop of inner counts.  The loops differ from row to
+row (holes, cascades, frontiers that move one digit per round, counts at a
+second anchor), so a single fitted family does not cover them.  Instead,
+each row's lap is a short set of Coq lemmas about `Reach0` / `Reach1`
+(`NestCountTr`) on configurations whose far parts are opaque lists.  They
+are proved by induction from three primitives in the new
+`theories/Counters/LoopRunTr.v`:
+
+* `rr n`: `n` concrete steps computed by `cbn` (a step that reads an
+  opaque tail is stuck, so the proof fails); `rgo` / `rr_upto` step until
+  the target or a lemma's left-hand side is reached;
+* sweeps: `sweepR` / `sweepL` (one state crossing `rep w n`), and
+  `sweepFL` / `sweepFR` for any configuration shape `F L R` (a walk that
+  moves two pairs per round in a fixed state pattern);
+* counts: `count_from_carry_lt` (a binary count from its carries below the
+  width), with list lemmas `rep_pair`, `rep_shift`, `rep_rot`,
+  `rep_app_dbl` (re-reading an alternating word one cell later).
+
+`BoardSeqTr` turns any `Cf i ->+ Cf (S i)` with every instruction firing
+from every `Cf i` into `NeverQuasiHaltsTr`.  `fire_find` steps from a lap
+point until the asked instruction fires, so fire witnesses take one line.
+The searching (traces, anchor visits, a greedy decomposition of a run into
+hypothesised lemma instances, numerical checks of each lemma over a range
+of widths and tails) is untrusted Python in the scratch tools; only the
+lemmas are kept.  A row's proof is `theories/Machines/LoopTr/LP_<spec>.v`
+and the batch is `le10/batch.py SPEC ...`.
+
+`theories/Counters/LoopConjTr.v` (`conj_family_neverqhtr`) carries a lap
+proved for EVERY member of a family to a conjugate whose blank run enters
+the family at a width the source never visits.  That is the case LE6's
+lockstep transport cannot take; the boot is computed.
+
+| batch | rows | shape | lemmas |
+|---|---:|---|---|
+| `CBT_LE10_00` | 2 | conjugates of LE7 boards | `CConjCoverTr` |
+| `CBT_LE10_01` | 1 | hole in `1^n`, each move a width-`p` count | `pp` by strong induction on the width, `uu` |
+| `CBT_LE10_02` | 2 | Gray-style flips (`1RB0RB_0RC1RC_0LD1LA_1LD0LA`); ratio-3 cascade (`0RB0RA_1RC1LD_1LC1RB_0LD0LA`) | `E1..E4` mutual induction; `CA k = setup; QQ (k-2); fin`, `QQ (j+1) = QQ j; t1; count; t2; QQ j` |
+| `CBT_LE10_03` | 1 | conjugate of the cascade | `CConjCoverTr` |
+| `CBT_LE10_04` | 2 | second ratio-3 class (same lemmas); the "ruler" counter (a full `D`-anchor count inside each carry) | as `_02`; `dc` / `ic` / `ca` |
+| `CBT_LE10_05` | 2 | their conjugates | `CConjCoverTr` |
+| `CBT_LE10_06` | 1 | mixed encoding: low `01`/`11`, a frontier pair, untouched `10` pairs | `loopstep` (count, carry into the frontier, count, frontier moves), `loop` |
+| `CBT_LE10_07` | 1 | lockstep conjugate | `CConjCoverTr` |
+| `CBT_LE10_08` | 2 | conjugates entering the family elsewhere | `LoopConjTr` |
+| `CBT_LE10_09` | 2 | 4-cell digits `1111`/`1011`/`0111`, three overflow passes | `awalk` (`sweepFL`), `loop`, `pa`/`pb`/`pc` |
+| `CBT_LE10_10` | 1 | frontier counter whose carries sweep to the blank and rebuild a `111` prefix (`1RB1RC_1LC1RA_1LD0LC_0RD0RB`) | `g` (any tail), `cf2`, `loop`, `fin` (`dwalk`, a 7-step unit) |
+| `CBT_LE10_11` | 1 | 3-cell digits at a `D` anchor, top two digits in a short tail (`1RB1RC_1LC1LB_1LD1RA_0RC0LD`) | `kk`, `x0`/`x2`/`x4`, four counts per lap |
+| `CBT_LE10_12` | 1 | the same read leftwards from the right end, a five-state top (`1RB1LC_1LA0RD_0RC1LB_0LC1RD`) | `cc`, `t1`..`t5` |
+| `CBT_LE10_13` | 1 | mirror counter: one count on both sides of the head (`1RB0LA_1LC1RC_1RD1LB_1LA0RD`) | `LoopMirrorTr.mirror_iter`, `armR`/`armL`, `ovf` |
+| `CBT_LE10_14`..`_16` | 3 | mirror counters whose markers are digits: one count from `2^m` to `2^(m+1)` is a lap | `mirror_iter1`, blank-padded widths (`nb_extend`) |
+| `CBT_LE10_17` | 1 | mirror counter with an offset (left `n`, right `n + 1`) and a two-bit top held by four tails (`0RB0RA_1RC0LD_1LB1RA_1LB1LD`) | `mirror_inc`, `iter`, `top0`..`top3`, `fin` |
+| `CBT_LE10_18` | 1 | its lockstep conjugate | `CConjCoverTr` |
+| `CBT_LE10_19` | 1 | binary / base-3 mirror counter from blank tape (`1RB0LA_1LC0RB_1RD1LA_1RA1RC`) | `armL`, `tloop`, `armR`, `inc` on any digit strings |
+| `CBT_LE10_20` | 1 | the same with 4-cell base-3 digits (`1RB0LA_1LC0RB_1RD1LA_1RB1RC`) | as `_19`; `fires_g` looks one increment ahead for `D0` |
+| `CBT_LE10_21` | 2 | conjugates of `_19` / `_20` entering the family off the source's orbit | `LoopConjTr` with `inc`, `fires_g` |
+| `CBT_LE10_22` | 1 | lockstep conjugate of `_20` | `CConjCoverTr` |
+
+`theories/Counters/LoopMirrorTr.v` covers LE7's "one counter held on both sides of
+the head".  The state is one number `n` (left `n + a`, right `n`) and
+`nb m n` is its `m`-bit expansion (`nb_succ`: it is `binc` below `2^m`).
+`mirror_iter` / `mirror_iter1` run every increment from two one-sided arm
+hypotheses (right carry to a junction configuration `mk2`, left carry back
+to `mk1`).  A numerical search over encodings, junction shapes and offsets
+(`reach` on random tails) finds the arms' law before any Coq is written.
+
+Every batch compiles alone in 7-11 s at about 470 MB.  `Print Assumptions`
+on every batch shows `functional_extensionality_dep` only.
+
+**Boarded so far: 30 of 42.**
+
+The offset mirror row (`CBT_LE10_17`) reads with head-aligned digits:
+`A [1]` at the junction `JL = 1101111`, left digits `00`/`11` holding `n`
+plus the marker `11`, and right digits `10111`/`10101` holding `n + 1`
+modulo `2^mR`.  The right zero digit is not blank, so bits `mR` and `mR+1`
+live in the tail: `T0 = 10101`, `T1 = 10110101`, `T2 = 10100101`,
+`T3 = 10101101`, and a carry into `T3` gives `10111 T0`, one digit wider.
+A lap is four `mirror_inc` runs (offsets `0`, `2^mR - 1`, `2^(mR+1) - 1`,
+`3*2^mR - 1`) and four top steps.  The last increment carries the left
+side onto blank tape, where the blank is the digit `00` and the old marker
+becomes a digit.
+
+The "structured left region beside a growing run" of five rows is a
+mirror counter in two bases (`CBT_LE10_19`..`_22`).  `A [0]` sits between
+a binary counter on the left (`10` / `00`, LSB nearest) and a base-3
+counter on the right (a junction cell, then `00000` / `00011` / `00001`,
+or 4-cell digits).  Both hold the same count, and both zero digits are
+blank, so neither has a width: the blank tape is the anchor at count 0.
+Each increment is a binary carry and then a base-3 carry, and the lap
+family is the iterates of `binc` / `tinc`.  The "ratio 3" records are the
+carries that run through every base-3 digit, when the count is `3^j`.  So
+the region reads as `3^j` in binary at each right record.  Neither lemma
+needs arithmetic: `inc` holds for any pair of digit strings.
+
+**Left (12), by shape:**
+
+* a two-level binary mirror counter (4 rows: `1RB1LD_1RC0RB_1LA1RC_1LA0LA`,
+  `1RB1LD_0RC0RB_1LC0LA_1LA0LA`, `1RB1LD_1RC0RB_1LA1RC_1LC0LA`,
+  `1RB1LA_1LC1RD_1LA0LC_1RA0RB`).  Visits over one doubling lap are a
+  perfect mirror: `2^j` on both sides of a junction (`B [0]` in the first
+  row).  The left counter is binary (`10` / `00`, blank zero, no width).
+  The right counter is binary too (`11` = 1, `10` = 0), but its zero digit
+  is not blank: it has a fixed width ending in a `11` marker.  Both count
+  the same increments, and the increment law holds for any digit strings
+  while the right has a 0 digit (checked on random strings).  When the
+  right is all 1s it overflows (records at steps 947 and 55,514; the next
+  is about `2^48` increments later).  A pass then re-encodes the left
+  digits as right digits, moving the junction to the left end, so each era
+  roughly doubles the right width.  That pass zigzags: each left digit is
+  absorbed by a carry-like excursion, and the junction moves by an odd
+  number of cells, mixing the two digit encodings.  A proof needs the
+  overflow lemma for any left string, which is a third level not yet read.
+* 8 rows with no counter at the junction scale:
+  `0RB0LA_1LC1RD_1LA0LC_1RB0RD` and `0RB0LA_1RC0RC_1LD1RB_1LA0LD` with
+  their conjugates, and the 4-row class of `0RB0LD_0RC1RB_1LD1RC_0LA1LA`.
+  The right-growing ones keep every 0 isolated (`00 (1|10)*`), and their
+  visits decay geometrically from the left end at about 0.809 per cell
+  (near `phi / 2`), not the `1/2` per digit of a binary counter.  LE6's
+  Zeckendorf finders found no anchor for them (`le6/zeckw*.jsonl`).  The
+  `0RB0LA_1LC1RD_1LA0LC_1RB0RD` pair has a bell-shaped visit profile
+  around a wandering centre.  A lap stated by hand does not apply.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
