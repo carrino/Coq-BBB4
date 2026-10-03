@@ -7144,15 +7144,31 @@ needs arithmetic: `inc` holds for any pair of digit strings.
 
 **Left (12), by shape:**
 
-* a doubling family of 4 (`1RB1LD_1RC0RB_1LA1RC_1LA0LA`,
+* a two-level binary mirror counter (4 rows: `1RB1LD_1RC0RB_1LA1RC_1LA0LA`,
   `1RB1LD_0RC0RB_1LC0LA_1LA0LA`, `1RB1LD_1RC0RB_1LA1RC_1LC0LA`,
-  `1RB1LA_1LC1RD_1LA0LC_1RA0RB`): a run of 1s that grows by 2 per lap
-  beside a region of `1` / `10` blocks whose change point moves right;
-* 8 rows with no visible counter: `0RB0LA_1LC1RD_1LA0LC_1RB0RD` and
-  `0RB0LA_1RC0RC_1LD1RB_1LA0LD` with their conjugates, and the 4-row class
-  of `0RB0LD_0RC1RB_1LD1RC_0LA1LA`.  The right-growing ones keep every 0
-  isolated (`00 (1|10)*`), but the run lengths look random and no anchor
-  recurs (`le10` scratch reads), so a lap stated by hand does not apply.
+  `1RB1LA_1LC1RD_1LA0LC_1RA0RB`).  Visits over one doubling lap are a
+  perfect mirror: `2^j` on both sides of a junction (`B [0]` in the first
+  row).  The left counter is binary (`10` / `00`, blank zero, no width).
+  The right counter is binary too (`11` = 1, `10` = 0), but its zero digit
+  is not blank: it has a fixed width ending in a `11` marker.  Both count
+  the same increments, and the increment law holds for any digit strings
+  while the right has a 0 digit (checked on random strings).  When the
+  right is all 1s it overflows (records at steps 947 and 55,514; the next
+  is about `2^48` increments later).  A pass then re-encodes the left
+  digits as right digits, moving the junction to the left end, so each era
+  roughly doubles the right width.  That pass zigzags: each left digit is
+  absorbed by a carry-like excursion, and the junction moves by an odd
+  number of cells, mixing the two digit encodings.  A proof needs the
+  overflow lemma for any left string, which is a third level not yet read.
+* 8 rows with no counter at the junction scale:
+  `0RB0LA_1LC1RD_1LA0LC_1RB0RD` and `0RB0LA_1RC0RC_1LD1RB_1LA0LD` with
+  their conjugates, and the 4-row class of `0RB0LD_0RC1RB_1LD1RC_0LA1LA`.
+  The right-growing ones keep every 0 isolated (`00 (1|10)*`), and their
+  visits decay geometrically from the left end at about 0.809 per cell
+  (near `phi / 2`), not the `1/2` per digit of a binary counter.  LE6's
+  Zeckendorf finders found no anchor for them (`le6/zeckw*.jsonl`).  The
+  `0RB0LA_1LC1RD_1LA0LC_1RB0RD` pair has a bell-shaped visit profile
+  around a wandering centre.  A lap stated by hand does not apply.
 
 ## 8. What we deliberately do NOT redo
 
