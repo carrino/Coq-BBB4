@@ -7922,3 +7922,73 @@ window 3 on the first 99-row residue. `blocklists114_residue.tsv` filters
 that diagnostic to the 86 rows still open after this tranche. Its missing
 instructions are targets for manual recurrence proofs; an unsuccessful
 ranking search does not imply those instructions fail to recur.
+
+#### 7.4.AST14 Pair draining and longer patterns: twelve more block-list rows (2026-10-02)
+
+The forty AST13 rows with only one uncertified instruction reduce to
+fourteen cores after state renaming/reflection and removing that target
+instruction. `blocklists_single_cores.json` records the grouping and
+maps. The largest core has five rows; four others have four each.
+
+**A generic finite-tape proof (four rows, AST127).**
+`PairDrainFiniteTr.v` proves that every finite configuration reaches A1
+under these seven equations; A1 itself is unconstrained:
+
+```
+A0=1LB
+B0=1LC  B1=0LB
+C0=1RD  C1=0LA
+D0=1RA  D1=0RC
+```
+
+The C routine consumes `01` pairs. A left word `1(01)^k U` reduces by
+parity to a single-one frontier or an A configuration reading U. The
+`1101` branch leaves a `01001` marker, which forces A1 on the next
+frontier pass. Strong induction on the untouched right suffix closes
+both C branches, including the implicit blank tail; strong induction on
+the left word then handles arbitrary finite configurations. The proof
+uses neither a conjectured reachable language nor a run-joining bound.
+`FiniteInstrTr` transports the result to the four conjugates and obtains
+arbitrarily late target visits. Partial FuelMix certificates at window 3
+cover the other seven instructions. `pair_drain_ast.json` retains the
+certificates and maps; `pair_drain_batch.py --check` reproduces AST127.
+
+**Longer pattern certificates (eight rows, AST128--132).** The earlier
+sweeps capped patterns at length four. Raising that cap to eight in the
+phase-aware checker at windows 5--7 certified three of the fourteen core
+representatives (six failures, five 60-second timeouts). All five of
+those representatives' companion rows then certified with the same
+parameters and a 120-second budget. This closes three entire groups of
+sizes three, two and three. Retrying four timed-out representatives at
+window 7 alone, 180 seconds each, gave two failures and two timeouts.
+The fifth timeout belongs to the core now covered by the manual proof.
+
+Search records are `fuelphasetr_blocklists_cores.jsonl`,
+`fuelphasetr_blocklists_mates.jsonl`, and
+`fuelphasetr_blocklists_core_retry.jsonl`. To avoid duplicating the large
+certificates, successful records refer to their Coq definitions and keep
+a SHA-256 of the emitted certificate text. `blocklists_phase_replay.py`
+checks those hashes and byte-exact reproduction of all five batches.
+The larger rank tables materially increase compilation cost; each batch
+has its own conservative CI cost entry. Measured compiler user CPU time
+for AST127--132 was approximately 95, 514, 148, 864, 165 and 145 seconds,
+respectively.
+
+All six batches and the generic finite-tape theorem were kernel-checked;
+assumption audits list only `functional_extensionality_dep`. This tranche
+closes twelve of the forty single-instruction rows. The requested
+114-row scope now has **40 proved and 74 open**, including 28 with one
+uncertified instruction in the saved window-3 diagnostic.
+`blocklists114_residue.tsv` has been filtered accordingly. Overall:
+**536 batches, 10,703 boarded, 221 remaining**. The full aggregate still
+requires the older batch objects noted in AST13; the new batches and
+regenerated remaining-row module are checked locally.
+
+**Main integration (2026-10-02).** Merging main at `13cfeb8a` adds 97
+previously open rows to this branch, including 24 of the requested
+114 block-list rows from BLC6's wider-family box sweep. The combined
+scope is now **64 proved and 50 open**; twenty of the open rows have
+one uncertified instruction in the saved window-3 diagnostic.
+`blocklists114_residue.tsv` is filtered to this combined residue; the
+historical search records and core grouping remain unchanged. The
+regenerated split has **560 batches, 10,800 boarded, 124 remaining**.
