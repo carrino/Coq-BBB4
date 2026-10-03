@@ -7171,6 +7171,25 @@ top (all ones) is the same carry at `n = k + 1` over the blank ends, so the
 counter widens to `0^(k+1)`.  Models in `le9/emit_zz.py` (`ZZ2`, `ZZ3`);
 **2 boarded** (`CBT_LE9_07`), ~1.6 s and ~460 MB each.
 
+**Part 8: the out-of-step mirrors are TWO counters.**  LE7's last two ~11 GB
+Fuel rows (`1RB1LD_1RC0RB_1RD1RC_1LA0LD`, `1RB1RA_1LC0LB_1RD1LB_1RA0RD`)
+hold a counter each side of a fixed pivot cell (LSB at the pivot, left over
+`00`/`01`, right over `00`/`11`), and a round is two halves through the
+pivot: the right counter steps (`B0 -> D1`, resp. `D0 -> B1`), then the
+left.  They are out of step because they are NOT the same number: on this
+orbit the right one is the left one plus a constant (`+2`, resp. `-2`) below
+its top, and the two tops fall at different rounds.  In
+`1RB1LD_1RC0RB_1RD1RC_1LA0LD` the right top is also two-phase (`1^j 1 ->
+0^j 011`, `1^j 011 -> 0^(j+1) 1`).  No one-counter board states that, so
+`AbsStepTr` takes ANY abstract state, configuration and round
+(`Hstep: C s ->+ C (F s)` under an invariant, `Hfire`: from every invariant
+state some later round fires each instruction); here the state is
+`(x, z, p)`, each half is one arm family per case (carry over `j` ones, the
+top), and every instruction fires in each round's halves or the next
+round's (the right top in phase 1, or a right counter ending in 0).
+Emitter `le9/emit_ab.py` (`ROWS`, two top modes); **2 boarded**
+(`CBT_LE9_08`), ~2.5 s and ~470 MB each, where Fuel needed ~11 GB.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

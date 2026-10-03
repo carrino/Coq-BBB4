@@ -16,6 +16,8 @@ Kinds:
              LDRP_ / LDRPQ_ after RunPhCountTr.v
     zz       le9/emit_zz.py (rows hand-modelled in its ROWS), [TopMapGTr] +
              [TwoSideArmTr], boards LDZZ_ after TopMapGTr.v
+    ab       le9/emit_ab.py (rows hand-modelled in its ROWS), [AbsStepTr] +
+             [TwoSideArmTr], boards LDAB_ after AbsStepTr.v
 
 Each row is emitted, compiled alone (wall time and peak RSS are printed), and
 the boards that compile are copied to theories/Machines/LadderTr/, listed in
@@ -62,6 +64,10 @@ KINDS = {
                pfx='LDZZ', anchor='theories/Counters/TopMapGTr.v',
                blurb='zig-zag mirrors: a binary counter held on both sides of the head, '
                      'by TopMapGTr'),
+    'ab': dict(emit=[os.path.join(HERE, 'emit_ab.py'), '{spec}'],
+               pfx='LDAB', anchor='theories/Counters/AbsStepTr.v',
+               blurb='out-of-step mirrors: two binary counters at a pivot, stepped in turn, '
+                     'by AbsStepTr'),
 }
 
 
