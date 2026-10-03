@@ -270,3 +270,6 @@ Proof.
   intros a n. induction n as [|n IH]; [reflexivity|].
   replace (S n + S n + S n) with (S (S (S (n + n + n)))) by lia. cbn [rep app]. rewrite IH. reflexivity.
 Qed.
+
+Lemma rep1_fold : forall (a : Sym) n l, a :: rep [a] n ++ l = rep [a] (S n) ++ l.
+Proof. reflexivity. Qed.
