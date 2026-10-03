@@ -20,6 +20,8 @@ Kinds:
              [TwoSideArmTr], boards LDAB_ after AbsStepTr.v
     ab3      le9/emit_ab3.py (rows hand-modelled in its ROWS), [AbsStepTr] +
              [TwoSideArmTr], boards LDAB3_ after the LDAB_ boards
+    abg      le9/emit_abg.py (rows hand-modelled in its ROWS), [AbsStepTr] +
+             [TwoSideArmTr], boards LDABG_ after the LDAB3_ boards
 
 Each row is emitted, compiled alone (wall time and peak RSS are printed), and
 the boards that compile are copied to theories/Machines/LadderTr/, listed in
@@ -73,6 +75,9 @@ KINDS = {
     'ab3': dict(emit=[os.path.join(HERE, 'emit_ab3.py'), '{spec}'],
                 pfx='LDAB3', anchor='theories/Counters/AbsStepTr.v',
                 blurb='a ternary and a binary counter at a pivot, stepped in turn, by AbsStepTr'),
+    'abg': dict(emit=[os.path.join(HERE, 'emit_abg.py'), '{spec}'],
+                pfx='LDABG', anchor='theories/Counters/AbsStepTr.v',
+                blurb='two binary counters at a pivot with phased tops, stepped in turn, by AbsStepTr'),
 }
 
 

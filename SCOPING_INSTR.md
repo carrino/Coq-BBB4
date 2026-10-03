@@ -7205,6 +7205,21 @@ right half fires seven instructions; `C0` fires in the ternary half when
 its low digit is 0, which happens within two rounds.  Emitter
 `le9/emit_ab3.py`; **2 boarded** (`CBT_LE9_09`), ~2.4 s and ~470 MB each.
 
+**Part 10: the "irregular slow" pair is two counters, the left one phased.**
+`1RB1LC_1LA0RD_0LB0LC_1RB1RD` and `1RB1RA_1LC0RA_1RB1LD_0LB0LD` (identical
+tapes; pivot `B1 / C0`, resp. `B1 / D0`; the cell right of the pivot `1 /
+0`) hold a binary counter right of the pivot over `00` / `11` (widening) and
+one left of it over the NON-blank words `11110` (0) / `10110` (1).  LE7's
+"ratios 1.6 / 1.25 alternating" are the left counter's four end phases:
+its top runs `1^w 1 -> 0^w 101 -> 0^w 110101 -> 0^w 100101 -> 0^w 1 1`
+(the last grows a top digit 1), so the left widens once per four of its
+overflows.  `le9/emit_abg.py` is `emit_ab.py` made general: per side a
+prefix that the half toggles, words, a list of end phases, and whether the
+last phase grows a 0 or a 1 digit.  Liveness: `A0` fires only at a top of
+the left counter in phases 0, 1 or 3, so the board proves (by counting,
+`bval`) that the left counter tops within `2^w` rounds and then reaches
+every phase.  **2 boarded** (`CBT_LE9_10`), ~3.8 s and ~480 MB each.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
