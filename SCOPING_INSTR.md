@@ -7435,8 +7435,20 @@ one is reached within a pass by induction on `v` (`F_ones`,
 | batch | rows | shape | lemmas |
 |---|---:|---|---|
 | `CBT_LE11_00` | 1 | two-level mirror counter (`1RB1LD_1RC0RB_1LA1RC_1LA0LA`) | `macro` (`armR`, `armO`, `walk_a..d`, `ovf_e..g`), `Inv_step`, `reach_good` |
+| `CBT_LE11_01` | 1 | the same abstract counter, right digits `01` / `11` after a `0` cell (`1RB1LD_0RC0RB_1LC0LA_1LA0LA`) | `usweep` (a 3-step unit per right `1`), `armR`, `armO`, the left walks of `_00`, `close`; `good2_fires` |
 
-**Boarded so far: 1 of 12.**
+The abstract part (`astep`, `Inv`, `Inv_step`, `reach_good`, the board
+`two_level_neverqhtr`) is `theories/Counters/TwoLevelTr.v`; a row supplies
+its cells (`enc`), the macro lemma, and fire witnesses from the "good"
+steps or from the steps whose `y` is odd (`good2`).
+`1RB1LD_0RC0RB_1LC0LA_1LA0LA` (A [0] at the junction, era start at step
+79,674) runs EXACTLY the same `astep` as `_00` (checked against the
+machine over 10,000 macro steps across a pass): its right carry is a
+3-step unit (`A0`, `B0`, `C1`) moving one cell right per `1`, its left
+walks are `_00`'s (the A, D and `B1` rules agree), and `B0`, `C1` close
+each step.  It fires `D1` only when `y` is odd.
+
+**Boarded so far: 2 of 12.**
 
 ## 8. What we deliberately do NOT redo
 
