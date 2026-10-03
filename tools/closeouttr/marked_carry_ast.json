@@ -1,0 +1,70 @@
+[
+  {
+    "spec": "0RB0LA_1RC0RC_1LD1RB_1LA0LD",
+    "source": "0RB0LA_1RC0RC_1LD1RB_1LA0LD",
+    "p": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "flip": false,
+    "failed": [
+      [
+        0,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 15,
+    "left": [
+      0,
+      0
+    ],
+    "right": [
+      1,
+      1
+    ],
+    "fuel": 3952,
+    "rounds": 19,
+    "contexts": 486,
+    "certificate_sha256": "661cc3bb3b45184e9e27d736ae4d24ddf4f256a2d071fccddb08408ec2a0f528"
+  },
+  {
+    "spec": "1RB0RB_1LC1RA_1LD0LC_0RA0LD",
+    "source": "0RB0LA_1RC0RC_1LD1RB_1LA0LD",
+    "p": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "flip": false,
+    "failed": [
+      [
+        3,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 14,
+    "left": [
+      0,
+      0
+    ],
+    "right": [
+      1,
+      1
+    ],
+    "fuel": 3912,
+    "rounds": 19,
+    "contexts": 481,
+    "certificate_sha256": "43d6eb814e4ddaa8263ff4aa884ac7597fdf73ae7fc22ff866a085f59e79d327"
+  }
+]
