@@ -7103,6 +7103,15 @@ doubles" LE7 measured is B's whole count).  New generic board
 `le9/emit_phbin.py`, models `le9/phbin_models.jsonl`.  **3 boarded**
 (`CBT_LE9_02`), ~1 s and ~460 MB a board.
 
+**4. LE5's "growing tail" is a marker run with phases.**  `0RB1LA_1LC1RD_1RB0LD_1RB0LA`
+(and its mirror `1RB1LC_1LA0RC_1LA0RD_0LA1RD`) at `A0` reads `x ++ 0 ++
+(01)^m ++ suf_p`, `x` over `11`/`10`: the top of `x` drops into the run
+(`(10)^(k+1) 0 -> (11)^k 0 01`, LE4's marker run), and an empty `x` refills;
+but the suffix alternates `[]` / `[1]` between refills and the two refills
+differ (`[] -> 0^m 1`, `[1] -> 0^(m+1)`).  New generic board
+`RunPhCountTr` (a carry, a narrowing, a refill per phase, all `Reach1`
+facts); emitter `le9/emit_runph.py`.  **2 boarded** (`CBT_LE9_03`).
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

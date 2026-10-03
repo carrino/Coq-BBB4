@@ -10,6 +10,8 @@ Kinds:
              DoubleBounceTr.v
     phbin    le9/emit_phbin.py + le9/phbin_models.jsonl, [PhBinCountTr], boards
              LDPB_ / LDPBQ_ after PhBinCountTr.v
+    runph    le9/emit_runph.py + le9/runph_models.jsonl, [RunPhCountTr], boards
+             LDRP_ / LDRPQ_ after RunPhCountTr.v
 
 Each row is emitted, compiled alone (wall time and peak RSS are printed), and
 the boards that compile are copied to theories/Machines/LadderTr/, listed in
@@ -44,6 +46,11 @@ KINDS = {
                         os.path.join(HERE, 'phbin_models.jsonl')],
                   pfx='LDPB', anchor='theories/Counters/PhBinCountTr.v',
                   blurb='binary counters with phases, each its own anchor, by PhBinCountTr'),
+    'runph': dict(emit=[os.path.join(HERE, 'emit_runph.py'), '{spec}',
+                        os.path.join(HERE, 'runph_models.jsonl')],
+                  pfx='LDRP', anchor='theories/Counters/RunPhCountTr.v',
+                  blurb='binary counters beside a growing marker run, with phases between '
+                        'refills, by RunPhCountTr'),
 }
 
 
