@@ -7381,6 +7381,63 @@ needs arithmetic: `inc` holds for any pair of digit strings.
   `0RB0LA_1LC1RD_1LA0LC_1RB0RD` pair has a bell-shaped visit profile
   around a wandering centre.  A lap stated by hand does not apply.
 
+#### 7.4.LE11 LE10's open rows: the two-level mirror counter's overflow pass (2026-10-03)
+
+Workstream LE11 (batch tag `LE11`) takes the 12 rows LE10 left open
+(`tools/closeouttr/le11/rows12.txt`).  Branched from
+`claude/instruction-beeping-proof-scope-ww7zdk`.  Same method as LE10: a
+lap stated by hand over opaque digit strings, proved from `LoopRunTr`'s
+primitives, closed by `BoardSeqTr`; the Python (scratch) only finds the law.
+
+**The two-level binary mirror counter, `1RB1LD_1RC0RB_1LA1RC_1LA0LA`
+(`CBT_LE11_00`).**  The whole machine is ONE macro step from `B [0]` (the
+junction): the C sweep right over 1s, the A/D walk back left (A keeps a 1
+and goes on, D flips its cell, A stops at a 0 and writes 1), the B sweep
+right clearing 1s to the next 0, which is the next junction.  Read at the
+junction, the tape is an abstract state `(u, v, y)`:
+
+* right: `y`, LSB first, digits `10` / `11`, then a `11` marker;
+* left: `xc u ++ 1 :: xc v`: a binary counter `u` (digits `00` / `10`),
+  one SEPARATOR cell, then a digit string `v` read one cell out of step.
+
+The macro step on `(u, v, y)` (`astep`, `macro`), for every `u`, `v`, `y`:
+
+| case | result |
+|---|---|
+| `y` has a 0, `u` has a 0 | `(u+1, v, y+1)` |
+| `y` has a 0, `u = 1^k`, `v = []` | `(0^(k+1), [], y+1)` (the era widens) |
+| `y` has a 0, `u = 1^k`, `v = 1 :: v1` | `([], v1, 1^k 0 ++ (y+1))`: `u` and the separator move to the right, the junction moves left |
+| `y` has a 0, `u = 1^k`, `v = 0 :: v1` | `(0^(k+1), v1, y+1)` |
+| `y = 1^w` (then `v = []`), `u = 1 :: u1` | `([], u1 ++ [1], 0^(w+1))` |
+| `y = 1^w`, `u = 0 :: u1` | `([0], u1 ++ [1], 0^w)` |
+
+So the "third level" LE10 could not read is just the separator: the
+overflow walk enters the left one cell out of step and turns the era's
+left counter into `v`, and the pass that follows absorbs `v` digit by digit
+(a `0` digit widens `u`, a `1` digit flushes `u` into the right).  The
+only fact the orbit needs is that `y` is never full during a pass, nor at
+an era overflow with an empty `u`.  That is a numeric invariant (`Inv`):
+
+* era (`v = []`): `val u + 2^|u| <= val y` (the left count never passes the
+  right one), and `u = []` only while `y` has a 0;
+* pass (`v <> []`, last digit 1): `2^(|u|+1+|v|) + val y + 1 <= 2^|y| +
+  val (u ++ 1 :: v)`, i.e. the right's deficit is at least the left's.
+
+The `+1` steps keep both sides' deficits in step, the absorption doubles
+the right deficit (`D' = 2^k (2D - 1)`), and the two overflows start a
+pass with deficit `2^w - 1` against at most `2^(|u|+1)`, `|u| < w`.  The
+lap is the macro step itself (`Cf i = enc (astep^i s0)`, `s0` the era
+start at step 1,045).  Every instruction fires in a "good" macro step (`u`
+odd with a 0 above, or `u` all 1s with `v` empty or starting with 0), and
+one is reached within a pass by induction on `v` (`F_ones`,
+`reach_good`).  The file is `LP_1RB1LD_1RC0RB_1LA1RC_1LA0LA.v`, 10 s, 480 MB.
+
+| batch | rows | shape | lemmas |
+|---|---:|---|---|
+| `CBT_LE11_00` | 1 | two-level mirror counter (`1RB1LD_1RC0RB_1LA1RC_1LA0LA`) | `macro` (`armR`, `armO`, `walk_a..d`, `ovf_e..g`), `Inv_step`, `reach_good` |
+
+**Boarded so far: 1 of 12.**
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
