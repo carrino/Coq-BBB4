@@ -7124,6 +7124,23 @@ only, the fill arms are stated over `Wm`-digit units (`rep_pow`,
 `kdecomp`).  **3 boarded** (`CBT_LE9_04`); the three mixed-digit boards are
 regenerated at `Wm = 1`.
 
+**6. A general board for the rest: `TopMapTr`.**  The phased boards all
+share one skeleton (a binary counter counts inside its width; at its top
+something depending on a small state beside it happens), so `TopMapTr`
+takes the top transitions as a MAP `G p k m = (x', m', p')` on (phase,
+width, run), the configurations as `base (bcells x ++ tail p m)`, an
+invariant `G` preserves, and the liveness as a hypothesis on the macro
+dynamics `(k, m, p) |-> (|x'|, m', p')`: per instruction a predicate `Q`
+on macro states whose tops fire it, and a proof that every invariant state
+reaches `Q` (a hand induction per row).  `1RB0RD_1LB1LC_1RC0RA_0LB1RD`
+(LE7's "other") is a binary COUNTDOWN over `11`/`00` (an up-counter with the
+words swapped) with three phases: W (tail `(01)^m`, `m` odd: each top
+widens `x` two digits into the run, `m - 2`; at `m = 1` one digit and the
+tail becomes `1`), X (the top narrows `x` beside a new tail `1001`), N (each
+top narrows `x` and the run grows; an empty `x` restarts W at `x = [1;0]`).
+Row model, `G`, invariant (parities) and macro proofs in
+`le9/emit_topmap.py` (`ROWS`); **1 boarded** (`CBT_LE9_05`).
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

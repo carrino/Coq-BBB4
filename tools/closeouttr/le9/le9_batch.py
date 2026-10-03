@@ -10,6 +10,8 @@ Kinds:
              DoubleBounceTr.v
     phbin    le9/emit_phbin.py + le9/phbin_models.jsonl, [PhBinCountTr], boards
              LDPB_ / LDPBQ_ after PhBinCountTr.v
+    topmap   le9/emit_topmap.py (rows hand-modelled in its ROWS), [TopMapTr], boards
+             LDTM_ / LDTMQ_ after TopMapTr.v
     runph    le9/emit_runph.py + le9/runph_models.jsonl, [RunPhCountTr], boards
              LDRP_ / LDRPQ_ after RunPhCountTr.v
 
@@ -51,6 +53,9 @@ KINDS = {
                   pfx='LDRP', anchor='theories/Counters/RunPhCountTr.v',
                   blurb='binary counters beside a growing marker run, with phases between '
                         'refills, by RunPhCountTr'),
+    'topmap': dict(emit=[os.path.join(HERE, 'emit_topmap.py'), '{spec}'],
+                   pfx='LDTM', anchor='theories/Counters/TopMapTr.v',
+                   blurb='binary counters whose tops are a map on (width, run, phase), by TopMapTr'),
 }
 
 
