@@ -264,3 +264,9 @@ Proof.
   intros w k. induction k as [|k IH]; [reflexivity|].
   replace (S k + S k) with (S (S (k + k))) by lia. cbn [rep]. rewrite IH, app_assoc. reflexivity.
 Qed.
+
+Lemma rep_triple : forall (a : Sym) n, rep [a; a; a] n = rep [a] (n + n + n).
+Proof.
+  intros a n. induction n as [|n IH]; [reflexivity|].
+  replace (S n + S n + S n) with (S (S (S (n + n + n)))) by lia. cbn [rep app]. rewrite IH. reflexivity.
+Qed.
