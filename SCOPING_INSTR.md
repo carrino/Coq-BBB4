@@ -7484,6 +7484,30 @@ the `u`, yet the pass is still safe for every `u` except `0^W`
 zero runs of `v` (the pass ends early), plus the era fact `X_ovf <
 2^(W+1)`, `X_ovf <> 2^W`.  The second holds by parity when the era starts
 with `k >= 2`, and needs `val v1 <> val y + 1` when `k = 0`.  Not boarded.
+The real orbit's era values look arithmetic-random.  Projected with
+`eras3.py` they give `X_ovf - 2^W = -121402, +122760, +66867560, <0, >0`
+for eras 3..7.  So no invariant on magnitudes alone excludes `X_ovf =
+2^W`.  The machine itself copes with that case: started from a state
+built that way, `fromstate.py` shows the pass overflowing into a second,
+nested separator and the counting going on.  A proof therefore needs the
+TOTAL law with nested separators (`u`, then a list of separator-delimited
+digit strings).  Each walk case that meets an older separator, in either
+phase, is new.  Left open: out of reach for this session.
+
+**The 8 "no counter at the junction scale" rows: out of reach.**
+`0RB0LD_0RC1RB_1LD1RC_0LA1LA` fires all eight instructions at exactly
+1/8 of the steps each (2,000,000 steps: 248,776 .. 251,195), and its
+visit profile decays at 0.809 per cell (`cos 36` = phi/2) from cell 4 on.
+The tape at `A [0]` on cell 0 is no positional or Zeckendorf string with
+a constant increment, and the walk is a B/C sweep right then a D/A walk
+left that zeroes alternate 1s.  `0RB0LA_1RC0RC_1LD1RB_1LA0LD` is balanced
+the same way, and its anchor strings contain runs of up to five 0s, so it
+is not the `00 (1|10)*` language either.  No macro step was found that
+reads as a counter, so no lap could be stated.
+
+**LE11 summary: 2 of 12 boarded** (`CBT_LE11_00..01`), the shared law
+`Counters/TwoLevelTr.v`; the 3-cell pair's law read but its overflow
+safety open; the 8 balanced rows unread.
 
 
 ## 8. What we deliberately do NOT redo
