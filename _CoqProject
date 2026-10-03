@@ -475,6 +475,8 @@ theories/Checkers/FuelMixPartialTr.v
 theories/Checkers/FuelMixTargetTr.v
 theories/Checkers/FuelMixTargetFastTr.v
 theories/Checkers/FuelPhaseTr.v
+theories/Checkers/FuelPhaseTargetTr.v
+theories/Checkers/HexFuelData.v
 theories/Machines/Fuel_Batch_01.v
 theories/Machines/Fuel_Batch_02.v
 theories/Machines/Fuel_Batch_03.v
@@ -12108,6 +12110,9 @@ theories/CloseoutTr/CBT_AST_13.v
 theories/CloseoutTr/CBT_AST_131.v
 theories/CloseoutTr/CBT_AST_132.v
 theories/CloseoutTr/CBT_AST_133.v
+theories/CloseoutTr/CBT_AST_134.v
+theories/CloseoutTr/CBT_AST_135.v
+theories/CloseoutTr/CBT_AST_136.v
 theories/CloseoutTr/CBT_AST_14.v
 theories/CloseoutTr/CBT_AST_15.v
 theories/CloseoutTr/CBT_AST_16.v

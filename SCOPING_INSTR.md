@@ -8389,3 +8389,60 @@ open rows have one missing instruction in the saved window-3 diagnostic;
 the largest core still has five rows. The generated split has
 **561 batches, 10,804 boarded, 120 remaining**. These negative search
 results only record the search limits, not failure of recurrence.
+
+
+**Main integration after AST15 (2026-10-02).** Main at `e67d5cf2`
+adds 57 previously open rows to this branch. Its removal of AST128 and
+AST130 for CI memory use is preserved: three block-list rows reopen;
+the fourth row is covered independently by FTA24. The combined split is
+**593 batches, 10,858 boarded, 66 remaining**. The requested block-list
+scope has **65 boarded and 49 open**. Its residue diagnostic is rebuilt
+from the saved partial records so it includes the reopened rows.
+The replacements below update AST14's replay script for the removed batches.
+
+
+### 7.4.AST16 — Compact phase certificates after the main merge (2026-10-02)
+
+Restore the three rows reopened by main's removal of AST128/130, as
+single-row batches AST134--136:
+
+| Batch | Row | Phase-checked instruction |
+|---|---|---|
+| AST134 | `0RB0RD_1LC0RC_1RA0LC_0LB1RC` | B1 |
+| AST135 | `1RB0LB_1LC0RB_0LA0LD_0RA1LB` | A1 |
+| AST136 | `0RB1LC_1RC0LC_1LD0RC_0LB0LA` | B1 |
+
+`FuelPhaseTargetTr` proves recurrence of one supplied instruction from a
+closed phase graph and its checked lexicographic descent certificate.
+It reuses `FuelSCCTr.fscc_find_tr` and `FuelPhaseTr`'s sound abstraction.
+The window-7 certificate is needed only for the instruction in the table;
+`FuelMixPartialTr` checks the other seven at window 3. This discards the
+unnecessary large certificates without weakening the conclusion.
+
+`HexFuelData` decodes ordinary inductive hexadecimal digit lists into
+rank and gate tables. Shared natural-number definitions avoid repeated
+unary rank terms; shared positive keys and chunked base-8 key differences
+reduce syntax size. This is only an untrusted data representation: the
+existing checkers validate the decoded tables inside Coq. No primitive
+arrays, native-number axioms, new proof axioms, or admitted goals occur.
+
+`shared_phase_batch.py --check` and `blocklists_phase_replay.py` decode
+saved batches, verify certificate SHA-256 values and regenerate byte for
+byte. Metadata retains the original full-certificate hash and source batch,
+plus the active single-instruction and small-certificate hashes. The old
+AST128 row covered by FTA24 is explicitly retired in the replay metadata;
+its independent coverage is checked before replay skips it.
+
+All three final batches compiled with Coq 8.18. Local wall times were
+159.7, 146.7 and 147.9 seconds; peak RSS was respectively 1,847,459,840,
+1,683,488,768 and 1,682,046,976 bytes. These are local measurements, not a
+claim that hosted CI has run. Costs of 600 seconds per batch leave room
+for slower CI CPUs. Positive/negative target-checker examples and an
+invalid seed test passed. The checker and each batch's assumptions were
+audited: only `functional_extensionality_dep`.
+
+The resulting split is **596 batches, 10,861 boarded, 63 remaining**.
+The requested block-list scope is back to **68 proved and 46 open**.
+This restores previously proved rows in a smaller form; it does not count
+them as newly discovered machines. The single-target checker can also be
+used when future rows need different abstractions for different instructions.
