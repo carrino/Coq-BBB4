@@ -7520,6 +7520,116 @@ safety open; the 8 balanced rows unread.
   `Closeout/CB_*`, census lists): they regenerate from tools once the
   checker layer lands.
 
+#### 7.4.LE12 LE9's five open rows: recursive erasers, a nested overflow, the heavy sweepers (2026-10-03)
+
+Workstream LE12 (batch tag `LE12`) takes the five rows LE9 left open
+(§7.4.LE9 Part 11), with LE10's route: hand-stated `Reach0` / `Reach1`
+lemmas over opaque tails (`LoopRunTr`), the board `BoardSeqTr`, one file
+per row (`theories/Machines/LoopTr/LP_<spec>.v`), batches by
+`tools/closeouttr/le12/batch.py`.
+
+**1. The moving-one rows are recursive ERASERS, and need no count.**
+LE9 read the cells left of the marker as a Hanoi-like count and planned an
+inner count by induction on the marker distance.  The count never has to be
+stated: what recurs is an erase of the block between a left `1` (the wall)
+and the marker, and an erase of a block is a few erases of smaller blocks.
+
+* `1RB0RB_1LC1LD_0LC1RA_0LD0RA`: `Cf i = 1 0^(i+3) [B0]`.  The lap writes
+  the marker, `C` sweeps back to the wall, and `ee N` erases:
+  `1 0^c [A] 0^N 1 R ->+ 1 0^(c+N+1) [B] R` for every `c`, `R` and the
+  far left opaque.  For `N >= 3`, `ee N` is 7 steps (the wall moves one
+  cell in), `ee 1`, a `loop` erasing `0^j 1` for `j = 2 .. N-1` (each a
+  smaller `ee`, the `B0` before it writing the next marker), a `D` sweep
+  that clears the moved wall, and `ee (N-1)` from the old wall with
+  `c + 1`.  Strong induction on `N`; `N = 0, 1, 2` are concrete runs.
+* `1RB1RC_1LA1LD_0RC0RB_0LD0LA` (same step counts, not a conjugate):
+  `Cf i = 1 0^(i+4) [B0]`, worked from the right with two mutually
+  recursive erasers.  `EA a b`: `1 0^a [A] 0^(b+1) 1 R ->+ 1 0^(a+b+2)
+  [B] R` (the marker erased) runs `EB 0 b` and then `EA (a-1) (b+1)` (or,
+  at `a = 0`, a `C` sweep onto the marker).  `EB a b`: `X 1 0^a [B] 0^b 1
+  R ->+ [A] X | 0^(a+b+1) 1 R` (the wall erased) runs `EA (a-1) 0` and
+  then `EB (a+1) (b-1)` (or, at `b = 0`, a `D` sweep onto the wall).
+  Strong induction on `a + b`, then on `a` or `b`.
+
+The fire witnesses are the first concrete steps from `Cf i` (with enough
+concrete zeros), plus, in the first row, the configuration just before the
+outer `D` sweep.  **2 boarded** (`CBT_LE12_00`), 8.7 s and 470 MB for the
+batch alone.
+
+
+**2. The heavy sweepers: the n = 6 Fuel certificate was never heavy to CHECK,
+only to elaborate.**  `0RB1RD_1LC0RD_1LD0LC_1RA0LB` and
+`1RB0LC_0RC1RA_1LD0RA_1LA0LD` have FuelWideTr certificates at n = 6
+(`fueltr_fta_box_heavy.jsonl`), which were set aside as needing ~11 GB.  With
+the certificate already a compiled constant, `vm_compute` of the check takes
+11.6 s and 694 MB; elaborating the 6 MB term in the same file is what costs
+(138 s and 4 GB for the bare `Definition`, and typing a big list literal in
+place as the argument of `NgRankE` is a further ~6x slower than typing it as
+a stand-alone `list (positive * nat)`).  So `le12/fuel_split.py` writes every
+list inside the certificate as its own typed constant, cut into pieces of at
+most 250 KB, over 30 part files (`theories/Machines/FuelSplitTr/FS_<spec>_<k>.v`,
+each <= ~620 MB and a few seconds), and `FS_<spec>.v` rebuilds the same
+certificate with `++` and proves `check_<spec>` (32.6 s, 737 MB).  The
+checker and the checked statement are FuelWideTr's, unchanged.  The other
+row is a lockstep conjugate (`p = [3,0,1,2]`, boots 15 / 9), boarded in the
+same batch by `cconj_cover_run` (`le12/fuel_batch.py --conj`), so CI builds
+the parts once.  **2 boarded** (`CBT_LE12_01`); the whole chain (parts,
+check, batch) builds serially in 178 s at 801 MB peak.
+
+What the sweepers ARE, for the record: at a left turn the tape reads
+`[a counter-like left part] (101000)^a W1 (10101010000000)^b 010 (10101110)^c W2`;
+the right end grows 4 cells per sweep, three sweeps in four turn near the
+`(10101110)` region's left end (a turn point that drifts one word per cycle),
+every fourth goes into the middle region, and rarer ones reach the left
+part, which grows like a counter.  A hand lap would need that whole
+hierarchy; the split certificate needs none of it.
+
+**3. The overflow row stays open: the overflow is the whole machine again,
+against walls.**  `1RB0RB_1LC1RA_0LD0LC_1RD0RB`, read with C simulators and
+local runs over opaque tails (`le12/` has the results; the simulators are
+scratch tools):
+
+* A round is `B1@p -> (right +1) -> C1@p -> (left +1) -> B1@p`.  At `C1@p`
+  the left is `[0;1;1;1] ++ words(x) ++ ...` (nearest first, digit 1 =
+  `[1;1]`, digit 0 = a `0` cell whose neighbour is NEVER read) and the
+  right is `[0] ++ words(y) ++ ...` (digit 1 = `[1;0]`, digit 0 = a `0`
+  cell).  Both arms check over opaque tails: the left carry over `j` ones
+  in `24 + 8j` steps, the right carry in `4 + 4j`.  LE9's "widening" right
+  top is no event at all: the terminator `1` is a top digit 1 and the blank
+  beyond is zeros, so the right counter is a plain binary number.  The left
+  counter's top is the only event: its carry meets a `[1;0]` pair.
+* Eras: `x` has `n` digits below a top `1`, `y` restarts at 0 each era, so
+  an era is `2^n - 1 - X` rounds and ends at `r = 2^n - X`.  Measured:
+  `(n, X) = (23, 5129) -> (47, 23995135) -> (95, ...) -> (191, ...)`, so
+  `n' = 2n + 1` and the pivot moves to the right end at each overflow.
+* The overflow is NOT a bounded transition (LE9's "a ~47M-step nested
+  count" undercounts it).  Replayed from synthetic era ends, it takes 615,
+  6,423, 20,974,355 steps for eras 1-3, and more than `2 * 10^10` for era 4.
+  Inside it the machine runs the same two-counter rounds at intermediate
+  pivots, with each counter ending at a WALL of older tape instead of the
+  blank: era 3's overflow runs `2^19` rounds at the old pivot `+ 3`, then
+  `2, 4, 16, 2, 8, 2, ...` rounds at pivots stepping right, and the next
+  era starts at the right end.  The gaps between rounds stay short (at most
+  ~2x the tape width, 783 steps in era 3's overflow), so the row is a
+  sweeping system whose state is the sequence of walls.  The mini-era
+  lengths depend on the bits of `r`.
+* A board therefore needs either an exact theory of the overflow (a
+  recursion over wall shapes, with the output `X'` stated as a function of
+  `(n, r)`; the outputs above have no closed form we could find), or a
+  closed tape language at the pivot events with a termination argument for
+  every wall event.  The second is a new checker (a regular language of
+  wall words closed under the round and wall transductions), not a hand
+  lap.  `SetBoard`-style laps (an invariant set of configurations,
+  existential successors) would carry the never-quasihalting argument once
+  such a language exists, since every instruction fires inside an ordinary
+  round.
+* FuelWideTr at `n = 6, 7, 8, 9` (`le12/fuel_overflow_n6_9.jsonl`, max
+  pattern 6, up to 312 s) finds no certificate; every attempt fails on the
+  target `A0`, as at `n <= 5`.
+
+**LE12 summary: 4 of 5 boarded** (`CBT_LE12_00` two moving-one rows,
+`CBT_LE12_01` the two heavy sweepers); open: `1RB0RB_1LC1RA_0LD0LC_1RD0RB`.
+
 #### 7.4.TA follow-up: cube counters at moduli 9 and 27 (2026-10-01)
 
 The suggested larger-residue search was run on the 15 cube rows for which
