@@ -25,6 +25,10 @@ def main():
     args = parser.parse_args()
     batches = defaultdict(list)
     for record in map(json.loads, RECORDS.read_text().splitlines()):
+        if record['status'] == 'duplicate':
+            replacement = ROOT / 'theories/CloseoutTr' / (record['covered_by'] + '.v')
+            assert f"(* spec {record['spec']} *)" in replacement.read_text()
+            continue
         if record['status'] != 'found':
             continue
         batch, index = record['certificate_batch'], record['certificate_index']

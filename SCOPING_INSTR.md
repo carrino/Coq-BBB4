@@ -8495,3 +8495,28 @@ The requested 114-row scope now has **73 proved and 41 open**. The split
 has **599 batches, 10,866 boarded, 58 remaining**. All five row proofs,
 certificate replay, project registration, frozen census cache, generated
 split and six-shard checks pass.
+
+The follow-up phase-aware pass over the 41-row residue, windows 6--7,
+patterns up to 8, boot 0 and 60 seconds per row, found no additional
+certificate: 19 failures and 22 timeouts. Its outcomes are appended to
+`fuelcombined_blocklists.jsonl`; a timeout is not evidence of impossibility.
+
+`blocklists_combined_partial.jsonl` combines successful per-instruction
+searches from the ordinary finder (windows 3--7, patterns up to 8) and
+combined finder (windows 3--6, patterns up to 6), both orientations at
+boot 0. These are search diagnostics, not additional Coq proofs. Taking
+the union of successful targets leaves 23 rows with one uncertified
+instruction, one with two, four with three, one with four, five with five,
+two with six, and five with seven. The single-target rows form nine
+seven-transition cores under state renaming and reflection, recorded in
+`blocklists_combined_cores.json`.
+
+Two newly isolated cores each account for four rows:
+`---0LB_1RC1LB_1LD0RB_1LA0LD` and
+`---1LB_0LC1RD_1LA1LC_1RB0RB`. Proving finite-tape reachability of A0
+for either core would provide the remaining instruction theorem for its
+group; the other instruction certificates would still need Coq checking.
+`blocklists_target_summary.py` validates every residual target against
+the baseline diagnostics and checks all state-renaming/reflection maps.
+Its optional `--verify-spec` reruns recorded successful target searches;
+the two D1 certificates for `1RB0RA_0LC0RD_1RA0LD_1LC1RD` were replayed.
