@@ -18,6 +18,8 @@ Kinds:
              [TwoSideArmTr], boards LDZZ_ after TopMapGTr.v
     ab       le9/emit_ab.py (rows hand-modelled in its ROWS), [AbsStepTr] +
              [TwoSideArmTr], boards LDAB_ after AbsStepTr.v
+    ab3      le9/emit_ab3.py (rows hand-modelled in its ROWS), [AbsStepTr] +
+             [TwoSideArmTr], boards LDAB3_ after the LDAB_ boards
 
 Each row is emitted, compiled alone (wall time and peak RSS are printed), and
 the boards that compile are copied to theories/Machines/LadderTr/, listed in
@@ -68,6 +70,9 @@ KINDS = {
                pfx='LDAB', anchor='theories/Counters/AbsStepTr.v',
                blurb='out-of-step mirrors: two binary counters at a pivot, stepped in turn, '
                      'by AbsStepTr'),
+    'ab3': dict(emit=[os.path.join(HERE, 'emit_ab3.py'), '{spec}'],
+                pfx='LDAB3', anchor='theories/Counters/AbsStepTr.v',
+                blurb='a ternary and a binary counter at a pivot, stepped in turn, by AbsStepTr'),
 }
 
 

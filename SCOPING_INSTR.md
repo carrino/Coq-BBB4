@@ -7190,6 +7190,21 @@ round's (the right top in phase 1, or a right counter ending in 0).
 Emitter `le9/emit_ab.py` (`ROWS`, two top modes); **2 boarded**
 (`CBT_LE9_08`), ~2.5 s and ~470 MB each, where Fuel needed ~11 GB.
 
+**Part 9: "base3-side" is a ternary counter beside a binary one.**  LE7's
+two base3-side rows (`1RB0LA_1LC1RD_1LA1LB_1LA0RD`,
+`1RB0LA_1LC1RD_1LD1LB_1LA0RD`) are the same two-counter shape with the left
+counter in BASE 3: at the pivot (`D1`, cell `1` left of it) the left is
+`0 ++ tcells x`, digit words `0000` / `0110` / `0010` (resp. `00000` /
+`00110` / `00010`, each a word plus a blank separator), the right is
+binary over `00` / `01`.  A round: the binary counter steps (`D1 -> B0`,
+the cell beside the pivot `0 -> 1`), then the ternary one (`B0 -> D1`).
+Both blank-digit words are blank, so each top is the carry into the blank
+end and the round is plainly `(x, z) |-> (x + 1, z + 1)`.  Ternary carries
+are three arm families (over `2^k`, then a 0, a 1, or the blank end).  The
+right half fires seven instructions; `C0` fires in the ternary half when
+its low digit is 0, which happens within two rounds.  Emitter
+`le9/emit_ab3.py`; **2 boarded** (`CBT_LE9_09`), ~2.4 s and ~470 MB each.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
