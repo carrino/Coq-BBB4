@@ -7381,6 +7381,135 @@ needs arithmetic: `inc` holds for any pair of digit strings.
   `0RB0LA_1LC1RD_1LA0LC_1RB0RD` pair has a bell-shaped visit profile
   around a wandering centre.  A lap stated by hand does not apply.
 
+#### 7.4.LE11 LE10's open rows: the two-level mirror counter's overflow pass (2026-10-03)
+
+Workstream LE11 (batch tag `LE11`) takes the 12 rows LE10 left open
+(`tools/closeouttr/le11/rows12.txt`).  Branched from
+`claude/instruction-beeping-proof-scope-ww7zdk`.  Same method as LE10: a
+lap stated by hand over opaque digit strings, proved from `LoopRunTr`'s
+primitives, closed by `BoardSeqTr`; the Python (scratch) only finds the law.
+
+**The two-level binary mirror counter, `1RB1LD_1RC0RB_1LA1RC_1LA0LA`
+(`CBT_LE11_00`).**  The whole machine is ONE macro step from `B [0]` (the
+junction): the C sweep right over 1s, the A/D walk back left (A keeps a 1
+and goes on, D flips its cell, A stops at a 0 and writes 1), the B sweep
+right clearing 1s to the next 0, which is the next junction.  Read at the
+junction, the tape is an abstract state `(u, v, y)`:
+
+* right: `y`, LSB first, digits `10` / `11`, then a `11` marker;
+* left: `xc u ++ 1 :: xc v`: a binary counter `u` (digits `00` / `10`),
+  one SEPARATOR cell, then a digit string `v` read one cell out of step.
+
+The macro step on `(u, v, y)` (`astep`, `macro`), for every `u`, `v`, `y`:
+
+| case | result |
+|---|---|
+| `y` has a 0, `u` has a 0 | `(u+1, v, y+1)` |
+| `y` has a 0, `u = 1^k`, `v = []` | `(0^(k+1), [], y+1)` (the era widens) |
+| `y` has a 0, `u = 1^k`, `v = 1 :: v1` | `([], v1, 1^k 0 ++ (y+1))`: `u` and the separator move to the right, the junction moves left |
+| `y` has a 0, `u = 1^k`, `v = 0 :: v1` | `(0^(k+1), v1, y+1)` |
+| `y = 1^w` (then `v = []`), `u = 1 :: u1` | `([], u1 ++ [1], 0^(w+1))` |
+| `y = 1^w`, `u = 0 :: u1` | `([0], u1 ++ [1], 0^w)` |
+
+So the "third level" LE10 could not read is just the separator: the
+overflow walk enters the left one cell out of step and turns the era's
+left counter into `v`, and the pass that follows absorbs `v` digit by digit
+(a `0` digit widens `u`, a `1` digit flushes `u` into the right).  The
+only fact the orbit needs is that `y` is never full during a pass, nor at
+an era overflow with an empty `u`.  That is a numeric invariant (`Inv`):
+
+* era (`v = []`): `val u + 2^|u| <= val y` (the left count never passes the
+  right one), and `u = []` only while `y` has a 0;
+* pass (`v <> []`, last digit 1): `2^(|u|+1+|v|) + val y + 1 <= 2^|y| +
+  val (u ++ 1 :: v)`, i.e. the right's deficit is at least the left's.
+
+The `+1` steps keep both sides' deficits in step, the absorption doubles
+the right deficit (`D' = 2^k (2D - 1)`), and the two overflows start a
+pass with deficit `2^w - 1` against at most `2^(|u|+1)`, `|u| < w`.  The
+lap is the macro step itself (`Cf i = enc (astep^i s0)`, `s0` the era
+start at step 1,045).  Every instruction fires in a "good" macro step (`u`
+odd with a 0 above, or `u` all 1s with `v` empty or starting with 0), and
+one is reached within a pass by induction on `v` (`F_ones`,
+`reach_good`).  The file is `LP_1RB1LD_1RC0RB_1LA1RC_1LA0LA.v`, 10 s, 480 MB.
+
+| batch | rows | shape | lemmas |
+|---|---:|---|---|
+| `CBT_LE11_00` | 1 | two-level mirror counter (`1RB1LD_1RC0RB_1LA1RC_1LA0LA`) | `macro` (`armR`, `armO`, `walk_a..d`, `ovf_e..g`), `Inv_step`, `reach_good` |
+| `CBT_LE11_01` | 1 | the same abstract counter, right digits `01` / `11` after a `0` cell (`1RB1LD_0RC0RB_1LC0LA_1LA0LA`) | `usweep` (a 3-step unit per right `1`), `armR`, `armO`, the left walks of `_00`, `close`; `good2_fires` |
+
+The abstract part (`astep`, `Inv`, `Inv_step`, `reach_good`, the board
+`two_level_neverqhtr`) is `theories/Counters/TwoLevelTr.v`; a row supplies
+its cells (`enc`), the macro lemma, and fire witnesses from the "good"
+steps or from the steps whose `y` is odd (`good2`).
+`1RB1LD_0RC0RB_1LC0LA_1LA0LA` (A [0] at the junction, era start at step
+79,674) runs EXACTLY the same `astep` as `_00` (checked against the
+machine over 10,000 macro steps across a pass): its right carry is a
+3-step unit (`A0`, `B0`, `C1`) moving one cell right per `1`, its left
+walks are `_00`'s (the A, D and `B1` rules agree), and `B0`, `C1` close
+each step.  It fires `D1` only when `y` is odd.
+
+**Boarded so far: 2 of 12.**
+
+**The 3-cell pair (`1RB1LD_1RC0RB_1LA1RC_1LC0LA` and its lockstep
+conjugate `1RB1LA_1LC1RD_1LA0LC_1RA0RB`, `le6/conj_find.py`: `p = 1203`,
+mirrored, `m = 7`, `n0 = 9`): the law is read, the safety argument is
+not.**  The right side and the B0 anchor are those of `_00`; the left
+digits are 3 cells (`100` / `000`), and there are TWO separators: `1`
+(phase P1, `xc3 u ++ 1 :: xc3 v`) and `10` (phase P2, `xc3 u ++ 1 :: 0
+:: xc3 v`).  With `D0 = 1LC` the walk can turn round (`C1` sweeps right),
+so the absorption depends on the parity of `k = |u|`.  The exact step
+(`tools/closeouttr/le11/two_level3.py`; matched against the machine over
+187,000 macro steps and a full pass by `check_two_level3.py`):
+
+| case (`y` has a 0; `y+1` below) | result |
+|---|---|
+| `u` has a 0 | `(P, u+1, v)` |
+| `u = 1^k`, `v = []` | `(P1, 0^(k+1), [])` (both phases) |
+| `u = 1^k`, `v = 0 :: v1` | `(P, 0^(k+1), v1)` |
+| P1, `v = 1 :: v1`, `k` even | `(P2, [], v1)`, `y := 1^(3k/2) 0 ++ y+1` |
+| P1, `v = 1 :: v1`, `k` odd | `(P1, [], v1)`, `y := 0^((3k+1)/2) 1 ++ y+1` (two B0 visits: the first leaves the right one cell out of step) |
+| P2, `v = 1 :: v1`, `k` odd | `(P2, [], v1)`, `y := 0^((3k+1)/2) 1 ++ y+1` (a turn-round and a second A/D walk) |
+| P2, `v = 1 :: v1`, `k` even | ERA `(P1, 0 :: init (v1+1), [])`, `y := 0^(3k/2) 1 ++ y+1` (the second walk increments `v1`) |
+| `y` full, P1, `v = []` | as `_00`: `u = 0 :: u1` gives `(P1, [0], u1 ++ [1], 0^w)`, `u = 1 :: u1` gives `(P2, [], u1 ++ [1], 0^(w+1))` |
+
+So a pass ends at the first `1` of `v` that follows an even run of `0`s in
+phase P2, usually long before `v` is used up, and the rest of `v` (plus 1)
+becomes the next era's left counter.  `_00`'s invariant does NOT carry
+over.  From an overflow with `|u| <= W - 1` it holds throughout the pass
+(checked exhaustively for `W <= 10`, `pass_safety3.py`).  But the real
+orbit overflows with `|u| = W` (eras 4, 5 and 7 of the projection
+`eras3.py`: `W = 35, 49, 83`).  There the invariant fails for a quarter of
+the `u`, yet the pass is still safe for every `u` except `0^W`
+(exhaustive for `W <= 11`).  A proof needs a pass cost bounded by the
+zero runs of `v` (the pass ends early), plus the era fact `X_ovf <
+2^(W+1)`, `X_ovf <> 2^W`.  The second holds by parity when the era starts
+with `k >= 2`, and needs `val v1 <> val y + 1` when `k = 0`.  Not boarded.
+The real orbit's era values look arithmetic-random.  Projected with
+`eras3.py` they give `X_ovf - 2^W = -121402, +122760, +66867560, <0, >0`
+for eras 3..7.  So no invariant on magnitudes alone excludes `X_ovf =
+2^W`.  The machine itself copes with that case: started from a state
+built that way, `fromstate.py` shows the pass overflowing into a second,
+nested separator and the counting going on.  A proof therefore needs the
+TOTAL law with nested separators (`u`, then a list of separator-delimited
+digit strings).  Each walk case that meets an older separator, in either
+phase, is new.  Left open: out of reach for this session.
+
+**The 8 "no counter at the junction scale" rows: out of reach.**
+`0RB0LD_0RC1RB_1LD1RC_0LA1LA` fires all eight instructions at exactly
+1/8 of the steps each (2,000,000 steps: 248,776 .. 251,195), and its
+visit profile decays at 0.809 per cell (`cos 36` = phi/2) from cell 4 on.
+The tape at `A [0]` on cell 0 is no positional or Zeckendorf string with
+a constant increment, and the walk is a B/C sweep right then a D/A walk
+left that zeroes alternate 1s.  `0RB0LA_1RC0RC_1LD1RB_1LA0LD` is balanced
+the same way, and its anchor strings contain runs of up to five 0s, so it
+is not the `00 (1|10)*` language either.  No macro step was found that
+reads as a counter, so no lap could be stated.
+
+**LE11 summary: 2 of 12 boarded** (`CBT_LE11_00..01`), the shared law
+`Counters/TwoLevelTr.v`; the 3-cell pair's law read but its overflow
+safety open; the 8 balanced rows unread.
+
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
