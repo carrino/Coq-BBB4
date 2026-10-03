@@ -1,0 +1,78 @@
+[
+  {
+    "spec": "0RB0LA_1LC1RD_1LA0LC_1RB0RD",
+    "source": "0RB0LA_1LC1RD_1LA0LC_1RB0RD",
+    "p": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "flip": false,
+    "failed": [
+      [
+        0,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 10,
+    "left": [
+      0
+    ],
+    "right": [
+      1,
+      0,
+      1
+    ],
+    "fuel": 4456,
+    "rounds": 20,
+    "contexts": 549,
+    "certificate_sha256": "3b9c22e32da976a2c4eb02f526ca60eae0b462af7606e5fa6067f104e1ac3083"
+  },
+  {
+    "spec": "1RB1LD_1RC0RB_0LA0RC_1LA0LD",
+    "source": "0RB0LA_1LC1RD_1LA0LC_1RB0RD",
+    "p": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "flip": true,
+    "failed": [
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 9,
+    "left": [
+      0
+    ],
+    "right": [
+      1,
+      0,
+      1
+    ],
+    "fuel": 4440,
+    "rounds": 20,
+    "contexts": 547,
+    "certificate_sha256": "29eece25435a8d4a6df76924eab7333747f40fc964b1d9946335bfb663c5af6f"
+  }
+]

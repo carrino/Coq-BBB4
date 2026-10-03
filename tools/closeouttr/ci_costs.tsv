@@ -481,3 +481,11 @@ CBT_LE11_00	10
 CBT_LE11_01	10
 CBT_LE12_00	10
 CBT_LE12_01	180
+# AST17 combined potentials: local builds 4.4, 8.9, 9.9 seconds.
+CBT_AST_137	15
+CBT_AST_138	30
+CBT_AST_139	30
+# AST18: balanced-counter batches compile locally in 6.9, 4.0, 3.8 s.
+CBT_AST_140	30
+CBT_AST_141	15
+CBT_AST_142	15
