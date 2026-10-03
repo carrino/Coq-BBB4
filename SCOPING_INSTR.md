@@ -7141,6 +7141,24 @@ top narrows `x` and the run grows; an empty `x` restarts W at `x = [1;0]`).
 Row model, `G`, invariant (parities) and macro proofs in
 `le9/emit_topmap.py` (`ROWS`); **1 boarded** (`CBT_LE9_05`).
 
+**Part 7: zig-zag mirrors.**  LE7's "mirror" rows read at their A0 anchor
+hold ONE binary counter twice, a copy on each side of the head, both LSB
+at the head (`cells x | h | 0 cells x`).  The carry is a fixed sequence of
+passes, each crossing one copy while the other copy is an opaque tail on
+the far side, so the existing one-sided arm families do not state it.
+`TwoSideArmTr` (`armfam2_r/l`, `arm2_flat`, `fire2_*`) are the same arm
+lemmas with BOTH tails opaque, and `TopMapGTr` is `TopMapTr` with the
+configuration an arbitrary `C x m p` (here `C x = (A, (cells x ++ [0], 0,
+0 :: cells x ++ [0]))`; the blank pad makes the carry past the top end the
+same chain).  `1RB0LA_0RC1RB_0LD0RB_1LD0LA`: `Z = 00`, `O = 01`, the carry
+over `1 + n` ones is six passes (flat, right copy `01 -> 11`, left copy
+`01 -> 00`, flat, right copy `11 -> 00`, flat), the carry over no ones is
+one flat arm, and the left pass fires every instruction.  Two-sided arm
+generator `le9/gen2.py`, row model in `le9/emit_zz.py` (`ROWS`);
+**1 boarded** (`CBT_LE9_06`), ~2 s and ~460 MB.  `1RB1RC_0RC1RB_0LD0RB_1LD0LA`
+differs at `A1` only but is NOT the same shape (its A0 tapes are not two
+copies), so it stays open with the rest.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

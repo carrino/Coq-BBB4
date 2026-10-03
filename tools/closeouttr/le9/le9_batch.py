@@ -14,6 +14,8 @@ Kinds:
              LDTM_ / LDTMQ_ after TopMapTr.v
     runph    le9/emit_runph.py + le9/runph_models.jsonl, [RunPhCountTr], boards
              LDRP_ / LDRPQ_ after RunPhCountTr.v
+    zz       le9/emit_zz.py (rows hand-modelled in its ROWS), [TopMapGTr] +
+             [TwoSideArmTr], boards LDZZ_ after TopMapGTr.v
 
 Each row is emitted, compiled alone (wall time and peak RSS are printed), and
 the boards that compile are copied to theories/Machines/LadderTr/, listed in
@@ -56,6 +58,10 @@ KINDS = {
     'topmap': dict(emit=[os.path.join(HERE, 'emit_topmap.py'), '{spec}'],
                    pfx='LDTM', anchor='theories/Counters/TopMapTr.v',
                    blurb='binary counters whose tops are a map on (width, run, phase), by TopMapTr'),
+    'zz': dict(emit=[os.path.join(HERE, 'emit_zz.py'), '{spec}'],
+               pfx='LDZZ', anchor='theories/Counters/TopMapGTr.v',
+               blurb='zig-zag mirrors: a binary counter held on both sides of the head, '
+                     'by TopMapGTr'),
 }
 
 
