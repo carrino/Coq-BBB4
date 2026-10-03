@@ -7455,6 +7455,52 @@ every fourth goes into the middle region, and rarer ones reach the left
 part, which grows like a counter.  A hand lap would need that whole
 hierarchy; the split certificate needs none of it.
 
+**3. The overflow row stays open: the overflow is the whole machine again,
+against walls.**  `1RB0RB_1LC1RA_0LD0LC_1RD0RB`, read with C simulators and
+local runs over opaque tails (`le12/` has the results; the simulators are
+scratch tools):
+
+* A round is `B1@p -> (right +1) -> C1@p -> (left +1) -> B1@p`.  At `C1@p`
+  the left is `[0;1;1;1] ++ words(x) ++ ...` (nearest first, digit 1 =
+  `[1;1]`, digit 0 = a `0` cell whose neighbour is NEVER read) and the
+  right is `[0] ++ words(y) ++ ...` (digit 1 = `[1;0]`, digit 0 = a `0`
+  cell).  Both arms check over opaque tails: the left carry over `j` ones
+  in `24 + 8j` steps, the right carry in `4 + 4j`.  LE9's "widening" right
+  top is no event at all: the terminator `1` is a top digit 1 and the blank
+  beyond is zeros, so the right counter is a plain binary number.  The left
+  counter's top is the only event: its carry meets a `[1;0]` pair.
+* Eras: `x` has `n` digits below a top `1`, `y` restarts at 0 each era, so
+  an era is `2^n - 1 - X` rounds and ends at `r = 2^n - X`.  Measured:
+  `(n, X) = (23, 5129) -> (47, 23995135) -> (95, ...) -> (191, ...)`, so
+  `n' = 2n + 1` and the pivot moves to the right end at each overflow.
+* The overflow is NOT a bounded transition (LE9's "a ~47M-step nested
+  count" undercounts it).  Replayed from synthetic era ends, it takes 615,
+  6,423, 20,974,355 steps for eras 1-3, and more than `2 * 10^10` for era 4.
+  Inside it the machine runs the same two-counter rounds at intermediate
+  pivots, with each counter ending at a WALL of older tape instead of the
+  blank: era 3's overflow runs `2^19` rounds at the old pivot `+ 3`, then
+  `2, 4, 16, 2, 8, 2, ...` rounds at pivots stepping right, and the next
+  era starts at the right end.  The gaps between rounds stay short (at most
+  ~2x the tape width, 783 steps in era 3's overflow), so the row is a
+  sweeping system whose state is the sequence of walls.  The mini-era
+  lengths depend on the bits of `r`.
+* A board therefore needs either an exact theory of the overflow (a
+  recursion over wall shapes, with the output `X'` stated as a function of
+  `(n, r)`; the outputs above have no closed form we could find), or a
+  closed tape language at the pivot events with a termination argument for
+  every wall event.  The second is a new checker (a regular language of
+  wall words closed under the round and wall transductions), not a hand
+  lap.  `SetBoard`-style laps (an invariant set of configurations,
+  existential successors) would carry the never-quasihalting argument once
+  such a language exists, since every instruction fires inside an ordinary
+  round.
+* FuelWideTr at `n = 6, 7, 8, 9` (`le12/fuel_overflow_n6_9.jsonl`, max
+  pattern 6, up to 312 s) finds no certificate; every attempt fails on the
+  target `A0`, as at `n <= 5`.
+
+**LE12 summary: 4 of 5 boarded** (`CBT_LE12_00` two moving-one rows,
+`CBT_LE12_01` the two heavy sweepers); open: `1RB0RB_1LC1RA_0LD0LC_1RD0RB`.
+
 #### 7.4.TA follow-up: cube counters at moduli 9 and 27 (2026-10-01)
 
 The suggested larger-residue search was run on the 15 cube rows for which
