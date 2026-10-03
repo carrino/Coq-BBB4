@@ -222,3 +222,10 @@ Ltac rr_upto n tac :=
   | O => fail
   | S ?m => first [ rr_upto m tac | rr n; tac ]
   end.
+
+(** an alternating word read one cell later *)
+Lemma rep_shift : forall (a b : Sym) k l, a :: rep [b; a] k ++ l = rep [a; b] k ++ a :: l.
+Proof.
+  intros a b k. induction k as [|k IH]; intros l; [reflexivity|].
+  cbn [rep app]. f_equal. f_equal. apply IH.
+Qed.
