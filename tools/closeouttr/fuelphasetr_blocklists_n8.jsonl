@@ -1,0 +1,4 @@
+{"probe_max_pattern": 10, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 180, "probe_warmups": [0, 64, 256], "seconds": 180.037, "spec": "0RB0LB_1LC1RD_1LA0RD_1RB1RC", "status": "timeout"}
+{"first_fail": null, "probe_max_pattern": 10, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 180, "probe_warmups": [0, 64, 256], "seconds": 1.361, "spec": "1RB0RA_1RC0RD_1LD1LC_1RA0LC", "status": "no certificate"}
+{"first_fail": null, "probe_max_pattern": 10, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 180, "probe_warmups": [0, 64, 256], "seconds": 2.092, "spec": "1RB0RC_1LB1RA_0RB0LD_1LC1LD", "status": "no certificate"}
+{"probe_max_pattern": 10, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 180, "probe_warmups": [0, 64, 256], "seconds": 180.011, "spec": "1RB0RD_0LC0RA_1RC1LD_1LB1RA", "status": "timeout"}

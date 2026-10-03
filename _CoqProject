@@ -12061,6 +12061,7 @@ theories/Counters/ValueFrontierD0.v
 theories/Counters/Period3FiniteTr.v
 theories/Counters/Period3RightResetTr.v
 theories/Counters/PairDrainFiniteTr.v
+theories/Counters/TripleSweepFiniteTr.v
 theories/Counters/FiniteReturnTr.v
 theories/CloseoutTr/CloseoutKitTr.v
 theories/CloseoutTr/CBT_AST_00.v
@@ -12106,6 +12107,7 @@ theories/CloseoutTr/CBT_AST_129.v
 theories/CloseoutTr/CBT_AST_13.v
 theories/CloseoutTr/CBT_AST_131.v
 theories/CloseoutTr/CBT_AST_132.v
+theories/CloseoutTr/CBT_AST_133.v
 theories/CloseoutTr/CBT_AST_14.v
 theories/CloseoutTr/CBT_AST_15.v
 theories/CloseoutTr/CBT_AST_16.v
