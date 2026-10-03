@@ -7094,11 +7094,40 @@ lockstep transport cannot take; the boot is computed.
 | `CBT_LE10_07` | 1 | lockstep conjugate | `CConjCoverTr` |
 | `CBT_LE10_08` | 2 | conjugates entering the family elsewhere | `LoopConjTr` |
 | `CBT_LE10_09` | 2 | 4-cell digits `1111`/`1011`/`0111`, three overflow passes | `awalk` (`sweepFL`), `loop`, `pa`/`pb`/`pc` |
+| `CBT_LE10_10` | 1 | frontier counter whose carries sweep to the blank and rebuild a `111` prefix (`1RB1RC_1LC1RA_1LD0LC_0RD0RB`) | `g` (any tail), `cf2`, `loop`, `fin` (`dwalk`, a 7-step unit) |
+| `CBT_LE10_11` | 1 | 3-cell digits at a `D` anchor, top two digits in a short tail (`1RB1RC_1LC1LB_1LD1RA_0RC0LD`) | `kk`, `x0`/`x2`/`x4`, four counts per lap |
+| `CBT_LE10_12` | 1 | the same read leftwards from the right end, a five-state top (`1RB1LC_1LA0RD_0RC1LB_0LC1RD`) | `cc`, `t1`..`t5` |
+| `CBT_LE10_13` | 1 | mirror counter: one count on both sides of the head (`1RB0LA_1LC1RC_1RD1LB_1LA0RD`) | `LoopMirrorTr.mirror_iter`, `armR`/`armL`, `ovf` |
+| `CBT_LE10_14`..`_16` | 3 | mirror counters whose markers are digits: one count from `2^m` to `2^(m+1)` is a lap | `mirror_iter1`, blank-padded widths (`nb_extend`) |
+
+`theories/Counters/LoopMirrorTr.v` covers LE7's "one counter held on both sides of
+the head".  The state is one number `n` (left `n + a`, right `n`) and
+`nb m n` is its `m`-bit expansion (`nb_succ`: it is `binc` below `2^m`).
+`mirror_iter` / `mirror_iter1` run every increment from two one-sided arm
+hypotheses (right carry to a junction configuration `mk2`, left carry back
+to `mk1`).  A numerical search over encodings, junction shapes and offsets
+(`reach` on random tails) finds the arms' law before any Coq is written.
 
 Every batch compiles alone in 8-11 s at about 470 MB.  `Print Assumptions`
 on every batch shows `functional_extensionality_dep` only.
 
-**Boarded so far: 16 of 42.**
+**Boarded so far: 23 of 42.**
+
+**Left (19), by shape:**
+
+* mirror counters with offset sides and a truncated top digit
+  (`0RB0RA_1RC0LD_1LB1RA_1LB1LD` and its conjugate `1RB0LC_1LA1RD_1LA1LC_0RA0RD`):
+  the increment law holds (left `11`/`00`, right `10110`/`11110`, junction
+  `0 [A0]`), but the right side's zero digit is not blank, so its top grows
+  by its own transitions;
+* a structured left region beside a growing run, which changes irregularly
+  from lap to lap (ratio 3 per lap), so a third level that is not yet read
+  (9 rows: `1RB0LA_1LC0RB_1RD1LA_1RA1RC` and its classes,
+  `1RB1LD_1RC0RB_1LA1RC_1LA0LA`, `1RB1LD_0RC0RB_1LC0LA_1LA0LA`,
+  `1RB1LD_1RC0RB_1LA1RC_1LC0LA`, `1RB1LA_1LC1RD_1LA0LC_1RA0RB`);
+* 8 rows with no visible counter: `0RB0LA_1LC1RD_1LA0LC_1RB0RD` and
+  `0RB0LA_1RC0RC_1LD1RB_1LA0LD` with their conjugates, and the 4-row class
+  of `0RB0LD_0RC1RB_1LD1RC_0LA1LA`.
 
 ## 8. What we deliberately do NOT redo
 
