@@ -478,3 +478,8 @@ CBT_LE10_22	10
 CBT_AST_134	600
 CBT_AST_135	600
 CBT_AST_136	600
+
+# AST17 combined potentials: local builds 4.4, 8.9, 9.9 seconds.
+CBT_AST_137	15
+CBT_AST_138	30
+CBT_AST_139	30

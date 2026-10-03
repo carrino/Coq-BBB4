@@ -8446,3 +8446,52 @@ The requested block-list scope is back to **68 proved and 46 open**.
 This restores previously proved rows in a smaller form; it does not count
 them as newly discovered machines. The single-target checker can also be
 used when future rows need different abstractions for different instructions.
+
+
+#### 7.4.AST17 Combining two potential finders: five block-list rows (2026-10-03)
+
+AST137--139 board five previously open rows, using the unchanged
+`FuelMixTr` checker:
+
+| Batch | Row | Window |
+|---|---|---|
+| AST137 | `1RB0RD_0LC0RA_1RC1LD_1LB1RA` | 3 |
+| AST137 | `1RB1LD_0RC0LD_1LC1RA_1LB0LA` | 3 |
+| AST138 | `1RB0LC_0RC0RA_1LD1LA_1RA1LD` | 4 |
+| AST138 | `1RB1LA_1RC0LD_0RD0RB_1LA1LB` | 4 |
+| AST139 | `1RB1LD_0RC0LB_1LC1RA_0RD0LA` | 5 |
+
+The previous weighted and nonincreasing-potential searches replaced one
+another. They succeed on different cyclic components, even within one
+instruction's graph. `fuelcombinedtr_batch.py` first tries the ordinary
+weighted finder, then falls back to a potential that is nonincreasing on
+all edges but strictly decreases on only some. Exact integer replay still
+checks every emitted component before Coq checks the complete certificate.
+No new Coq checker or axiom is needed.
+
+The finder subtracts the minimum gated node potential and divides all
+weights and potentials by their common divisor. This preserves the signs
+of integer edge changes and avoids large unary coefficients. For AST139,
+the sum of serialized node ranks fell from 30,104,295 to 526,110; the
+unchanged checker still accepts the normalized certificate.
+
+A combined sweep over all 46 open rows, windows 3--4, maximum pattern
+length 6, boot 0 and 20 seconds per row found the first four rows (42
+failures). On the 42-row residue, windows 5--6, patterns up to 8 and 45
+seconds per row found AST139 (34 failures, 7 timeouts). The phase-aware
+variant `fuelphasecombinedtr_batch.py`, windows 3--5 with the same longer
+patterns and 45-second limit, independently found AST139 (35 failures,
+6 timeouts). The smaller ordinary certificate is retained.
+
+`fuelcombined_blocklists.jsonl` stores parameters and search outcomes,
+with successful certificates stored only in the Coq batch files.
+`blocklists_combined_replay.py --check` checks SHA-256 values and regenerates
+all three batches byte for byte. Final local Coq 8.18 builds took 4.4,
+8.9 and 9.9 seconds, peaking at 677,298,176, 838,860,800 and 1,161,560,064
+bytes respectively. Assumption audits for all three batch theorems list
+only `functional_extensionality_dep`.
+
+The requested 114-row scope now has **73 proved and 41 open**. The split
+has **599 batches, 10,866 boarded, 58 remaining**. All five row proofs,
+certificate replay, project registration, frozen census cache, generated
+split and six-shard checks pass.
