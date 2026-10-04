@@ -1,0 +1,156 @@
+[
+  {
+    "spec": "0RB0LB_1LC1RD_1LA0RD_1RB1RC",
+    "source": "0RB0LB_1LC1RD_1LA0RD_1RB1RC",
+    "p": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "flip": false,
+    "mode": "zero",
+    "boot": 34,
+    "tail": [
+      1,
+      1,
+      1
+    ],
+    "failed": [
+      [
+        0,
+        0
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "fuel": 2488,
+    "rounds": 19,
+    "contexts": 303,
+    "certificate_sha256": "efcb215f26cb70333e43feb02260e84f95a446d3e819588fce97b4abb63082f0"
+  },
+  {
+    "spec": "1RB0LD_0LC0RC_1RA1LD_1LC1LA",
+    "source": "0RB0LB_1LC1RD_1LA0RD_1RB1RC",
+    "p": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "flip": true,
+    "mode": "zero",
+    "boot": 16,
+    "tail": [
+      1
+    ],
+    "failed": [
+      [
+        1,
+        0
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "fuel": 2528,
+    "rounds": 19,
+    "contexts": 308,
+    "certificate_sha256": "aaf8206c0cd2dc657fd95d5dcbc27dc6918372721c706f160d0963788ebfc10e"
+  },
+  {
+    "spec": "1RB0RC_1LC1LD_1RD1LB_1RA0LB",
+    "source": "1LD0LB_1LC1RD_1LA0RD_1RB1RC",
+    "p": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "flip": true,
+    "mode": "oneleft",
+    "boot": 21,
+    "tail": [
+      1,
+      1,
+      1
+    ],
+    "failed": [
+      [
+        0,
+        0
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "fuel": 2376,
+    "rounds": 19,
+    "contexts": 289,
+    "certificate_sha256": "59afc20d4e1c26b8ee19ecd04e5aff0f5539472db3f8e4ed60b6cfefb816c98c"
+  },
+  {
+    "spec": "1RB1LD_1RC0LD_0LA0RA_1LA1LB",
+    "source": "0RB0LB_1LC1RD_1LA0RD_1RB1RC",
+    "p": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "flip": true,
+    "mode": "zero",
+    "boot": 33,
+    "tail": [
+      1,
+      1,
+      1
+    ],
+    "failed": [
+      [
+        2,
+        0
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "fuel": 2480,
+    "rounds": 19,
+    "contexts": 302,
+    "certificate_sha256": "19f6e179b0d4b4f8d776d557e817b5253cf0c12032caa01949b7f5a0476954b3"
+  },
+  {
+    "spec": "1RB1RC_1LC1RA_1LD0RA_0RB0LB",
+    "source": "0RB0LB_1LC1RD_1LA0RD_1RB1RC",
+    "p": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "flip": false,
+    "mode": "zero",
+    "boot": 8,
+    "tail": [],
+    "failed": [
+      [
+        3,
+        0
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "fuel": 2552,
+    "rounds": 19,
+    "contexts": 311,
+    "certificate_sha256": "c3ae3dbf39f9f442ea47b26803da3e7031be450b478f118106379883337c3d7f"
+  }
+]

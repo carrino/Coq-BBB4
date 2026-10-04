@@ -493,3 +493,10 @@ CBT_AST_142	15
 # AST19: marked returns close the final three counters (5.5 s / 4.5 s).
 CBT_AST_143	20
 CBT_AST_144	15
+
+# AST20: four stack-return rows, 53.9 s local Coq 8.18 build.
+CBT_AST_145	180
+
+# AST21: five marked-return rows (8.1 s), four exact-extent rows (150.1 s wall / 99.4 s CPU).
+CBT_AST_146	15
+CBT_AST_147	450

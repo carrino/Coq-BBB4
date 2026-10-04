@@ -1,0 +1,46 @@
+[
+  {
+    "spec": "1RB0LA_0RC0RD_1LA1LC_0LC0RB",
+    "n": 3,
+    "t": 0,
+    "mirrored": false,
+    "max_pattern": 8,
+    "fuel": 5440,
+    "rounds": 20,
+    "contexts": 672,
+    "certificate_sha256": "a78f75d76865b41370468d424a8cfb957ee9720d77f859e9a19eeda66454224e"
+  },
+  {
+    "spec": "1RB0LA_1LC0RD_0LC1LA_0RB1RD",
+    "n": 3,
+    "t": 0,
+    "mirrored": false,
+    "max_pattern": 8,
+    "fuel": 6768,
+    "rounds": 20,
+    "contexts": 838,
+    "certificate_sha256": "346c73873426922d45ebcb1185b04f6a7a9b96f9cb8f3d8292eba77dd58ef1d2"
+  },
+  {
+    "spec": "1RB0LA_1RC1LD_0LD0RB_0RC1LA",
+    "n": 3,
+    "t": 0,
+    "mirrored": false,
+    "max_pattern": 8,
+    "fuel": 6192,
+    "rounds": 20,
+    "contexts": 766,
+    "certificate_sha256": "db851ab716b7310caaf2515d0f53c37eb90aade781e227405e5adbbf891a1326"
+  },
+  {
+    "spec": "1RB0LA_1RC1LD_0LD0RC_0RB1LA",
+    "n": 3,
+    "t": 0,
+    "mirrored": false,
+    "max_pattern": 8,
+    "fuel": 6384,
+    "rounds": 20,
+    "contexts": 790,
+    "certificate_sha256": "cdeab175e982a302e0b21a8471da61b76b1929ddfde4ee7c326c1e403d0d90f4"
+  }
+]
