@@ -8838,3 +8838,62 @@ no complete certificate. All 14 whole-row outcomes are in
 The split now has **606 batches, 10,880 boarded, 44 remaining**: 41 from
 the block-list scope and these three counter holdouts. Required split,
 project, frozen census-cache and six-shard checks pass.
+
+#### 7.4.AST19 — Marked returns close the last three counters (2026-10-03)
+
+**All eleven rows in `counters11_rows.txt` are now boarded.** The three
+remaining rows need only local return invariants, so the nested overflow
+laws left open in LE11/12 are not prerequisites for transition liveness.
+
+| Batch | Row | Manual instruction(s) |
+|---|---|---|
+| AST143 | `1RB1LD_1RC0RB_1LA1RC_1LC0LA` | C1, D1 |
+| AST143 | `1RB1LA_1LC1RD_1LA0LC_1RA0RB` | A1, D1 |
+| AST144 | `1RB0RB_1LC1RA_0LD0LC_1RD0RB` | A1 |
+
+`MirrorNestedReturnTr` proves positive returns from C1 with a 1 immediately
+to the left, with both remaining finite tape tails arbitrary. A leftward
+A/D walk preserves a right-hand `01` marker preceded by a run of ones.
+Structural induction on the finite left tail proves that the walk either
+finds another marked C1 or turns into a B sweep that clears those ones
+and reaches the marker. The separate D1 witness scans the finite right
+tail. These are eventual marked returns; an intermediate C1 need not
+itself carry the marker. The primary row boots into the family at step 7.
+Its mirrored conjugate uses permutation `1203` and a direct boot at step 8.
+
+`OverflowNestedReturnTr` uses A1 with left prefix `[1;b;1]`, where `b` and
+the remaining finite tails are arbitrary. B scans right pairs `10`,
+leaving left pairs `11`; encountering `11` returns immediately to a
+marked A1. Encountering zero starts a C sweep that erases the accumulated
+pairs. The strong left marker `0111` produces a right `0111` marker;
+structural induction on the remaining left tail closes the return. The
+weak marker `0101` reduces to the strong case. The first marked anchor
+is at step 23, with `b=0`, left suffix `[1]`, right suffix `[1]`.
+An additional finite-B-to-D0 witness is proved, but not needed by AST144:
+the original-orientation window-3 FuelMix finder certifies all seven
+instructions other than A1. AST18's survey retained the first D0
+certificate it found, in the mirrored orientation, without testing that
+target again in the original orientation.
+
+`MarkedReturnTr.conjugate_marked_return_fire` is the shared logical glue:
+any family with existential positive returns and an eventual instruction
+witness from every member supplies arbitrarily late visits, including
+after state renaming and reflection. Endpoints are compared after `lift`,
+so finite blank padding is immaterial. The batches combine these manual
+visits with the landed `FuelMixPartialTr` checker at window 3.
+
+`mirror_marked_batch.py` and `overflow_marked_batch.py` support finder
+replay (`--find`) and byte-for-byte regeneration checks (`--check`).
+Certificate payloads occur only in the Coq batches; their JSON metadata
+records hashes, parameters and concrete boots. The shared replay helper
+now respects the recorded orientation.
+
+Local Coq 8.18 builds: AST143 **5.5 s / 711,671,808 bytes** peak RSS;
+AST144 **4.5 s / 574,586,880 bytes**. Both complete batch theorems and
+the new return lemmas pass `Print Assumptions` with only
+`functional_extensionality_dep`. The marked-return proofs were also
+independently reviewed. Main `cd839f5b` was fast-forwarded before the
+final checks; it already includes AST140--142.
+
+The regenerated split has **608 batches, 10,883 boarded, 41 remaining**,
+all from the block-list scope. `counters11_remaining.txt` is empty.
