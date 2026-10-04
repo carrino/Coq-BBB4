@@ -8986,3 +8986,85 @@ AST147 **150.087 s wall / 99.401 s CPU / 1,207,599,104 bytes**, with
 concurrent finder work. The split now has **611 batches, 10,896 boarded,
 28 remaining**. Wider exact-extent searches and further finite-return
 arguments are still in progress; exploratory potentials are not proofs.
+
+#### 7.4.AST22 — Nonblank-count parity closes two more lists (2026-10-03)
+
+AST148 proves `1RB0LD_0LC0RB_1RA1LD_1RB1LC` and
+`1RB1LC_0LC0RB_1RD1LA_1RB0LA`. `FuelParityTr` refines each side to
+zero, one, positive even, or odd at least three nonblank cells. Its
+recursive count classifier has direct push/pop lemmas; popping from
+the even class branches to one or odd at least three. The covering
+relation projects to AST21's exact capped-count relation.
+
+`FuelParityMixTr` reuses the proved natural pattern/extent measures
+through that projection while retaining the full parity context in
+rank and gate keys. Both rows have complete eight-instruction
+certificates at window 3 in original orientation (1,114 contexts each).
+Their terms need only ordinary patterns and left/right extent
+complements. `block_parity_batch.py --find` reproduces the graph and
+integer replay; `--check` verifies inline payload hashes and exact
+regeneration. The full batch compiles in **50.46 s wall / 48.78 s CPU**.
+The abstraction and wrapper were independently reviewed; both row
+theorems, the batch theorem and the checker soundness theorem have only
+`functional_extensionality_dep` in their assumption audits.
+
+Search extensions after AST21: exact-cap-2 extents at windows 4--5 on
+the 28-row residue found no further targets within the per-orientation
+budgets; exact caps 3/4 at window 3 likewise found none. A nearest-1
+distance proposal and total-extent pattern complements at window 3
+found none. Signed-head/complement proposals for core G found none at
+window 5 and timed out at window 6 (180 seconds per orientation); those
+proposals would in any case require a separate boundary proof. Higher
+count residues and additional finite-return arguments remain ongoing.
+
+The regenerated split has **612 batches, 10,898 boarded, 26 remaining**.
+Fifteen of the 41 starting block-list rows have now been proved.
+
+#### 7.4.AST23 — Protected word stacks close the ninth core (2026-10-03)
+
+AST149 proves `1RB0RA_0LC0RD_1LD1LB_1RA0LB`. Its one missing
+instruction, D1, becomes C1 in the canonical table
+`0LB0RC_1LC1LA_1RD0LA_1RA0RD` (source-to-row permutation `1230`,
+without reflection). The other seven instruction witnesses use the
+landed FuelMixPartial checker in mirrored orientation at window 3,
+381 contexts.
+
+`BlockCoreIReturnTr.bi_return` proves positive returns within a marked
+C1 family. Write B=`01`, and let a marker T be either `001` or `101`.
+Good left words are an odd positive power of B, or B^k T W where W is
+good. The right word has no adjacent ones. The core phase requires its
+right word to begin with 1; the second phase instead requires a left
+`001` marker. The actual row reaches the second phase at step 14,
+with left `00101`, head 1, and a blank right tape.
+
+A protected D phase has left `101 B^k T W`. Right scans of `010` and
+`1010` preserve that form; `00` and `100` return to the marked family.
+Structural induction on the finite right word proves this phase
+terminates. C1 consumes B pairs until it encounters a marker. For the
+terminal odd B-run, the resulting even number of `10` blocks makes
+the blank-left excursion produce another protected D phase. Explicit
+blank-padding lemmas cover the finite-tape endpoints.
+
+This proof needs a reachable marked family. A universal finite C1
+claim is not used: a separate finite starting tape avoided C1 for ten
+million simulated steps, so empirical blanket termination was not a
+sound basis for the argument. The final return theorem was independently
+reviewed. Its assumption audit contains only
+`functional_extensionality_dep`; the marked-instruction lemma is closed
+under the global context. The batch compiles in **2.03 s / 584,204,288
+bytes** peak RSS. `block_guard_stack_batch.py --find` replays the
+seven certificates; `--check` verifies payload hashes and exact source
+regeneration.
+
+Further bounded searches on the previous 26-row residue found no new
+certificates from exact counts combined with extent residues mod 2/3,
+spatial binary-value residues mod 3/5, side pattern-count parity or
+caps for `11`, `01`, and `001`, side-count difference bands with
+minimum/maximum/absolute-difference measures, or gated upper bounds on
+the first distance moment. Exact parity after a 4,096-step warmup at
+window 3 also found none. These are search results, not impossibility
+claims. More specialized marked returns remain under development.
+
+After merging main `c918443c`, the regenerated split has **613 batches,
+10,899 boarded, 25 remaining**. Sixteen of the 41 starting block-list
+rows have now been proved.

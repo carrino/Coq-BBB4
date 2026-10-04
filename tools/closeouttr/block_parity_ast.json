@@ -1,0 +1,24 @@
+[
+  {
+    "spec": "1RB0LD_0LC0RB_1RA1LD_1RB1LC",
+    "n": 3,
+    "t": 0,
+    "mirrored": false,
+    "max_pattern": 8,
+    "fuel": 8976,
+    "rounds": 20,
+    "contexts": 1114,
+    "certificate_sha256": "da67d5db1ec99deea0def040b80adad26a81ffa1155be84165806117f62009e6"
+  },
+  {
+    "spec": "1RB1LC_0LC0RB_1RD1LA_1RB0LA",
+    "n": 3,
+    "t": 0,
+    "mirrored": false,
+    "max_pattern": 8,
+    "fuel": 8976,
+    "rounds": 20,
+    "contexts": 1114,
+    "certificate_sha256": "e27f9dcdf252d41976178c5e3ee07c97291a987287c5245230108abf72e905a6"
+  }
+]
