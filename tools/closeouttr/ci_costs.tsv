@@ -500,3 +500,9 @@ CBT_AST_145	180
 # AST21: five marked-return rows (8.1 s), four exact-extent rows (150.1 s wall / 99.4 s CPU).
 CBT_AST_146	15
 CBT_AST_147	450
+
+# AST22: exact-count parity, 50.5 s local Coq build.
+CBT_AST_148	180
+
+# AST23: protected word-stack return, 2.0 s local Coq 8.18 build.
+CBT_AST_149	10
