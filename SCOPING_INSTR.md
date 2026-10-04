@@ -9159,3 +9159,44 @@ G boot facts are closed under the global context.
 
 The regenerated split has **617 batches, 10,906 boarded, 18 remaining**.
 Twenty-three of the 41 starting block-list rows are now proved.
+
+#### 7.4.AST26 — A signed binary counter closes another pair (2026-10-04)
+
+AST154 proves `1RB0LC_1RC0RD_1LA0LC_1RD0RA` and
+`1RB0RD_1LC0LB_1RA0LB_1RD0RC`. The latter is a state conjugate of
+the former, with source-to-row permutation `2013` and no reflection.
+Unlike the preceding batches, this pair needs no Fuel certificate:
+the lap and all eight instruction witnesses are proved directly.
+
+At B0, let the left word be `(10)^(2n)1` and the right word encode a
+digit list w by tokens `000`/`100`, with final terminator `1`. The
+signed value is `V([])=-1`, `V(0w)=2V(w)`, and `V(1w)=-2V(w)-1`.
+The marked family requires n>=1 and V(w)>0. The empty word really is
+unsafe: its erased terminator permits D to escape across blank tape.
+Positivity rules it out and is preserved by the exact successor.
+
+Write H([])=[], H(dx)=1(not d)x; F([])=[1], F(0x)=0F(x),
+F(1x)=H(x). The successor is S(0x)=H(x), S(1x)=0F(x).
+`BlockCoreKValueTr` proves V(Hw)=2V(w)+1, V(Fw)=-V(w), and
+V(Sw)=V(w)+1 for nonempty words. `BlockCoreKReturnTr` proves an even
+left sweep, the H/F carry microphase by finite-word induction, and an
+odd return sweep. Together they give a positive lap from (n,w) to
+(n+1,S(w)). The actual boots are at steps 27 and 51, with n=1 and n=2,
+respectively, and w=[1] in both cases.
+
+`BlockCoreKFireTr` reaches the left blank boundary through a uniform
+A sweep. Its initial fragment and boundary turn witness seven
+instructions; a finite D scan to the encoded terminal one witnesses
+D1. `MarkedReturnTr` transports recurrence to both original rows.
+Independent review and assumption audits passed: the arithmetic is
+closed under the global context, and the lap, firing, and coverage
+theorems use only `functional_extensionality_dep`.
+
+`block_signed_counter_batch.py --check` verifies exact regeneration.
+The two-row batch compiles in **0.39 s / 488,980,480 bytes** peak RSS.
+An additional exact-count/extent search at window 6 over the preceding
+12 multi-target rows found no certificates (the two conjugate rows of
+`0RB1LD_1RC0RC_1LA1RA_1RA0LD` timed out in both orientations after 60 s).
+
+The regenerated split has **618 batches, 10,908 boarded, 16 remaining**.
+Twenty-five of the 41 starting block-list rows are now proved.
