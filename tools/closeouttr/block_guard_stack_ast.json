@@ -1,0 +1,28 @@
+[
+  {
+    "spec": "1RB0RA_0LC0RD_1LD1LB_1RA0LB",
+    "source": "0LB0RC_1LC1LA_1RD0LA_1RA0RD",
+    "p": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "flip": false,
+    "failed": [
+      [
+        3,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 14,
+    "fuel": 3112,
+    "rounds": 17,
+    "contexts": 381,
+    "certificate_sha256": "918a1884e87f430f8d24c708e54b1e7dfdf3be7e4e14369d0cd010713b9967d3"
+  }
+]
