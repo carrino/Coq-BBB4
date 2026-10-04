@@ -8986,3 +8986,36 @@ AST147 **150.087 s wall / 99.401 s CPU / 1,207,599,104 bytes**, with
 concurrent finder work. The split now has **611 batches, 10,896 boarded,
 28 remaining**. Wider exact-extent searches and further finite-return
 arguments are still in progress; exploratory potentials are not proofs.
+
+#### 7.4.AST22 — Nonblank-count parity closes two more lists (2026-10-03)
+
+AST148 proves `1RB0LD_0LC0RB_1RA1LD_1RB1LC` and
+`1RB1LC_0LC0RB_1RD1LA_1RB0LA`. `FuelParityTr` refines each side to
+zero, one, positive even, or odd at least three nonblank cells. Its
+recursive count classifier has direct push/pop lemmas; popping from
+the even class branches to one or odd at least three. The covering
+relation projects to AST21's exact capped-count relation.
+
+`FuelParityMixTr` reuses the proved natural pattern/extent measures
+through that projection while retaining the full parity context in
+rank and gate keys. Both rows have complete eight-instruction
+certificates at window 3 in original orientation (1,114 contexts each).
+Their terms need only ordinary patterns and left/right extent
+complements. `block_parity_batch.py --find` reproduces the graph and
+integer replay; `--check` verifies inline payload hashes and exact
+regeneration. The full batch compiles in **50.46 s wall / 48.78 s CPU**.
+The abstraction and wrapper were independently reviewed; both row
+theorems, the batch theorem and the checker soundness theorem have only
+`functional_extensionality_dep` in their assumption audits.
+
+Search extensions after AST21: exact-cap-2 extents at windows 4--5 on
+the 28-row residue found no further targets within the per-orientation
+budgets; exact caps 3/4 at window 3 likewise found none. A nearest-1
+distance proposal and total-extent pattern complements at window 3
+found none. Signed-head/complement proposals for core G found none at
+window 5 and timed out at window 6 (180 seconds per orientation); those
+proposals would in any case require a separate boundary proof. Higher
+count residues and additional finite-return arguments remain ongoing.
+
+The regenerated split has **612 batches, 10,898 boarded, 26 remaining**.
+Fifteen of the 41 starting block-list rows have now been proved.

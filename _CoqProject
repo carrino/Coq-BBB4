@@ -506,6 +506,8 @@ theories/Checkers/PatternComplementTr.v
 theories/Checkers/FuelExtentTr.v
 theories/Checkers/FuelExactTr.v
 theories/Checkers/FuelExactMixTr.v
+theories/Checkers/FuelParityTr.v
+theories/Checkers/FuelParityMixTr.v
 theories/Checkers/FuelMixPartialTr.v
 theories/Checkers/FuelMixTargetTr.v
 theories/Checkers/FuelMixTargetFastTr.v
@@ -12174,6 +12176,7 @@ theories/CloseoutTr/CBT_AST_144.v
 theories/CloseoutTr/CBT_AST_145.v
 theories/CloseoutTr/CBT_AST_146.v
 theories/CloseoutTr/CBT_AST_147.v
+theories/CloseoutTr/CBT_AST_148.v
 theories/CloseoutTr/CBT_AST_15.v
 theories/CloseoutTr/CBT_AST_16.v
 theories/CloseoutTr/CBT_AST_17.v
