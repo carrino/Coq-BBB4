@@ -9068,3 +9068,38 @@ claims. More specialized marked returns remain under development.
 After merging main `c918443c`, the regenerated split has **613 batches,
 10,899 boarded, 25 remaining**. Sixteen of the 41 starting block-list
 rows have now been proved.
+
+#### 7.4.AST24 — A terminal guard closes three more block lists (2026-10-03)
+
+AST150 proves all three rows in core D:
+
+- `0RB0RA_0LC1RA_1RB1LD_1LC0LD`
+- `0RB1LD_1LA1RC_1RB0RC_0LA0LD`
+- `1RB1LC_0LA1RD_1LA0LC_0RB0RD`
+
+They have the same full canonical table
+`0LB0LA_0RC1LA_1LB1RD_1RC0RD`. `BlockCoreDReturnTr.bd_return`
+uses A1 with an arbitrary finite left word and a right word ending in
+`1011`. The actual rows reach this family after 22, 21, and 20 steps,
+respectively. State permutations and reflection transport A1 recurrence
+to each row's missing instruction.
+
+D scans right `1` and `01`. A `00` turns to A with a manufactured `11`
+prefix. A strips left `01` pairs, placing `10` on the right. It either
+encounters marked A1 or turns back to D; D consumes the manufactured
+`(10)^k11` and resumes on the shorter old right suffix. A continuation
+quantifying over the new left word makes the induction independent of
+that word. The terminal `1011` and `01011` cases reach marked A1
+locally. One initial erase step makes the return strictly positive.
+
+The generator `block_terminal_guard_batch.py` checks all conjugacies,
+replays the seven remaining instruction certificates with `--find`,
+and checks source hashes and exact regeneration with `--check`. The
+three certificates use mirrored window-3 FuelMixPartial graphs of
+541, 539, and 537 contexts. The full batch compiles in **5.18 s /
+811,843,584 bytes** peak RSS. Independent review and assumption audits
+passed: the return and coverage theorems use only
+`functional_extensionality_dep`; the marked-instruction lemma is closed.
+
+The regenerated split has **614 batches, 10,902 boarded, 22 remaining**.
+Nineteen of the 41 starting block-list rows are now proved.

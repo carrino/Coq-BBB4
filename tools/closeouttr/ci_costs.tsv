@@ -506,3 +506,6 @@ CBT_AST_148	180
 
 # AST23: protected word-stack return, 2.0 s local Coq 8.18 build.
 CBT_AST_149	10
+
+# AST24: three terminal-guard rows, 5.2 s local Coq 8.18 build.
+CBT_AST_150	20
