@@ -12099,6 +12099,7 @@ theories/Machines/LadderTr/LDRT_1RB1RD_1LC0RA_1LD0LC_0RB1LC.v
 theories/Counters/FiniteInstrTr.v
 theories/Counters/BlockCoreBReturnTr.v
 theories/Counters/BlockCoreIReturnTr.v
+theories/Counters/BlockCoreDReturnTr.v
 theories/Counters/BlockCoreAReturnTr.v
 theories/Counters/Period3MacroTr.v
 theories/Counters/ValueFrontierTransducer.v
@@ -12180,6 +12181,7 @@ theories/CloseoutTr/CBT_AST_147.v
 theories/CloseoutTr/CBT_AST_148.v
 theories/CloseoutTr/CBT_AST_149.v
 theories/CloseoutTr/CBT_AST_15.v
+theories/CloseoutTr/CBT_AST_150.v
 theories/CloseoutTr/CBT_AST_16.v
 theories/CloseoutTr/CBT_AST_17.v
 theories/CloseoutTr/CBT_AST_18.v
