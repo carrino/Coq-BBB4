@@ -489,3 +489,7 @@ CBT_AST_139	30
 CBT_AST_140	30
 CBT_AST_141	15
 CBT_AST_142	15
+
+# AST19: marked returns close the final three counters (5.5 s / 4.5 s).
+CBT_AST_143	20
+CBT_AST_144	15

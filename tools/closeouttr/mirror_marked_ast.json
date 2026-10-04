@@ -1,0 +1,73 @@
+[
+  {
+    "spec": "1RB1LD_1RC0RB_1LA1RC_1LC0LA",
+    "source": "1RB1LD_1RC0RB_1LA1RC_1LC0LA",
+    "p": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "flip": false,
+    "boot": 7,
+    "left": [
+      1
+    ],
+    "right": [
+      1
+    ],
+    "failed": [
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "fuel": 2584,
+    "rounds": 19,
+    "contexts": 315,
+    "certificate_sha256": "ed1ecee7ca79b639cc85f461dced6b833148db5c27a78db1ab18ae530d2ddb9e"
+  },
+  {
+    "spec": "1RB1LA_1LC1RD_1LA0LC_1RA0RB",
+    "source": "1RB1LD_1RC0RB_1LA1RC_1LC0LA",
+    "p": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "flip": true,
+    "boot": 8,
+    "left": [],
+    "right": [
+      1,
+      1
+    ],
+    "failed": [
+      [
+        0,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "fuel": 2664,
+    "rounds": 19,
+    "contexts": 325,
+    "certificate_sha256": "f5e38ca9281852debcfaedeaba0b532647f62776ff24c63de6a2f568dfd12f01"
+  }
+]

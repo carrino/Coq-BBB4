@@ -12102,6 +12102,9 @@ theories/Counters/PairDrainFiniteTr.v
 theories/Counters/TripleSweepFiniteTr.v
 theories/Counters/FiniteReturnTr.v
 theories/Counters/FiniteReturnFireTr.v
+theories/Counters/MarkedReturnTr.v
+theories/Counters/MirrorNestedReturnTr.v
+theories/Counters/OverflowNestedReturnTr.v
 theories/Counters/AlternatingCarryFiniteTr.v
 theories/Counters/MarkedCarryReturnTr.v
 theories/Counters/WanderingCarryReturnTr.v
@@ -12160,6 +12163,8 @@ theories/CloseoutTr/CBT_AST_14.v
 theories/CloseoutTr/CBT_AST_140.v
 theories/CloseoutTr/CBT_AST_141.v
 theories/CloseoutTr/CBT_AST_142.v
+theories/CloseoutTr/CBT_AST_143.v
+theories/CloseoutTr/CBT_AST_144.v
 theories/CloseoutTr/CBT_AST_15.v
 theories/CloseoutTr/CBT_AST_16.v
 theories/CloseoutTr/CBT_AST_17.v

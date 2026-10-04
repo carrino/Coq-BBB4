@@ -72,7 +72,8 @@ def main(data=DATA,batch=BATCH,emitter=emit):
         import fuelcombinedtr_batch as combined
         ft=combined.ft
         for r in records:
-            n=r['n'];tbl=ft.bp.parse(ft.gf.mirror_mtext(r['spec']))
+            n=r['n'];spec=ft.gf.mirror_mtext(r['spec']) if r['mirrored'] else r['spec']
+            tbl=ft.bp.parse(spec)
             _,ls,rs,a0,_=ft.bp.build_closure(tbl,n,0)
             nodes=ft.gf.build_fw_closure(tbl,ls,rs,(a0,0,0));adj=ft.gf.fw_adj(tbl,ls,rs,nodes)
             candidates=ft.pattern_candidates(n,r['max_pattern']);delta=ft.make_pattern_delta(tbl,n)
