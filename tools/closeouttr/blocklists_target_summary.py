@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate remaining per-instruction search summaries and core conjugacies.
+"""Validate historical per-instruction search summaries and core conjugacies.
 
 These files are search diagnostics, not Coq certificates or coverage claims.
 Use --verify-spec SPEC to rerun the recorded successful target searches for
@@ -23,10 +23,11 @@ def main():
     records = list(map(json.loads, (HERE / 'blocklists_combined_partial.jsonl').read_text().splitlines()))
     baseline = {r['spec']: r for r in map(json.loads, (HERE / 'blocklists114_partial.jsonl').read_text().splitlines())}
     remaining = set((ROOT / 'closeouttr_remaining.txt').read_text().splitlines())
+    scope = set((HERE / 'blocklists114.txt').read_text().splitlines())
     by_spec = {r['spec']: r for r in records}
     assert len(by_spec) == len(records)
     for r in records:
-        assert r['spec'] in remaining
+        assert r['spec'] in scope
         b = baseline[r['spec']]
         assert r['base_n'] == b['n'] == 3 and r['base_mirrored'] == b['mirrored']
         assert r['base_uncertified'] == b['failed']
@@ -55,6 +56,7 @@ def main():
             assert render(conj(table, p, row['flip'])) == core['core']
     assert seen == {r['spec'] for r in records if len(r['missing']) == 1}
     print(f'Checked {len(records)} partial summaries; {len(seen)} single-target rows in {len(cores)} cores')
+    print(f'{len(set(by_spec) & remaining)} of these historical rows remain open')
     if args.verify_spec:
         r = by_spec[args.verify_spec]
         import fuelcombinedtr_batch as combined

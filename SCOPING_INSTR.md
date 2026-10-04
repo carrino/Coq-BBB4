@@ -8897,3 +8897,36 @@ final checks; it already includes AST140--142.
 
 The regenerated split has **608 batches, 10,883 boarded, 41 remaining**,
 all from the block-list scope. `counters11_remaining.txt` is empty.
+
+#### 7.4.AST20 — Finite stack return for four block-list rows (2026-10-03)
+
+`BlockCoreBReturnTr.bb_finite` proves that every finite configuration fires
+A0 for the seven-transition core `---0LB_1RC1LB_1LD0RB_1LA0LD`.
+A0 itself is unconstrained. A B sweep consumes right `1` and `01`; a
+right `00` turns into the left stack. A `100` guard drains positive
+one-runs. Induction on the finite right suffix closes the frontier, and
+strong induction on the finite left word closes all configurations.
+
+AST145 transports this universal finite-return theorem to four full-table
+conjugates and combines it with window-4 `FuelMixPartialTr` certificates:
+
+- `0RB0LD_1LC0RD_1LA0LC_1RB1LD`
+- `1RB0LD_1RC0RB_0LA0RD_1LA1RD`
+- `1RB0RA_0LC0RD_1RA0LD_1LC1RD`
+- `1RB1LA_1LC0RA_1LD0LC_0RB0LA`
+
+`block_stack_batch.py --find` replays certificate search; `--check`
+validates exact regeneration and metadata hashes. The complete batch
+compiles in **53.9 s / 1,125,105,664 bytes** peak RSS. Its only assumption
+is `functional_extensionality_dep`. Historical per-instruction search
+summaries remain intact; their validator now reports which rows are
+still open rather than requiring all historical rows to remain open.
+
+A further sweep over all 41 starting rows at windows 3--5, boots 64/4096
+and pattern bound 8 found no complete combined-potential certificate
+(30 no certificate, 11 timed out at 20 seconds per row). Manual return
+proofs and head-distance/complement measures remain under investigation;
+exploratory ranking candidates are not coverage claims.
+
+The regenerated split has **609 batches, 10,887 boarded, 37 remaining**,
+all from the block-list scope.
