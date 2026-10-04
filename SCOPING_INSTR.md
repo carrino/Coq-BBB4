@@ -8930,3 +8930,59 @@ exploratory ranking candidates are not coverage claims.
 
 The regenerated split has **609 batches, 10,887 boarded, 37 remaining**,
 all from the block-list scope.
+
+#### 7.4.AST21 — Paired returns and exact finite extents (2026-10-03)
+
+**Nine further block-list rows boarded in AST146--147.** Together with
+AST145, thirteen of the starting 41 are now proved.
+
+AST146 closes all five rows in the seven-transition core
+`---0LB_1LC1RD_1LA0RD_1RB1RC`. `BlockCoreAReturnTr` proves two positive
+marked A0 returns, for A0=0RB and A0=1LD. The right tail has fixed 1s in
+alternate cells. A D pass through a protected left 1 preserves that
+paired language; strong induction on its finite pair count handles the
+continuing runs of one and five 1s. Other odd runs normalize through
+paired sweeps. C then drains a finite stack of left pairs 01/11. The
+forward D scan builds exactly that stack, with one of two protected
+left bases. Conjugate boots at steps 34, 16, 21, 33 and 8 connect the
+actual rows. No numerical relation between adjacent block lengths is
+needed. Window-3 `FuelMixPartialTr` certificates cover the other seven
+instructions. `block_pair_stack_batch.py` provides `--find` and `--check`.
+
+AST147 closes these four rows with a new generic checker:
+
+- `1RB0LA_0RC0RD_1LA1LC_0LC0RB`
+- `1RB0LA_1LC0RD_0LC1LA_0RB1RD`
+- `1RB0LA_1RC1LD_0LD0RB_0RC1LA`
+- `1RB0LA_1RC1LD_0LD0RC_0RB1LA`
+
+`FuelExactTr` refines each half-tape count to exactly zero, exactly one,
+or at least two nonblank cells. Popping a 1 from the last class branches
+to one or at least two; inconsistent context windows are filtered out.
+The finite-tape witness in the covering relation makes that split
+constructive. The existing lower-bound classes cannot distinguish an
+empty side from an unknown side.
+
+`PatternComplementTr` proves that a pattern containing a 1 occurs no
+more often than there are 1s, including overlapping occurrences. It also
+defines the normalized finite extent, the distance to the farthest 1.
+`FuelExtentTr` proves exact extent and extent-minus-pattern deltas using
+the exact count classes. These natural measures handle a wholly blank
+side explicitly. `FuelExactMixTr` combines them with ordinary pattern
+counts, nonnegative coefficients and finite node potentials, then reuses
+the landed lexicographic fuel engine. All eight instructions certify in
+original orientation at window 3 for each AST147 row.
+
+`block_extent_batch.py --find` reproduces the full searches and exact
+integer replay; `--check` verifies certificate hashes and byte-for-byte
+regeneration. Certificate payloads occur only in the batch. The exact
+graph, complement bounds and wrapper were independently reviewed; an
+additional exhaustive replay checked 169,136 finite extent/complement
+deltas. Both aggregate batch theorems and the checker soundness theorem
+list only `functional_extensionality_dep` in `Print Assumptions`.
+
+Local Coq 8.18 builds: AST146 **8.133 s / 758,382,592 bytes** peak RSS;
+AST147 **150.087 s wall / 99.401 s CPU / 1,207,599,104 bytes**, with
+concurrent finder work. The split now has **611 batches, 10,896 boarded,
+28 remaining**. Wider exact-extent searches and further finite-return
+arguments are still in progress; exploratory potentials are not proofs.
