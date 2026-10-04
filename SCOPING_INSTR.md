@@ -9103,3 +9103,59 @@ passed: the return and coverage theorems use only
 
 The regenerated split has **614 batches, 10,902 boarded, 22 remaining**.
 Nineteen of the 41 starting block-list rows are now proved.
+
+#### 7.4.AST25 — Protected suffixes and a finite wall (2026-10-04)
+
+AST151--153 prove four more rows:
+
+- AST151: `1RB0LA_0RC0RD_1LA1RB_1LC1RC` and
+  `1RB1LB_1RC1LD_1LD0RC_0LB0LA` (core F).
+- AST152: `1RB0LA_0RC0RD_1LA0RC_0LC1RA` (core H).
+- AST153: `1RB0RA_1RC0RD_1LD1LC_1RA0LC` (core G).
+
+`BlockCoreFReturnTr` marks C1 with left word consisting of ones or ending
+in `1111`, and right word `01` followed by tokens `1`/`01`. Its protected
+D phase has left `0^n 011 W`, with W equal to `11`, `111`, or ending in
+`1111`. Induction on the right word handles the zero-run parameter and
+the finite endpoints; A strips left `01` pairs before entering that
+phase or returning. The two actual boots occur after 14 and 4 steps.
+
+`BlockCoreHReturnTr` marks A1 with left `01 L`, where L is generated
+from the singleton `1` by prefixes `1` and `01`. The right word has an
+explicit final blank and normalizes to empty, `01`, or a word ending
+in `0101` with no adjacent ones. A protected C pass consumes the finite
+left grammar while rebuilding a right zero-run. Its positive return
+starts at the actual 14-step boot. This row's window-3 Fuel graph leaves
+two instructions unresolved; the window-7 ordinary graph certifies all
+seven other instructions (4,990 contexts).
+
+`FiniteWallTr` supplies a new generic termination theorem. A finite
+certificate describes a right wall with an opaque finite left context.
+It checks every internal transition and every possible reentry from the
+left. A nonnegative integer potential based on the binary tape value,
+state, and fixed explicit width strictly decreases until the target is
+reached. Right escape is excluded by the certificate; a separate finite
+run handles an empty-left move.
+
+`BlockCoreGReturnTr` instantiates that theorem with 38 boundary words
+and 1,304 internal configurations on a 21-cell wall. Every internal A0
+has right `101010101001` and left prefix `101b`; the two values of b
+reset the wall in 29 or 37 steps. Outside-wall A0 takes one left step
+and preserves its boundary word. The actual boot is at step 214.
+`block_core_g_wall.py --check` reproduces the finite certificate; Coq
+checks its closure and terminal shapes. The decreasing potential is
+`24*binary(tape) + bias(state)*2^right_length + 26*2^width`, with biases
+`(-26,-4,-17,28)`.
+
+The batch generators `block_suffix_pair_batch.py`,
+`block_alternating_guard_batch.py`, and `block_finite_wall_batch.py`
+support certificate replay (`--find`) and exact regeneration (`--check`).
+Measured batch compilations: AST151 **2.15 s / 591,134,720 bytes**;
+AST152 **29.77 s / 2,636,300,288 bytes**; AST153 **2.15 s /
+586,711,040 bytes**. Independent reviews and assumption audits passed:
+the return and coverage theorems use only
+`functional_extensionality_dep`; the marked-instruction and concrete
+G boot facts are closed under the global context.
+
+The regenerated split has **617 batches, 10,906 boarded, 18 remaining**.
+Twenty-three of the 41 starting block-list rows are now proved.
