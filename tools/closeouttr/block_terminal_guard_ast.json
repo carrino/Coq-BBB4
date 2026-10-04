@@ -1,0 +1,80 @@
+[
+  {
+    "spec": "0RB0RA_0LC1RA_1RB1LD_1LC0LD",
+    "source": "0LB0LA_0RC1LA_1LB1RD_1RC0RD",
+    "p": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "flip": true,
+    "failed": [
+      [
+        0,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 22,
+    "fuel": 4392,
+    "rounds": 20,
+    "contexts": 541,
+    "certificate_sha256": "314a8cd3a4ee840d6da70b545e108d68718033d9457089c9f1ca97d503485624"
+  },
+  {
+    "spec": "0RB1LD_1LA1RC_1RB0RC_0LA0LD",
+    "source": "0LB0LA_0RC1LA_1LB1RD_1RC0RD",
+    "p": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "flip": false,
+    "failed": [
+      [
+        3,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 21,
+    "fuel": 4376,
+    "rounds": 20,
+    "contexts": 539,
+    "certificate_sha256": "3eaf32f4499b47528756c50d2eef2431ac51e4edd2c72a3b722c46429b1166a7"
+  },
+  {
+    "spec": "1RB1LC_0LA1RD_1LA0LC_0RB0RD",
+    "source": "0LB0LA_0RC1LA_1LB1RD_1RC0RD",
+    "p": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "flip": true,
+    "failed": [
+      [
+        3,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 20,
+    "fuel": 4360,
+    "rounds": 20,
+    "contexts": 537,
+    "certificate_sha256": "0a52179e8e39ac7ce1f56158580e7a804089d7b4689e1a17d67dce3a6af91ffd"
+  }
+]
