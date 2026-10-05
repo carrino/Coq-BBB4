@@ -155,7 +155,24 @@ one instruction contradicted the theorem.
 
 Past the harness's own horizon:
 
-AUDIT_HORIZON
+The 8 machines with the stalest instructions in the harness's own 10^10
+data were run again to 10^10 and beyond (cap 2 × 10^11). These are the
+machines where some instruction had been silent since about 1.2–1.3 × 10^9.
+
+- **The harness agrees with the independent simulator.** All 64
+  per-instruction fire counts and last fires at 10^10 match `cull.csv`
+  exactly. The harness's last-fire *step* is always our configuration
+  *index* + 1, which is the `S s` convention of §2.
+- **Every stale instruction fired again.** In the stalest machine,
+  `1RB0RC_1RC1RB_1LD1RA_1LB1LD`, A0 fired 8 times by 10^10, the last at step
+  1,202,895,087, and then again at 19,247,442,615. In the other seven, the
+  silent instructions came back at about 1.18 × 10^10. These are binary
+  counters whose rare instruction fires once per overflow, at roughly
+  geometric intervals. The theorem says they never stop. The harness alone
+  could not tell them apart from a quasihalt with a score in the billions.
+
+Raw output: [`bbbt4_horizon_1e10.txt`](bbbt4_horizon_1e10.txt). The format
+is `T<q><a>:<count>:<last index before 10^10>:<next fire>`.
 
 Rerun:
 
@@ -163,6 +180,7 @@ Rerun:
 gcc -O2 -o refire tools/bbbt4/refire.c
 cut -d, -f1 cull.csv | tail -n +2 | ./refire 1000000000 30000000000 > refire.out
 python3 tools/bbbt4/cull_audit.py cull.csv refire.out --tsv audit.tsv
+./refire 10000000000 200000000000 < stalest8.txt > horizon.out   # past 10^10
 ```
 
 The per-machine table is [`bbbt4_cull_audit.tsv`](bbbt4_cull_audit.tsv).
