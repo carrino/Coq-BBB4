@@ -187,15 +187,39 @@ The per-machine table is [`bbbt4_cull_audit.tsv`](bbbt4_cull_audit.tsv).
 
 ## 7. Reproducing the proof
 
+One command, on a fresh clone, mirrors the state level's `make proof-all`:
+
 ```
-make                                     # from source: everything CI checks, plus the champion
-make census-tr-units
-make census-tr-walk WALK_JOBS=5          # box: ~9 CPU-hours, 32 GB
-make closeout-tr-final                   # CloseoutFinalTr.v: bbbt4_bound
-make -f Makefile.coq theories/BBBT4_Champion.vo theories/Counters/BlankTailTr.vo
+git clone https://github.com/carrino/Coq-BBB4 && cd Coq-BBB4
+make proof-tr-all 2>&1 | tee proof-tr-all.log
+```
+
+It does the following:
+
+- Sets up a Coq with `native_compute` via `tools/census_toolchain.sh`,
+  creating the `census` opam switch if needed.
+- Checks that the generated files match the commit.
+- Walks the census (`census_tr`).
+- Builds the 626 closeout batches and `CloseoutTr.vo`, the champion, and the
+  instruction-level tests.
+- Compiles `CloseoutFinalTr.v` (`bbbt4_bound`) and `BBBT4_Value.v`
+  (`BBBT4_value`).
+
+The `Axioms:` block it prints for `BBBT4_value` should list
+`functional_extensionality_dep` and nothing else. Nothing committed is
+trusted, because the instruction-level walk has no committed `.vo`. Memory
+sets the job counts: a walk unit peaks near 5.8 GB. Override with
+`WALK_TR_JOBS=` and `CLOSEOUT_TR_JOBS=`. Budget several hours on an
+8-core, 32 GB machine.
+
+The same steps by hand:
+
+```
+make census-tr-walk WALK_JOBS=4
+make -f Makefile.coq theories/CloseoutTr/CloseoutTr.vo theories/BBBT4_Champion.vo \
+  theories/Counters/BlankTailTr.vo
+coqc -Q theories BBB4 theories/CloseoutTr/CloseoutFinalTr.v
 coqc -Q theories BBB4 theories/CloseoutTr/BBBT4_Value.v
-                                         # Print Assumptions BBBT4_value:
-                                         #   functional_extensionality_dep
 ```
 
 For an independent re-check of the compiled terms, run
@@ -209,6 +233,6 @@ For an independent re-check of the compiled terms, run
 | Claim stated (`BBBT4_Spec.v`) | done |
 | Lower bound (`BBBT4_Champion.v`) | done, builds from source |
 | Closeout: 10,924 of 10,924 rows (`closeout_tr_complete`) | done, CI |
-| Upper bound and value (`CloseoutFinalTr.v`, `BBBT4_Value.v`) | written; only checked with `census_tr` as a hypothesis. Needs the box run in §7 against current main |
+| Upper bound and value (`CloseoutFinalTr.v`, `BBBT4_Value.v`) | written; only checked with `census_tr` as a hypothesis. Needs `make proof-tr-all` (§7) on current main |
 | `coqchk` of the full chain | pending, box |
 | Independent reproduction on a second machine | pending |

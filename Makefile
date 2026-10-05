@@ -959,3 +959,85 @@ closeout-tr-final: closeout-tr
 	echo 'From BBB4.CloseoutTr Require Import CloseoutTr CloseoutFinalTr. Print Assumptions bbbt4_target.' \
 	  | coqtop -Q theories BBB4 -w none 2>&1 | grep -v '^$$' | tail -5
 .PHONY: closeout-tr-final
+
+# ---------------------------------------------------------------------------
+# proof-tr-all: the INSTRUCTION-LEVEL counterpart of proof-all.  One command
+# that re-derives, from source, on a fresh clone,
+#
+#   BBBT4_value : BBBT4_statement          (BBB_tr(4) = 32,779,478)
+#
+# and prints its Print Assumptions (expect functional_extensionality_dep and
+# nothing else).  Nothing committed is trusted: the transition-level walk has
+# no committed .vo at all, so every unit is walked here.  Steps:
+#
+#   1. toolchain: tools/census_toolchain.sh (native_compute is required --
+#      without it native_cast_no_check silently falls back to the VM)
+#   2. the generated files are current (closeout split, walk units)
+#   3. the census walk: census_tr (96 native units + assembly)
+#   4. the closeout: 626 batches + CloseoutTr.vo (closeout_tr_complete),
+#      the champion (BBBT4_Champion.vo) and the instruction-level tests
+#   5. CloseoutFinalTr.v (bbbt4_bound) and BBBT4_Value.v (BBBT4_value)
+#
+# MEMORY sets the job counts, not -j.  A walk unit peaks near 5.8 GB
+# (README), so WALK_TR_JOBS sizes at WALK_TR_RSS_GB per job, capped at the
+# physical cores; the batches peak under ~2.5 GB (the CI budget), so
+# CLOSEOUT_TR_JOBS sizes at CLOSEOUT_TR_RSS_GB.  On a 32 GB box (~30 GB
+# available) that is 4 walk jobs and up to 9 batch jobs.  Override either: `make proof-tr-all
+# WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6'.  A rerun keeps finished work (walk
+# units newer than RunTr_Split.vo, built .vo); to force a full re-walk,
+# delete theories/CensusTr/Compute/*.vo first.
+WALK_TR_RSS_GB ?= 6
+CLOSEOUT_TR_RSS_GB ?= 3
+_mem_jobs = $(shell m=$$(awk -v r=$(1) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-1}; c=$(2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+WALK_TR_JOBS ?= $(call _mem_jobs,$(WALK_TR_RSS_GB),$(WALK_CORES))
+CLOSEOUT_TR_JOBS ?= $(call _mem_jobs,$(CLOSEOUT_TR_RSS_GB),$(BUILD_JOBS))
+
+proof-tr-all:
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) _proof-tr-all-run
+
+_proof-tr-all-run:
+	@echo "############################################################"
+	@echo "# proof-tr-all: BBB_tr(4) = 32,779,478 from source.         "
+	@echo "# commit $$(git rev-parse HEAD 2>/dev/null)"
+	@echo "# $$(coqc --version | head -1) / OCaml $$(ocamlfind ocamlopt -version 2>/dev/null)"
+	@echo "# walk jobs $(WALK_TR_JOBS), batch jobs $(CLOSEOUT_TR_JOBS)"
+	@echo "############################################################"
+	@# same reasons as _proof-all-run: a stale Makefile.coq bakes in the
+	@# wrong native setting, and a tree built by another toolchain cannot
+	@# be loaded (OCaml-marshalled .vo) but looks up to date to make.
+	rm -f Makefile.coq
+	@S=.toolchain-stamp; \
+	 H="$$(coqc --version 2>/dev/null | tr -d '\n')|$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')"; \
+	 if [ -f "$$S" ] && [ "$$(cat $$S)" != "$$H" ]; then \
+	   echo ">>> this tree was built by a DIFFERENT toolchain:"; \
+	   echo ">>>   built with: $$(cat $$S)"; \
+	   echo ">>>   now using : $$H"; \
+	   echo ">>> its .vo cannot be loaded or extended -- running make clean."; \
+	   $(MAKE) clean >/dev/null; \
+	   rm -f theories/CensusTr/Compute/*.vo theories/CloseoutTr/CloseoutFinalTr.vo \
+	     theories/CloseoutTr/BBBT4_Value.vo; \
+	 fi; \
+	 echo "$$H" > "$$S"
+	$(MAKE) Makefile.coq
+	@echo ">>> [1/4] generated files current"
+	python3 tools/closeouttr/gen_closeout_tr.py --check
+	git diff --quiet -- theories/CensusTr/Compute/ \
+	  || { echo ">>> theories/CensusTr/Compute/ differs from the commit"; exit 1; }
+	@echo ">>> [2/4] the census walk: census_tr"
+	$(MAKE) census-tr-walk WALK_JOBS=$(WALK_TR_JOBS)
+	@echo ">>> [3/4] the closeout, the champion, the tests"
+	$(MAKE) -f Makefile.coq -j$(CLOSEOUT_TR_JOBS) \
+	  theories/CloseoutTr/CloseoutTr.vo \
+	  theories/BBBT4_Champion.vo theories/Counters/BlankTailTr.vo \
+	  theories/Tests/ChampionTr_Corruption.vo theories/Tests/ConventionTr_Example.vo
+	@echo ">>> [4/4] bbbt4_bound and BBBT4_value"
+	coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/CloseoutFinalTr.v
+	coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/BBBT4_Value.v
+	@echo "------------------------------------------------------------"
+	@echo "proof-tr-all COMPLETE at $$(git rev-parse HEAD 2>/dev/null)."
+	@echo "BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)"
+	@echo "Its Print Assumptions is the 'Axioms:' block just above; expect"
+	@echo "functional_extensionality_dep and nothing else."
+	@echo "------------------------------------------------------------"
+.PHONY: proof-tr-all _proof-tr-all-run

@@ -203,9 +203,9 @@ It is proved by `BBBT4_value : BBBT4_statement` in
   `closeout_tr_complete` covers all 10,924 deferred rows; none remain.
 
 Trust boundary: `BBBT4_Value.v` and `CloseoutFinalTr.v` load the walk
-output (`CensusTr/Compute/`), so they build on the box only:
-`make census-tr-walk`, then `make closeout-tr-final`, then the two
-commands in the `BBBT4_Value.v` header. Every other piece builds from
+output (`CensusTr/Compute/`), so they build only under the native-compute
+toolchain. `make proof-tr-all` runs the whole chain from a fresh clone; it is
+the instruction-level `make proof-all`. Every other piece builds from
 source, and the closeout is kernel-checked by CI. A reviewer's guide, with
 independent cross-checks (the champion re-simulated, and the harness's 432
 hardest machines audited against the theorem's prediction), is
