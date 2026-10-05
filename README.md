@@ -289,7 +289,8 @@ box.  The same champion attains it (`BBBT4_Champion.v`), so
 **BBB_tr(4) = 32,779,478**: `BBBT4_value : BBBT4_statement`
 (claim in `theories/BBBT4_Spec.v`, proof in
 `theories/CloseoutTr/BBBT4_Value.v`, box only;
-[`docs/CLAIMS.md`](docs/CLAIMS.md)).
+[`docs/CLAIMS.md`](docs/CLAIMS.md); reviewer's guide and cross-checks:
+[`docs/BBBT4_REVIEW.md`](docs/BBBT4_REVIEW.md)).
 
 Build: `make instr` for the whole chain (~9 CPU-hours beyond the
 BBB(4) build), `make instr-core` for the slice CI compiles.
