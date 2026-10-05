@@ -80,3 +80,28 @@ Proof.
 Qed.
 
 Print Assumptions BBBT4_is_unique.
+
+(** ** Relation to the state-level claim
+
+    A state's last visit is the last fire of whichever of its
+    instructions fired there, so every state-level score is attained at
+    instruction level too ([attains_st_tr]), and the instruction-level
+    value is at least the state-level one ([BBB4_le_BBBT4]).  Both
+    axiom-free. *)
+
+Lemma attains_st_tr : forall tm B, Attains tm B -> AttainsTr tm B.
+Proof.
+  intros tm B (q & s & [Hv Hq] & Hs).
+  apply visits_fires in Hv. destruct Hv as (a & Hf).
+  exists (q, a), s. split; [| exact Hs].
+  split; [exact Hf |].
+  intros n Hn Hfn. exact (Hq n Hn (fires_visits tm q a n Hfn)).
+Qed.
+
+Lemma BBB4_le_BBBT4 : forall v v', BBB4_is v -> BBBT4_is v' -> v <= v'.
+Proof.
+  intros v v' [(tm & Ha) _] [_ Hmax].
+  exact (Hmax tm v (attains_st_tr tm v Ha)).
+Qed.
+
+Print Assumptions BBB4_le_BBBT4.

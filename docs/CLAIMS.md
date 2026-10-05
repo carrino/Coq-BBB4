@@ -195,8 +195,8 @@ It is proved by `BBBT4_value : BBBT4_statement` in
 `theories/CloseoutTr/BBBT4_Value.v`:
 
 * **ATTAINED.** `champion_attains_tr` (`theories/BBBT4_Champion.v`, built
-  from source). The same champion enters `D` for the last time at index
-  32,779,477, so the instruction it fires there never fires again.
+  from source). The same champion fires instruction (D, 0) at index
+  32,779,477 and never again: `champion_quiet_after_D0`.
 * **MAXIMAL.** `bbbt4_bound : forall tm, QHBoundTr 32779478 tm`
   (`CloseoutFinalTr.v`). It chains the 96-unit transition-level census
   walk `census_tr` with `closeout_tr_complete` (`CloseoutTr.v`, CI).
@@ -206,7 +206,10 @@ Trust boundary: `BBBT4_Value.v` and `CloseoutFinalTr.v` load the walk
 output (`CensusTr/Compute/`), so they build on the box only:
 `make census-tr-walk`, then `make closeout-tr-final`, then the two
 commands in the `BBBT4_Value.v` header. Every other piece builds from
-source, and the closeout is kernel-checked by CI. Expected axiom footprint:
+source, and the closeout is kernel-checked by CI. A reviewer's guide, with
+independent cross-checks (the champion re-simulated, and the harness's 432
+hardest machines audited against the theorem's prediction), is
+[`BBBT4_REVIEW.md`](BBBT4_REVIEW.md). Expected axiom footprint:
 `functional_extensionality_dep` only. The pieces each report that, with the
 census theorem taken as a hypothesis.
 
