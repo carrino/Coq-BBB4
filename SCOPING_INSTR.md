@@ -9299,3 +9299,32 @@ AST158 **0.38 s / 487,587,840 bytes**, and AST159 **0.45 s /
 
 The regenerated split has **623 batches, 10,917 boarded, 7 remaining**.
 Thirty-four of the 41 starting block-list rows are now proved.
+
+#### 7.4.AST29 — A nested token counter closes the singleton (2026-10-04)
+
+AST160 proves `1RB1RD_1LC1LB_1RA0LB_1RD0RC`. Its source table is
+`1RB0LC_1RC1RD_1LA1LC_1RD0RA`, transported by permutation 2013
+without reflection. Source B on a blank tape is already a marked
+anchor, so the conjugate target needs no boot steps.
+
+`BlockCoreKVariantTr` marks B0 with empty right word and a finite left
+word over B=10111 and Z=011. A C sweep transforms these into right
+codes 11011 and 101. A D scan transfers Z directly, while each B code
+calls a carry on strictly fewer B tokens. Three concrete boundary
+markers govern the carry: 1010011, 111010, and 01010. The first two
+add a Z code and advance to the next phase; the last emits one B token.
+Strong induction on B count, with ordinary finite-word induction
+inside each phase, proves that every carry and complete lap terminates.
+The next anchor again has a word over the same two tokens.
+
+Every anchor reaches all eight instructions. In particular, a C sweep
+reaches B1 at its blank boundary, and the next anchor has an initial B
+token supplying C1 even when the original token word was empty. Thus
+this batch needs no Fuel certificate. Independent review passed;
+`kv_carry`, `kv_return`, `kv_anchor_fires`, and the row and batch
+coverage theorems use only `functional_extensionality_dep`.
+
+`block_nested_token_batch.py --check` verifies exact regeneration. The
+batch compiles in **0.34 s / 487,653,376 bytes** peak RSS. The generated
+split has **624 batches, 10,918 boarded, 6 remaining**. Thirty-five of
+the 41 starting block-list rows are now proved.
