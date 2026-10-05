@@ -9328,3 +9328,87 @@ coverage theorems use only `functional_extensionality_dep`.
 batch compiles in **0.34 s / 487,653,376 bytes** peak RSS. The generated
 split has **624 batches, 10,918 boarded, 6 remaining**. Thirty-five of
 the 41 starting block-list rows are now proved.
+
+#### 7.4.AST30 — Periodic orbits close the C quartet (2026-10-04)
+
+AST162 proves the four rows sharing canonical full table
+`1RB1LB_0LC1RD_1LA1LC_1RB0RB`. The decisive invariant concerns the
+actual orbit, rather than universal termination of arbitrary finite
+left words. At an A0 anchor with empty left word, both reachable
+families have right word Q^n followed by a finite tail, where
+
+```
+Q = 101111011101101101101101111011011011110110110111101101
+S = 101111
+T = 10111101101101111
+```
+
+Sixteen successive A0 returns add one 54-cell Q block. The two tails
+share the entire sweep structure. `GuardedSweepTr` supplies generic
+repeated-block sweep and block-rotation lemmas. `BlockCoreCOrbitSweepTr`
+checks a 330-step right sweep and a 190-step left sweep per block;
+its terminal bridges take 726 or 830 steps. `BlockCoreCOrbitFramesTr`
+checks the finite connecting paths. `BlockCoreCOrbitReturnTr` composes
+nine round trips and three exact word rotations into the positive
+return laws for both families. The first two instances are checked
+concrete runs: 2592/7272 steps for S, 3528/8208 steps for T. Subsequent
+laps add 4680 steps per extra Q block.
+
+`BlockCoreCOrbitDefsTr` checks the canonical blank-state boots: A and
+D reach the S family at step 21, B reaches the T family at step 191,
+and C reaches it at step 190. All eight instructions fire within the
+first eleven steps of every anchor in both families. AST162 transports
+these results to the four target rows using state permutations and,
+for two rows, tape reflection. `block_periodic_orbit_batch.py --check`
+replays the generated batch exactly.
+
+Independent review passed. Generic sweep and word-rotation lemmas are
+closed under the global context. Both return laws and all four coverage
+theorems use only `functional_extensionality_dep`. The batch compiles
+in **0.42 s / 489,406,464 bytes** peak RSS. This closes 39 of the 41
+starting block-list rows; the M pair remains for AST161.
+
+#### 7.4.AST31 — Binary stack folds close the last M pair (2026-10-04)
+
+AST161 proves `0RB1LD_1RC0RC_1LA1RA_1RA0LD` and its state-renamed
+conjugate `1RB0RB_1LC1RC_0RA1LD_1RC0LD`. This closes all 41 rows of
+the final block-list slice. The regenerated split has **626 batches,
+10,924 boarded, and zero remaining rows**.
+
+The common source marks B0 configurations. `BlockCoreMRankTr` combines
+four times the number of ones, a finite local bias, and three times the
+right-stack length to prove finite return to B0. `BlockCoreMReturnTr`
+checks a 19-state right-stack language that rules out unhandled escape
+through the blank boundary. `BlockCoreMStrongTr` adds a 137-state
+right-stack language with eight left lookahead bits. Its checked
+closure restricts every empty-right B0 boundary to one of two prefixes:
+P0=01001 or P1=01101101. A three-step boundary reset preserves both
+invariants and gives a positive marked return.
+
+The rare B1 witness needs a different rank. `BinaryStackRankTr` gives
+a generic positive binary fold over two finite stacks, including the
+one-step descent and prefix lower-bound lemmas. `BlockCoreMB1FoldDataTr`
+contains integer tables over six-bit contexts and seven-bit edge
+windows. Kernel reduction checks all 28,672 non-B1 contexts and 53,248
+non-B1 edges. `BlockCoreMB1FoldTr` proves positivity and strict descent
+for every finite tape away from the explicitly handled boundary; no
+reachability approximation is assumed for this ranking certificate.
+
+At the boundary, P0 becomes P1 in 19 steps, and P1 reaches a D guard
+with right word 0001101111 in 29 steps. `BlockCoreMWallTr` checks a
+six-state right-stack invariant preventing another boundary escape
+before B1. `BlockCoreMGlueTr` joins this guard to the binary fold, while
+preserving the broad invariant at B1 to obtain C1. A separate local
+rank in `BlockCoreMFireRankTr` supplies A1, followed by finite D0/D1
+witnesses. B0 is the mark itself. The landed FuelMixPartialTr checker
+supplies A0/C0. Blank boots take 12 and 11 steps for the two rows.
+
+The DFA, frontier, additive rank, binary fold, and batch generators
+have durable replay checks in `tools/closeouttr/block_core_m_*.py` and
+`block_binary_fold_batch.py`. Independent review passed. The finite
+certificate and descent lemmas are closed under the global context;
+return, reachability, and coverage use only
+`functional_extensionality_dep`, with no `Admitted`. The binary-fold
+data and semantic modules compile locally in 6.07 and 20.93 seconds;
+the batch takes **1.46 s / 580,517,888 bytes** peak RSS. Its CI budget
+includes the new helper chain.
