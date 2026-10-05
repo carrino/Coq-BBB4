@@ -23,9 +23,10 @@ the transition-level bound is unconditional.
 626 batches, and `RemainingTr.v` is empty. `CloseoutTr.v` (CI) now also proves
 `closeout_tr_complete`. `CloseoutFinalTr.v` (box, `make closeout-tr-final`
 after `make census-tr-walk`) proves `bbbt4_bound`. `bbbt4_bound` is the
-upper bound only: every (4,2) machine has every quiet instruction quiet before
-configuration index 32,779,478. The matching lower bound, a champion whose
-instruction-level score reaches it, is not yet a Coq theorem.
+upper bound: every (4,2) machine has every quiet instruction quiet before
+configuration index 32,779,478. The state champion reaches it at instruction
+level (`BBBT4_Champion.v`), so `BBBT4_value : BBBT4_statement`
+(`CloseoutTr/BBBT4_Value.v`, box) gives BBB_tr(4) = 32,779,478.
 
 ## The pieces
 

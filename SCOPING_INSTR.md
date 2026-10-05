@@ -12,6 +12,16 @@ file:line.
 
 ## 0. TL;DR
 
+> **Resolved (2026-10-05): BBB_tr(4) = 32,779,478**, the same value as the
+> state level, attained by the same champion. The census walk plus the
+> closeout of all 10,924 deferred rows prove the bound
+> `forall tm, QHBoundTr 32779478 tm`. The champion's last entry into `D`
+> is the last fire of an instruction (`BBBT4_Champion.v`). The claim is
+> stated in `BBBT4_Spec.v` and proved in `CloseoutTr/BBBT4_Value.v` (box
+> only). The rare-fire counters §2 feared would push the value higher were
+> all decided as never-quasihalting at instruction level, or quiet earlier.
+> §2 below is the scoping-time view and is kept as written.
+
 * **The convention.**  An *instruction* is a `(state, read symbol)` pair — 8
   per (4,2) machine.  Instruction `(q,a)` *fires* at configuration index `n`
   when the machine is in state `q` reading `a` after `n` steps.  A machine

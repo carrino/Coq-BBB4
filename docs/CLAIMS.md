@@ -174,6 +174,42 @@ champion's 66,349, never quasihalts, or quasihalts by the new champion's
   convention precisely, and `BBB4_is` is stated directly in those terms so
   there is nothing informal to translate.
 
+## The instruction-level theorem: BBB_tr(4) = 32,779,478
+
+The same number holds under the harness's TRANSITION-level convention,
+where an instruction (state, read symbol) scores its last firing step
+(`theories/BBBT4_Statement.v`). The claim is stated census-free in
+`theories/BBBT4_Spec.v`:
+
+```coq
+AttainsTr (tm : TM) (B : nat) : Prop :=
+  exists t s, QuietAfterTr tm t s /\ S s = B
+
+BBBT4_is (B : nat) : Prop :=
+  (exists tm, AttainsTr tm B) /\ (forall tm B', AttainsTr tm B' -> B' <= B)
+
+BBBT4_statement : Prop := BBBT4_is champion_score    (* 32,779,478 *)
+```
+
+It is proved by `BBBT4_value : BBBT4_statement` in
+`theories/CloseoutTr/BBBT4_Value.v`:
+
+* **ATTAINED.** `champion_attains_tr` (`theories/BBBT4_Champion.v`, built
+  from source). The same champion enters `D` for the last time at index
+  32,779,477, so the instruction it fires there never fires again.
+* **MAXIMAL.** `bbbt4_bound : forall tm, QHBoundTr 32779478 tm`
+  (`CloseoutFinalTr.v`). It chains the 96-unit transition-level census
+  walk `census_tr` with `closeout_tr_complete` (`CloseoutTr.v`, CI).
+  `closeout_tr_complete` covers all 10,924 deferred rows; none remain.
+
+Trust boundary: `BBBT4_Value.v` and `CloseoutFinalTr.v` load the walk
+output (`CensusTr/Compute/`), so they build on the box only:
+`make census-tr-walk`, then `make closeout-tr-final`, then the two
+commands in the `BBBT4_Value.v` header. Every other piece builds from
+source, and the closeout is kernel-checked by CI. Expected axiom footprint:
+`functional_extensionality_dep` only. The pieces each report that, with the
+census theorem taken as a hypothesis.
+
 ## Reproducing
 
 See `docs/VERIFYING.md`.  In short: `make` builds everything through

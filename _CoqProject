@@ -7154,6 +7154,8 @@ theories/Closeout/CB_51.v
 theories/Closeout/Closeout.v
 
 theories/BBBT4_Statement.v
+theories/BBBT4_Spec.v
+theories/BBBT4_Champion.v
 theories/CensusTr/TNF_QHTr.v
 theories/CensusTr/DecideTr.v
 theories/CensusTr/QHConveyorTr.v
