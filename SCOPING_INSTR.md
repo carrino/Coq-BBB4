@@ -9200,3 +9200,32 @@ An additional exact-count/extent search at window 6 over the preceding
 
 The regenerated split has **618 batches, 10,908 boarded, 16 remaining**.
 Twenty-five of the 41 starting block-list rows are now proved.
+
+#### 7.4.AST27 — Paired right sweeps close three rows (2026-10-04)
+
+AST155 proves `1RB0LA_1LC0RD_1LA0LC_1RB0RB`,
+`1RB0RA_1LC0RB_1RA0LD_1LC0LC`, and
+`1RB0RB_1LC0RA_1LD0LC_1RB0LD`. They are conjugates, with one
+reflection, of `1LB0LA_1RC0LB_1LA0RD_1RC0RC`.
+
+`BlockCoreJReturnTr` marks A1 with an arbitrary finite left word and a
+right word ending in `1101`. D consumes right pairs `01` and `11`.
+On `00` it turns through A with a manufactured `01`; on `10` it turns
+through B with a manufactured `11`. Simultaneous structural induction
+on right prefixes U and 1U closes these callbacks. The three terminal
+cases take 11 or 24 steps and restore the guard. Every mark reaches
+B1 by an analogous prefix induction and D0 by a finite left-word
+induction. Thus all three missing instructions recur. The concrete
+boots occur after 15, 10, and 15 steps.
+
+The other five instructions use mirrored window-4 FuelMix certificates
+with 1,497 contexts each. `block_paired_guard_batch.py --find` replays
+those certificates and `--check` checks exact regeneration. The batch
+compiles in **18.28 s / 1,488,945,152 bytes** peak RSS. Independent review
+of the generic return and all instruction witnesses passed. Their
+assumption audits, and those of the three coverage theorems, allow only
+`functional_extensionality_dep`; the concrete boot and marked-instruction
+facts are closed under the global context.
+
+The regenerated split has **619 batches, 10,911 boarded, 13 remaining**.
+Twenty-eight of the 41 starting block-list rows are now proved.

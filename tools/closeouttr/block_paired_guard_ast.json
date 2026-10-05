@@ -1,0 +1,107 @@
+[
+  {
+    "spec": "1RB0LA_1LC0RD_1LA0LC_1RB0RB",
+    "source": "1LB0LA_1RC0LB_1LA0RD_1RC0RC",
+    "p": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "flip": false,
+    "failed": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        0
+      ]
+    ],
+    "n": 4,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 15,
+    "left_ones": 1,
+    "fuel": 12040,
+    "rounds": 36,
+    "contexts": 1497,
+    "certificate_sha256": "a8bc2849b3b4ae9be61aa7110bb0534857e5151cd1154533da29a12039aadc4d"
+  },
+  {
+    "spec": "1RB0RA_1LC0RB_1RA0LD_1LC0LC",
+    "source": "1LB0LA_1RC0LB_1LA0RD_1RC0RC",
+    "p": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "flip": true,
+    "failed": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        3,
+        0
+      ]
+    ],
+    "n": 4,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 10,
+    "left_ones": 0,
+    "fuel": 12040,
+    "rounds": 36,
+    "contexts": 1497,
+    "certificate_sha256": "921e3e3228afeb9cc74e1ab3db9875b5a44e98e37c9069ea3dd5bdd384c81ea1"
+  },
+  {
+    "spec": "1RB0RB_1LC0RA_1LD0LC_1RB0LD",
+    "source": "1LB0LA_1RC0LB_1LA0RD_1RC0RC",
+    "p": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "flip": false,
+    "failed": [
+      [
+        0,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "n": 4,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 15,
+    "left_ones": 1,
+    "fuel": 12040,
+    "rounds": 36,
+    "contexts": 1497,
+    "certificate_sha256": "62ec1648d6fa6ce9db8ffd0f4aa520a6d0e3e204969e548492e59e39a6144067"
+  }
+]
