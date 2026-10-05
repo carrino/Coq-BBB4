@@ -9103,3 +9103,228 @@ passed: the return and coverage theorems use only
 
 The regenerated split has **614 batches, 10,902 boarded, 22 remaining**.
 Nineteen of the 41 starting block-list rows are now proved.
+
+#### 7.4.AST25 — Protected suffixes and a finite wall (2026-10-04)
+
+AST151--153 prove four more rows:
+
+- AST151: `1RB0LA_0RC0RD_1LA1RB_1LC1RC` and
+  `1RB1LB_1RC1LD_1LD0RC_0LB0LA` (core F).
+- AST152: `1RB0LA_0RC0RD_1LA0RC_0LC1RA` (core H).
+- AST153: `1RB0RA_1RC0RD_1LD1LC_1RA0LC` (core G).
+
+`BlockCoreFReturnTr` marks C1 with left word consisting of ones or ending
+in `1111`, and right word `01` followed by tokens `1`/`01`. Its protected
+D phase has left `0^n 011 W`, with W equal to `11`, `111`, or ending in
+`1111`. Induction on the right word handles the zero-run parameter and
+the finite endpoints; A strips left `01` pairs before entering that
+phase or returning. The two actual boots occur after 14 and 4 steps.
+
+`BlockCoreHReturnTr` marks A1 with left `01 L`, where L is generated
+from the singleton `1` by prefixes `1` and `01`. The right word has an
+explicit final blank and normalizes to empty, `01`, or a word ending
+in `0101` with no adjacent ones. A protected C pass consumes the finite
+left grammar while rebuilding a right zero-run. Its positive return
+starts at the actual 14-step boot. This row's window-3 Fuel graph leaves
+two instructions unresolved; the window-7 ordinary graph certifies all
+seven other instructions (4,990 contexts).
+
+`FiniteWallTr` supplies a new generic termination theorem. A finite
+certificate describes a right wall with an opaque finite left context.
+It checks every internal transition and every possible reentry from the
+left. A nonnegative integer potential based on the binary tape value,
+state, and fixed explicit width strictly decreases until the target is
+reached. Right escape is excluded by the certificate; a separate finite
+run handles an empty-left move.
+
+`BlockCoreGReturnTr` instantiates that theorem with 38 boundary words
+and 1,304 internal configurations on a 21-cell wall. Every internal A0
+has right `101010101001` and left prefix `101b`; the two values of b
+reset the wall in 29 or 37 steps. Outside-wall A0 takes one left step
+and preserves its boundary word. The actual boot is at step 214.
+`block_core_g_wall.py --check` reproduces the finite certificate; Coq
+checks its closure and terminal shapes. The decreasing potential is
+`24*binary(tape) + bias(state)*2^right_length + 26*2^width`, with biases
+`(-26,-4,-17,28)`.
+
+The batch generators `block_suffix_pair_batch.py`,
+`block_alternating_guard_batch.py`, and `block_finite_wall_batch.py`
+support certificate replay (`--find`) and exact regeneration (`--check`).
+Measured batch compilations: AST151 **2.15 s / 591,134,720 bytes**;
+AST152 **29.77 s / 2,636,300,288 bytes**; AST153 **2.15 s /
+586,711,040 bytes**. Independent reviews and assumption audits passed:
+the return and coverage theorems use only
+`functional_extensionality_dep`; the marked-instruction and concrete
+G boot facts are closed under the global context.
+
+The regenerated split has **617 batches, 10,906 boarded, 18 remaining**.
+Twenty-three of the 41 starting block-list rows are now proved.
+
+#### 7.4.AST26 — A signed binary counter closes another pair (2026-10-04)
+
+AST154 proves `1RB0LC_1RC0RD_1LA0LC_1RD0RA` and
+`1RB0RD_1LC0LB_1RA0LB_1RD0RC`. The latter is a state conjugate of
+the former, with source-to-row permutation `2013` and no reflection.
+Unlike the preceding batches, this pair needs no Fuel certificate:
+the lap and all eight instruction witnesses are proved directly.
+
+At B0, let the left word be `(10)^(2n)1` and the right word encode a
+digit list w by tokens `000`/`100`, with final terminator `1`. The
+signed value is `V([])=-1`, `V(0w)=2V(w)`, and `V(1w)=-2V(w)-1`.
+The marked family requires n>=1 and V(w)>0. The empty word really is
+unsafe: its erased terminator permits D to escape across blank tape.
+Positivity rules it out and is preserved by the exact successor.
+
+Write H([])=[], H(dx)=1(not d)x; F([])=[1], F(0x)=0F(x),
+F(1x)=H(x). The successor is S(0x)=H(x), S(1x)=0F(x).
+`BlockCoreKValueTr` proves V(Hw)=2V(w)+1, V(Fw)=-V(w), and
+V(Sw)=V(w)+1 for nonempty words. `BlockCoreKReturnTr` proves an even
+left sweep, the H/F carry microphase by finite-word induction, and an
+odd return sweep. Together they give a positive lap from (n,w) to
+(n+1,S(w)). The actual boots are at steps 27 and 51, with n=1 and n=2,
+respectively, and w=[1] in both cases.
+
+`BlockCoreKFireTr` reaches the left blank boundary through a uniform
+A sweep. Its initial fragment and boundary turn witness seven
+instructions; a finite D scan to the encoded terminal one witnesses
+D1. `MarkedReturnTr` transports recurrence to both original rows.
+Independent review and assumption audits passed: the arithmetic is
+closed under the global context, and the lap, firing, and coverage
+theorems use only `functional_extensionality_dep`.
+
+`block_signed_counter_batch.py --check` verifies exact regeneration.
+The two-row batch compiles in **0.39 s / 488,980,480 bytes** peak RSS.
+An additional exact-count/extent search at window 6 over the preceding
+12 multi-target rows found no certificates (the two conjugate rows of
+`0RB1LD_1RC0RC_1LA1RA_1RA0LD` timed out in both orientations after 60 s).
+
+The regenerated split has **618 batches, 10,908 boarded, 16 remaining**.
+Twenty-five of the 41 starting block-list rows are now proved.
+
+#### 7.4.AST27 — Paired right sweeps close three rows (2026-10-04)
+
+AST155 proves `1RB0LA_1LC0RD_1LA0LC_1RB0RB`,
+`1RB0RA_1LC0RB_1RA0LD_1LC0LC`, and
+`1RB0RB_1LC0RA_1LD0LC_1RB0LD`. They are conjugates, with one
+reflection, of `1LB0LA_1RC0LB_1LA0RD_1RC0RC`.
+
+`BlockCoreJReturnTr` marks A1 with an arbitrary finite left word and a
+right word ending in `1101`. D consumes right pairs `01` and `11`.
+On `00` it turns through A with a manufactured `01`; on `10` it turns
+through B with a manufactured `11`. Simultaneous structural induction
+on right prefixes U and 1U closes these callbacks. The three terminal
+cases take 11 or 24 steps and restore the guard. Every mark reaches
+B1 by an analogous prefix induction and D0 by a finite left-word
+induction. Thus all three missing instructions recur. The concrete
+boots occur after 15, 10, and 15 steps.
+
+The other five instructions use mirrored window-4 FuelMix certificates
+with 1,497 contexts each. `block_paired_guard_batch.py --find` replays
+those certificates and `--check` checks exact regeneration. The batch
+compiles in **18.28 s / 1,488,945,152 bytes** peak RSS. Independent review
+of the generic return and all instruction witnesses passed. Their
+assumption audits, and those of the three coverage theorems, allow only
+`functional_extensionality_dep`; the concrete boot and marked-instruction
+facts are closed under the global context.
+
+The regenerated split has **619 batches, 10,911 boarded, 13 remaining**.
+Twenty-eight of the 41 starting block-list rows are now proved.
+
+#### 7.4.AST28 — Three walls and closed word grammars (2026-10-04)
+
+AST156--159 prove six more block-list rows:
+
+- AST156: `1RB0RC_0LC1LB_0LD1LC_1RD0RA` (core O).
+- AST157: `1RB0RC_1LB1RA_0RB0LD_1LC1LD` and
+  `1RB1RA_0LC0RA_1RC1LD_1LC0LB` (core E).
+- AST158: `1RB0RD_1LC1LB_1RA0LB_0RB1RA` and
+  `1RB0RD_1LC1LB_1RA0LB_1LC1RA` (core N).
+- AST159: `1RB1RA_0LC0RA_1LC1LD_1LA0LC` (core L).
+
+For O, `BlockCoreOReturnTr` marks A0 with left `01` and right word
+starting in 1, ending in 1, without adjacent zeros, and with an odd
+number of ones. Its partial transducer has clauses F(1)=011,
+F(10x)=101x, F(111x)=11F(1x), and F(1101x)=011F(1x). The undefined
+terminal case 11 has even one-count. Structural induction proves
+existence on the marked domain; F adds one one, and the full lap
+prefixes three more. Oddness is preserved. The concrete boot is at
+step 12, and all eight instruction witnesses occur in the first 20
+steps of every lap. No Fuel certificate is needed.
+
+For E, `BlockCoreELeftTr` proves that a finite left excursion either
+hits A0 or returns across its entry boundary with a strictly smaller
+binary left value. `BlockCoreEWallTr` checks three seven-cell words
+P=1100111, Q=0010111, and J=1010111. Their six C/D entry cases either
+call that left excursion or exit right in D with fixed left prefix
+110101. A finite-prefix induction retains one of the three wall words
+at every early A0 hit. `BlockCoreEReturnTr` therefore uses a disjoint
+marked family: the original periodic sweep anchors, plus these early
+A0 hits with a wall and a nonempty periodic tail. `BlockCoreEStartTr`
+proves the sweep and the return shuttle. The exact boots occur at
+steps 361 and 167 (one explicit blank is removed by tape lifting).
+Mirrored window-3 FuelMix graphs with 519 and 525 contexts certify
+the seven other instructions.
+
+For N, `BlockCoreNWordTr` formalizes F[]=101, F(0x)=11x,
+F(11x)=01F(x), and F(101x)=101F(x). Let Q=101. Four prefix phases
+0110, 11110, 010111, and 1110111 rotate under F; the last returns to
+0110 followed by Q and F of the tail. Eight base phases, built from
+1Q^(n+1) and 1111Q^n, feed those prefix phases. This inductive finite
+grammar is closed under F. Intersecting it with (1|01)* supplies the
+exact machine domain. `BlockCoreNReturnTr` proves the A0 lap with left
+101 and right w, returning with right Q++F(w). A disjunction for D0
+handles both implementations; their boots occur at steps 23 and 21.
+All eight instructions fire during the uniform entrance.
+
+For L, `BlockCoreLWordsTr` works on lists of positive one-run lengths.
+Its two-pass map on a list beginning in 4 reduces to a map U on the
+tail. U commutes with prefix [2]; four further prefix phases rotate
+and then invoke U on their shorter tail. Eighteen concrete base phases
+close the invariant, including the initial tail [7;1].
+`BlockCoreLReturnTr` proves the bit-word transducer and the exact
+concrete-tape lap. `BlockCoreLGlueTr` connects run lists to bit words,
+proves a positive two-lap return, and witnesses all eight instructions.
+The marked boot is exact at step 80, with run list [4;7;1].
+
+Each batch has an exact-replay generator: `block_odd_word_batch.py`,
+`block_three_wall_batch.py`, `block_regular_word_batch.py`, and
+`block_run_grammar_batch.py`. The three-wall generator also supports
+`--find` certificate replay. Independent reviews passed. Word-domain
+and grammar theorems are closed under the global context; every
+coverage and machine-return audit permits only
+`functional_extensionality_dep`. Measured batch compilations: AST156
+**0.48 s / 487,260,160 bytes**, AST157 **3.38 s / 682,999,808 bytes**,
+AST158 **0.38 s / 487,587,840 bytes**, and AST159 **0.45 s /
+488,144,896 bytes**.
+
+The regenerated split has **623 batches, 10,917 boarded, 7 remaining**.
+Thirty-four of the 41 starting block-list rows are now proved.
+
+#### 7.4.AST29 — A nested token counter closes the singleton (2026-10-04)
+
+AST160 proves `1RB1RD_1LC1LB_1RA0LB_1RD0RC`. Its source table is
+`1RB0LC_1RC1RD_1LA1LC_1RD0RA`, transported by permutation 2013
+without reflection. Source B on a blank tape is already a marked
+anchor, so the conjugate target needs no boot steps.
+
+`BlockCoreKVariantTr` marks B0 with empty right word and a finite left
+word over B=10111 and Z=011. A C sweep transforms these into right
+codes 11011 and 101. A D scan transfers Z directly, while each B code
+calls a carry on strictly fewer B tokens. Three concrete boundary
+markers govern the carry: 1010011, 111010, and 01010. The first two
+add a Z code and advance to the next phase; the last emits one B token.
+Strong induction on B count, with ordinary finite-word induction
+inside each phase, proves that every carry and complete lap terminates.
+The next anchor again has a word over the same two tokens.
+
+Every anchor reaches all eight instructions. In particular, a C sweep
+reaches B1 at its blank boundary, and the next anchor has an initial B
+token supplying C1 even when the original token word was empty. Thus
+this batch needs no Fuel certificate. Independent review passed;
+`kv_carry`, `kv_return`, `kv_anchor_fires`, and the row and batch
+coverage theorems use only `functional_extensionality_dep`.
+
+`block_nested_token_batch.py --check` verifies exact regeneration. The
+batch compiles in **0.34 s / 487,653,376 bytes** peak RSS. The generated
+split has **624 batches, 10,918 boarded, 6 remaining**. Thirty-five of
+the 41 starting block-list rows are now proved.
