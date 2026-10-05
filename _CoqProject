@@ -12108,6 +12108,16 @@ theories/Counters/BlockCoreKValueTr.v
 theories/Counters/BlockCoreKReturnTr.v
 theories/Counters/BlockCoreKFireTr.v
 theories/Counters/BlockCoreJReturnTr.v
+theories/Counters/BlockCoreOReturnTr.v
+theories/Counters/BlockCoreNWordTr.v
+theories/Counters/BlockCoreNReturnTr.v
+theories/Counters/BlockCoreEStartTr.v
+theories/Counters/BlockCoreELeftTr.v
+theories/Counters/BlockCoreEWallTr.v
+theories/Counters/BlockCoreEReturnTr.v
+theories/Counters/BlockCoreLWordsTr.v
+theories/Counters/BlockCoreLReturnTr.v
+theories/Counters/BlockCoreLGlueTr.v
 theories/Counters/BlockCoreAReturnTr.v
 theories/Counters/Period3MacroTr.v
 theories/Counters/ValueFrontierTransducer.v
@@ -12195,6 +12205,10 @@ theories/CloseoutTr/CBT_AST_152.v
 theories/CloseoutTr/CBT_AST_153.v
 theories/CloseoutTr/CBT_AST_154.v
 theories/CloseoutTr/CBT_AST_155.v
+theories/CloseoutTr/CBT_AST_156.v
+theories/CloseoutTr/CBT_AST_157.v
+theories/CloseoutTr/CBT_AST_158.v
+theories/CloseoutTr/CBT_AST_159.v
 theories/CloseoutTr/CBT_AST_16.v
 theories/CloseoutTr/CBT_AST_17.v
 theories/CloseoutTr/CBT_AST_18.v
