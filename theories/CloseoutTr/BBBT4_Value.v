@@ -13,13 +13,11 @@
 
     - the LOWER bound: [champion_attains_tr] (BBBT4_Champion.v): the
       state-level champion's last entry into [StD], at configuration
-      index 32,779,477, is the last fire of an instruction [(StD, a)].
+      index 32,779,477, is the last fire of instruction [(StD, S0)].
 
     Box only, like CloseoutFinalTr.v (it loads the census walk's .vo).
-    After `make census-tr-walk` and `make closeout-tr-final`:
-
-      make -f Makefile.coq theories/BBBT4_Champion.vo theories/Counters/BlankTailTr.vo
-      coqc -Q theories BBB4 theories/CloseoutTr/BBBT4_Value.v
+    `make proof-tr-all` builds the whole chain from a fresh clone and
+    compiles this file last.
 
     [Print Assumptions BBBT4_value] below. *)
 From Coq Require Import Arith Lia NArith.

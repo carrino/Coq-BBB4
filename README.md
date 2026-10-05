@@ -284,8 +284,8 @@ checked by CI in seconds, no re-walk), in parallel workstreams:
 (`CloseoutTr/CloseoutTr.v`, CI) closes every deferred row.
 `bbbt4_bound : forall tm, QHBoundTr B_tr tm` (`CloseoutFinalTr.v`)
 is the unconditional instruction-level upper bound, after
-`make census-tr-walk WALK_JOBS=5 && make closeout-tr-final` on the
-box.  The same champion attains it (`BBBT4_Champion.v`), so
+`make proof-tr-all` (the instruction-level `make proof-all`; native
+toolchain, several hours).  The same champion attains it (`BBBT4_Champion.v`), so
 **BBB_tr(4) = 32,779,478**: `BBBT4_value : BBBT4_statement`
 (claim in `theories/BBBT4_Spec.v`, proof in
 `theories/CloseoutTr/BBBT4_Value.v`, box only;
