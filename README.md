@@ -279,7 +279,13 @@ it:
 The census is now frozen at v10.  The deferred rows are settled
 outside it by batch files in `theories/CloseoutTr/` (`make closeout-tr`,
 checked by CI in seconds, no re-walk), in parallel workstreams:
-[`docs/CLOSEOUT_TR.md`](docs/CLOSEOUT_TR.md).
+[`docs/CLOSEOUT_TR.md`](docs/CLOSEOUT_TR.md).  As of 2026-10-05 all
+10,924 rows are boarded (626 batches).  `closeout_tr_complete`
+(`CloseoutTr/CloseoutTr.v`, CI) closes every deferred row.
+`bbbt4_bound : forall tm, QHBoundTr B_tr tm` (`CloseoutFinalTr.v`)
+is the unconditional instruction-level upper bound, after
+`make census-tr-walk WALK_JOBS=5 && make closeout-tr-final` on the
+box.  The matching lower bound is not yet a Coq theorem.
 
 Build: `make instr` for the whole chain (~9 CPU-hours beyond the
 BBB(4) build), `make instr-core` for the slice CI compiles.  The
