@@ -1,0 +1,58 @@
+[
+  {
+    "spec": "1RB0LA_0RC0RD_1LA1RB_1LC1RC",
+    "source": "0LB0LC_1RD1LA_1RB1LB_1LA0RD",
+    "p": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "flip": true,
+    "failed": [
+      [
+        3,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 14,
+    "fuel": 2128,
+    "rounds": 18,
+    "contexts": 258,
+    "certificate_sha256": "245c01d16fb83dc84920db13f0b2349bb9b8989488e43cb18c65825d1bff9ba9",
+    "left_ones": 1,
+    "right_ones": 1
+  },
+  {
+    "spec": "1RB1LB_1RC1LD_1LD0RC_0LB0LA",
+    "source": "0LB0LC_1RD1LA_1RB1LB_1LA0RD",
+    "p": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "flip": false,
+    "failed": [
+      [
+        0,
+        1
+      ]
+    ],
+    "n": 3,
+    "t": 0,
+    "mirrored": true,
+    "max_pattern": 8,
+    "boot": 4,
+    "fuel": 2112,
+    "rounds": 18,
+    "contexts": 256,
+    "certificate_sha256": "c1ef01810eacac040e68d25782c6e26809ae15cdeb72a44750ee879cadeda0ef",
+    "left_ones": 0,
+    "right_ones": 0
+  }
+]
