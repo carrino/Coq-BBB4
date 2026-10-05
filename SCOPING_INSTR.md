@@ -9229,3 +9229,73 @@ facts are closed under the global context.
 
 The regenerated split has **619 batches, 10,911 boarded, 13 remaining**.
 Twenty-eight of the 41 starting block-list rows are now proved.
+
+#### 7.4.AST28 — Three walls and closed word grammars (2026-10-04)
+
+AST156--159 prove six more block-list rows:
+
+- AST156: `1RB0RC_0LC1LB_0LD1LC_1RD0RA` (core O).
+- AST157: `1RB0RC_1LB1RA_0RB0LD_1LC1LD` and
+  `1RB1RA_0LC0RA_1RC1LD_1LC0LB` (core E).
+- AST158: `1RB0RD_1LC1LB_1RA0LB_0RB1RA` and
+  `1RB0RD_1LC1LB_1RA0LB_1LC1RA` (core N).
+- AST159: `1RB1RA_0LC0RA_1LC1LD_1LA0LC` (core L).
+
+For O, `BlockCoreOReturnTr` marks A0 with left `01` and right word
+starting in 1, ending in 1, without adjacent zeros, and with an odd
+number of ones. Its partial transducer has clauses F(1)=011,
+F(10x)=101x, F(111x)=11F(1x), and F(1101x)=011F(1x). The undefined
+terminal case 11 has even one-count. Structural induction proves
+existence on the marked domain; F adds one one, and the full lap
+prefixes three more. Oddness is preserved. The concrete boot is at
+step 12, and all eight instruction witnesses occur in the first 20
+steps of every lap. No Fuel certificate is needed.
+
+For E, `BlockCoreELeftTr` proves that a finite left excursion either
+hits A0 or returns across its entry boundary with a strictly smaller
+binary left value. `BlockCoreEWallTr` checks three seven-cell words
+P=1100111, Q=0010111, and J=1010111. Their six C/D entry cases either
+call that left excursion or exit right in D with fixed left prefix
+110101. A finite-prefix induction retains one of the three wall words
+at every early A0 hit. `BlockCoreEReturnTr` therefore uses a disjoint
+marked family: the original periodic sweep anchors, plus these early
+A0 hits with a wall and a nonempty periodic tail. `BlockCoreEStartTr`
+proves the sweep and the return shuttle. The exact boots occur at
+steps 361 and 167 (one explicit blank is removed by tape lifting).
+Mirrored window-3 FuelMix graphs with 519 and 525 contexts certify
+the seven other instructions.
+
+For N, `BlockCoreNWordTr` formalizes F[]=101, F(0x)=11x,
+F(11x)=01F(x), and F(101x)=101F(x). Let Q=101. Four prefix phases
+0110, 11110, 010111, and 1110111 rotate under F; the last returns to
+0110 followed by Q and F of the tail. Eight base phases, built from
+1Q^(n+1) and 1111Q^n, feed those prefix phases. This inductive finite
+grammar is closed under F. Intersecting it with (1|01)* supplies the
+exact machine domain. `BlockCoreNReturnTr` proves the A0 lap with left
+101 and right w, returning with right Q++F(w). A disjunction for D0
+handles both implementations; their boots occur at steps 23 and 21.
+All eight instructions fire during the uniform entrance.
+
+For L, `BlockCoreLWordsTr` works on lists of positive one-run lengths.
+Its two-pass map on a list beginning in 4 reduces to a map U on the
+tail. U commutes with prefix [2]; four further prefix phases rotate
+and then invoke U on their shorter tail. Eighteen concrete base phases
+close the invariant, including the initial tail [7;1].
+`BlockCoreLReturnTr` proves the bit-word transducer and the exact
+concrete-tape lap. `BlockCoreLGlueTr` connects run lists to bit words,
+proves a positive two-lap return, and witnesses all eight instructions.
+The marked boot is exact at step 80, with run list [4;7;1].
+
+Each batch has an exact-replay generator: `block_odd_word_batch.py`,
+`block_three_wall_batch.py`, `block_regular_word_batch.py`, and
+`block_run_grammar_batch.py`. The three-wall generator also supports
+`--find` certificate replay. Independent reviews passed. Word-domain
+and grammar theorems are closed under the global context; every
+coverage and machine-return audit permits only
+`functional_extensionality_dep`. Measured batch compilations: AST156
+**0.48 s / 487,260,160 bytes**, AST157 **3.38 s / 682,999,808 bytes**,
+AST158 **0.38 s / 487,587,840 bytes**, and AST159 **0.45 s /
+488,144,896 bytes**.
+
+The regenerated split has **623 batches, 10,917 boarded, 7 remaining**.
+Thirty-four of the 41 starting block-list rows are now proved.
