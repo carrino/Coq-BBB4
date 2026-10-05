@@ -519,3 +519,6 @@ CBT_AST_157	15
 CBT_AST_158	5
 CBT_AST_159	5
 CBT_AST_160	5
+CBT_AST_162	5
+# AST31 includes the binary-fold helper chain (data 6.1s, semantics 20.9s).
+CBT_AST_161	120

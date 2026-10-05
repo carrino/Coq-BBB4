@@ -135,3 +135,6 @@ theories/CensusTr/Compute/*.v
 # with `make closeout-tr-final` after `make census-tr-walk`, never in CI.
 # CloseoutTr.v and the CBT_* batches ARE in _CoqProject and CI builds them.
 theories/CloseoutTr/CloseoutFinalTr.v
+# BBBT4_Value.v proves BBBT4_statement from CloseoutFinalTr's bbbt4_bound
+# and BBBT4_Champion's lower bound: box-only for the same reason.
+theories/CloseoutTr/BBBT4_Value.v

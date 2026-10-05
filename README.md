@@ -187,7 +187,7 @@ verification tier, from "check one machine" to "re-walk the census".
 | `theories/Checkers/Ladder*.v`, `theories/Machines/Ladder/` | The ladder: counter segments carried as a value-indexed rule family, its fill law read off the machine rather than assumed (`docs/LADDER_PLAN.md`) |
 | `theories/Census/` | The trusted census: TNF enumeration, the in-walk deciders, the frozen deferred tables, and (committed as `.vo`) the walk output ending in `census_decided` |
 | `theories/Closeout/` | The assembly: generated stages bridging every decided frozen row to its board, `closeout_partial`, `census_boarded`, `bbb4_target`, and the hand-written `BBB4_Value.v` — the BBB(4) = 32,779,478 value theorem |
-| `theories/BBBT4_Statement.v`, `theories/CensusTr/`, `theories/Checkers/*Tr.v`, `theories/Machines/CountersTr/` | The **instruction-level (transition-level) development**, in progress: the beeping semantics at instruction granularity, the ported checkers, the transition-level census walk and its proven tier — see the section below |
+| `theories/BBBT4_Statement.v`, `theories/BBBT4_Spec.v`, `theories/BBBT4_Champion.v`, `theories/CensusTr/`, `theories/Checkers/*Tr.v`, `theories/Machines/CountersTr/` | The **instruction-level (transition-level) development**: the claim BBB_tr(4) = 32,779,478, the beeping semantics at instruction granularity, the ported checkers, the transition-level census walk and its proven tier — see the section below |
 | `theories/Tests/` | Negative controls in the BBB corruption-test tradition: mutated certificates, periods, sides and claims must all fail |
 | `tools/` | **Untrusted** certificate search, generators, and differential validators — a wrong certificate fails to compile, never proves a false theorem |
 | `docs/` | The prose claim, verification guide, and closing-campaign write-ups, plus the historical lab notebook — [`docs/README.md`](docs/README.md) is the index |
@@ -229,7 +229,7 @@ statement in [`docs/CLAIMS.md`](docs/CLAIMS.md).
 [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) records how each family of
 machines fell.
 
-## The instruction-level development (in progress)
+## The instruction-level development
 
 The BBB harness's second convention scores a machine by the last time
 each *instruction* (state, read symbol) fires rather than each state.
@@ -279,11 +279,21 @@ it:
 The census is now frozen at v10.  The deferred rows are settled
 outside it by batch files in `theories/CloseoutTr/` (`make closeout-tr`,
 checked by CI in seconds, no re-walk), in parallel workstreams:
-[`docs/CLOSEOUT_TR.md`](docs/CLOSEOUT_TR.md).
+[`docs/CLOSEOUT_TR.md`](docs/CLOSEOUT_TR.md).  As of 2026-10-05 all
+10,924 rows are boarded (626 batches).  `closeout_tr_complete`
+(`CloseoutTr/CloseoutTr.v`, CI) closes every deferred row.
+`bbbt4_bound : forall tm, QHBoundTr B_tr tm` (`CloseoutFinalTr.v`)
+is the unconditional instruction-level upper bound, after
+`make census-tr-walk WALK_JOBS=5 && make closeout-tr-final` on the
+box.  The same champion attains it (`BBBT4_Champion.v`), so
+**BBB_tr(4) = 32,779,478**: `BBBT4_value : BBBT4_statement`
+(claim in `theories/BBBT4_Spec.v`, proof in
+`theories/CloseoutTr/BBBT4_Value.v`, box only;
+[`docs/CLAIMS.md`](docs/CLAIMS.md)).
 
 Build: `make instr` for the whole chain (~9 CPU-hours beyond the
-BBB(4) build), `make instr-core` for the slice CI compiles.  The
-value is **not** determined: `SCOPING_INSTR.md` is the running record
+BBB(4) build), `make instr-core` for the slice CI compiles.
+`SCOPING_INSTR.md` is the running record
 of the scoping, the measured population, the routes per machine class
 and the open classes (section 7), and `tools/censustr/` holds the
 untrusted generators (`gen_walk_units.py`, `gen_listburn.py`,

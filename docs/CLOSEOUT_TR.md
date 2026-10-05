@@ -12,10 +12,21 @@ seconds.
 census_tr                  : forall tm, QHBoundTr B_tr tm \/ Deferred D_tr tm      (frozen, box)
 closeout_tr_partial        : Deferred D_tr tm -> QHBoundTr B_tr tm \/ Deferred D_remaining_tr tm   (CI)
 bbbt4_target               : forall tm, QHBoundTr B_tr tm \/ Deferred D_remaining_tr tm           (box)
+closeout_tr_complete       : Deferred D_tr tm -> QHBoundTr B_close tm                               (CI)
+bbbt4_bound                : forall tm, QHBoundTr B_tr tm                                           (box)
 ```
 
 When `closeouttr_remaining.txt` is empty, `Deferred [] tm` is uninhabited and
 the transition-level bound is unconditional.
+
+**Done (2026-10-05): 0 of 10,924 rows remain.** All 10,924 rows are boarded by
+626 batches, and `RemainingTr.v` is empty. `CloseoutTr.v` (CI) now also proves
+`closeout_tr_complete`. `CloseoutFinalTr.v` (box, `make closeout-tr-final`
+after `make census-tr-walk`) proves `bbbt4_bound`. `bbbt4_bound` is the
+upper bound: every (4,2) machine has every quiet instruction quiet before
+configuration index 32,779,478. The state champion reaches it at instruction
+level (`BBBT4_Champion.v`), so `BBBT4_value : BBBT4_statement`
+(`CloseoutTr/BBBT4_Value.v`, box) gives BBB_tr(4) = 32,779,478.
 
 ## The pieces
 

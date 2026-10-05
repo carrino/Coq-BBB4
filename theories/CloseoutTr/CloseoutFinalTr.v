@@ -1,4 +1,4 @@
-(** * CloseoutFinalTr: the transition-level target, modulo the residue.
+(** * CloseoutFinalTr: the transition-level target.
 
       [bbbt4_target : forall tm, QHBoundTr B_tr tm \/ Deferred D_remaining_tr tm]
 
@@ -7,7 +7,9 @@
     rows no closeout batch has boarded yet (CloseoutTr/RemainingTr.v).
     When that list is empty the second disjunct is uninhabited
     ([Deferred [] tm] has no base case) and the transition-level bound
-    is unconditional.
+    is unconditional.  It is (2026-10-05): every row is boarded, and
+    [bbbt4_bound] below is the unconditional form, through
+    [closeout_tr_complete] (CloseoutTr.v, built by CI).
 
     Chains [census_tr] (the 96-unit walk, CensusTr/Compute/, box only)
     with [closeout_tr_partial] (CloseoutTr.v, built by CI).  Compile it
@@ -25,4 +27,13 @@ Proof.
   intro tm.
   destruct (census_tr tm) as [H | H]; [left; exact H |].
   exact (closeout_tr_partial tm H).
+Qed.
+
+(** the residue is empty: every (4,2) machine has every quiet
+    instruction quiet before configuration index 32,779,478. *)
+Theorem bbbt4_bound : forall tm, QHBoundTr B_tr tm.
+Proof.
+  intro tm.
+  destruct (census_tr tm) as [H | H]; [exact H |].
+  exact (closeout_tr_complete tm H).
 Qed.

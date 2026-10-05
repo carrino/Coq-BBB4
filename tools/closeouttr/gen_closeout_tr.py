@@ -135,6 +135,24 @@ def closeout_v(bs, n_def, n_rem):
             '  exact (deferred_split_tr deferred_tr_rows proven_tr_rows remaining_tr_rows',
             '           closeout_tr_rows_split proven_tr_rows_covers).',
             'Qed.']
+    if n_rem == 0:
+        # every row boarded: the residue disjunct is [Deferred [] tm], which
+        # has no base case (swaps and mirrors only re-wrap another one)
+        out += ['',
+                '(** Every row is boarded, so the residue is empty and the closeout',
+                '    is complete. *)',
+                'Lemma deferred_nil_tr : forall tm, ~ Deferred [] tm.',
+                'Proof.',
+                '  intros tm H; induction H as [h t Hin _ | | ]; [exact Hin | assumption | assumption].',
+                'Qed.',
+                '',
+                'Theorem closeout_tr_complete : forall tm,',
+                '  Deferred D_censusTr tm -> QHBoundTr B_close tm.',
+                'Proof.',
+                '  intros tm H.',
+                '  destruct (closeout_tr_partial tm H) as [Hq | Hd]; [exact Hq |].',
+                '  exfalso; exact (deferred_nil_tr tm Hd).',
+                'Qed.']
     return '\n'.join(out) + '\n'
 
 
