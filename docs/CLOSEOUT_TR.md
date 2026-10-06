@@ -26,7 +26,8 @@ after `make census-tr-walk`) proves `bbbt4_bound`. `bbbt4_bound` is the
 upper bound: every (4,2) machine has every quiet instruction quiet before
 configuration index 32,779,478. The state champion reaches it at instruction
 level (`BBBT4_Champion.v`), so `BBBT4_value : BBBT4_statement`
-(`CloseoutTr/BBBT4_Value.v`, box) gives BBB_tr(4) = 32,779,478.
+(`CloseoutTr/BBBT4_Value.v`, box) gives BBB_tr(4) = 32,779,478, verified
+end to end by `make proof-tr-all` on 2026-10-06 (`BBBT4_REVIEW.md` §8.1).
 
 ## The pieces
 
