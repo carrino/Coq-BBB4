@@ -1027,12 +1027,18 @@ _proof-tr-all-run:
 	@echo ">>> [2/4] the census walk: census_tr"
 	$(MAKE) census-tr-walk WALK_JOBS=$(WALK_TR_JOBS)
 	@echo ">>> [3/4] the closeout, the champion, the tests"
+	@# the stack: under the census switch every .vo is also COQNATIVE'd,
+	@# and the OCaml compiler overflows the default 8 MB stack on the
+	@# large batch files (CBT_AST_134..136, 2026-10-06) -- as for `all'.
+	ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	$(MAKE) -f Makefile.coq -j$(CLOSEOUT_TR_JOBS) \
 	  theories/CloseoutTr/CloseoutTr.vo \
 	  theories/BBBT4_Champion.vo theories/Counters/BlankTailTr.vo \
 	  theories/Tests/ChampionTr_Corruption.vo theories/Tests/ConventionTr_Example.vo
 	@echo ">>> [4/4] bbbt4_bound and BBBT4_value"
+	ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/CloseoutFinalTr.v
+	ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/BBBT4_Value.v
 	@echo "------------------------------------------------------------"
 	@echo "proof-tr-all COMPLETE at $$(git rev-parse HEAD 2>/dev/null)."
