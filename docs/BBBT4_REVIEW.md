@@ -271,5 +271,8 @@ finished `.vo`, re-checked the walk assembly and completed.
 
 The run took most of a day of wall time. Two RepWL stages,
 `ProvTr_RW_14` and `ProvTr_RW_15`, took about 4 h 20 min and over 2 h on
-one core each, and gated the walk. Cutting the build time is the next
-piece of work.
+one core each, and gated the walk. The walk itself took 13.1 CPU-h: a
+median of 435 s per unit and a slowest unit (`UnitTr_63`) of 1,313 s, so
+about 3.3 h of wall time at 4 jobs. Per-unit times are in
+[`bbbt4_walk_times_2026-10-06.txt`](bbbt4_walk_times_2026-10-06.txt).
+Cutting the build time is the next piece of work.
