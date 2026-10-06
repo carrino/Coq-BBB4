@@ -17,10 +17,19 @@ verified check all run inside one vm_compute).
 ROWS.tsv: spec L T t fuel M
 Usage: gen_provtr_rw.py probe ROWS OUTDIR [--chunk 1]
        gen_provtr_rw.py stage ROWS PROBEDIR OUTDIR [--chunk 100] [--start 0]
+       gen_provtr_rw.py inventory STAGEDIR MANIFEST.tsv
+       gen_provtr_rw.py split MANIFEST.tsv OUTDIR [--chunk 10] [--check]
+
+The split phase preserves the existing stage numbers, row order, machine
+definitions and proof parameters. Heavy rows get their own compilation
+unit; each original stage becomes a compatibility wrapper. The manifest
+is source data, not a trusted certificate or a compiled artifact.
 """
 import argparse
+import csv
 import glob
 import os
+from pathlib import Path
 import re
 import sys
 
@@ -185,18 +194,217 @@ def stage(rows, probedir, outdir, chunk, start):
                      % (len(keep), n - start, len(groups)))
 
 
+FIELDS = ['stage', 'index', 'spec', 'L', 'T', 't', 'fuel', 'M']
+ROW_RE = re.compile(
+    r'^\(\* (\S+)  L=(\d+) T=(\d+) t=(\d+) fuel=(\d+) M=(\d+) \*\)\n'
+    r'(Definition tm_rw(\d+)_(\d+) : TM :=.*?\n  end\.)\n'
+    r'Lemma nqhtr_rw\8_\9 : NeverQuasiHaltsTr tm_rw\8_\9\.\n'
+    r'Proof\. apply \(rw_tier_tr_sound _ (\d+) (\d+) (\d+) (\d+) (\d+)\)\. '
+    r'vm_cast_no_check \(eq_refl true\)\. Qed\.', re.M | re.S)
+
+
+def inventory(stagedir, manifest):
+    """Freeze the exact existing row order; refuse any unparsed proof."""
+    rows = []
+    for path in sorted(Path(stagedir).glob('ProvTr_RW_[0-9][0-9].v')):
+        text = path.read_text()
+        matches = list(ROW_RE.finditer(text))
+        nn = int(path.stem[-2:])
+        names = []
+        for index, match in enumerate(matches):
+            spec, *values = match.groups()[:6]
+            definition, stage_name, row_index = match.groups()[6:9]
+            # Comments are not authoritative: compare their machine and
+            # parameters with the actual definition and theorem application.
+            if int(stage_name) != nn or int(row_index) != index:
+                raise ValueError(f'noncontiguous row names in {path}')
+            name = f'tm_rw{nn:02d}_{index:04d}'
+            if definition != tm_lambda(name, spec):
+                raise ValueError(f'machine comment disagrees with {name}')
+            if tuple(values) != match.groups()[9:]:
+                raise ValueError(f'proof parameters disagree for {name}')
+            names.append(name)
+            rows.append(dict(zip(FIELDS, [nn, index, spec, *map(int, values)])))
+        actual = re.search(r'Definition ptw_\d+ : list TM :=\s*\[(.*?)\]\.',
+                           text, re.S)
+        if not names or not actual or re.findall(r'tm_rw\d+_\d+', actual[1]) != names:
+            raise ValueError(f'row list not fully accounted for in {path}')
+        if len(re.findall(r'^Lemma nqhtr_', text, re.M)) != len(names):
+            raise ValueError(f'unparsed proof in {path}')
+    if not rows:
+        raise ValueError('no original stages found')
+    with open(manifest, 'w') as out:
+        writer = csv.DictWriter(out, FIELDS, delimiter='\t', lineterminator='\n')
+        writer.writeheader()
+        writer.writerows(rows)
+    print(f'inventoried {len(rows)} machines in {len(set(r["stage"] for r in rows))} stages')
+
+
+def read_manifest(path):
+    with open(path) as source:
+        reader = csv.DictReader(source, delimiter='\t')
+        if reader.fieldnames != FIELDS:
+            raise ValueError('unexpected RepWL manifest columns')
+        rows = [{k: v if k == 'spec' else int(v) for k, v in row.items()}
+                for row in reader]
+    seen = set()
+    previous_stage = -1
+    next_index = 0
+    for r in rows:
+        if r['stage'] != previous_stage:
+            if r['stage'] <= previous_stage:
+                raise ValueError('stages must be ordered')
+            previous_stage, next_index = r['stage'], 0
+        if r['index'] != next_index:
+            raise ValueError('row indices must be contiguous within each stage')
+        next_index += 1
+        if not re.fullmatch(r'(?:[01][LR][ABCD]|---){2}(?:_(?:[01][LR][ABCD]|---){2}){3}', r['spec']):
+            raise ValueError(f'invalid machine: {r["spec"]}')
+        if r['spec'] in seen or any(r[k] < 0 for k in FIELDS if k != 'spec'):
+            raise ValueError('duplicate machine or negative parameter')
+        seen.add(r['spec'])
+    if not rows:
+        raise ValueError('empty manifest')
+    return rows
+
+
+def split_rows(rows, chunk, heavy_fuel, heavy_length):
+    """Contiguous groups preserve the public lists by definitional equality."""
+    if chunk < 1 or heavy_fuel < 1 or heavy_length < 1:
+        raise ValueError('split thresholds must be positive')
+    parts, pending = [], []
+    for row in rows:
+        heavy = row['fuel'] >= heavy_fuel or row['L'] >= heavy_length
+        if heavy:
+            if pending:
+                parts.append(pending)
+                pending = []
+            parts.append([row])
+        else:
+            pending.append(row)
+            if len(pending) == chunk:
+                parts.append(pending)
+                pending = []
+    if pending:
+        parts.append(pending)
+    return parts
+
+
+def render_parts(rows, chunk=10, heavy_fuel=100000, heavy_length=9):
+    files = {}
+    for nn in sorted(set(r['stage'] for r in rows)):
+        stage_rows = [r for r in rows if r['stage'] == nn]
+        parts = split_rows(stage_rows, chunk, heavy_fuel, heavy_length)
+        wrapper = [f'''(** GENERATED by tools/censustr/gen_provtr_rw.py split -- DO NOT EDIT.
+    RW {nn:02d}: {len(stage_rows)} machines, {len(parts)} independent checking units.
+    The original machine order and all public theorem names are preserved. *)
+From Coq Require Import List.
+From BBB4 Require Import BBB4_Statement BBBT4_Statement.''']
+        part_names = []
+        for pi, part in enumerate(parts):
+            mod = f'ProvTr_RW_{nn:02d}_P{pi:03d}'
+            pn = f'ptw_{nn:02d}_p{pi:03d}'
+            part_names.append((mod, pn))
+            wrapper.append(f'From BBB4.CensusTr.RWParts Require {mod}.')
+            body = [f'''(** GENERATED by tools/censustr/gen_provtr_rw.py split -- DO NOT EDIT.
+    Independent RepWL checks for stage {nn:02d}, part {pi:03d}. *)
+From Coq Require Import Arith List.
+From BBB4 Require Import BBB4_Statement BBBT4_Statement.
+From BBB4.CensusTr Require Import RepWLTr.
+Import ListNotations.
+''']
+            names = []
+            for r in part:
+                name = f'rw{nn:02d}_{r["index"]:04d}'
+                names.append(name)
+                params = ' '.join(str(r[k]) for k in FIELDS[3:])
+                body.extend([
+                    '(* ' + r['spec'] + '  ' + ' '.join(f'{k}={r[k]}' for k in FIELDS[3:]) + ' *)',
+                    tm_lambda('tm_' + name, r['spec']),
+                    f'Lemma nqhtr_{name} : NeverQuasiHaltsTr tm_{name}.',
+                    f'Proof. apply (rw_tier_tr_sound _ {params}). vm_cast_no_check (eq_refl true). Qed.\n'])
+                wrapper.extend([
+                    f'Definition tm_{name} : TM := {mod}.tm_{name}.',
+                    f'Lemma nqhtr_{name} : NeverQuasiHaltsTr tm_{name}.',
+                    f'Proof. exact {mod}.nqhtr_{name}. Qed.'])
+            body.append(f'Definition {pn} : list TM :=\n  [' + ';\n   '.join('tm_'+n for n in names) + '].\n')
+            term = '(Forall_nil NeverQuasiHaltsTr)'
+            for name in reversed(names):
+                term = f'(Forall_cons _ nqhtr_{name} {term})'
+            body.extend([f'Lemma {pn}_nqhtr : Forall NeverQuasiHaltsTr {pn}.',
+                         f'Proof. exact {term}. Qed.\n'])
+            files[f'RWParts/{mod}.v'] = '\n'.join(body)
+        wrapper.extend(['Import ListNotations.\n',
+            f'Definition ptw_{nn:02d} : list TM :=\n  ' +
+            ' ++\n  '.join(f'{mod}.{pn}' for mod, pn in part_names) + '.\n',
+            f'Lemma ptw_{nn:02d}_rows : ptw_{nn:02d} =\n  [' +
+            ';\n   '.join(f'tm_rw{nn:02d}_{r["index"]:04d}' for r in stage_rows) + '].',
+            'Proof. reflexivity. Qed.\n',
+            f'Lemma ptw_{nn:02d}_nqhtr : Forall NeverQuasiHaltsTr ptw_{nn:02d}.',
+            f'Proof. unfold ptw_{nn:02d}; repeat (apply Forall_app; split);',
+            '  first [' + ' | '.join(f'exact {mod}.{pn}_nqhtr' for mod, pn in part_names) + ']. Qed.\n'])
+        files[f'ProvTr_RW_{nn:02d}.v'] = '\n'.join(wrapper)
+    return files
+
+
+def split_stages(manifest, outdir, chunk, heavy_fuel, heavy_length, check, project):
+    rows = read_manifest(manifest)
+    files = render_parts(rows, chunk, heavy_fuel, heavy_length)
+    outdir = Path(outdir)
+    stale = sorted(set(outdir.glob('RWParts/ProvTr_RW_*_P*.v')) -
+                   {outdir / name for name in files})
+    if stale:
+        raise ValueError('unexpected old parts (refusing to silently discard): ' + ', '.join(map(str, stale)))
+    for name, text in files.items():
+        path = outdir / name
+        if check:
+            if not path.exists() or path.read_text() != text:
+                raise ValueError(f'stale generated file: {path}')
+        else:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text)
+    if project:
+        path = Path(project)
+        old = path.read_text()
+        names = [str((outdir / n).relative_to(path.resolve().parent))
+                 for n in sorted(files)]
+        old_lines = old.splitlines()
+        missing = [n for n in names if n not in old_lines]
+        if check and missing:
+            raise ValueError('unregistered stages: ' + ', '.join(missing))
+        if missing:
+            path.write_text(old.rstrip() + '\n' + '\n'.join(missing) + '\n')
+    print(f'{"checked" if check else "wrote"} {len(files)} files for {len(rows)} machines')
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('phase', choices=['probe', 'stage'])
+    ap.add_argument('phase', choices=['probe', 'stage', 'inventory', 'split'])
     ap.add_argument('args', nargs='+')
     ap.add_argument('--chunk', type=int, default=None,
-                    help='machines per probe file (default 1: one slow machine then stalls only its own file) / per stage file (default 100)')
+                    help='maximum rows per file (probe: 1; stage: 100; split: 10)')
     ap.add_argument('--start', type=int, default=0)
+    ap.add_argument('--heavy-fuel', type=int, default=100000)
+    ap.add_argument('--heavy-length', type=int, default=9)
+    ap.add_argument('--check', action='store_true')
+    ap.add_argument('--project', help='register/check generated files in this _CoqProject')
     a = ap.parse_args()
+    required = 3 if a.phase == 'stage' else 2
+    if len(a.args) != required:
+        ap.error(f'{a.phase} takes {required} positional arguments')
+    if a.chunk is not None and a.chunk < 1:
+        ap.error('--chunk must be positive')
+    if a.heavy_fuel < 1 or a.heavy_length < 1:
+        ap.error('heavy-row thresholds must be positive')
     if a.phase == 'probe':
         probe(read_rows(a.args[0]), a.args[1], a.chunk or 1)
-    else:
+    elif a.phase == 'stage':
         stage(read_rows(a.args[0]), a.args[1], a.args[2], a.chunk or 100, a.start)
+    elif a.phase == 'inventory':
+        inventory(a.args[0], a.args[1])
+    else:
+        split_stages(a.args[0], str(Path(a.args[1]).resolve()), a.chunk or 10,
+                     a.heavy_fuel, a.heavy_length, a.check, a.project)
 
 
 if __name__ == '__main__':

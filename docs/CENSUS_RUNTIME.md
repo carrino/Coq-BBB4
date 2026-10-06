@@ -2762,6 +2762,82 @@ being the binding constraint, because the constraint moved to memory.
 The row stands as the right description of where the CPU is; it is no
 longer the thing between here and the goal.
 
+## Instruction census: splitting RepWL stages (2026-10-06)
+
+The instruction census's 1,462 RepWL proofs were serialized inside 17
+`ProvTr_RW_NN.v` files. In the owner's box run, RW_14 alone took about
+4 h 20 min and RW_15 about 2 h 20 min, gating the census walk.
+
+`tools/censustr/gen_provtr_rw.py split` now emits 402 independent checking
+units under `CensusTr/RWParts/`. Each unit holds at most ten machines;
+rows with fuel at least 100,000 or block length at least nine get a unit
+of their own. The original stage files remain compatibility wrappers,
+with the same machine and theorem names and the same ordered lists.
+RW_14 has 40 checking units. Every machine still uses its original
+`rw_tier_tr_sound` application and VM conversion check.
+
+The source manifest `tools/censustr/provtr_rw_stages.tsv` records the
+original machines and parameters. Its inventory command checks the
+actual transition definitions and theorem applications, rather than
+trusting their comments. All 1,462 entries were compared with main at
+`797d2692`. That revision contains 23 rows in RW_09 and 37 in RW_10.
+Each wrapper also proves its concatenated list equal to the explicit
+original order by reflexivity.
+
+### Local phase measurement
+
+Coq 8.18.0 / OCaml 4.14.2, macOS arm64, four worker slots. The same
+RW_09 inputs were compiled before and after, sequentially, with
+`-native-compiler no`. Checker prerequisites were built beforehand;
+this measures the stage's VM proofs, not a fresh-clone build or native
+companion compilation. One run per configuration:
+
+| Configuration | Wall seconds | Sum of per-file elapsed seconds |
+|---|---:|---:|
+| Original RW_09, 23 proofs in one file | 342.217 | 342.216 |
+| Three independent parts plus wrapper | 160.822 | 355.789 |
+
+The wall-time improvement is 2.13x. The parts took 70.057, 160.539 and
+124.910 seconds; the wrapper took 0.283 seconds. The sum is elapsed
+compiler time, not an OS CPU-time measurement. Splitting exposes
+parallelism; it does not remove the closure or certificate search.
+These numbers are not a measured whole-pipeline speedup or a prediction
+for the 8-core box.
+
+Reproduce after building `RepWLTr.vo` with the selected compiler:
+
+```sh
+python3 tools/censustr/gen_provtr_rw.py split \
+  tools/censustr/provtr_rw_stages.tsv theories/CensusTr --project _CoqProject
+python3 tools/closeouttr/gen_closeout_tr.py
+python3 tools/censustr/bench_rw_split.py --stages 09 --jobs 4 \
+  --coqc /path/to/coqc --baseline-ref 797d2692 --output /tmp/rw09-bench
+```
+
+The benchmark validates the baseline's machines and parameters before
+running, recompiles every selected stage check, and writes per-file
+logs and `timings.json`. `--stages 14,15` exercises the critical stages;
+`--coqnative /path/to/coqnative` additionally measures native companions
+when their prerequisites and compiler environment are available.
+
+The four inventory/corruption tests pass. The generated-file checks,
+Coq project audit and six-shard audit pass; the state-census cache guard
+reports `MATCH`. All 23 RW_09 proofs and their wrapper were compiled.
+`Print Assumptions ptw_09_nqhtr` reports only:
+
+```text
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+  : forall (A : Type) (B : A -> Type) (f g : forall x : A, B x),
+    (forall x : A, f x = g x) -> f = g
+```
+
+`Print Assumptions ptw_09_rows` reports `Closed under the global context`.
+The full instruction census and final value assumption audit still need
+the box re-walk. Batch that validation with subsequent changes to the
+walk dependencies. No `.vo`, native output, deferred list, statement,
+state-census source, Makefile or CI workflow changes belong to this split.
+
 ## Measurement status
 
 tools/probes/ has the vm_compute harness (per-tier timings on four
