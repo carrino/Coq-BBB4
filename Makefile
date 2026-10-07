@@ -45,6 +45,31 @@ all: Makefile.coq
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	 $(MAKE) -f Makefile.coq
 
+# STATE_TARGETS: everything the STATE-level chain needs from _CoqProject --
+# the modules that the census walk units (Census/Compute/, Census/Run_Split*)
+# and the three census-backed files (Closeout/CloseoutFinal.v, BBB4_Theorem.v,
+# BBB4_Value.v) Require.  Makefile.coq builds their dependency closure.
+#
+# `all' is every file in _CoqProject, which since the instruction-level
+# development landed also holds ~7,900 files the state proof never loads
+# (CensusTr/ stages, Machines/CountersTr/ boards, the CloseoutTr/ batches):
+# proof-all over `all' went from ~83 min to most of a day (2026-10-07).
+# The state targets below build only the state chain; `make all' is
+# unchanged and still builds everything.
+STATE_TARGETS := theories/BBB4_Statement.vo theories/BBB4_Spec.vo \
+  theories/Census/TNF_QH.vo theories/Census/Decide.vo \
+  theories/Census/Deferred_Defs.vo theories/Census/Deferred_Data.vo \
+  theories/Census/Run.vo theories/Census/Run_Compute.vo \
+  theories/Census/Run_Compute_Split.vo \
+  theories/Closeout/CloseoutKit.vo theories/Closeout/ShadowKit.vo \
+  theories/Closeout/CoreRows.vo theories/Closeout/Closeout.vo \
+  theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.vo
+
+state-build: Makefile.coq
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 $(MAKE) -f Makefile.coq -j$(BUILD_JOBS) $(STATE_TARGETS)
+.PHONY: state-build
+
 Makefile.coq: _CoqProject
 	coq_makefile -f _CoqProject -o Makefile.coq
 
@@ -76,7 +101,7 @@ clean:
 # (docs/VERIFYING.md).  On a mismatched toolchain the load fails with
 # "inconsistent assumptions"; either use the census switch or re-derive
 # the census .vo with `make census-verify'.
-proof: all
+proof: state-build
 	@python3 tools/census_cache.py --check
 	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v || \
 	  { echo "proof: FAILED loading the committed census .vo -- use the census"; \
@@ -500,7 +525,7 @@ _proof-all-run:
 	   coq_makefile -f _CoqProject -o Makefile.coq; \
 	 fi; \
 	 echo "$$H" > "$$S"
-	$(MAKE) -j$(BUILD_JOBS) all
+	$(MAKE) state-build
 	$(MAKE) census-verify
 	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v
 	coqc -Q theories BBB4 theories/Closeout/BBB4_Theorem.v
@@ -516,7 +541,7 @@ _proof-all-run:
 
 # Guarded census: skip the walk when the committed .vo already certify this
 # tree (hash matches + all census .vo present); otherwise WARN and walk.
-census: all
+census: state-build
 	@if python3 tools/census_cache.py --check >/dev/null 2>&1; then \
 	  echo "census cache VALID -- skipping walk (make census-verify to force a re-walk)"; \
 	else \
@@ -542,7 +567,7 @@ census-cache:
 # Deletes ONLY the committed census .vo (walk units + Run_Split* + the theorem);
 # the base build's .vo (Run/Decide/Deferred_*/Proven_*/TNF_QH/...) stay under
 # Makefile.coq's control.  After a green walk, refresh + commit the cache.
-census-verify: all
+census-verify: state-build
 	@echo ">>> census-verify: FORCE RE-WALK from source (STABLE hardware only) <<<"
 	@echo ">>> current census .vo are BACKED UP (not deleted) -- see below <<<"
 	@bdir="census_probes/vo-backup-$$(date +%Y%m%d-%H%M%S)"; \
