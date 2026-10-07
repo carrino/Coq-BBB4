@@ -70,10 +70,10 @@ during `make proof`) or independently with `coqchk -o`.
 
 ## The verification ladder
 
-Four rungs, in increasing order of paranoia — each needs strictly less
-trust than the one before.  No rung requires deleting anything by hand:
-a fresh clone carries no binaries except the census `.vo`, and the walk
-targets back up and re-derive those automatically.
+Three rungs, in increasing order of paranoia — each needs strictly less
+trust than the one before.  A fresh clone carries **no binaries**: since
+2026-10-07 the census `.vo` are not committed either, so the full proof
+is one from-source build on your own machine.
 
 1. **Read the claim.**  [`theories/BBB4_Spec.v`](theories/BBB4_Spec.v)
    (with [`theories/BBB4_Statement.v`](theories/BBB4_Statement.v)) is
@@ -82,19 +82,12 @@ targets back up and re-derive those automatically.
    proved — and what is not.  Trust: the authors.
 2. **`make`** (stock Coq 8.18, no opam, ~1–2 h).  Rebuilds every
    checker, every board theorem, the champion's exact score, and
-   `closeout_partial` — the entire boarding argument — **from source;
-   none of the committed `.vo` are in this closure**.  Trust: the Coq
-   kernel.
-3. **`make proof`** (the census opam switch, minutes).  Adds the
-   census chain: loads the 154 committed census `.vo` (hash-guarded
-   against the census sources) and yields `bbb4_target` and
-   `BBB4_value`.  Trust: the kernel, plus that those `.vo` are honest
-   output of the census walk.
-4. **`make proof-all`** — **the whole claim from source, one
-   command, 1 h 20 m.**  Base build, then re-derive the census
-   (`census-verify` backs the committed `.vo` up automatically and
-   walks from source), then the same closeout chain and the same
-   `Print Assumptions`.  Nothing committed is trusted; the `Axioms:`
+   `closeout_partial` — the entire boarding argument — **from source**.
+   Trust: the Coq kernel.
+3. **`make proof`** (= `make proof-all`) — **the whole claim from
+   source, one command, ~80–90 min.**  The state-level base build, then
+   the census walk on your machine, then the closeout chain and
+   `Print Assumptions BBB4_value`.  Nothing is precompiled; the `Axioms:`
    block at the end is the entire trust surface.  Trust: the kernel
    alone.
 
@@ -110,8 +103,7 @@ targets back up and re-derive those automatically.
    base build from `nproc` (`BUILD_JOBS`) and the walk from *physical*
    cores (`WALK_JOBS`) — the walk is memory-bandwidth bound, so SMT
    threads do not help it.  The walk is resumable per-unit, so
-   re-walking a *sample* and checking it reproduces the committed
-   output is meaningful too.  Needs ~10 GB RAM
+   an interrupted walk picks up where it stopped.  Needs ~10 GB RAM
    (`Compute/Census_Theorem.v` runs alone at 6.3 GB) and the census
    opam switch.
 
@@ -127,7 +119,8 @@ tooling only — it carries no proof weight).
 ```sh
 make -j8        # the full from-source build: every checker, board and
                 # the closeout, on stock Coq -- no committed binaries
-make proof      # + the census-backed top-level theorem and its report
+make proof      # the whole claim from source: base build, census walk,
+                # BBB4_value and its report (~80-90 min, census switch)
 ```
 
 **Or, to trust nothing but the kernel, one command:**
@@ -155,13 +148,11 @@ so `make -j16` budgets ~24 GB for them while the rest of the tree fills
 the remaining slots.  On a ~16 GB box use `make -j2`, or tighten the
 chains in `Makefile.coq.local` to a single column.
 
-`make proof` additionally loads the **committed census `.vo`**
-(`theories/Census/Compute/`, the output of a 385-core-minute
-`native_compute` enumeration of the whole (4,2) space).  Those binaries are
-toolchain-specific: they load under the opam switch they were built
-with (OCaml 4.14.2, Coq 8.18.0, `coq-native`) and are hash-guarded by
-`tools/census_cache.py`.  To trust nothing but source, re-derive them
-yourself:
+`make proof` (the same as `make proof-all`) additionally walks the census
+(`theories/Census/Compute/`, a 385-core-minute `native_compute`
+enumeration of the whole (4,2) space) on your machine.  It needs
+`native_compute`, so it runs under the census opam switch (OCaml 4.14.2,
+Coq 8.18.0, `coq-native`), which `tools/census_toolchain.sh` sets up:
 
 ```sh
 make proof-all       # everything from source, 79 m 38 s (recommended)
@@ -185,7 +176,7 @@ verification tier, from "check one machine" to "re-walk the census".
 | `theories/Counters/` | The windowed-run toolkit for hand-proved machines: `WTape`, `LapGlue`/`WaveCounter`/`MeasureGlue` closers, shared counter encodings |
 | `theories/Checkers/ReachSt.v`, `ReachStI.v` | The termination checker behind the REACHST tier: a machine's liveness obligation for one state, discharged as termination of the STATE-DELETED sub-machine (`docs/REACHST_TIER.md`) |
 | `theories/Checkers/Ladder*.v`, `theories/Machines/Ladder/` | The ladder: counter segments carried as a value-indexed rule family, its fill law read off the machine rather than assumed (`docs/LADDER_PLAN.md`) |
-| `theories/Census/` | The trusted census: TNF enumeration, the in-walk deciders, the frozen deferred tables, and (committed as `.vo`) the walk output ending in `census_decided` |
+| `theories/Census/` | The trusted census: TNF enumeration, the in-walk deciders, the frozen deferred tables, and the walk units (`Compute/`, run by `make proof`) ending in `census_decided` |
 | `theories/Closeout/` | The assembly: generated stages bridging every decided frozen row to its board, `closeout_partial`, `census_boarded`, `bbb4_target`, and the hand-written `BBB4_Value.v` — the BBB(4) = 32,779,478 value theorem |
 | `theories/BBBT4_Statement.v`, `theories/BBBT4_Spec.v`, `theories/BBBT4_Champion.v`, `theories/CensusTr/`, `theories/Checkers/*Tr.v`, `theories/Machines/CountersTr/` | The **instruction-level (transition-level) development**: the claim BBB_tr(4) = 32,779,478, the beeping semantics at instruction granularity, the ported checkers, the transition-level census walk and its proven tier — see the section below |
 | `theories/Tests/` | Negative controls in the BBB corruption-test tradition: mutated certificates, periods, sides and claims must all fail |
@@ -201,14 +192,11 @@ verification tier, from "check one machine" to "re-walk the census".
 * Every checker feature ships with corruption tests
   (`theories/Tests/*_Corruption.v`) that must reject tampered
   certificates.
-* The committed census `.vo` are genuine walk output, hash-guarded
-  against census source edits — and you do not have to take that on
-  faith: **`make proof-all` re-derives them and the whole value theorem
-  from source in 1 h 20 m** on 8 cores / 32 GB (measured end to end,
-  2026-08-12).  That used to be a
-  12-hour proposition and a multi-step procedure; it is now one
-  command, which is why it is rung 4 of the ladder rather than a
-  paragraph in the docs.
+* Nothing precompiled is trusted: no `.vo` are committed, and
+  **`make proof` re-derives the census and the whole value theorem
+  from source in ~80–90 min** on 8 cores / 32 GB.  The census `.vo`
+  used to be committed and hash-guarded; that cache was removed on
+  2026-10-07, so the proof is one from-source build.
 * The partition audit (`tools/closeout/audit.py`) is untrusted Python —
   but with the residue empty it carries no weight for the value
   theorem: `not_skipped_nil` discharges the skip disjunct inside Coq,

@@ -1,6 +1,0 @@
-# CENSUS_VO_HASH -- sha256 of the census .v INPUT closure.
-# Build-hygiene guard only (UNTRUSTED, no proof weight); see
-# tools/census_cache.py.  Regenerate with: census_cache.py --update
-# after a GREEN re-walk on stable hardware (make census-verify).
-# closure: 532 .v input files.
-21d5501b0738f9a3813434907ffec14689119e75bffca7e9194d1c6e33a27c2a

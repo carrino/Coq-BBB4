@@ -3,19 +3,19 @@
 _What to run, what to expect, and where you are being asked to trust
 something.  The claim itself is in [`docs/CLAIMS.md`](CLAIMS.md)._
 
-There are two tiers.  **Tier A needs no committed binaries and no opam**; it
-verifies every board and the whole boarding argument.  Tier B chains that to
-the census, and is where the one trust decision lives.
+There are two tiers.  **Tier A needs no opam**; it verifies every board and
+the whole boarding argument.  Tier B adds the census walk and the value
+theorem: `make proof`, the whole claim from source in one command.  No `.vo`
+are committed (since 2026-10-07), so neither tier loads anything precompiled.
 
 ## Tier A — everything except the census walk
 
-`theories/Closeout/Closeout.v`'s dependency closure contains **zero committed
-`.vo`**.  Its only census dependencies are
-`theories/Census/{TNF_QH,Deferred_Defs,Deferred_Data}.v`, and none of those
-are among the 154 committed binaries — those are all walk output
-(`Census_Theorem`, `GG_*`, `GGH_*`, `G_*`, `Run_Split*`), which only
-`CloseoutFinal.v`, `BBB4_Theorem.v` and `BBB4_Value.v` load.  So this
-tier is entirely from source.
+`theories/Closeout/Closeout.v`'s dependency closure contains **no census walk
+output**.  Its only census dependencies are
+`theories/Census/{TNF_QH,Deferred_Defs,Deferred_Data}.v`; the walk output
+(`Census_Theorem`, `GG_*`, `GGH_*`, `G_*`, `Run_Split*`) is loaded only by
+`CloseoutFinal.v`, `BBB4_Theorem.v` and `BBB4_Value.v`.  So this tier needs
+no `native_compute` and stock apt Coq builds it.
 
 ```bash
 sudo apt-get install -y coq          # must be 8.18.0; Ubuntu 24.04 ships it
@@ -86,13 +86,15 @@ check rather than a quick one.
 `theories/Closeout/CloseoutFinal.v` gives `census_boarded`,
 `theories/Closeout/BBB4_Theorem.v` gives `bbb4_target`, and
 `theories/Closeout/BBB4_Value.v` gives `BBB4_value : BBB4_statement` —
-the end-to-end value theorem `make proof` builds and reports.  (The
+the end-to-end value theorem `make proof` walks, builds and reports.  (The
 claim itself, `BBB4_statement := BBB4_is champion_score`, is stated
 in `theories/BBB4_Spec.v`, with no census dependence; reading that file plus
 `theories/BBB4_Statement.v` gives every definition in the theorem.)  These
-three files are the only ones that load the committed walk output (they
+three files are the only ones that load the census walk output (they
 are deliberately not in `_CoqProject`, so the default `make` never
-touches them), and they need the toolchain that produced it:
+touches them), and the walk needs `native_compute`, so the census opam
+switch.  `make proof` sets it up through `tools/census_toolchain.sh`, or
+by hand:
 
 ```bash
 opam switch create census 4.14.2
@@ -101,8 +103,9 @@ eval $(opam env --switch=census)
 make proof
 ```
 
-`make proof` checks the census cache hash, compiles the three files
-with `coqc` (watch for the single `Print Assumptions BBB4_value`
+`make proof` (the same target as `make proof-all`) builds the state
+chain, walks the census from source, compiles the three files with
+`coqc` (watch for the single `Print Assumptions BBB4_value`
 `Axioms:` block in the output — expect exactly
 `functional_extensionality_dep`; `BBB4_value` consumes `bbb4_target`,
 so one footprint covers the chain.  `BBB4_is_unique` prints closed
@@ -142,18 +145,15 @@ takes any value your hard limit allows (`ulimit -Hs`), and Coq's own
 hint in that error is the fallback.  Measured 2026-08-11: 8192 KB fails,
 unlimited builds all three lists clean.
 
-**Trusting those 154 `.vo` is a decision.**  To avoid it, re-derive them
-— and since 2026-08-12 the whole claim from source is one command:
+The whole claim from source is one command:
 
 ```bash
-make proof-all            # base build + re-walk + closeout chain, 1 h 20 m
+make proof                # = make proof-all: base build + walk + closeout chain, ~80-90 min
 ```
 
-`proof-all` is `make proof` with the census re-derived instead of
-loaded: it runs the base build, then `census-verify`, then the same
-three closeout files and the same `Print Assumptions`.  Nothing in the
-committed cache is trusted, and the `Axioms:` block at the end is the
-entire trust surface.  Measured on 8 physical cores / 31 GB, un-niced:
+It runs the state base build, then `census-verify` (the walk), then the
+three closeout files and `Print Assumptions`.  Nothing precompiled is
+loaded, and the `Axioms:` block at the end is the entire trust surface.  Measured on 8 physical cores / 31 GB, un-niced:
 **79 m 38 s end to end** (742 core-min), from `git clean -fdx` with
 nothing pre-configured — a ~40 min base build plus the 42 m 36 s walk.
 The base build is the larger half, and unlike the walk it has had one
@@ -165,7 +165,7 @@ To re-walk on its own, without the closeout chain:
 make census-verify
 ```
 
-This moves the committed walk output to a timestamped backup directory
+This moves any previous walk output to a timestamped backup directory
 (`census_probes/vo-backup-*` — nothing is destroyed, and no manual `.vo`
 deletion is ever needed) and re-walks from source, on a native Linux
 filesystem — not `/mnt/c` under WSL2, where the drive bridge breaks
@@ -324,12 +324,9 @@ victim.
 
 The walk is **resumable and per-unit**: finished units are skipped on re-run,
 and a walk-stamp quarantines any `.vo` that was not produced by walking the
-current tree.  So it can be spread over days, and a *sample* is meaningful —
-re-walk a few `Run_Split_*` / `GG_*` / `G_*` units and check they reproduce
-the committed output, without paying for the whole walk.
-
-Afterwards, `python3 tools/census_cache.py --print-hash` should match the
-committed hash, confirming your walk covered the same inputs.
+current tree.  So it can be spread over days: an interrupted walk resumes
+where it stopped.  `python3 tools/census_cache.py --print-hash` prints the
+census input hash the walk-stamp records.
 
 ## Traps
 
@@ -353,11 +350,11 @@ committed hash, confirming your walk covered the same inputs.
   `-j2`, or edit the chains down to one column.  The build is incremental,
   so an OOM costs only the in-flight files — re-run and it resumes.
 * **`make proof` needs the census switch; plain `make` does not.**
-  `CloseoutFinal.v`, `BBB4_Theorem.v` and `BBB4_Value.v` are the only
-  files that load the committed `.vo`, and they are kept out of
-  `_CoqProject` so the default build stays all-source.  On the wrong toolchain `make proof` fails with
-  "inconsistent assumptions" while loading — that is the marshalling
-  mismatch, not a proof failure.
+  The walk is `native_compute`, and `CloseoutFinal.v`, `BBB4_Theorem.v`
+  and `BBB4_Value.v` load its output, so they are kept out of
+  `_CoqProject` and the default build stays apt-Coq-compatible.  Mixing
+  toolchains fails with "inconsistent assumptions" while loading — that is
+  the marshalling mismatch, not a proof failure.
 * **CI runs only the light tier.**  A hosted runner has ~7 GB, so neither
   the full build (the IRules batches peak at ~6–8 GB) nor the walk can live
   there.  `.github/workflows/ci.yml` builds the core library, the closeout
