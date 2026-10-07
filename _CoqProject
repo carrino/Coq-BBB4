@@ -12557,6 +12557,17 @@ theories/CensusTr/RWParts/ProvTr_RW_15_P035.v
 theories/CensusTr/RWParts/ProvTr_RW_15_P036.v
 theories/CensusTr/RWParts/ProvTr_RW_16_P000.v
 theories/CensusTr/RWParts/ProvTr_RW_16_P001.v
+theories/CensusTr/RWCerts/DataTr_RW_14_0047.v
+theories/CensusTr/RWCerts/DataTr_RW_14_0060.v
+theories/CensusTr/RWCerts/DataTr_RW_14_0075.v
+theories/CensusTr/RWCerts/DataTr_RW_14_0080.v
+theories/CensusTr/RWCerts/DataTr_RW_15_0054.v
+theories/CensusTr/RWCerts/DataTr_RW_15_0062.v
+theories/CensusTr/RWCerts/DataTr_RW_15_0080.v
+theories/CensusTr/RWCerts/DataTr_RW_15_0099.v
+theories/Checkers/ClosurePoolTr.v
+theories/Checkers/RepWLStoredTr.v
+theories/Tests/RepWLStoredTr_Corruption.v
 theories/CloseoutTr/CloseoutKitTr.v
 theories/CloseoutTr/CBT_AST_00.v
 theories/CloseoutTr/CBT_AST_01.v

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Stage RepWL (Tier W) never-QH catches into the transition-level proven
-tier.  UNTRUSTED tooling: every row is re-checked by the kernel through
-CensusTr/RepWLTr.v's [rw_tier_tr_sound] (the parameter-closed tier: the
-closure search, the per-instruction rank/lex certificate search and the
-verified check all run inside one vm_compute).
+tier. UNTRUSTED tooling: every row is re-checked by the kernel. By default
+CensusTr/RepWLTr.v's [rw_tier_tr_sound] runs closure search, per-instruction
+rank/lex search and verification. Selected split rows instead use
+Checkers/RepWLStoredTr.v's [rw_check_stored_tr_sound] to verify a supplied
+closure and certificate; no search is repeated for those rows.
 
   probe  ROWS.tsv OUTDIR          -> OUTDIR/ProbeRW_NN.v: ONE Eval per
          machine, a match chain over its rows in file order that stops at
@@ -24,6 +25,10 @@ The split phase preserves the existing stage numbers, row order, machine
 definitions and proof parameters. Heavy rows get their own compilation
 unit; each original stage becomes a compatibility wrapper. The manifest
 is source data, not a trusted certificate or a compiled artifact.
+Optional rw_certificates/RW_NN_NNNN.json files supply compact certificates;
+their machine and parameters must match the manifest. The split phase
+replays these into ordinary .v data under RWCerts and changes only the
+corresponding checker application, preserving every wrapper and machine.
 """
 import argparse
 import csv
@@ -195,6 +200,7 @@ def stage(rows, probedir, outdir, chunk, start):
 
 
 FIELDS = ['stage', 'index', 'spec', 'L', 'T', 't', 'fuel', 'M']
+CERTIFICATE_DIR = Path(__file__).resolve().parent / 'rw_certificates'
 ROW_RE = re.compile(
     r'^\(\* (\S+)  L=(\d+) T=(\d+) t=(\d+) fuel=(\d+) M=(\d+) \*\)\n'
     r'(Definition tm_rw(\d+)_(\d+) : TM :=.*?\n  end\.)\n'
@@ -290,7 +296,25 @@ def split_rows(rows, chunk, heavy_fuel, heavy_length):
     return parts
 
 
-def render_parts(rows, chunk=10, heavy_fuel=100000, heavy_length=9):
+def read_stored_certificates(rows, directory=CERTIFICATE_DIR):
+    import rw_stored
+    by_id = {(r['stage'], r['index']): r for r in rows}
+    out = {}
+    for path in sorted(Path(directory).glob('RW_*.json')):
+        match = re.fullmatch(r'RW_(\d{2})_(\d{4})', path.stem)
+        if not match:
+            raise ValueError(f'invalid certificate filename: {path}')
+        key = tuple(map(int, match.groups()))
+        data = rw_stored.read(path)
+        if key not in by_id or any(data[k] != by_id[key][k] for k in rw_stored.PARAMS):
+            raise ValueError(f'certificate machine or parameters differ: {path}')
+        out[key] = data
+    return out
+
+
+def render_parts(rows, chunk=10, heavy_fuel=100000, heavy_length=9, certificates=None):
+    import rw_stored
+    certificates = certificates or {}
     files = {}
     for nn in sorted(set(r['stage'] for r in rows)):
         stage_rows = [r for r in rows if r['stage'] == nn]
@@ -314,15 +338,27 @@ From BBB4.CensusTr Require Import RepWLTr.
 Import ListNotations.
 ''']
             names = []
+            if any((r['stage'], r['index']) in certificates for r in part):
+                body.append('From BBB4.Checkers Require Import RepWLStoredTr.')
             for r in part:
                 name = f'rw{nn:02d}_{r["index"]:04d}'
                 names.append(name)
                 params = ' '.join(str(r[k]) for k in FIELDS[3:])
+                key = (r['stage'], r['index'])
+                if key in certificates:
+                    cm = f'DataTr_RW_{nn:02d}_{r["index"]:04d}'
+                    files[f'RWCerts/{cm}.v'] = rw_stored.render(certificates[key])
+                    body.append(f'From BBB4.CensusTr.RWCerts Require {cm}.')
+                    args = ' '.join(str(r[k]) for k in ['L', 'T', 't', 'M'])
+                    proof = (f'rw_check_stored_tr_sound _ {args} '
+                             f'{cm}.keys {cm}.ranks {cm}.cert')
+                else:
+                    proof = f'rw_tier_tr_sound _ {params}'
                 body.extend([
                     '(* ' + r['spec'] + '  ' + ' '.join(f'{k}={r[k]}' for k in FIELDS[3:]) + ' *)',
                     tm_lambda('tm_' + name, r['spec']),
                     f'Lemma nqhtr_{name} : NeverQuasiHaltsTr tm_{name}.',
-                    f'Proof. apply (rw_tier_tr_sound _ {params}). vm_cast_no_check (eq_refl true). Qed.\n'])
+                    f'Proof. apply ({proof}). vm_cast_no_check (eq_refl true). Qed.\n'])
                 wrapper.extend([
                     f'Definition tm_{name} : TM := {mod}.tm_{name}.',
                     f'Lemma nqhtr_{name} : NeverQuasiHaltsTr tm_{name}.',
@@ -349,9 +385,11 @@ Import ListNotations.
 
 def split_stages(manifest, outdir, chunk, heavy_fuel, heavy_length, check, project):
     rows = read_manifest(manifest)
-    files = render_parts(rows, chunk, heavy_fuel, heavy_length)
+    certificates = read_stored_certificates(rows)
+    files = render_parts(rows, chunk, heavy_fuel, heavy_length, certificates)
     outdir = Path(outdir)
-    stale = sorted(set(outdir.glob('RWParts/ProvTr_RW_*_P*.v')) -
+    stale = sorted((set(outdir.glob('RWParts/ProvTr_RW_*_P*.v')) |
+                    set(outdir.glob('RWCerts/DataTr_RW_*.v'))) -
                    {outdir / name for name in files})
     if stale:
         raise ValueError('unexpected old parts (refusing to silently discard): ' + ', '.join(map(str, stale)))
@@ -360,7 +398,7 @@ def split_stages(manifest, outdir, chunk, heavy_fuel, heavy_length, check, proje
         if check:
             if not path.exists() or path.read_text() != text:
                 raise ValueError(f'stale generated file: {path}')
-        else:
+        elif not path.exists() or path.read_text() != text:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text)
     if project:

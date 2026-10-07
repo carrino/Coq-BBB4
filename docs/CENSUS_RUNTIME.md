@@ -2773,8 +2773,9 @@ units under `CensusTr/RWParts/`. Each unit holds at most ten machines;
 rows with fuel at least 100,000 or block length at least nine get a unit
 of their own. The original stage files remain compatibility wrappers,
 with the same machine and theorem names and the same ordered lists.
-RW_14 has 40 checking units. Every machine still uses its original
-`rw_tier_tr_sound` application and VM conversion check.
+RW_14 has 40 checking units. This split retained every original
+`rw_tier_tr_sound` application and VM conversion check. The following
+stored-certificate change replaces selected applications separately.
 
 The source manifest `tools/censustr/provtr_rw_stages.tsv` records the
 original machines and parameters. Its inventory command checks the
@@ -2837,6 +2838,89 @@ The full instruction census and final value assumption audit still need
 the box re-walk. Batch that validation with subsequent changes to the
 walk dependencies. No `.vo`, native output, deferred list, statement,
 state-census source, Makefile or CI workflow changes belong to this split.
+
+## Instruction census: supplied RepWL certificates (2026-10-06)
+
+Eight expensive RW_14/RW_15 checks now verify supplied closures and
+lexicographic certificates instead of searching for them during compilation.
+`Checkers/ClosurePoolTr.v` proves instruction liveness from a supplied pool:
+it checks the initial abstraction's membership, every successor edge and
+the certificate for every instruction visited in the prefix or pool.
+`Checkers/RepWLStoredTr.v` instantiates that theorem using the existing
+RepWL abstraction, successor soundness and measure lemmas.
+
+The compact decoders construct untrusted data. No encoder/decoder inverse,
+Python result or digest is assumed by the proof: the decoded pool and
+certificate undergo the complete Coq check. Wrong data must either fail
+the check or describe another valid certificate for the same machine.
+Every build compiles the data from `.v` source and repeats verification.
+
+`tools/censustr/rw_stored.py` searches and packs certificates into ordinary
+JSON under `tools/censustr/rw_certificates/`. `gen_provtr_rw.py split` checks
+the original machine and parameters against the frozen manifest and emits
+data modules under `CensusTr/RWCerts/`. It preserves all 1,462 machine
+definitions, their order and the stage wrappers exactly. Only eight
+checker applications change; all remaining searches are unchanged.
+
+### Local phase measurement
+
+Same toolchain and host as the split measurement: Coq 8.18.0 / OCaml
+4.14.2, macOS arm64, four workers, baseline `ba677fac`. Each configuration
+ran once, with common checker prerequisites already built. The after
+measurement includes compiling all eight data modules from source.
+
+| Phase | Before wall seconds | After wall seconds |
+|---|---:|---:|
+| VM compilation and checking | 1,344.645 | 211.960 |
+| Native companion compilation, measured separately | 0.859 | 3.285 |
+
+The VM phase is **6.34x faster** (22m25s to 3m32s). Its sum of per-file
+elapsed times falls from 4,518.175 to 680.631 seconds; those sums are not
+OS CPU-time measurements. Native compilation adds little overhead.
+These are phase measurements, not a fresh-clone or whole-census timing.
+
+| Stage / row (zero-based) | Original VM seconds | Stored data + proof seconds |
+|---|---:|---:|
+| RW_14 / 47 | 634.554 | 41.854 |
+| RW_14 / 60 | 548.348 | 202.683 |
+| RW_14 / 75 | 616.269 | 69.310 |
+| RW_14 / 80 | 564.980 | 52.219 |
+| RW_15 / 54 | 661.575 | 91.890 |
+| RW_15 / 62 | 192.068 | 80.026 |
+| RW_15 / 80 | 590.291 | 49.783 |
+| RW_15 / 99 | 710.090 | 92.866 |
+
+Reproduce with matching compiler prerequisites and native companions:
+
+```sh
+python3 tools/censustr/bench_rw_stored.py --baseline-ref ba677fac \
+  --jobs 4 --output /tmp/rw-stored-eight
+python3 tools/censustr/bench_rw_stored.py --baseline-ref ba677fac \
+  --jobs 4 --output /tmp/rw-stored-eight --mode native
+python3 tools/censustr/test_rw_stored.py
+python3 tools/censustr/test_provtr_rw_split.py
+python3 tools/censustr/rw_stored.py smoke \
+  theories/Tests/RepWLStoredTr_Corruption.v --check
+```
+
+Both new soundness theorems and all eight updated `nqhtr_rwNN_NNNN`
+theorems compile and report exactly this `Print Assumptions` output:
+
+```text
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+  : forall (A : Type) (B : A -> Type) (f g : forall x : A, B x),
+    (forall x : A, f x = g x) -> f = g
+```
+
+The Coq corruption suite accepts a small valid cycle and rejects a missing
+seed, malformed configuration, missing successor, empty certificate and
+invalid ranks. The Python tests cover packing, replay, parameter integrity
+and preservation of all machines and wrappers. Generated-file, project
+and shard checks pass; the state-census cache guard reports `MATCH`.
+No compiled outputs or changes to statements, deferred rows, `RunTr.v`,
+the Makefile or workflows are included. The 8-core/32 GB cold build and
+final `BBBT4_value` assumption audit remain pending the batched box re-walk.
 
 ## Measurement status
 
