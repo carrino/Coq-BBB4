@@ -209,9 +209,10 @@ the instruction-level `make proof-all`. Every other piece builds from
 source, and the closeout is kernel-checked by CI. A reviewer's guide, with
 independent cross-checks (the champion re-simulated, and the harness's 432
 hardest machines audited against the theorem's prediction), is
-[`BBBT4_REVIEW.md`](BBBT4_REVIEW.md). Expected axiom footprint:
-`functional_extensionality_dep` only. The pieces each report that, with the
-census theorem taken as a hypothesis.
+[`BBBT4_REVIEW.md`](BBBT4_REVIEW.md). Axiom footprint:
+`functional_extensionality_dep` only. This was verified end to end on
+2026-10-06 by `make proof-tr-all` from a fresh clone at `d9dc41d0`, which
+printed `Print Assumptions BBBT4_value` (`BBBT4_REVIEW.md` §8.1).
 
 ## Reproducing
 

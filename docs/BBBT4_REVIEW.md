@@ -233,6 +233,46 @@ For an independent re-check of the compiled terms, run
 | Claim stated (`BBBT4_Spec.v`) | done |
 | Lower bound (`BBBT4_Champion.v`) | done, builds from source |
 | Closeout: 10,924 of 10,924 rows (`closeout_tr_complete`) | done, CI |
-| Upper bound and value (`CloseoutFinalTr.v`, `BBBT4_Value.v`) | written; only checked with `census_tr` as a hypothesis. Needs `make proof-tr-all` (§7) on current main |
+| Upper bound and value (`CloseoutFinalTr.v`, `BBBT4_Value.v`) | **done, verified end to end** (§8.1) |
 | `coqchk` of the full chain | pending, box |
 | Independent reproduction on a second machine | pending |
+
+### 8.1 The verification run (2026-10-06)
+
+`make proof-tr-all` was run on a fresh clone at commit
+`d9dc41d08d0b19138af88d414ab458d302ad69e9`. That commit's tree,
+`f52855192fde74694f2ef647877f9658ec1a322f`, is identical to main after
+PR #242. The toolchain was Coq 8.18.0 with OCaml 4.14.2 (the `census` opam
+switch, native compiler present), on an 8-core / 32 GB WSL2 box at 4 walk
+jobs and 9 batch jobs. The run did the following:
+
+- built the walk prerequisites;
+- walked all 96 census units: `>>> units done: 96 / 96`, then
+  `census_tr : forall tm, QHBoundTr B_tr tm \/ Deferred D_tr tm -- CHECKED`;
+- compiled all 626 closeout batches, `CloseoutTr.vo`, the champion and the
+  instruction-level tests;
+- compiled `CloseoutFinalTr.v` and `BBBT4_Value.v`, which printed:
+
+```
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+  : forall (A : Type) (B : A -> Type) (f g : forall x : A, B x),
+    (forall x : A, f x = g x) -> f = g
+------------------------------------------------------------
+proof-tr-all COMPLETE at d9dc41d08d0b19138af88d414ab458d302ad69e9.
+BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)
+```
+
+The first attempt stopped in the closeout step. `COQNATIVE` overflowed
+the default 8 MB stack on `CBT_AST_134`..`136`. That was a build-script
+problem, not a proof failure, and PR #243 fixes it by raising the stack as
+`make all` does. The run resumed with `ulimit -s unlimited`, kept every
+finished `.vo`, re-checked the walk assembly and completed.
+
+The run took most of a day of wall time. Two RepWL stages,
+`ProvTr_RW_14` and `ProvTr_RW_15`, took about 4 h 20 min and over 2 h on
+one core each, and gated the walk. The walk itself took 13.1 CPU-h: a
+median of 435 s per unit and a slowest unit (`UnitTr_63`) of 1,313 s, so
+about 3.3 h of wall time at 4 jobs. Per-unit times are in
+[`bbbt4_walk_times_2026-10-06.txt`](bbbt4_walk_times_2026-10-06.txt).
+Cutting the build time is the next piece of work.
