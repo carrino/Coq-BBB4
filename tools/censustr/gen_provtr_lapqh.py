@@ -16,6 +16,8 @@ The ProvTr_QH_NN namespace is shared with the other QH conveyors
 exist; an existing stage is never overwritten.
 UNTRUSTED bookkeeping: it only names theorems the kernel already checked;
 a wrong name fails to compile.
+Collection also regenerates the shared lap bundles and stage import
+adapters via gen_lap_bundles.py.
 Usage: gen_provtr_lapqh.py --start N [--chunk N] [--boards DIR] [--outdir DIR]
 """
 import argparse
@@ -23,6 +25,7 @@ import glob
 import os
 import re
 import sys
+from gen_lap_bundles import generate as bundle_laps, staged_boards
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -51,7 +54,7 @@ def main():
     # a later collection appends only the new ones
     staged = set()
     for st in glob.glob(os.path.join(a.outdir, 'ProvTr_QH_*.v')):
-        staged |= set(re.findall(r'^From BBB4\.Machines\.CountersTr Require Import (LAPQ_\w+)\.', open(st).read(), re.M))
+        staged |= staged_boards(open(st).read())
     boards = [b for b in sorted(glob.glob(os.path.join(a.boards, 'LAPQ_*.v')))
               if os.path.splitext(os.path.basename(b))[0] not in staged]
     if staged:
@@ -103,6 +106,7 @@ def main():
                 f.write(''.join(x + '\n' for x in add))
         print('%d board path(s) added to _CoqProject' % len(add))
     print('%d boards -> %d stage file(s) (%s..) in %s' % (len(rows), nfiles, 'ProvTr_QH_%02d' % a.start, a.outdir))
+    bundle_laps(a.boards, a.outdir, project=None if a.no_coqproject else os.path.join(REPO, '_CoqProject'))
 
 
 if __name__ == '__main__':

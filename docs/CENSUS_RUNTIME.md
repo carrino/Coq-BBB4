@@ -2922,6 +2922,86 @@ No compiled outputs or changes to statements, deferred rows, `RunTr.v`,
 the Makefile or workflows are included. The 8-core/32 GB cold build and
 final `BBBT4_value` assumption audit remain pending the batched box re-walk.
 
+## Instruction census: lap-board bundles (2026-10-07)
+
+The 7,122 instruction lap boards previously required separate Coq and
+native compiler processes. `tools/censustr/gen_lap_bundles.py` groups them
+into 73 files of at most 100 boards under `Machines/CountersTr/Bundles/`.
+Each board has its own module, preserving local notation scope. The
+generator lifts `Require Import` commands into the bundle's prerequisites
+and leaves corresponding `Import` commands in their original positions;
+every other byte of the board body is preserved and rechecked by Coq.
+
+The individual board sources remain canonical. Bundle generation copies
+source, never compiled proofs. Import adapters give census stages and
+closeout batches their original board module names. Removing the adapters
+recovers all 80 modified Coq consumers byte-for-byte at baseline `9436619c`:
+their ordered machine lists, theorem statements and proof scripts are
+unchanged. The generated dependency graph for `RunTr_Split.vo` and
+`CloseoutTr.vo` contains all 73 bundles and zero individual lap-board
+compilation units, so the instruction build does not compile both layouts.
+
+The lap stage generators and emission scripts regenerate bundles after
+collection. `gen_closeout_tr.py` regenerates the bundles and closeout import
+adapters; its existing `--check` also rejects stale bundle source. The
+inventory `Bundles/boards.tsv` records the board-to-bundle mapping. No
+Makefile or workflow change is needed for this lever.
+
+### Local phase measurement
+
+Coq 8.18.0 / OCaml 4.14.2, macOS arm64, four workers, one run per
+configuration. The sample contains 400 unchanged boards: the first two
+100-board bundles of each LAPT and LAPQ family. Common checker and native
+prerequisites were prebuilt. Both phases forcibly compiled every selected
+source and then its native companion.
+
+| Configuration | Wall seconds | Sum of per-file elapsed seconds |
+|---|---:|---:|
+| 400 individual boards | 117.889 | 469.373 |
+| Four bundles containing the same boards | 63.767 | 147.740 |
+
+This sample's wall time improves **1.85x**. The compiler elapsed-time sum
+falls 3.18x; it is not an OS CPU-time measurement. The LAPT bundles took
+11.751 and 11.774 seconds; LAPQ took 60.451 and 63.764 seconds, leaving
+only two busy workers late in this small sample. This is a phase sample,
+not a measured whole-build or 8-core/32 GB result.
+
+```sh
+python3 tools/censustr/gen_lap_bundles.py
+python3 tools/closeouttr/gen_closeout_tr.py
+python3 tools/censustr/test_lap_bundles.py
+python3 tools/censustr/bench_lap_bundles.py \
+  --output /tmp/lap-bundle-bench --jobs 4
+```
+
+The benchmark checks that bundled source matches the generator and writes
+per-file logs and `timings.json`. `--bundles` selects another comma-separated
+sample; `--phase after` compiles just the corresponding bundles.
+
+All 73 bundles, containing all 7,122 original proofs, compiled with both
+Coq and the native compiler. All 80 consumers (26 census stages and 54
+closeout batches) also compiled, in 25.028 seconds at four workers with
+prerequisites prebuilt. Import adapters use the bundle's module names
+directly; they deliberately avoid module aliases, which duplicate native
+code. The 54 affected batch costs in `ci_costs.tsv` were measured again
+(including 21 previously absent entries), with the host and method noted.
+
+`Print Assumptions` on each consumer's assembled `Forall` theorem reports
+only:
+
+```text
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+  : forall (A : Type) (B : A -> Type) (f g : forall x : A, B x),
+    (forall x : A, f x = g x) -> f = g
+```
+
+The four import/replay tests pass, as do generated-file, Coq project and
+six-shard checks. The state-census cache guard reports `MATCH`. The full
+census re-walk and final `BBBT4_value` audit remain part of the batched
+box validation; these local measurements do not establish the two-hour
+whole-build target.
+
 ## Measurement status
 
 tools/probes/ has the vm_compute harness (per-tier timings on four

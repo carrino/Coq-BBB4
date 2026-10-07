@@ -6,108 +6,314 @@
 From Coq Require Import List.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.CensusTr Require Import TNF_QHTr.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LB1RB_1LB0RB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RB_0RB___.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RB_1LC0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0RB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB1RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB1RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1LB1RB_0RB0LB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1LC1RB_0RB0LB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1LC1RB_0RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1LC1RD_0RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RB1LB_0LB1RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RB1LB_0LC1RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RD1LB_0LB1RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RD1LB_0LC0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RD1LB_0LC1RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RD1LC_0LC1RB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1LB_1RD1LB_0LC0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1LC_0RD0LB_1LB1RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1LC_1RD1LB_0LC0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1LD_1RD1LB_0LC0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0LB1RD_1LB0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_0LC0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_0RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_0RD0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_1LC0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_1RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_1RC0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_1LD1LD_0RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_1RB1LD_0RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_1RC1LD_0RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RC_1RB0LD_0RB1LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RC_1RB0LD_0RC1LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0LB1RD_1LB0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0LB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0RB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB1RB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB1RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB1RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB1LC_1RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RD0LC_1RB___.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RD1LC_1RB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_1RB1LC_0LC0RB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC____0LC1RD_1LC0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC____0RC1LD_1RC0LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC____1RD0LC_0RD1LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC____1RD1LB_0LB0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LB_1LD1RB_0RB0LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LC_0RD1LB_1LC1RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LC_1LD1RB_0RB0LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LB1RB_0RB1LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LB1RB_0RC1LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LD1RB_0RB0LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LD1RB_0RB1LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LD1RB_0RC0LB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LD1RB_0RC1LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LD1RC_0RC1LB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0RB_1LC1LD_0LD1RB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0RB_1LD1RB_0RB0LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0RC_0LD1RB_1RC1LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0RD_1LD1RB_0RB0LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_0LB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_0LD0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_0RC0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_1LB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_1LC0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_1RC0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_1LB1RD_0LB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_1LC1RD_0LB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_1RD1RD_0LB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LC_1LB0RD_0LB1RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LC_1LB0RD_0LC1RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LC_1LD0RC_0LD1RB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0LB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0RB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB1LB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB1LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB1LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB1RC_1LB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB1LB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB1LC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB1LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD1RC_1LB0RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_1LB1RC_0RC0LB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1RB_1LD0RC_0LD0LB.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1RB_1LD1RB_0RB0LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1RC_0LD0RB_1RB1LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1RC_1LD1RB_0RB0LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1RD_1LD1RB_0RB0LD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC____0LC1RD_1LC0RD.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC____1LD0RC_0LD1RC.
-From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC____1LD1RB_0RC0LD.
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LB1RB_1LB0RB. *)
+From BBB4.Machines.CountersTr.Bundles Require Import BundleLAPQ_024.
+Import LAPQ_1RB____1LC0RD_0LB1RB_1LB0RB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RB_0RB___. *)
+Import LAPQ_1RB____1LC0RD_0LC1RB_0RB___.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RB_1LC0RD. *)
+Import LAPQ_1RB____1LC0RD_0LC1RB_1LC0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0LC. *)
+Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0RB. *)
+Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0RB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0RC. *)
+Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0RD. *)
+Import LAPQ_1RB____1LC0RD_0LC1RD_0RB0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB1RC. *)
+Import LAPQ_1RB____1LC0RD_0LC1RD_0RB1RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_0LC1RD_0RB1RD. *)
+Import LAPQ_1RB____1LC0RD_0LC1RD_0RB1RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1LB1RB_0RB0LB. *)
+Import LAPQ_1RB____1LC0RD_1LB1RB_0RB0LB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1LC1RB_0RB0LB. *)
+Import LAPQ_1RB____1LC0RD_1LC1RB_0RB0LB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1LC1RB_0RB0LC. *)
+Import LAPQ_1RB____1LC0RD_1LC1RB_0RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1LC1RD_0RB0LC. *)
+Import LAPQ_1RB____1LC0RD_1LC1RD_0RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RB1LB_0LB1RD. *)
+Import LAPQ_1RB____1LC0RD_1RB1LB_0LB1RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RB1LB_0LC1RD. *)
+Import LAPQ_1RB____1LC0RD_1RB1LB_0LC1RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RD1LB_0LB1RD. *)
+Import LAPQ_1RB____1LC0RD_1RD1LB_0LB1RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RD1LB_0LC0RD. *)
+Import LAPQ_1RB____1LC0RD_1RD1LB_0LC0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RD1LB_0LC1RD. *)
+Import LAPQ_1RB____1LC0RD_1RD1LB_0LC1RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC0RD_1RD1LC_0LC1RB. *)
+Import LAPQ_1RB____1LC0RD_1RD1LC_0LC1RB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1LB_1RD1LB_0LC0RD. *)
+Import LAPQ_1RB____1LC1LB_1RD1LB_0LC0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1LC_0RD0LB_1LB1RD. *)
+Import LAPQ_1RB____1LC1LC_0RD0LB_1LB1RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1LC_1RD1LB_0LC0RD. *)
+Import LAPQ_1RB____1LC1LC_1RD1LB_0LC0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1LD_1RD1LB_0LC0RD. *)
+Import LAPQ_1RB____1LC1LD_1RD1LB_0LC0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0LB1RD_1LB0RD. *)
+Import LAPQ_1RB____1LC1RB_0LB1RD_1LB0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_0LC0LC. *)
+Import LAPQ_1RB____1LC1RB_0RB1LD_0LC0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_0RB0LC. *)
+Import LAPQ_1RB____1LC1RB_0RB1LD_0RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_0RD0LC. *)
+Import LAPQ_1RB____1LC1RB_0RB1LD_0RD0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_1LC0LC. *)
+Import LAPQ_1RB____1LC1RB_0RB1LD_1LC0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_1RB0LC. *)
+Import LAPQ_1RB____1LC1RB_0RB1LD_1RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_0RB1LD_1RC0LC. *)
+Import LAPQ_1RB____1LC1RB_0RB1LD_1RC0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_1LD1LD_0RB0LC. *)
+Import LAPQ_1RB____1LC1RB_1LD1LD_0RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_1RB1LD_0RB0LC. *)
+Import LAPQ_1RB____1LC1RB_1RB1LD_0RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RB_1RC1LD_0RB0LC. *)
+Import LAPQ_1RB____1LC1RB_1RC1LD_0RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RC_1RB0LD_0RB1LD. *)
+Import LAPQ_1RB____1LC1RC_1RB0LD_0RB1LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RC_1RB0LD_0RC1LD. *)
+Import LAPQ_1RB____1LC1RC_1RB0LD_0RC1LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0LB1RD_1LB0RD. *)
+Import LAPQ_1RB____1LC1RD_0LB1RD_1LB0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0LB. *)
+Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0LB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0LC. *)
+Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0RB. *)
+Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0RB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0RC. *)
+Import LAPQ_1RB____1LC1RD_0RB0LC_1RB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB1RB. *)
+Import LAPQ_1RB____1LC1RD_0RB0LC_1RB1RB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB1RC. *)
+Import LAPQ_1RB____1LC1RD_0RB0LC_1RB1RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB0LC_1RB1RD. *)
+Import LAPQ_1RB____1LC1RD_0RB0LC_1RB1RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RB1LC_1RB0LC. *)
+Import LAPQ_1RB____1LC1RD_0RB1LC_1RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RD0LC_1RB___. *)
+Import LAPQ_1RB____1LC1RD_0RD0LC_1RB___.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_0RD1LC_1RB0LC. *)
+Import LAPQ_1RB____1LC1RD_0RD1LC_1RB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC1RD_1RB1LC_0LC0RB. *)
+Import LAPQ_1RB____1LC1RD_1RB1LC_0LC0RB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC____0LC1RD_1LC0RD. *)
+Import LAPQ_1RB____1LC____0LC1RD_1LC0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC____0RC1LD_1RC0LD. *)
+Import LAPQ_1RB____1LC____0RC1LD_1RC0LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC____1RD0LC_0RD1LC. *)
+Import LAPQ_1RB____1LC____1RD0LC_0RD1LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1LC____1RD1LB_0LB0RD. *)
+Import LAPQ_1RB____1LC____1RD1LB_0LB0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LB_1LD1RB_0RB0LD. *)
+Import LAPQ_1RB____1RC0LB_1LD1RB_0RB0LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LC_0RD1LB_1LC1RD. *)
+Import LAPQ_1RB____1RC0LC_0RD1LB_1LC1RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LC_1LD1RB_0RB0LD. *)
+Import LAPQ_1RB____1RC0LC_1LD1RB_0RB0LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LB1RB_0RB1LD. *)
+Import LAPQ_1RB____1RC0LD_1LB1RB_0RB1LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LB1RB_0RC1LD. *)
+Import LAPQ_1RB____1RC0LD_1LB1RB_0RC1LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LD1RB_0RB0LD. *)
+Import LAPQ_1RB____1RC0LD_1LD1RB_0RB0LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LD1RB_0RB1LD. *)
+Import LAPQ_1RB____1RC0LD_1LD1RB_0RB1LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LD1RB_0RC0LB. *)
+Import LAPQ_1RB____1RC0LD_1LD1RB_0RC0LB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LD1RB_0RC1LD. *)
+Import LAPQ_1RB____1RC0LD_1LD1RB_0RC1LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0LD_1LD1RC_0RC1LB. *)
+Import LAPQ_1RB____1RC0LD_1LD1RC_0RC1LB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0RB_1LC1LD_0LD1RB. *)
+Import LAPQ_1RB____1RC0RB_1LC1LD_0LD1RB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0RB_1LD1RB_0RB0LD. *)
+Import LAPQ_1RB____1RC0RB_1LD1RB_0RB0LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0RC_0LD1RB_1RC1LD. *)
+Import LAPQ_1RB____1RC0RC_0LD1RB_1RC1LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC0RD_1LD1RB_0RB0LD. *)
+Import LAPQ_1RB____1RC0RD_1LD1RB_0RB0LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_0LB0RC. *)
+Import LAPQ_1RB____1RC1LB_0LB1RD_0LB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_0LD0RC. *)
+Import LAPQ_1RB____1RC1LB_0LB1RD_0LD0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_0RC0RC. *)
+Import LAPQ_1RB____1RC1LB_0LB1RD_0RC0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_1LB0RC. *)
+Import LAPQ_1RB____1RC1LB_0LB1RD_1LB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_1LC0RC. *)
+Import LAPQ_1RB____1RC1LB_0LB1RD_1LC0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_0LB1RD_1RC0RC. *)
+Import LAPQ_1RB____1RC1LB_0LB1RD_1RC0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_1LB1RD_0LB0RC. *)
+Import LAPQ_1RB____1RC1LB_1LB1RD_0LB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_1LC1RD_0LB0RC. *)
+Import LAPQ_1RB____1RC1LB_1LC1RD_0LB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LB_1RD1RD_0LB0RC. *)
+Import LAPQ_1RB____1RC1LB_1RD1RD_0LB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LC_1LB0RD_0LB1RD. *)
+Import LAPQ_1RB____1RC1LC_1LB0RD_0LB1RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LC_1LB0RD_0LC1RD. *)
+Import LAPQ_1RB____1RC1LC_1LB0RD_0LC1RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LC_1LD0RC_0LD1RB. *)
+Import LAPQ_1RB____1RC1LC_1LD0RC_0LD1RB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0LB. *)
+Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0LB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0LC. *)
+Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0RB. *)
+Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0RB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0RC. *)
+Import LAPQ_1RB____1RC1LD_0LB0RC_1LB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB1LB. *)
+Import LAPQ_1RB____1RC1LD_0LB0RC_1LB1LB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB1LC. *)
+Import LAPQ_1RB____1RC1LD_0LB0RC_1LB1LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB0RC_1LB1LD. *)
+Import LAPQ_1RB____1RC1LD_0LB0RC_1LB1LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LB1RC_1LB0RC. *)
+Import LAPQ_1RB____1RC1LD_0LB1RC_1LB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0LC. *)
+Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0LD. *)
+Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0RC. *)
+Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0RD. *)
+Import LAPQ_1RB____1RC1LD_0LD0RC_1LB0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB1LB. *)
+Import LAPQ_1RB____1RC1LD_0LD0RC_1LB1LB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB1LC. *)
+Import LAPQ_1RB____1RC1LD_0LD0RC_1LB1LC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD0RC_1LB1LD. *)
+Import LAPQ_1RB____1RC1LD_0LD0RC_1LB1LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_0LD1RC_1LB0RC. *)
+Import LAPQ_1RB____1RC1LD_0LD1RC_1LB0RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1LD_1LB1RC_0RC0LB. *)
+Import LAPQ_1RB____1RC1LD_1LB1RC_0RC0LB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1RB_1LD0RC_0LD0LB. *)
+Import LAPQ_1RB____1RC1RB_1LD0RC_0LD0LB.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1RB_1LD1RB_0RB0LD. *)
+Import LAPQ_1RB____1RC1RB_1LD1RB_0RB0LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1RC_0LD0RB_1RB1LD. *)
+Import LAPQ_1RB____1RC1RC_0LD0RB_1RB1LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1RC_1LD1RB_0RB0LD. *)
+Import LAPQ_1RB____1RC1RC_1LD1RB_0RB0LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC1RD_1LD1RB_0RB0LD. *)
+Import LAPQ_1RB____1RC1RD_1LD1RB_0RB0LD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC____0LC1RD_1LC0RD. *)
+Import LAPQ_1RB____1RC____0LC1RD_1LC0RD.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC____1LD0RC_0LD1RC. *)
+From BBB4.Machines.CountersTr.Bundles Require Import BundleLAPQ_025.
+Import LAPQ_1RB____1RC____1LD0RC_0LD1RC.
+(* END LAP BUNDLE IMPORT *)
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require Import LAPQ_1RB____1RC____1LD1RB_0RC0LD. *)
+Import LAPQ_1RB____1RC____1LD1RB_0RC0LD.
+(* END LAP BUNDLE IMPORT *)
 Import ListNotations.
 
 Definition pqh_15 : list TM :=

@@ -29,6 +29,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
 from cbt import CT, spec_row  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, 'tools', 'censustr'))
+from gen_lap_bundles import generate as generate_lap_bundles, read_bundle_map, rewrite_imports  # noqa: E402
 
 DEFERRED = os.path.join(REPO, 'censustr_deferred_v10.txt')
 SPEC_RE = re.compile(r'^\(\* spec (\S+) \*\)$', re.M)
@@ -172,6 +174,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--check', action='store_true')
     a = ap.parse_args()
+    if read_bundle_map():
+        generate_lap_bundles(check=a.check)
     deferred = read_list(DEFERRED)
     dset = set(deferred)
     bs = batches()
@@ -189,6 +193,13 @@ def main():
         os.path.join(REPO, 'closeouttr_boarded.tsv'): ''.join('%s\t%s\n' % (s, boarded[s]) for s in deferred if s in boarded),
         os.path.join(REPO, '_CoqProject'): coqproject(bs),
     }
+    # Import adapters only: every row, theorem statement and proof body stays
+    # unchanged. The source lap boards are rechecked in generated bundles.
+    lap_bundles = read_bundle_map()
+    if lap_bundles:
+        for module, _, _ in bs:
+            path = os.path.join(CT, module+'.v')
+            files[path] = rewrite_imports(open(path).read(), lap_bundles)
     stale = [p for p, txt in files.items()
              if not os.path.exists(p) or open(p).read() != txt]
     if a.check:
