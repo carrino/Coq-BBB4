@@ -87,7 +87,7 @@ additionally reports that nothing relies on type-in-type, unsafe
 ## How the two halves are proved
 
 **The upper bound** is the census + closeout chain.  The census walk
-(`census_decided`, the committed `.vo`: the 385-core-minute TNF walk of
+(`census_decided`, the 385-core-minute TNF walk of
 the whole (4,2) space) shows every machine either satisfies `QHBound 2000` or lies
 in the orbit — under completion of undefined transitions, non-start state
 swaps, and mirroring — of one of 5,156 frozen deferred rows; the closeout
@@ -147,18 +147,13 @@ champion's 66,349, never quasihalts, or quasihalts by the new champion's
   discharges the skip disjunct inside Coq, so padding or truncating the
   (empty) remaining table cannot change `BBB4_value`.  The audit remains
   useful bookkeeping for the frozen tables and per-row attribution.
-* The committed census `.vo` (154 files) are walk output, not source.
-  Loading them is a trust decision; `make census-verify` re-derives them
-  from source instead (385 core-min; 1 h 45 m at 4 jobs on 32 GB).  See
-  `docs/VERIFYING.md` for both paths.
-* **The rule for committed proof binaries:** a `.vo` is committed only when
-  reproducing it is prohibitive (the census walk: 385 core-min and a
-  special toolchain), and then only hash-guarded and with a from-source escape
-  hatch.  Nothing else in the tree ships as a binary — a file that rebuilds
-  in minutes gets rebuilt, not trusted — so the trust surface stays one
-  sharply-drawn line: everything up to `Closeout.vo` (and the champion's
-  exact score) compiles from source, and exactly one fact
-  (`census_decided`) rides on committed output.
+* **No proof binaries are committed.**  The census walk output (154 `.vo`)
+  used to be committed and hash-guarded, which made loading it a trust
+  decision.  Since 2026-10-07 it is not: `make proof` walks the census
+  from source on the verifier's machine (385 core-min; the whole proof is
+  ~80–90 min on 8 cores / 32 GB), so the trust surface is the Coq kernel,
+  the native compiler `native_compute` uses, and the one axiom.  See
+  `docs/VERIFYING.md`.
 
 ## What this does NOT claim
 
@@ -218,8 +213,8 @@ printed `Print Assumptions BBBT4_value` (`BBBT4_REVIEW.md` §8.1).
 
 See `docs/VERIFYING.md`.  In short: `make` builds everything through
 `Closeout.vo` — including the champion's exact-score file — from source
-with stock apt Coq 8.18.0 and needs **no committed binaries**; `make proof`
-adds the census-backed chain (`CloseoutFinal.v`, `BBB4_Theorem.v`,
-`BBB4_Value.v`, the only three files that load the walk output, kept out of
-the default build) under the census opam switch; `make census-verify`
-removes the last trust by re-walking the census from source.
+with stock apt Coq 8.18.0; `make proof` (= `make proof-all`) is the whole
+claim from source in one command: the census walk, then the chain
+(`CloseoutFinal.v`, `BBB4_Theorem.v`, `BBB4_Value.v`, the only three
+files that load the walk output, kept out of the default build), under
+the census opam switch.  No `.vo` are committed.

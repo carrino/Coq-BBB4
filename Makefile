@@ -26,9 +26,9 @@ STACK_KB ?= unlimited
 all: Makefile.coq
 	@# WARN (never fail) when this coqc has no native compiler.  A plain
 	@# `make' is legitimately useful that way -- CI builds on apt Coq and
-	@# the default build is all-source -- but the resulting .vo can
-	@# neither do the census walk nor load alongside the committed census
-	@# .vo, which are OCaml-marshalled by a different compiler.
+	@# the default build is all-source -- but the resulting .vo cannot
+	@# do the census walk (native_compute), and .vo are OCaml-marshalled,
+	@# so they will not load alongside .vo built by the census switch.
 	@#
 	@# This exists because `opam env' lives in the shell and a REBOOT
 	@# silently drops you back on /usr/bin/coqc.  Nothing announces it;
@@ -38,8 +38,8 @@ all: Makefile.coq
 	@if [ "$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')" = "no" ]; then \
 	   echo ">>> NOTE: this coqc has no native compiler ($$(command -v coqc))."; \
 	   echo ">>>   Fine for a plain build.  NOT usable for 'make census-verify'"; \
-	   echo ">>>   or 'make proof' -- the .vo will not load with the committed"; \
-	   echo ">>>   census .vo.  For those: eval \$$(opam env --switch=census)"; \
+	   echo ">>>   or 'make proof' -- the census walk needs native_compute."; \
+	   echo ">>>   For those: eval \$$(opam env --switch=census)"; \
 	   echo ">>>   then rm -f Makefile.coq && make clean && make."; \
 	 fi
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
@@ -91,25 +91,16 @@ clean:
 # 1RB1LD_1RC1RB_1LC1LA_0RC0RD's StD) scores exactly 32,779,478, and no
 # state of any (4,2) machine scores more (theories/Closeout/BBB4_Value.v;
 # the residue lists are EMPTY since 2026-08-01).  docs/CLAIMS.md states
-# the claim -- and its census trust tier -- precisely.
+# the claim precisely.
 #
-# The chain: census_decided (committed census .vo) -> closeout_partial
-# (Closeout.vo, from source via `make') -> census_boarded (CloseoutFinal.v)
-# -> bbb4_target (BBB4_Theorem.v) -> BBB4_value (BBB4_Value.v).  The last
-# three files LOAD the committed census .vo, which are toolchain-specific
-# (built with coq-native): compile them under the census opam switch
-# (docs/VERIFYING.md).  On a mismatched toolchain the load fails with
-# "inconsistent assumptions"; either use the census switch or re-derive
-# the census .vo with `make census-verify'.
-proof: state-build
-	@python3 tools/census_cache.py --check
-	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v || \
-	  { echo "proof: FAILED loading the committed census .vo -- use the census"; \
-	    echo "proof: opam switch (docs/VERIFYING.md) or run make census-verify."; \
-	    exit 1; }
-	coqc -Q theories BBB4 theories/Closeout/BBB4_Theorem.v
-	coqc -Q theories BBB4 theories/Closeout/BBB4_Value.v
-	@python3 tools/proof_report.py
+# The chain: census_decided (the census walk) -> closeout_partial
+# (Closeout.vo) -> census_boarded (CloseoutFinal.v) -> bbb4_target
+# (BBB4_Theorem.v) -> BBB4_value (BBB4_Value.v).  Since 2026-10-07 no
+# census .vo are committed: the walk runs on the verifier's machine, so
+# `make proof' is the one-command from-source build, the same as
+# `make proof-all' (~80-90 min on 8 cores / 32 GB; native_compute, so the
+# census opam switch -- tools/census_toolchain.sh sets it up).
+proof: proof-all
 .PHONY: proof
 
 # The census certification: the per-subtree queue enumerations
@@ -120,11 +111,8 @@ proof: state-build
 # grandchild walks -> the 24 G_ units -> theorem.  385 core-min native
 # (measured 2026-08-09): 1 h 45 m at WALK_JOBS=4, ~52 m at 8.
 #
-# The census .vo are committed + hash-guarded (tools/census_cache.py, an
-# UNTRUSTED build-hygiene guard -- no proof weight; the Coq kernel is what
-# certifies the census).  So `make census' normally SKIPS the walk on a clean
-# tree; only an edit to a census .v input (detected by the hash) or a missing
-# committed .vo forces the walk.  `make census-verify' forces it unconditionally.
+# Nothing is committed: `make census' walks (resuming finished units whose
+# walk-stamp matches this tree); `make census-verify' forces a full re-walk.
 
 # The raw walk recipe, factored out so `census' (cache-miss) and
 # `census-verify' (forced) share the exact same commands.  Internal target.
@@ -450,13 +438,9 @@ _census-walk: _census-prepare
 
 # `make proof-all' -- the whole claim from source, in one command.
 #
-# `make proof' compiles the closeout chain over the COMMITTED census
-# .vo: base build only, and it asks you to trust 154 files someone
-# else walked.
-# This target is the rung that does not: base build, RE-DERIVE the
-# census (census-verify backs the committed .vo out of the way and
-# walks from source), then the same closeout chain and the same
-# `Print Assumptions'.
+# Base build (state-build), RE-DERIVE the census (census-verify walks
+# it from source; nothing is committed since 2026-10-07), then the
+# closeout chain and `Print Assumptions'.  `make proof' is an alias.
 #
 # Measured 2026-08-12 on 8 physical cores (16 threads) / 31 GB:
 #   base build 40 min (BUILD_JOBS=16, from `git clean -fdx')
@@ -495,8 +479,8 @@ proof-all:
 _proof-all-run:
 	@echo "############################################################"
 	@echo "# proof-all: re-deriving the census from source.            "
-	@echo "# The committed .vo are NOT trusted here -- census-verify    "
-	@echo "# backs them up and walks.  ~83 min total on 8 cores / 32 GB,"
+	@echo "# Nothing committed is used: census-verify walks the census.  "
+	@echo "# ~83 min total on 8 cores / 32 GB,                         "
 	@echo "# of which the base build below is about half.               "
 	@echo "############################################################"
 	@# Makefile.coq bakes in the generating coq_makefile's native
@@ -539,34 +523,18 @@ _proof-all-run:
 .PHONY: _proof-all-run
 .PHONY: proof-all
 
-# Guarded census: skip the walk when the committed .vo already certify this
-# tree (hash matches + all census .vo present); otherwise WARN and walk.
+# The census walk, resumable: units already walked from THIS tree (the
+# walk-stamp matches) are kept; anything else is quarantined and walked.
+# Heavy native_compute (385 core-min): STABLE hardware only (real Linux /
+# WSL2, >=16 GB RAM, no preemption).
 census: state-build
-	@if python3 tools/census_cache.py --check >/dev/null 2>&1; then \
-	  echo "census cache VALID -- skipping walk (make census-verify to force a re-walk)"; \
-	else \
-	  echo "############################################################"; \
-	  echo "# census cache INVALID or absent -- WALKING FROM SOURCE.    "; \
-	  echo "# This is heavy native_compute (385 core-min) and preempts on "; \
-	  echo "# this container: run ONLY on STABLE hardware (real Linux /  "; \
-	  echo "# WSL2, >=16 GB RAM, no preemption).                         "; \
-	  echo "############################################################"; \
-	  python3 tools/census_cache.py --check || true; \
-	  $(MAKE) _census-walk; \
-	fi
+	$(MAKE) _census-walk
 .PHONY: census
 
-# Container setup step: verify the committed census .vo still certify this tree
-# (--check), then touch them newest so `make'-style timestamp checks skip the
-# walk (--touch runs only on --check success).  Run after the base build.
-census-cache:
-	python3 tools/census_cache.py --check && python3 tools/census_cache.py --touch
-.PHONY: census-cache
-
-# Force a re-walk from source (the CORRECTNESS phase; STABLE hardware only).
-# Deletes ONLY the committed census .vo (walk units + Run_Split* + the theorem);
+# Force a full re-walk from source (STABLE hardware only).  Moves ONLY the
+# census walk .vo (walk units + Run_Split* + the theorem) to a backup dir;
 # the base build's .vo (Run/Decide/Deferred_*/Proven_*/TNF_QH/...) stay under
-# Makefile.coq's control.  After a green walk, refresh + commit the cache.
+# Makefile.coq's control.
 census-verify: state-build
 	@echo ">>> census-verify: FORCE RE-WALK from source (STABLE hardware only) <<<"
 	@echo ">>> current census .vo are BACKED UP (not deleted) -- see below <<<"
@@ -578,11 +546,9 @@ census-verify: state-build
 	  echo ">>> restore with: mv $$bdir/Run_Split* theories/Census/; mv $$bdir/*.vo $$bdir/*.glob theories/Census/Compute/ 2>/dev/null"
 	$(MAKE) _census-walk
 	@echo "------------------------------------------------------------"
-	@echo "RE-WALK COMPLETE.  Confirm the census is HONEST, then refresh the cache:"
-	@echo "  # In coqtop/Census_Theorem: Print Assumptions census_decided."
-	@echo "  #   MUST be exactly: functional_extensionality_dep (nothing else)."
-	@echo "  python3 tools/census_cache.py --update    # rewrite CENSUS_VO_HASH"
-	@echo "  git add theories/Census CENSUS_VO_HASH && git commit"
+	@echo "RE-WALK COMPLETE.  The Axioms: block above is Print Assumptions of"
+	@echo "census_decided: it MUST be exactly functional_extensionality_dep."
+	@echo "Nothing to commit -- census .vo are build output, not source."
 	@echo "------------------------------------------------------------"
 .PHONY: census-verify
 
@@ -956,7 +922,6 @@ closeout:
 	python3 tools/closeout/audit.py
 	coq_makefile -f _CoqProject -o Makefile.coq
 	$(MAKE) -f Makefile.coq theories/Closeout/Closeout.vo
-	python3 tools/census_cache.py --check
 .PHONY: closeout
 
 # Report what the closeout currently certifies, without rebuilding.
