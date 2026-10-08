@@ -107,7 +107,9 @@ def trust_tier():
     census_probes/walk-stamp holds the census input hash that was WALKED
     on this machine (Makefile, _census-prepare).  If it matches the
     current inputs, these .vo are this machine's walk output, whoever
-    started it.  If it is absent or stale, they came from the commit.
+    started it.  If it is absent or stale, they were not walked from this
+    tree (nothing is committed since 2026-10-07; a stale stamp means .vo
+    left over from an older tree).
     """
     try:
         here = os.path.dirname(os.path.abspath(__file__))
@@ -124,8 +126,9 @@ def trust_tier():
                     'coqchk -o re-verifies the proof terms.')
     except Exception:
         pass
-    return ('Trust tier: this build LOADED the committed\ncensus .vo -- '
-            're-derive them from source with `make proof-all`\n'
+    return ('Trust tier: the walk-stamp does not match these census\n'
+            'inputs, so the census .vo loaded here were not walked from\n'
+            'this tree -- run `make proof` to walk it from source\n'
             '(docs/VERIFYING.md); coqchk -o re-verifies the compiled '
             'proof terms.')
 
