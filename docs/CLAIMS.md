@@ -217,4 +217,6 @@ with stock apt Coq 8.18.0; `make proof` (= `make proof-all`) is the whole
 claim from source in one command: the census walk, then the chain
 (`CloseoutFinal.v`, `BBB4_Theorem.v`, `BBB4_Value.v`, the only three
 files that load the walk output, kept out of the default build), under
-the census opam switch.  No `.vo` are committed.
+the census opam switch.  `make proof-tr-all` does the same for the
+instruction-level claim, `BBBT4_value` (VERIFYING.md, Tier C).  No `.vo`
+are committed.
