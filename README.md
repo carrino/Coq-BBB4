@@ -68,10 +68,44 @@ bookkeeping stays untrusted) — is stated precisely in
 `theories/`.  Verify with `Print Assumptions BBB4_value` (printed
 during `make proof`) or independently with `coqchk -o`.
 
+### And at instruction level: BBB_tr(4) = 32,779,478
+
+The harness's second convention scores the last fire of each
+*instruction* (state, read symbol) instead of each state's last visit.
+Its value is the same number, attained by the same champion:
+
+```coq
+AttainsTr tm B   : Prop := exists t s, QuietAfterTr tm t s /\ S s = B
+BBBT4_is B       : Prop :=
+  (exists tm, AttainsTr tm B) /\ (forall tm B', AttainsTr tm B' -> B' <= B)
+BBBT4_statement  : Prop := BBBT4_is champion_score
+
+BBBT4_value      : BBBT4_statement     (* theories/CloseoutTr/BBBT4_Value.v *)
+```
+
+The claim is [`theories/BBBT4_Spec.v`](theories/BBBT4_Spec.v), with
+[`theories/BBBT4_Statement.v`](theories/BBBT4_Statement.v) for
+`FiresAt` and `QuietAfterTr`.  One command proves it from a fresh
+clone:
+
+```sh
+make proof-tr-all 2>&1 | tee proof-tr-all.log
+```
+
+It ends with `proof-tr-all COMPLETE` and the `Print Assumptions
+BBBT4_value` block, which should list `functional_extensionality_dep`
+and nothing else.  It was verified end to end on 2026-10-06
+([`docs/BBBT4_REVIEW.md`](docs/BBBT4_REVIEW.md) §8.1).  It needs the
+same census opam switch as `make proof` and about 6 GB of RAM per
+walk job.  It is much longer than the state build: most of a day on
+8 cores / 32 GB, with work under way to bring that down.  Details are
+in [`docs/VERIFYING.md`](docs/VERIFYING.md), Tier C.
+
 ## The verification ladder
 
-Three rungs, in increasing order of paranoia — each needs strictly less
-trust than the one before.  A fresh clone carries **no binaries**: since
+Three rungs for BBB(4), in increasing order of paranoia — each needs
+strictly less trust than the one before — and a fourth that proves the
+instruction-level value the same way.  A fresh clone carries **no binaries**: since
 2026-10-07 the census `.vo` are not committed either, so the full proof
 is one from-source build on your own machine.
 
@@ -106,6 +140,13 @@ is one from-source build on your own machine.
    an interrupted walk picks up where it stopped.  Needs ~10 GB RAM
    (`Compute/Census_Theorem.v` runs alone at 6.3 GB) and the census
    opam switch.
+4. **`make proof-tr-all`** — **the instruction-level claim from
+   source, one command.**  `BBBT4_value : BBBT4_statement`
+   (BBB_tr(4) = 32,779,478): the instruction-level census walk, the
+   10,924-row closeout, the champion, and `Print Assumptions
+   BBBT4_value`.  Nothing is precompiled.  Trust: the kernel alone.
+   Most of a day on 8 cores / 32 GB as of 2026-10-06; same toolchain
+   as rung 3, and about 6 GB of RAM per walk job.
 
 For the extra-careful, `coqchk -o` re-verifies compiled proof terms
 with the standalone checker at any rung.  Full instructions and the
@@ -121,6 +162,9 @@ make -j8        # the full from-source build: every checker, board and
                 # the closeout, on stock Coq -- no committed binaries
 make proof      # the whole claim from source: base build, census walk,
                 # BBB4_value and its report (~80-90 min, census switch)
+make proof-tr-all  # the instruction-level claim from source:
+                # BBBT4_value, BBB_tr(4) = 32,779,478 (census switch,
+                # ~6 GB per walk job; most of a day on 8 cores / 32 GB)
 ```
 
 **Or, to trust nothing but the kernel, one command:**
@@ -273,15 +317,18 @@ checked by CI in seconds, no re-walk), in parallel workstreams:
 `bbbt4_bound : forall tm, QHBoundTr B_tr tm` (`CloseoutFinalTr.v`)
 is the unconditional instruction-level upper bound, after
 `make proof-tr-all` (the instruction-level `make proof-all`; native
-toolchain, several hours).  The same champion attains it (`BBBT4_Champion.v`), so
+toolchain, most of a day; see Tier C of
+[`docs/VERIFYING.md`](docs/VERIFYING.md)).  The same champion attains it (`BBBT4_Champion.v`), so
 **BBB_tr(4) = 32,779,478**: `BBBT4_value : BBBT4_statement`
 (claim in `theories/BBBT4_Spec.v`, proof in
 `theories/CloseoutTr/BBBT4_Value.v`, box only;
 [`docs/CLAIMS.md`](docs/CLAIMS.md); reviewer's guide and cross-checks:
 [`docs/BBBT4_REVIEW.md`](docs/BBBT4_REVIEW.md)).
 
-Build: `make instr` for the whole chain (~9 CPU-hours beyond the
-BBB(4) build), `make instr-core` for the slice CI compiles.
+Build: `make proof-tr-all` for the value theorem.  For partial
+builds, `make instr` builds the walk's prerequisites (statement,
+checkers, proven tiers, deferred tables; ~9 CPU-hours beyond the
+BBB(4) build) and `make instr-core` builds the slice CI compiles.
 `SCOPING_INSTR.md` is the running record
 of the scoping, the measured population, the routes per machine class
 and the open classes (section 7), and `tools/censustr/` holds the

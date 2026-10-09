@@ -3,10 +3,12 @@
 _What to run, what to expect, and where you are being asked to trust
 something.  The claim itself is in [`docs/CLAIMS.md`](CLAIMS.md)._
 
-There are two tiers.  **Tier A needs no opam**; it verifies every board and
+There are three tiers.  **Tier A needs no opam**; it verifies every board and
 the whole boarding argument.  Tier B adds the census walk and the value
-theorem: `make proof`, the whole claim from source in one command.  No `.vo`
-are committed (since 2026-10-07), so neither tier loads anything precompiled.
+theorem: `make proof`, the whole claim from source in one command.  Tier C is
+the instruction-level value, BBB_tr(4) = 32,779,478: `make proof-tr-all`, also
+one command.  No `.vo` are committed (since 2026-10-07), so no tier loads
+anything precompiled.
 
 ## Tier A — everything except the census walk
 
@@ -327,6 +329,79 @@ and a walk-stamp quarantines any `.vo` that was not produced by walking the
 current tree.  So it can be spread over days: an interrupted walk resumes
 where it stopped.  `python3 tools/census_cache.py --print-hash` prints the
 census input hash the walk-stamp records.
+
+## Tier C — the instruction-level value: `make proof-tr-all`
+
+The claim is `BBBT4_statement := BBBT4_is champion_score` in
+[`theories/BBBT4_Spec.v`](../theories/BBBT4_Spec.v): the largest step at
+which any instruction (state, read symbol) of any (4,2) machine fires for
+the last time.  It uses `FiresAt` and `QuietAfterTr` from
+`theories/BBBT4_Statement.v` and the machine model and champion from the
+state-level files; nothing in it refers to a proof.
+`BBBT4_value : BBBT4_statement` is proved in
+`theories/CloseoutTr/BBBT4_Value.v`.  Like `BBB4_Value.v`, it loads the walk
+output, so it is not in `_CoqProject`.
+
+From a fresh clone:
+
+```bash
+git clone https://github.com/carrino/Coq-BBB4 && cd Coq-BBB4
+make proof-tr-all 2>&1 | tee proof-tr-all.log
+```
+
+It uses the same toolchain as Tier B (`tools/census_toolchain.sh` finds or
+creates the `census` switch) and runs four steps:
+
+1. **Generated files.**  It checks that the closeout split and the walk units
+   match the commit.
+2. **The census walk.**  It walks 96 native-compute units and assembles
+   `census_tr : forall tm, QHBoundTr B_tr tm \/ Deferred D_tr tm`.  The
+   prerequisites include the proven tiers (`ProvTr_*`).
+3. **The closeout, the champion and the tests.**  It builds the 626 batches,
+   `CloseoutTr.vo` (`closeout_tr_complete`, all 10,924 deferred rows),
+   `BBBT4_Champion.vo` and the instruction-level corruption tests.
+4. **The value.**  It compiles `CloseoutFinalTr.v` (`bbbt4_bound`) and then
+   `BBBT4_Value.v`.
+
+Expected end of the log:
+
+```
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+  : forall (A : Type) (B : A -> Type) (f g : forall x : A, B x),
+    (forall x : A, f x = g x) -> f = g
+------------------------------------------------------------
+proof-tr-all COMPLETE at <commit>.
+BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)
+```
+
+Resources:
+
+* **Memory sets the job counts.**  A walk unit peaks near 5.8 GB, so the
+  walk runs one job per 6 GB available (`WALK_TR_JOBS`), capped at the
+  physical cores.  The batches run one job per 3 GB (`CLOSEOUT_TR_JOBS`).  A
+  32 GB box gets 4 and 9.  To override:
+  `make proof-tr-all WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6`.
+* **Time.**  The verified run on 2026-10-06 (8 cores / 32 GB, WSL2) took
+  most of a day.  The walk itself was 13.1 CPU-hours, about 3.3 h of wall
+  time at 4 jobs.  Two serial RepWL stages took several more hours before it
+  ([`BBBT4_REVIEW.md`](BBBT4_REVIEW.md) §8.1).  Work to cut this is under
+  way.
+* **Stack.**  Steps 3 and 4 raise the stack limit themselves, as `make all`
+  does, because `COQNATIVE` overflows 8 MB on the largest batches.  If your
+  hard limit is lower, run `ulimit -s unlimited` first.
+* **Resuming.**  A rerun keeps finished `.vo` and walked units.  To force a
+  full re-walk, delete `theories/CensusTr/Compute/*.vo`.
+
+To re-check the compiled terms with the standalone checker:
+
+```bash
+coqchk -o -Q theories BBB4 BBB4.CloseoutTr.BBBT4_Value
+```
+
+This is an overnight-scale job, as for Tier B.  The reviewer's guide,
+including cross-checks on the hardest machines, is
+[`BBBT4_REVIEW.md`](BBBT4_REVIEW.md).
 
 ## Traps
 
