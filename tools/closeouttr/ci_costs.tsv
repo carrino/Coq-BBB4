@@ -1,15 +1,17 @@
 # Per-batch CI cost for tools/closeouttr/ci_shard.py, in seconds on one
 # Lap-import batches: 2026-10-07, Coq 8.18 / OCaml 4.14.2, macOS arm64,
 # four workers; direct COQC + COQNATIVE, prerequisites prebuilt, rounded up.
-CBT_BR_00	2655
+# Stored BR_00/02/03/04/08: 2026-10-07, same toolchain; includes certificate data,
+# COQC + COQNATIVE, one worker during concurrent validation, rounded up.
+CBT_BR_00	124
 CBT_BR_01	480
-CBT_BR_02	2764
-CBT_BR_03	2340
-CBT_BR_04	1462
+CBT_BR_02	242
+CBT_BR_03	188
+CBT_BR_04	84
 CBT_BR_05	576
 CBT_BR_06	1264
 CBT_BR_07	900
-CBT_BR_08	1707
+CBT_BR_08	62
 CBT_BR_09	24
 CBT_CE_00	2
 CBT_CE_01	2

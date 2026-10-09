@@ -8,6 +8,7 @@ is trusted. Replaying committed JSON never repeats certificate search.
 
   find MANIFEST STAGE INDEX OUTPUT.json
   pack RAW.json OUTPUT.json          (developer probe interchange)
+  compact CERT.json OUTPUT.json      (merge disjoint measure components)
   emit CERT.json OUTPUT.v [--check]
 """
 import argparse
@@ -172,6 +173,77 @@ def pack(raw):
     return data
 
 
+def coalesce_measures(components):
+    """Propose shorter certificates; the Coq checker still decides validity.
+
+    Consecutive measure components come from separate cyclic components
+    in the finder's SCC pass. Merge equal measures/scales only when all
+    gates in that run are disjoint. Rank components remain in place.
+    """
+    result, run = [], []
+
+    def flush():
+        seen = set()
+        for comp in run:
+            gate = set(comp[4])
+            if seen & gate:
+                result.extend(run)
+                return
+            seen.update(gate)
+        groups = {}
+        for comp in run:
+            _, measure, scale, phi, gate = comp
+            groups.setdefault((measure, scale), []).append(comp)
+        for (measure, scale), group in groups.items():
+            if len(group) == 1:
+                result.extend(group)
+                continue
+            phi, gate = {}, set()
+            for comp in group:
+                local_gate = set(comp[4])
+                gate.update(local_gate)
+                # Potentials outside a component's gate never affect its
+                # value or its checker verdict. Do not combine them.
+                phi.update((k, v) for k, v in comp[3] if k in local_gate)
+            result.append(['meas', measure, scale,
+                           [[k, v] for k, v in sorted(phi.items())], sorted(gate)])
+
+    for comp in components:
+        if comp[0] == 'meas':
+            run.append(comp)
+        else:
+            flush()
+            run = []
+            result.append(comp)
+    flush()
+    return result
+
+
+def compact(data):
+    old = decoded(data)
+    if digest(old) != data['decoded_sha256']:
+        raise ValueError('invalid decoded digest')
+    key_ids = {key: i+1 for i, key in enumerate(old['keys'])}
+    rank_ids = {rank: i+1 for i, rank in enumerate(old['ranks'])}
+    certs = {tg: coalesce_measures(cs) for tg, cs in old['certs'].items()}
+    result = dict(data, certs={})
+    for tg, components in certs.items():
+        packed = []
+        for comp in components:
+            if comp[0] == 'rank':
+                packed.append(['rank', pack_table(comp[1], key_ids, rank_ids)])
+            else:
+                packed.append(['meas', comp[1], comp[2],
+                               pack_table(comp[3], key_ids, rank_ids),
+                               pack_table(comp[4], key_ids)])
+        result['certs'][tg] = packed
+    expected = dict(old, certs=certs)
+    if decoded(result) != expected:
+        raise ValueError('compacted certificate packing changed data')
+    result['decoded_sha256'] = digest(expected)
+    return result
+
+
 def search(row):
     start = time.monotonic()
     tbl = finder.rp.parse(row['spec'])
@@ -281,6 +353,9 @@ def main():
     pack_parser = sub.add_parser('pack')
     pack_parser.add_argument('raw', type=Path)
     pack_parser.add_argument('output', type=Path)
+    compact_parser = sub.add_parser('compact')
+    compact_parser.add_argument('certificate', type=Path)
+    compact_parser.add_argument('output', type=Path)
     emit = sub.add_parser('emit')
     emit.add_argument('certificate', type=Path)
     emit.add_argument('output', type=Path)
@@ -298,7 +373,9 @@ def main():
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_text(source)
         return
-    if args.command == 'find':
+    if args.command == 'compact':
+        data = compact(read(args.certificate))
+    elif args.command == 'find':
         from gen_provtr_rw import read_manifest
         row = next(r for r in read_manifest(args.manifest)
                    if (r['stage'], r['index']) == (args.stage, args.index))

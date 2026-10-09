@@ -7,32 +7,40 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.Census Require Import Deferred_Defs.
 From BBB4.CloseoutTr Require Import CloseoutKitTr.
 From BBB4.CensusTr Require Import RepWLTr.
+(* BEGIN STORED REPWL IMPORTS *)
+From BBB4.Checkers Require Import RepWLStoredTr.
+From BBB4.CloseoutTr.RWCerts Require Data_BR_04_0000.
+From BBB4.CloseoutTr.RWCerts Require Data_BR_04_0001.
+From BBB4.CloseoutTr.RWCerts Require Data_BR_04_0002.
+From BBB4.CloseoutTr.RWCerts Require Data_BR_04_0003.
+From BBB4.CloseoutTr.RWCerts Require Data_BR_04_0004.
+(* END STORED REPWL IMPORTS *)
 Import ListNotations.
 
 (* spec 1RB1LB_0LC0RD_1LC1LA_1LC1RA *)
 Definition r_BR_04_0000 : list (option Trans) := [t1RB;t1LB;t0LC;t0RD;t1LC;t1LA;t1LC;t1RA].
 Lemma cv_BR_04_0000 : coversTr (row_to_tm r_BR_04_0000).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 6 2 0 30664 22). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_check_stored_tr_sound _ 6 2 0 22 Data_BR_04_0000.keys Data_BR_04_0000.ranks Data_BR_04_0000.cert). vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LC_1RC0LD_0RD0RB_1LA1LB *)
 Definition r_BR_04_0001 : list (option Trans) := [t1RB;t1LC;t1RC;t0LD;t0RD;t0RB;t1LA;t1LB].
 Lemma cv_BR_04_0001 : coversTr (row_to_tm r_BR_04_0001).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 9 2 0 59664 31). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_check_stored_tr_sound _ 9 2 0 31 Data_BR_04_0001.keys Data_BR_04_0001.ranks Data_BR_04_0001.cert). vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LB_1LC0RD_0LB1LA_1LA1RA *)
 Definition r_BR_04_0002 : list (option Trans) := [t1RB;t1LB;t1LC;t0RD;t0LB;t1LA;t1LA;t1RA].
 Lemma cv_BR_04_0002 : coversTr (row_to_tm r_BR_04_0002).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 10 2 0 60800 34). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_check_stored_tr_sound _ 10 2 0 34 Data_BR_04_0002.keys Data_BR_04_0002.ranks Data_BR_04_0002.cert). vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LD_0RC1RD_1LC0RA_1LA0LC *)
 Definition r_BR_04_0003 : list (option Trans) := [t1RB;t1LD;t0RC;t1RD;t1LC;t0RA;t1LA;t0LC].
 Lemma cv_BR_04_0003 : coversTr (row_to_tm r_BR_04_0003).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 6 2 0 65320 24). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_check_stored_tr_sound _ 6 2 0 24 Data_BR_04_0003.keys Data_BR_04_0003.ranks Data_BR_04_0003.cert). vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LA_1RC0LD_0LA0RC_0LC1LB *)
 Definition r_BR_04_0004 : list (option Trans) := [t1RB;t1LA;t1RC;t0LD;t0LA;t0RC;t0LC;t1LB].
 Lemma cv_BR_04_0004 : coversTr (row_to_tm r_BR_04_0004).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 8 2 64 215560 31). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_check_stored_tr_sound _ 8 2 64 31 Data_BR_04_0004.keys Data_BR_04_0004.ranks Data_BR_04_0004.cert). vm_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_BR_04 : list (list (option Trans)) :=
   [r_BR_04_0000;

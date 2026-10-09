@@ -49,6 +49,24 @@ class StoredTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             s.totals([1,0])
 
+    def test_coalescing_keeps_rank_boundaries_and_disjoint_potentials(self):
+        rank = ['rank', [[10, 1]]]
+        left = ['meas', 'N/L', 1, [[10, 2], [20, 99]], [10]]
+        right = ['meas', 'N/L', 1, [[20, 3]], [20]]
+        self.assertEqual(s.coalesce_measures([rank, left, right, rank]),
+                         [rank, ['meas', 'N/L', 1, [[10, 2], [20, 3]], [10, 20]], rank])
+        self.assertEqual(s.coalesce_measures([left, rank, right]), [left, rank, right])
+        overlapping = ['meas', 'N/L', 1, [[10, 3]], [10]]
+        self.assertEqual(s.coalesce_measures([left, overlapping]), [left, overlapping])
+
+    def test_compacted_source_replays_and_is_idempotent(self):
+        result = s.compact(self.data)
+        self.assertEqual(result, s.compact(result))
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / 'compact.json'
+            path.write_text(json.dumps(result))
+            self.assertEqual(s.read(path), result)
+
 
 if __name__ == '__main__':
     unittest.main()

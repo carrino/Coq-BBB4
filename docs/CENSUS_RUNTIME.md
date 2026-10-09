@@ -2890,12 +2890,19 @@ These are phase measurements, not a fresh-clone or whole-census timing.
 | RW_15 / 80 | 590.291 | 49.783 |
 | RW_15 / 99 | 710.090 | 92.866 |
 
-Reproduce with matching compiler prerequisites and native companions:
+Reproduce with matching compiler prerequisites and native companions.
+The benchmark now reconstructs the original search sources from the frozen
+manifest by default; all eight reconstructed sources match `ba677fac`
+byte-for-byte. `--baseline-ref ba677fac` optionally checks that historical
+revision too. This avoids requiring intermediate commits after a squash
+merge. `--certificates RW_14_0047 ...` selects a smaller sample. Each
+compiler runs in a fresh measurement process that also records CPU time
+and peak RSS.
 
 ```sh
-python3 tools/censustr/bench_rw_stored.py --baseline-ref ba677fac \
+python3 tools/censustr/bench_rw_stored.py \
   --jobs 4 --output /tmp/rw-stored-eight
-python3 tools/censustr/bench_rw_stored.py --baseline-ref ba677fac \
+python3 tools/censustr/bench_rw_stored.py \
   --jobs 4 --output /tmp/rw-stored-eight --mode native
 python3 tools/censustr/test_rw_stored.py
 python3 tools/censustr/test_provtr_rw_split.py
@@ -2921,6 +2928,33 @@ and shard checks pass; the state-census cache guard reports `MATCH`.
 No compiled outputs or changes to statements, deferred rows, `RunTr.v`,
 the Makefile or workflows are included. The 8-core/32 GB cold build and
 final `BBBT4_value` assumption audit remain pending the batched box re-walk.
+
+### Certificate compaction and wider coverage (2026-10-08)
+
+The proven-tier stored-certificate set now contains 32 rows: the original
+eight plus 24 further high-fuel checks in RW_11 through RW_16. The
+`rw_stored.py compact` command groups disjoint measure components with
+equal measures and scales within each run between rank components. It
+keeps rank boundaries and refuses to merge a run whose gates overlap.
+The unchanged Coq checker decides whether each proposed certificate is
+valid; no preservation claim about the Python transformation is trusted.
+
+All 32 compact proven-tier certificates passed standalone VM and native
+checks before integration. Compact versions of the 22 existing closeout
+certificates passed the same checks. All 54 audits list only
+`functional_extensionality_dep`. All 32 real proven-tier data/proof modules,
+their six affected wrappers, and `RunTr`/`RunTr_Split` also passed VM and
+native compilation. The 32 row audits and four complete-list/census-gate
+audits report only `functional_extensionality_dep`. The final census and
+value assembly remain separate acceptance checks.
+
+For example, RW_13 row 79 shrinks from 233 to three components for most
+instructions, and from 464 to four for D1. In preliminary concurrent
+validation, its proof check fell from 66.589 to 20.611 wall seconds;
+data compilation and native companions are additional costs. This is
+diagnostic evidence, not a controlled speedup claim. The repeatable stage
+benchmark includes those costs and can select the same rows before and
+after the wider certificate set was added.
 
 ## Instruction census: lap-board bundles (2026-10-07)
 
@@ -2999,8 +3033,187 @@ FunctionalExtensionality.functional_extensionality_dep
 The four import/replay tests pass, as do generated-file, Coq project and
 six-shard checks. The state-census cache guard reports `MATCH`. The full
 census re-walk and final `BBBT4_value` audit remain part of the batched
-box validation; these local measurements do not establish the two-hour
+box validation; these local measurements do not establish the four-hour
 whole-build target.
+
+## Instruction census: lean native walk dependencies
+
+`RunTr_Compute.v` contains the original decider configuration and queue
+operations. `RunTr_WalkCompute.v` contains the original frontier and
+`unit_ok` predicate. Native units import only this computational layer;
+the final census assembly still imports `RunTr.v` and `RunTr_Split.v`,
+including every original proven-tier theorem.
+
+The untrusted generator `tools/censustr/gen_provtr_data.py` emits literal
+machine tables for the 7,353 never-quasihalting and 5,534 quasihalting
+proven entries. The original `prov_tr`, `provqh_tr` and their `Forall`
+proofs remain in `RunTr.v`. Two `exact` proof applications attach those
+original proofs to the generated lists by kernel conversion. This checks
+the complete ordered lists, including duplicates and undefined entries;
+the source reader is not part of the trusted proof.
+
+The computational dependency closure has 169 libraries and contains no
+machine-board or RepWL-part libraries. Its data is compiled from ordinary
+Coq source on every fresh build. The bound, deferred list, decider ladders,
+frontier depth, iteration budget and 96-unit partition are unchanged.
+
+The benchmark compares identical native computations and data in this tree:
+the before sample imports the proof-bearing `RunTr_Split`, and the after
+sample imports only `RunTr_WalkCompute`. This isolates library loading and
+remains reproducible after a squash merge. `--baseline-ref` optionally
+compares against a pre-split revision in a separate namespace. The benchmark
+measures loading and selected full units in fresh compiler processes.
+Common library and native prerequisites must
+already be built with the same compiler; other heavy jobs should be stopped
+before collecting timings. The `ondemand` flag is deliberate: Coq's
+`-native-compiler no` silently makes native conversion use the VM instead.
+
+```sh
+python3 tools/censustr/gen_provtr_data.py --check
+python3 tools/censustr/gen_walk_units.py --check
+python3 tools/censustr/bench_lean_walk.py \
+  --units 10 --output /tmp/lean-walk-bench
+```
+
+Measured on macOS arm64, Coq 8.18.0 / OCaml 4.14.2, one compiler worker,
+with dependencies prebuilt and the other proof jobs drained:
+
+| Native unit 10 | Full proof imports | Computation-only imports |
+|---|---:|---:|
+| Wall seconds | 55.154 | 39.323 |
+| User CPU seconds | 51.785 | 37.072 |
+| Peak RSS bytes | 4,055,613,440 | 1,659,371,520 |
+
+This sample is 1.40x faster with 59.1% lower peak memory. Both unit probes
+followed a load-only probe for their respective libraries, so the unit
+comparison uses warmed library files. The first full-import load probe
+had substantial I/O time (158.390 s wall versus 23.824 s user CPU); its
+wall-time ratio is not used as a speedup claim. All four probe theorems
+report closed assumptions. This is a single-unit comparison, not the
+complete walk or the target 8-core/32-GB measurement.
+
+All 28 moved computation definitions were
+compared with their original bodies and parameters; the original ordered
+machine-list definitions are unchanged. Both computation modules and the
+full `RunTr`/`RunTr_Split` assembly compile with Coq and the native compiler.
+The complete `prov_tr_data_all` and `provqh_tr_data_all` conversion gates,
+`decider_tr_WF`, and `census_tr_of_units` each report only
+`functional_extensionality_dep`. Assembly now tries each stage's existing
+`Forall` certificate before splitting concatenations: otherwise the old
+recursive tactic also unfolds the split RepWL wrappers and produces
+unintended sub-stage goals. The original machine lists are unchanged.
+
+A native unit-10 computation passed with
+closed assumptions and peak RSS 1,643,724,800 bytes (1.53 GiB), measured in
+a fresh process while other compilation jobs were running. This is a
+single-unit memory sample, not a controlled before/after timing or a safe
+maximum for all units. The complete native re-walk began with two workers
+alongside prerequisite compilation. After 26 units and prerequisite
+compilation finished, the scheduler was drained, retaining every completed
+proof, and the remaining 70 units resumed with six workers. All 96 units
+passed both native conversion and native companion compilation. Their
+largest measured peak RSS was 2,775,203,840 bytes (2.59 GiB); their summed
+user plus system CPU time was 9.782 hours. This was concurrent validation,
+not an isolated phase timing or a target-box measurement.
+
+The subsequent production `make census-tr-walk` invocation refreshed
+computational prerequisites and correctly invalidated the older unit
+timestamps. Its unit pass and census assembly are being validated through
+that recipe as well. The four-hour target is the revised acceptance goal;
+the earlier phase samples do not measure a complete source build.
+
+These samples do not replace the combined census re-walk, final value
+assumption audit, or the required fresh-build
+timing. No whole-build speedup is claimed by this dependency split yet.
+
+## Instruction closeout: stored RepWL certificates
+
+The 22 rows of `CBT_BR_00`, `CBT_BR_02`, `CBT_BR_03`, `CBT_BR_04`, and
+`CBT_BR_08` now supply closure and ranking certificates to the same
+`RepWLStoredTr` checker used by the proven-tier optimization. Each batch
+retains its original rows, order, theorem names, and `coversTr` statements.
+No search result is trusted: Coq checks the initial configuration, complete
+successor closure, and instruction liveness certificate again on every
+source build.
+
+`tools/closeouttr/rw_certificates/` contains the untrusted JSON data.
+`gen_rw_stored.py`, called by `gen_closeout_tr.py`, emits ordinary `.v`
+data under `CloseoutTr/RWCerts` and replaces exactly the corresponding
+checker applications. It rejects mismatched machines, parameters, and
+missing certificate sources. Restoring the search applications reproduces
+all five original batch sources byte-for-byte at `27d7059b`.
+
+All 22 data files and all five updated batches passed both Coq and native
+compilation with Coq 8.18.0 / OCaml 4.14.2 on macOS arm64. Each batch's
+`Forall coversTr` theorem reports only `functional_extensionality_dep`.
+The shard cost estimates include compiling the certificate data, not just
+the batch that imports it. These initial cost measurements were collected
+during concurrent validation and are not controlled speedup measurements.
+
+The repeatable comparison reconstructs the original searches from the
+retained parameters. Both phases compile with Coq and the native compiler;
+the after phase also recompiles the source data. Common dependencies must
+already be built, and other heavy jobs should be stopped when measuring:
+
+```sh
+python3 tools/closeouttr/test_rw_stored.py
+python3 tools/closeouttr/gen_closeout_tr.py --check
+python3 tools/closeouttr/bench_rw_stored.py \
+  --batches BR_00 BR_02 BR_03 BR_04 BR_08 --jobs 4 \
+  --output /tmp/closeout-rw-stored-bench
+```
+
+Controlled before/after timings and the complete value audit remain
+pending. This optimization does not change census computation or its
+frozen deferred list.
+
+## Instruction build scheduling and incremental checks
+
+The proposed `proof-tr-all` recipe passes `CLOSEOUT_TR_JOBS` to the
+proven-tier prerequisite build through `CENSUS_TR_PREREQ_JOBS`. The native
+walk keeps its separate `WALK_TR_JOBS` memory budget. Standalone
+`census-tr-walk` retains its previous prerequisite-job default unless the
+caller overrides it. The proposed walk budget is now 4 GiB per worker,
+based on the complete local walk's 2.59 GiB maximum, retaining the existing
+available-memory and physical-core caps. This normally permits seven walk
+workers on a 32 GB box. The batch budget remains 3 GiB. The target-box run
+must validate both peak memory and the complete build time before acceptance.
+
+Incremental unit freshness now checks both the unit's own source and
+`RunTr_WalkCompute.vo`; the prerequisite make follows the computational
+module's complete dependency chain. Proof-only wrapper changes are
+rechecked in the final assembly without discarding already checked,
+unchanged computations. A fresh clone still builds every proof from source.
+A failed unit compiler now fails the recipe even if an older `.vo` exists.
+The worker receives its filename as a quoted positional argument, avoiding
+BSD `xargs -I`'s replacement-size limit.
+
+`python3 tools/censustr/test_walk_make.py` exercises the actual Makefile
+recipe in an isolated temporary tree with a recording compiler: changed
+source, changed computation, unchanged computation after proof-only edits,
+separate prerequisite parallelism, and failure with an old object present.
+All four tests pass. These Makefile changes are proposed for owner review
+in the consolidated PR; their whole-build effect still needs box timing.
+
+For that acceptance measurement, use a fresh checkout of the PR head on
+the 8-core/32-GB Linux box with the normal native Coq toolchain available:
+
+```sh
+git clone --branch codex/split-instruction-repwl \
+  https://github.com/carrino/Coq-BBB4.git Coq-BBB4-tr-benchmark
+cd Coq-BBB4-tr-benchmark
+git rev-parse HEAD
+/usr/bin/time -v -o proof-tr-all.time \
+  make proof-tr-all > proof-tr-all.log 2>&1
+```
+
+Do not copy proof objects into that checkout. Retain the commit, complete
+log, timing report, and `census_probes/censustr_walk_times.txt`. The command
+must finish successfully and print only `functional_extensionality_dep`
+for `BBBT4_value`. Record the actual job counts printed by the build and
+the box's CPU and RAM information. The updated acceptance target is four
+hours wall time for this one from-source build; local phase samples and
+incremental builds do not establish it.
 
 ## Measurement status
 

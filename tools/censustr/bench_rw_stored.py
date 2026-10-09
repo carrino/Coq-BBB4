@@ -7,6 +7,9 @@ certificate-data compilation and proof checking, not just loading .vo data.
 Run without other heavy jobs. This is a phase benchmark, not a full walk.
 The default VM pass produces .vo files; --mode native subsequently measures
 their native companions, with prerequisite native companions already built.
+The default before sources are regenerated from the unchanged row manifest,
+so this comparison remains reproducible after a squash merge. An optional
+--baseline-ref additionally checks those sources against an older revision.
 """
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -14,16 +17,22 @@ import json
 from pathlib import Path
 import platform
 import subprocess
+import sys
 import time
 
 import gen_provtr_rw as gen
+from bench_lean_walk import worker
 
 REPO = Path(__file__).resolve().parents[2]
 
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == '--worker':
+        raise SystemExit(worker(sys.argv[4:], sys.argv[2], sys.argv[3]))
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('--baseline-ref', required=True)
+    ap.add_argument('--baseline-ref')
+    ap.add_argument('--certificates', nargs='+', metavar='RW_NN_NNNN',
+                    help='measure parts containing these certificates; default: all')
     ap.add_argument('--coqc', default='coqc')
     ap.add_argument('--coqnative', default='coqnative')
     ap.add_argument('--mode', choices=['vm', 'native'], default='vm')
@@ -39,17 +48,24 @@ def main():
     certs = gen.read_stored_certificates(rows)
     if not certs:
         ap.error('no stored certificates')
+    names = {f'RW_{stage:02d}_{index:04d}': (stage, index) for stage, index in certs}
+    selected = set(args.certificates or names)
+    if selected - names.keys():
+        ap.error('unknown certificates: ' + ', '.join(sorted(selected - names.keys())))
     original = gen.render_parts(rows)
     updated = gen.render_parts(rows, certificates=certs)
     parts = sorted(name for name in updated
-                   if name.startswith('RWParts/') and updated[name] != original[name])
+                   if name.startswith('RWParts/') and
+                   any(f'Require DataTr_{cert}.' in updated[name] for cert in selected))
     before_jobs, after_jobs = [], []
     for name in parts:
         relative = 'theories/CensusTr/'+name
-        baseline = subprocess.check_output(['git', 'show', f'{args.baseline_ref}:{relative}'],
-                                           cwd=REPO, text=True)
-        if baseline != original[name]:
-            raise ValueError(f'baseline is not the original proof: {name}')
+        baseline = original[name]
+        if args.baseline_ref:
+            historical = subprocess.check_output(
+                ['git', 'show', f'{args.baseline_ref}:{relative}'], cwd=REPO, text=True)
+            if historical != baseline:
+                raise ValueError(f'baseline is not the original proof: {name}')
         source = REPO/relative
         if source.read_text() != updated[name]:
             raise ValueError(f'stale proof source: {name}')
@@ -68,9 +84,10 @@ def main():
         after_jobs.append((source.stem, data_files+[source]))
     record = dict(platform=platform.platform(), jobs=args.jobs,
                   baseline_ref=args.baseline_ref,
+                  baseline_kind='original-search-source',
                   compiler=subprocess.check_output([args.coqc, '--version'],text=True).strip(),
                   native_companions=args.mode == 'native',
-                  certificates=len(certs), results=[])
+                  certificates=len(selected), selected_certificates=sorted(selected), results=[])
     def save():
         filename = 'native_timings.json' if args.mode == 'native' else 'timings.json'
         (output/filename).write_text(json.dumps(record,indent=2)+'\n')
@@ -79,7 +96,6 @@ def main():
         started = time.monotonic()
         files = []
         for path in paths:
-            start = time.monotonic()
             if args.mode == 'native':
                 artifact = path.with_suffix('.vo')
                 if not artifact.is_file():
@@ -92,11 +108,13 @@ def main():
                            '-w', '-abstract-large-number', '-Q',
                            str(REPO/'theories'), 'BBB4', str(path)]
                 log_name = path.stem+'.log'
-            with (output/log_name).open('w') as log:
-                result = subprocess.run(command,cwd=REPO,stdout=log,
-                                        stderr=subprocess.STDOUT)
-            files.append(dict(file=str(path), seconds=round(time.monotonic()-start,3),
-                              exit_code=result.returncode))
+            result_path = output / (log_name + '.json')
+            result = subprocess.run(
+                [sys.executable, str(Path(__file__).resolve()), '--worker',
+                 str(output / log_name), str(result_path), *command], cwd=REPO)
+            measured = json.loads(result_path.read_text())
+            files.append(dict(measured, file=str(path),
+                              seconds=round(measured['wall_seconds'], 3)))
             if result.returncode:
                 break
         value = dict(part=name,seconds=round(time.monotonic()-started,3),files=files)

@@ -5,7 +5,7 @@
 From Coq Require Import Arith List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Census Require Import TNF_QH.
-From BBB4.CensusTr Require Import RunTr RunTr_Split.
+From BBB4.CensusTr Require Import RunTr_WalkCompute.
 
 Lemma unit_tr_34 : unit_ok 96 34 0 frontier_nodes_tr = true.
 Proof.

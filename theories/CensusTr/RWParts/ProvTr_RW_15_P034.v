@@ -5,6 +5,8 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.CensusTr Require Import RepWLTr.
 Import ListNotations.
 
+From BBB4.Checkers Require Import RepWLStoredTr.
+From BBB4.CensusTr.RWCerts Require DataTr_RW_15_0097.
 (* 1RB1LC_1RC0LA_1RD0LC_1LA0RA  L=15 T=2 t=0 fuel=199824 M=60 *)
 Definition tm_rw15_0097 : TM := fun q s =>
   match q, s with
@@ -18,7 +20,7 @@ Definition tm_rw15_0097 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma nqhtr_rw15_0097 : NeverQuasiHaltsTr tm_rw15_0097.
-Proof. apply (rw_tier_tr_sound _ 15 2 0 199824 60). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_check_stored_tr_sound _ 15 2 0 60 DataTr_RW_15_0097.keys DataTr_RW_15_0097.ranks DataTr_RW_15_0097.cert). vm_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_15_p034 : list TM :=
   [tm_rw15_0097].
