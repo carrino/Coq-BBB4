@@ -29,6 +29,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
 from cbt import CT, spec_row  # noqa: E402
+from gen_rw_stored import read_certificates, generated_files as stored_rw_files  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, 'tools', 'censustr'))
+from gen_lap_bundles import generate as generate_lap_bundles, read_bundle_map, rewrite_imports  # noqa: E402
+from gen_provtr_data import generate as generate_proven_data  # noqa: E402
 
 DEFERRED = os.path.join(REPO, 'censustr_deferred_v10.txt')
 SPEC_RE = re.compile(r'^\(\* spec (\S+) \*\)$', re.M)
@@ -160,11 +164,11 @@ KIT = ['theories/CloseoutTr/CloseoutKitTr.v']
 TAIL = ['theories/CloseoutTr/RemainingTr.v', 'theories/CloseoutTr/CloseoutTr.v']
 
 
-def coqproject(bs):
+def coqproject(bs, certificate_sources=()):
     path = os.path.join(REPO, '_CoqProject')
     lines = open(path).read().splitlines()
     keep = [l for l in lines if not l.startswith('theories/CloseoutTr/')]
-    ours = KIT + ['theories/CloseoutTr/%s.v' % m for m, _, _ in bs] + TAIL
+    ours = KIT + sorted(certificate_sources) + ['theories/CloseoutTr/%s.v' % m for m, _, _ in bs] + TAIL
     return '\n'.join(keep + ours) + '\n'
 
 
@@ -172,6 +176,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--check', action='store_true')
     a = ap.parse_args()
+    if read_bundle_map():
+        generate_lap_bundles(check=a.check)
+    if os.path.exists(os.path.join(REPO, 'theories/CensusTr/ProvTr_Data.v')):
+        generate_proven_data(check=a.check)
     deferred = read_list(DEFERRED)
     dset = set(deferred)
     bs = batches()
@@ -182,13 +190,24 @@ def main():
                 sys.exit('%s boards %s, which is not a v10 deferred row' % (m, s))
             boarded.setdefault(s, m)
     remaining = [s for s in deferred if s not in boarded]
+    stored = {str(p): text for p, text in stored_rw_files(read_certificates()).items()}
+    certificate_sources = [os.path.relpath(p, REPO) for p in stored
+                           if os.path.dirname(p) == os.path.join(CT, 'RWCerts')]
     files = {
         os.path.join(CT, 'RemainingTr.v'): remaining_v(remaining),
         os.path.join(CT, 'CloseoutTr.v'): closeout_v(bs, len(deferred), len(remaining)),
         os.path.join(REPO, 'closeouttr_remaining.txt'): ''.join(s + '\n' for s in remaining),
         os.path.join(REPO, 'closeouttr_boarded.tsv'): ''.join('%s\t%s\n' % (s, boarded[s]) for s in deferred if s in boarded),
-        os.path.join(REPO, '_CoqProject'): coqproject(bs),
+        os.path.join(REPO, '_CoqProject'): coqproject(bs, certificate_sources),
     }
+    files.update(stored)
+    # Import adapters only: every row, theorem statement and proof body stays
+    # unchanged. The source lap boards are rechecked in generated bundles.
+    lap_bundles = read_bundle_map()
+    if lap_bundles:
+        for module, _, _ in bs:
+            path = os.path.join(CT, module+'.v')
+            files[path] = rewrite_imports(files.get(path, open(path).read()), lap_bundles)
     stale = [p for p, txt in files.items()
              if not os.path.exists(p) or open(p).read() != txt]
     if a.check:
@@ -200,6 +219,7 @@ def main():
               % (len(bs), len(boarded), len(remaining), len(deferred)))
         return
     for p in stale:
+        os.makedirs(os.path.dirname(p), exist_ok=True)
         with open(p, 'w') as f:
             f.write(files[p])
     print('%d batches, %d rows boarded, %d of %d remaining; wrote %d file(s)'

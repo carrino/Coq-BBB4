@@ -30,13 +30,12 @@ From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.Census Require Import TNF_QH Decide.
 From BBB4.CensusTr Require Import TNF_QHTr DecideTr RunTr.
+From BBB4.CensusTr Require Export RunTr_WalkCompute.
 Import ListNotations.
 
 Set Default Goal Selector "!".
 
 (** ** A level expansion preserves well-formedness *)
-
-Definition qnodes (q : SearchQueue) : list TNF_Node := fst q ++ snd q.
 
 Lemma qnodes_push_front : forall l q x,
   In x (qnodes (l ++ fst q, snd q)) <-> In x l \/ In x (qnodes q).
@@ -221,39 +220,15 @@ Qed.
 
 (** ** The frontier and its units *)
 
-Definition FRONTIER_LEVELS_TR : nat := 3.
-
-Definition frontier_tr : SearchQueue :=
-  SearchQueue_levels decider_tr_fast FRONTIER_LEVELS_TR q_0_tr.
-
-Definition frontier_nodes_tr : list TNF_Node := qnodes frontier_tr.
-
+(** The frontier, iteration budget and unit predicate are the exact
+    definitions exported by RunTr_WalkCompute. *)
 Lemma frontier_tr_WF : SearchQueue_WF_Tr B_tr D_tr frontier_tr root.
 Proof.
   apply SearchQueue_levels_spec_tr; [exact q_0_tr_WF | exact decider_tr_fast_WF].
 Qed.
 
-(** successor rounds per unit: the collection shards' own budget
-    (gen_walk_shards.py); iterating past exhaustion is a no-op *)
-Definition ITER_TR : nat := 4096.
-
-Definition queue_empty_b (q : SearchQueue) : bool :=
-  match q with ([], []) => true | _ => false end.
-
 Lemma queue_empty_b_spec : forall q, queue_empty_b q = true -> q = ([], []).
 Proof. intros [[|a l1] [|b l2]] H; simpl in H; congruence. Qed.
-
-(** unit [i] of [N]: every node at index [j] (counting from the given
-    offset) with [j mod N = i] walks to an empty queue *)
-Fixpoint unit_ok (N i j : nat) (l : list TNF_Node) : bool :=
-  match l with
-  | [] => true
-  | h :: t =>
-      (if Nat.eqb (j mod N) i
-       then queue_empty_b (Nat.iter ITER_TR q_suc_tr ([h], []))
-       else true)
-      && unit_ok N i (S j) t
-  end.
 
 (** the one-step equation, so no tactic ever has to [simpl] a term
     containing [Nat.iter ITER_TR] *)

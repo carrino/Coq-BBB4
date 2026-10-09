@@ -1,37 +1,27 @@
-(** * CensusTr/RunTr: the transition-level census walk wiring.
+(** * Proof-bearing assembly for the instruction census.
 
-    The transition-level analogue of Census/Run.v + Run_Compute.v, in
-    COLLECTION MODE (walks #1-#4): the three lookup tiers (proven /
-    proven-QH / deferred) started EMPTY, so the walk decided the halt +
-    cycle bulk and pushed everything else to the back queue.  Since
-    Milestone A the deferred tier is the FROZEN v6 list ([D_tr] below).  The back queue of a
-    completed collection walk IS the transition-level deferred set --
-    it gets frozen into generated DeferredTr tables, this file's lists
-    are regenerated, and the re-walk with the frozen list yields the
-    census theorem, exactly the bootstrap the state census used.
+    RunTr_Compute contains the unchanged decider parameters and queue
+    operations, using data-only copies of the proven machine lists.
+    RunTr_WalkCompute supplies the frontier and unit computations.
 
-    The walk computation ([SearchQueue], [Nat.iter], the [node_expand]
-    tree) is the state census's own, reused by import; the decider is
-    CensusTr/DecideTr.v's phase-0 stack.  Iterating [q_suc_tr] past
-    queue exhaustion is a no-op ([SearchQueue_upds] returns the queue
-    unchanged once the front list is empty), so a generous iteration
-    count is safe for driver units.
+    This file retains the original lists, every proven-tier certificate,
+    the data/proof conversion gates, and the decider/queue soundness
+    proofs. The final census assembly imports it. Native walk units need
+    only the computation modules, so they avoid loading board libraries.
 
-    [census_tr_from_empty] states the conditional theorem now, with
-    the empty deferred list: it becomes the real census theorem the
-    moment a walk over the FROZEN regenerated list empties the queue. *)
+    No certificate is skipped: the original Forall proofs must type-check
+    against the complete generated lists before decider_tr_WF is proved. *)
 
 From Coq Require Import Arith Lia Bool List NArith.
 From Coq Require Import FunctionalExtensionality.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape Mirror.
 From BBB4.Census Require Import TNF_QH Decide.
-From BBB4.CensusTr Require Import TNF_QHTr DecideTr DeferredTr_Data.
-(* the kernel-checked transition-level Proven tier: the 97 v1
-   IRules certificates that survive the per-instruction prefix
-   gate (SCOPING_INSTR.md 7.2).  739 KB of boards, so this is
-   Required directly -- the state census's data/certificate
-   split (Proven_List.v vs Proven_Data.v) exists for its 2.65 GB
-   of boards and buys nothing at this size. *)
+From BBB4.CensusTr Require Import TNF_QHTr DecideTr DeferredTr_Data
+  ProvTr_Data ProvQHTr_Data.
+From BBB4.CensusTr Require Export RunTr_Compute.
+(* Keep every original proven-tier certificate in the soundness chain.
+   Native walk units import RunTr_WalkCompute instead; only the final
+   assembly needs these proofs. *)
 From BBB4.Machines Require Import
   IRules_Batch_00 IRules_Batch_01 IRules_Batch_02 IRules_Batch_03
   IRules_Batch_04 IRules_Batch_05 IRules_Batch_06 IRules_Batch_07
@@ -50,26 +40,11 @@ Import ListNotations.
 
 Set Default Goal Selector "!".
 
-(** ** Parameters: collection mode *)
+(** ** Parameters and original proved lists
 
-(** The transition-level score bound.  A PLACEHOLDER until the harness
-    champion campaign fixes the real value; the census verdicts are
-    monotone in it ([qhboundtr_mono]), so any B_tr below the final bound
-    is safe to prove under.  Raised 2000 -> 32,779,478 (2026-09-02): the
-    state champion's tail argument generalizes verbatim, so the
-    instruction-level value is at least this (SCOPING_INSTR section 1),
-    and the leaf checks guard their cycle start by [n1 <=? B] -- at 2000
-    they rejected every translated cycler whose lap starts later, which
-    the real LIVE population is a quarter made of (7.1v). *)
-Definition B_tr : nat := 32779478.
-
-(** FROZEN (Milestone A): the v6 collection walk's deferred list,
-    23,692 machines (censustr_deferred_v6.txt -> DeferredTr_*.v via
-    tools/censustr/gen_deferredtr.py).  The walk decider looks them up
-    ([R_Deferred]) instead of paying the failing ladder, and the
-    kernel-checked re-walk (RunTr_Split.v + Compute/UnitTr_*.v) turns
-    [census_tr_of_units] into the census theorem over this list. *)
-Definition D_tr : list TM := D_censusTr.
+    The computational bound and deferred list are exported from
+    RunTr_Compute. The original proven lists and their proofs stay below;
+    the data-only copies are checked by kernel conversion before use. *)
 
 (** the LIST-BURN's deferred map stays EMPTY: the burn runs
     [decider_tr_deep] over the deferred list itself, so a lookup hit
@@ -298,8 +273,9 @@ Qed.
 Lemma prov_tr_all : Forall NeverQuasiHaltsTr prov_tr.
 Proof.
   unfold prov_tr.
-  repeat (apply Forall_app; split);
-    first [exact prov_tr_irtr_all | exact ptl_00_nqhtr | exact ptl_01_nqhtr | exact ptl_02_nqhtr | exact ptl_03_nqhtr | exact ptl_04_nqhtr | exact ptl_05_nqhtr | exact ptl_06_nqhtr | exact ptl_07_nqhtr | exact ptl_08_nqhtr | exact ptl_09_nqhtr | exact ptl_10_nqhtr | exact ptl_11_nqhtr | exact ptl_12_nqhtr | exact ptc_00_nqhtr | exact ptc_01_nqhtr | exact ptc_02_nqhtr | exact ptc_03_nqhtr | exact ptc_04_nqhtr | exact ptc_05_nqhtr | exact ptc_06_nqhtr | exact ptc_07_nqhtr | exact ptc_08_nqhtr | exact ptc_09_nqhtr | exact ptc_10_nqhtr | exact ptc_11_nqhtr | exact ptw_00_nqhtr | exact ptw_01_nqhtr | exact ptw_02_nqhtr | exact ptw_03_nqhtr | exact ptw_04_nqhtr | exact ptw_05_nqhtr | exact ptw_06_nqhtr | exact ptw_07_nqhtr | exact ptw_08_nqhtr | exact ptw_09_nqhtr | exact ptw_10_nqhtr | exact ptw_11_nqhtr | exact ptw_12_nqhtr | exact ptw_13_nqhtr | exact ptw_14_nqhtr | exact ptw_15_nqhtr | exact ptw_16_nqhtr | exact pti_00_nqhtr | exact pti_01_nqhtr | exact pti_02_nqhtr | exact prk_00_nqhtr | exact prk_01_nqhtr | exact prk_02_nqhtr | exact prk_03_nqhtr | exact prk_04_nqhtr | exact prk_05_nqhtr | exact prk_06_nqhtr | exact prk_07_nqhtr | exact prk_08_nqhtr | exact prk_09_nqhtr].
+  (* A split stage is itself an append: use its certificate before
+     attempting to split the surrounding proven-list concatenation. *)
+  repeat first [exact prov_tr_irtr_all | exact ptl_00_nqhtr | exact ptl_01_nqhtr | exact ptl_02_nqhtr | exact ptl_03_nqhtr | exact ptl_04_nqhtr | exact ptl_05_nqhtr | exact ptl_06_nqhtr | exact ptl_07_nqhtr | exact ptl_08_nqhtr | exact ptl_09_nqhtr | exact ptl_10_nqhtr | exact ptl_11_nqhtr | exact ptl_12_nqhtr | exact ptc_00_nqhtr | exact ptc_01_nqhtr | exact ptc_02_nqhtr | exact ptc_03_nqhtr | exact ptc_04_nqhtr | exact ptc_05_nqhtr | exact ptc_06_nqhtr | exact ptc_07_nqhtr | exact ptc_08_nqhtr | exact ptc_09_nqhtr | exact ptc_10_nqhtr | exact ptc_11_nqhtr | exact ptw_00_nqhtr | exact ptw_01_nqhtr | exact ptw_02_nqhtr | exact ptw_03_nqhtr | exact ptw_04_nqhtr | exact ptw_05_nqhtr | exact ptw_06_nqhtr | exact ptw_07_nqhtr | exact ptw_08_nqhtr | exact ptw_09_nqhtr | exact ptw_10_nqhtr | exact ptw_11_nqhtr | exact ptw_12_nqhtr | exact ptw_13_nqhtr | exact ptw_14_nqhtr | exact ptw_15_nqhtr | exact ptw_16_nqhtr | exact pti_00_nqhtr | exact pti_01_nqhtr | exact pti_02_nqhtr | exact prk_00_nqhtr | exact prk_01_nqhtr | exact prk_02_nqhtr | exact prk_03_nqhtr | exact prk_04_nqhtr | exact prk_05_nqhtr | exact prk_06_nqhtr | exact prk_07_nqhtr | exact prk_08_nqhtr | exact prk_09_nqhtr | (apply Forall_app; split)].
 Qed.
 
 Lemma provqh_tr_all :
@@ -307,60 +283,27 @@ Lemma provqh_tr_all :
          provqh_tr.
 Proof.
   unfold provqh_tr.
-  repeat (apply Forall_app; split);
-    first [exact pqh_00_qhtr | exact pqh_01_qhtr | exact pqh_02_qhtr | exact pqh_03_qhtr | exact pqh_04_qhtr | exact pqh_05_qhtr | exact pqh_06_qhtr | exact pqh_07_qhtr | exact pqh_08_qhtr | exact pqh_09_qhtr | exact pqh_10_qhtr | exact pqh_11_qhtr | exact pqh_12_qhtr | exact pqh_13_qhtr | exact pqh_14_qhtr | exact pqh_15_qhtr | exact pqh_16_qhtr | exact pqh_17_qhtr | exact pqh_18_qhtr | exact pqh_19_qhtr | exact pqh_20_qhtr | exact pqh_21_qhtr | exact pqh_22_qhtr | exact pqh_23_qhtr | exact pqh_24_qhtr | exact pqh_25_qhtr | exact pqh_26_qhtr | exact pqh_27_qhtr | exact pqh_28_qhtr | exact pqh_29_qhtr | exact pqh_30_qhtr | exact pqh_31_qhtr | exact pqh_32_qhtr | exact pqh_33_qhtr | exact pqh_34_qhtr | exact pqh_35_qhtr | exact pqh_36_qhtr | exact pqh_37_qhtr | exact pqh_38_qhtr | exact pqh_39_qhtr].
+  (* A split stage is itself an append: use its certificate before
+     attempting to split the surrounding proven-list concatenation. *)
+  repeat first [exact pqh_00_qhtr | exact pqh_01_qhtr | exact pqh_02_qhtr | exact pqh_03_qhtr | exact pqh_04_qhtr | exact pqh_05_qhtr | exact pqh_06_qhtr | exact pqh_07_qhtr | exact pqh_08_qhtr | exact pqh_09_qhtr | exact pqh_10_qhtr | exact pqh_11_qhtr | exact pqh_12_qhtr | exact pqh_13_qhtr | exact pqh_14_qhtr | exact pqh_15_qhtr | exact pqh_16_qhtr | exact pqh_17_qhtr | exact pqh_18_qhtr | exact pqh_19_qhtr | exact pqh_20_qhtr | exact pqh_21_qhtr | exact pqh_22_qhtr | exact pqh_23_qhtr | exact pqh_24_qhtr | exact pqh_25_qhtr | exact pqh_26_qhtr | exact pqh_27_qhtr | exact pqh_28_qhtr | exact pqh_29_qhtr | exact pqh_30_qhtr | exact pqh_31_qhtr | exact pqh_32_qhtr | exact pqh_33_qhtr | exact pqh_34_qhtr | exact pqh_35_qhtr | exact pqh_36_qhtr | exact pqh_37_qhtr | exact pqh_38_qhtr | exact pqh_39_qhtr | (apply Forall_app; split)].
 Qed.
 
-(** the same rung ladders as the state census (Run_Compute.v), and the
-    same n-gram fuel/rounds *)
-Definition ng_rungs_tr : list (nat * nat) :=
-  [(2, 100); (3, 200); (4, 400); (6, 800)].
+(** Data/proof gate: exact accepts these original proofs only if every
+    generated machine and the entire ordered list are convertible. *)
+Lemma prov_tr_data_all : Forall NeverQuasiHaltsTr prov_tr_data.
+Proof. exact prov_tr_all. Qed.
 
-(** the rank-rules never tier's ladder, the state census's own
-    (Run_Compute.v [rank_rungs_census]) *)
-Definition rank_rungs_tr : list (nat * nat) :=
-  [(3, 0); (3, 64); (3, 256); (3, 1024)].
-
-Definition qhb_rungs_tr : list (nat * nat) :=
-  [(2, 64); (2, 256); (2, 1024);
-   (3, 64); (3, 256); (3, 1024);
-   (4, 64); (4, 256); (4, 1024)].
-
-(** the lex ladder is the expensive one (per rung: re-grow, explore,
-    certificate search per instruction), and a failing machine pays
-    every rung -- so it gets the single deepest horizon per window,
-    and no n >= 5 rungs in-walk (context mixing at n <= 4 costs ~3/36
-    pilot catches; those go to offline boards, PLAYBOOK Rule 4) *)
-Definition qhb_lex_rungs_tr : list (nat * nat) :=
-  [(2, 1024); (3, 1024); (4, 1024)].
-
-(** the wrapped-RepWL tier's (L, T, t) ladder (Tier W-wrap,
-    SCOPING_INSTR.md 7.1m): one rung -- it closed and passed every
-    liveness gate on 81.8% of the measured suspects, and each rung a
-    failing machine pays re-grows a full wrapped closure *)
-Definition rw_qhb_rungs_tr : list (nat * nat * nat) :=
-  [(2, 3, 1024)].
-
-(** the RepWL tier's parameters, the state census's own
-    (Run_Compute.v [rw_rungs_census] / [rw_fuel_census] /
-    [rw_cut_census]) *)
-Definition rw_rungs_tr : list (nat * nat * nat) :=
-  [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0)].
-Definition rw_fuel_tr : nat := 5120.
-Definition rw_cut_tr : nat := 32.
-
-Definition decider_tr : QHDecider :=
-  decide_easy_tr B_tr 130 512 200000 512 ng_rungs_tr rank_rungs_tr
-    qhb_rungs_tr qhb_lex_rungs_tr rw_qhb_rungs_tr
-    rw_rungs_tr rw_fuel_tr rw_cut_tr
-    (dmap_of prov_tr) (dmap_of provqh_tr) (dmap_of D_tr).
+Lemma provqh_tr_data_all :
+  Forall (fun tm => NonHalt tm /\ QHBoundTr B_tr tm /\ QuasiHaltsTr tm)
+         provqh_tr_data.
+Proof. exact provqh_tr_all. Qed.
 
 Lemma decider_tr_WF : QHDeciderTr_WF B_tr D_tr decider_tr.
 Proof.
   exact (decide_easy_tr_WF B_tr D_tr 130 512 200000 512
            ng_rungs_tr rank_rungs_tr qhb_rungs_tr qhb_lex_rungs_tr
            rw_qhb_rungs_tr rw_rungs_tr rw_fuel_tr rw_cut_tr
-           prov_tr prov_tr_all provqh_tr provqh_tr_all).
+           prov_tr_data prov_tr_data_all provqh_tr_data provqh_tr_data_all).
 Qed.
 
 (** ** The ESCALATED (offline) configuration
@@ -426,51 +369,6 @@ Proof.
 Qed.
 
 
-(** ** The root and its symmetrized first level (Run_Compute.v shapes) *)
-
-Definition TM0 : TM := fun _ _ => None.
-
-Definition root : TNF_Node := mkNode TM0 (Some StB).
-
-Definition child (w : Sym) (d : Dir) (nx : St) : TNF_Node :=
-  mkNode (TM_upd' TM0 StA S0 (Some (mkTrans w d nx)))
-         (ptr_after (Some StB) nx).
-
-Definition q_0_tr : SearchQueue :=
-  ([child S0 DR StA; child S1 DR StA; child S0 DR StB; child S1 DR StB],
-   []).
-
-Definition q_suc_tr (q : SearchQueue) : SearchQueue :=
-  SearchQueue_upds q decider_tr 13.
-
-(** ** The FRONTIER decider: expansion only, no deciding
-
-    The frontier prefix walk exists to produce a set of pending nodes
-    to shard, and nothing else.  Running the full ladder there is pure
-    waste, and it is the expensive kind: [node_expand h s i] takes the
-    hole from [R_Halt s i], so EXPANSION only ever needs [find_halt] --
-    the cheapest tier.  A node [find_halt] cannot place is a node that
-    cannot be expanded, so the seconds the deep tiers spend on it buy
-    the prefix nothing.  (Measured 2026-08-23: ~10 s per pop with the
-    full decider, i.e. minutes to produce a frontier of a few hundred.)
-
-    So the prefix uses halt-or-defer.  Nodes it cannot expand go
-    straight to the back queue -- correct, just decided by a weaker
-    tier than they would have been.  That costs at most a handful of
-    extra rows in the collected list (the prefix pops ~13 per round),
-    and it buys a frontier that is effectively free and can therefore
-    be taken DEEP: more, smaller nodes, which is what makes the shards
-    balance.
-
-    Still well-formed: [R_Halt] is justified by [find_halt_sound]
-    exactly as in [decide_easy_tr], and [R_Unknown] is trivially so. *)
-
-Definition decider_tr_fast : QHDecider := fun tm =>
-  match find_halt tm 130 0 c0 with
-  | Some (n, s, i) => if S n <=? B_tr then R_Halt s i else R_Unknown
-  | None => R_Unknown
-  end.
-
 Lemma decider_tr_fast_WF : QHDeciderTr_WF B_tr D_tr decider_tr_fast.
 Proof.
   intro tm. unfold decider_tr_fast.
@@ -481,45 +379,6 @@ Proof.
     as (tp & Hst & Hhd & Hnone).
   exists n, tp. auto.
 Qed.
-
-Definition q_suc_tr_fast (q : SearchQueue) : SearchQueue :=
-  SearchQueue_upds q decider_tr_fast 13.
-
-(** ** Balanced frontier expansion (untrusted sharding helper)
-
-    [SearchQueue_upd] pushes a node's children at the FRONT of the
-    front queue, so iterating it is a depth-first walk and the tail of
-    the front queue is never touched.  That makes the front queue a
-    bad thing to shard on: measured 2026-08-24, after 32 halt-only
-    pops the 48-node frontier still had [child S1 DR StB] -- the
-    unexpanded [1RB---_------_------_------] root child, a full
-    quarter of the TNF tree -- sitting at index 47.  Its shard ran
-    ~17 CPU-hours while the other 47 finished in minutes.
-
-    [SearchQueue_level] instead expands EVERY node of the front queue
-    exactly once, so the frontier is a genuine tree level and the
-    shards are comparable in size.  Node order is preserved: children
-    of an earlier node come before children of a later one.
-
-    Untrusted, like all of the collection-mode serialization below:
-    the split only decides how work is divided between processes, and
-    the deferred list it feeds is re-derived by the eventual re-walk. *)
-Definition SearchQueue_level (f : QHDecider) (q : SearchQueue) : SearchQueue :=
-  fold_right
-    (fun h acc =>
-       match f (node_tm h) with
-       | R_Halt s i => (node_expand h s i ++ fst acc, snd acc)
-       | R_NeverQH | R_QH | R_Leaf | R_Deferred => acc
-       | R_Unknown => (fst acc, h :: snd acc)
-       end)
-    ([], snd q) (fst q).
-
-Definition SearchQueue_levels (f : QHDecider) (n : nat) (q : SearchQueue)
-  : SearchQueue := Nat.iter n (SearchQueue_level f) q.
-
-(** per-subtree roots, for splitting a long walk across processes *)
-Definition q_sub_tr (w : Sym) (nx : St) : SearchQueue :=
-  ([child w DR nx], []).
 
 (** ** Well-formedness of the symmetrized root *)
 

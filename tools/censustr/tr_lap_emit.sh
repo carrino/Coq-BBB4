@@ -16,4 +16,5 @@ ls census_probes/trlap/rows_* | xargs -P $JOBS -I{} sh -c \
   'python3 tools/counters/emit_lapcert.py --list {} --tr --emit --json {}.json > {}.log 2>&1; st=$?; echo ">>> $(basename {}): $(tail -1 {}.log) (exit $st)"; exit $st'
 echo ">>> LAPT boards on disk: $(ls theories/Machines/CountersTr/LAPT_*.v | wc -l)"
 python3 tools/censustr/gen_provtr_lap.py --start $START
+python3 tools/closeouttr/gen_closeout_tr.py
 echo ">>> commit the new boards, the new theories/CensusTr/ProvTr_Lap_*.v and _CoqProject; wiring + cut + walk come with the next batch"

@@ -19,4 +19,5 @@ ls census_probes/qhlap/rows_* | xargs -P $JOBS -I{} sh -c \
   'python3 tools/counters/emit_lapcert.py --list {} --qh --emit --json {}.json > {}.log 2>&1; st=$?; echo ">>> $(basename {}): $(tail -1 {}.log) (exit $st)"; exit $st'
 echo ">>> boards: $(ls theories/Machines/CountersTr/LAPQ_*.v 2>/dev/null | wc -l)"
 python3 tools/censustr/gen_provtr_lapqh.py --start $START
+python3 tools/closeouttr/gen_closeout_tr.py
 echo ">>> add the new theories/CensusTr/ProvTr_QH_*.v to _CoqProject and [provqh_tr] (RunTr.v), then push"

@@ -6,7 +6,11 @@ From Coq Require Import Arith List ZArith.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.Census Require Import Deferred_Defs.
 From BBB4.CloseoutTr Require Import CloseoutKitTr.
-From BBB4.Machines.CountersTr Require LAPT_0RB0LA_1RC1RB_0RD____1LD1LA LAPT_1RB1LB_1LA1LC_0LC1RD_1RA0RD LAPT_1RB1RA_0RC____1LC1LD_0RA0LD.
+(* LAP BUNDLE IMPORT: From BBB4.Machines.CountersTr Require LAPT_0RB0LA_1RC1RB_0RD____1LD1LA LAPT_1RB1LB_1LA1LC_0LC1RD_1RA0RD LAPT_1RB1RA_0RC____1LC1LD_0RA0LD. *)
+From BBB4.Machines.CountersTr.Bundles Require Import BundleLAPT_001.
+From BBB4.Machines.CountersTr.Bundles Require Import BundleLAPT_033.
+From BBB4.Machines.CountersTr.Bundles Require Import BundleLAPT_040.
+(* END LAP BUNDLE IMPORT *)
 Import ListNotations.
 
 (* spec 0RB0LA_1RC1RB_0RD---_1LD1LA *)
