@@ -7,17 +7,22 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.Census Require Import Deferred_Defs.
 From BBB4.CloseoutTr Require Import CloseoutKitTr.
 From BBB4.CensusTr Require Import RepWLTr.
+(* BEGIN STORED REPWL IMPORTS *)
+From BBB4.Checkers Require Import RepWLStoredTr.
+From BBB4.CloseoutTr.RWCerts Require Data_BR_08_0000.
+From BBB4.CloseoutTr.RWCerts Require Data_BR_08_0001.
+(* END STORED REPWL IMPORTS *)
 Import ListNotations.
 
 (* spec 1RB1LC_1RC1LA_1RD0LC_1LA0RA *)
 Definition r_BR_08_0000 : list (option Trans) := [t1RB;t1LC;t1RC;t1LA;t1RD;t0LC;t1LA;t0RA].
 Lemma cv_BR_08_0000 : coversTr (row_to_tm r_BR_08_0000).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 15 2 0 182456 52). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_check_stored_tr_sound _ 15 2 0 52 Data_BR_08_0000.keys Data_BR_08_0000.ranks Data_BR_08_0000.cert). vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LD_1RC0LB_1LD0RD_1RA1LB *)
 Definition r_BR_08_0001 : list (option Trans) := [t1RB;t1LD;t1RC;t0LB;t1LD;t0RD;t1RA;t1LB].
 Lemma cv_BR_08_0001 : coversTr (row_to_tm r_BR_08_0001).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 15 2 0 167376 52). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_check_stored_tr_sound _ 15 2 0 52 Data_BR_08_0001.keys Data_BR_08_0001.ranks Data_BR_08_0001.cert). vm_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_BR_08 : list (list (option Trans)) :=
   [r_BR_08_0000;

@@ -851,43 +851,48 @@ instr-core: Makefile.coq
 #   census_tr : forall tm, QHBoundTr B_tr tm \/ Deferred D_tr tm
 #
 # the first transition-level census theorem.  Units are independent
-# (each Requires only RunTr + RunTr_Split), so one xargs pool; finished
+# (each Requires only RunTr_WalkCompute), so one xargs pool; finished
 # units are kept across reruns (delete the .vo to redo one).  The
 # generator is idempotent -- rerun it after changing CENSUS_TR_UNITS.
 CENSUS_TR_UNITS ?= 96
+# The proven-tier prerequisites can use the batch budget independently
+# of the memory budget for simultaneous native walks. Standalone callers
+# retain the old default; proof-tr-all passes its batch job count below.
+CENSUS_TR_PREREQ_JOBS ?= $(WALK_JOBS)
 
 census-tr-units:
 	@python3 tools/censustr/gen_walk_units.py --units $(CENSUS_TR_UNITS)
 .PHONY: census-tr-units
 
-# MEMORY (measured 2026-09-04, prov_tr = 5,800 machines): each unit process
-# peaks at 2.7-3.5 GB RSS -- it loads the native code of every certificate
-# stage -- so WALK_JOBS=16 on a 31 GB box gets a third of the first wave
-# OOM-killed (the unit's log ends in "Killed", dmesg says "Out of memory").
-# Budget WALK_JOBS <= RAM_GB / 4; on 31 GB use WALK_JOBS=7.  Killed units
-# leave no .vo and are simply re-run by the next invocation.
+# Native units now load the computation layer only; the final assembler
+# still checks every proven-tier certificate. Memory budgets remain
+# explicit: proof-tr-all passes WALK_TR_JOBS, and standalone callers can
+# set WALK_JOBS. See docs/CENSUS_RUNTIME.md for measurements of the split.
 census-tr-walk: Makefile.coq
-	$(MAKE) -f Makefile.coq -j$(WALK_JOBS) theories/CensusTr/RunTr_Split.vo
+	$(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) theories/CensusTr/RunTr_Split.vo
 	@mkdir -p census_probes
 	@ulimit -s $(STACK_KB) 2>/dev/null \
 	  || echo ">>> WARNING: could not raise stack to $(STACK_KB)"
 	@# a unit counts as done only if its .vo is NEWER than the decider it
-	@# was checked against (RunTr_Split.vo): units from an earlier walk
+	@# was checked against (RunTr_WalkCompute.vo), and its own source:
+	@# units from an earlier walk
 	@# (older tables, older prov_tr) are rebuilt, not skipped -- skipping
 	@# them would fail later at the assembly with inconsistent assumptions
 	@ulimit -s $(STACK_KB) 2>/dev/null; \
 	 ls theories/CensusTr/Compute/UnitTr_*.v \
 	   | while read f; do \
-	       [ -f "$${f%.v}.vo" ] && [ "$${f%.v}.vo" -nt theories/CensusTr/RunTr_Split.vo ] \
+	       [ -f "$${f%.v}.vo" ] \
+	         && [ "$${f%.v}.vo" -nt theories/CensusTr/RunTr_WalkCompute.vo ] \
+	         && [ "$${f%.v}.vo" -nt "$$f" ] \
 	         || echo "$$f"; done \
-	   | xargs -r -P $(WALK_JOBS) -I{} sh -c \
-	    's=$$(date +%s); \
-	     coqc -Q theories BBB4 -w -abstract-large-number {} \
-	       > {}.log 2>&1 \
+	   | xargs -r -P $(WALK_JOBS) -n1 sh -c \
+	    'f=$$1; s=$$(date +%s); \
+	     coqc -Q theories BBB4 -w -abstract-large-number "$$f" \
+	       > "$$f.log" 2>&1 \
 	       && { t=$$(( $$(date +%s) - s )); \
-	            echo ">>> $$(basename {} .v) done in $$t s"; \
-	            echo "$$(basename {} .v) $$t" >> census_probes/censustr_walk_times.txt; } \
-	       || echo ">>> $$(basename {} .v) FAILED (see {}.log)"'
+	            echo ">>> $$(basename "$$f" .v) done in $$t s"; \
+	            echo "$$(basename "$$f" .v) $$t" >> census_probes/censustr_walk_times.txt; } \
+	       || { echo ">>> $$(basename "$$f" .v) FAILED (see $$f.log)"; exit 1; }' walk-unit
 	@n=$$(ls theories/CensusTr/Compute/UnitTr_*.v | wc -l); \
 	 d=$$(ls theories/CensusTr/Compute/UnitTr_*.vo 2>/dev/null | wc -l); \
 	 echo ">>> units done: $$d / $$n"; [ "$$d" = "$$n" ]
@@ -968,15 +973,18 @@ closeout-tr-final: closeout-tr
 #      the champion (BBBT4_Champion.vo) and the instruction-level tests
 #   5. CloseoutFinalTr.v (bbbt4_bound) and BBBT4_Value.v (BBBT4_value)
 #
-# MEMORY sets the job counts, not -j.  A walk unit peaks near 5.8 GB
-# (README), so WALK_TR_JOBS sizes at WALK_TR_RSS_GB per job, capped at the
-# physical cores; the batches peak under ~2.5 GB (the CI budget), so
-# CLOSEOUT_TR_JOBS sizes at CLOSEOUT_TR_RSS_GB.  On a 32 GB box (~30 GB
-# available) that is 4 walk jobs and up to 9 batch jobs.  Override either: `make proof-tr-all
+# MEMORY sets the job counts, not -j.  The complete 96-unit lean walk
+# peaked at 2.59 GiB per compiler on macOS arm64 / Coq 8.18; budget 4 GiB
+# per worker, capped at the physical cores. Target-box validation remains
+# pending; see docs/CENSUS_RUNTIME.md. The batches peak under
+# ~2.5 GB (the CI budget), so CLOSEOUT_TR_JOBS uses CLOSEOUT_TR_RSS_GB.
+# On a 32 GB box (~30 GB available), that is 7 walk jobs and up to 9 batch
+# jobs. Override either: `make proof-tr-all
 # WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6'.  A rerun keeps finished work (walk
-# units newer than RunTr_Split.vo, built .vo); to force a full re-walk,
+# units newer than their source and RunTr_WalkCompute.vo, built .vo);
+# to force a full re-walk,
 # delete theories/CensusTr/Compute/*.vo first.
-WALK_TR_RSS_GB ?= 6
+WALK_TR_RSS_GB ?= 4
 CLOSEOUT_TR_RSS_GB ?= 3
 _mem_jobs = $(shell m=$$(awk -v r=$(1) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-1}; c=$(2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_TR_JOBS ?= $(call _mem_jobs,$(WALK_TR_RSS_GB),$(WALK_CORES))
@@ -1012,10 +1020,11 @@ _proof-tr-all-run:
 	$(MAKE) Makefile.coq
 	@echo ">>> [1/4] generated files current"
 	python3 tools/closeouttr/gen_closeout_tr.py --check
+	python3 tools/censustr/gen_walk_units.py --check --units $(CENSUS_TR_UNITS)
 	git diff --quiet -- theories/CensusTr/Compute/ \
 	  || { echo ">>> theories/CensusTr/Compute/ differs from the commit"; exit 1; }
 	@echo ">>> [2/4] the census walk: census_tr"
-	$(MAKE) census-tr-walk WALK_JOBS=$(WALK_TR_JOBS)
+	$(MAKE) census-tr-walk WALK_JOBS=$(WALK_TR_JOBS) CENSUS_TR_PREREQ_JOBS=$(CLOSEOUT_TR_JOBS)
 	@echo ">>> [3/4] the closeout, the champion, the tests"
 	@# the stack: under the census switch every .vo is also COQNATIVE'd,
 	@# and the OCaml compiler overflows the default 8 MB stack on the
