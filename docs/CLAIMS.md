@@ -207,7 +207,8 @@ hardest machines audited against the theorem's prediction), is
 [`BBBT4_REVIEW.md`](BBBT4_REVIEW.md). Axiom footprint:
 `functional_extensionality_dep` only. This was verified end to end on
 2026-10-06 by `make proof-tr-all` from a fresh clone at `d9dc41d0`, which
-printed `Print Assumptions BBBT4_value` (`BBBT4_REVIEW.md` §8.1).
+printed `Print Assumptions BBBT4_value` (`BBBT4_REVIEW.md` §8.1), and again
+on 2026-10-11 at `455d4d96`, after the build speedups (§8.2).
 
 ## Reproducing
 

@@ -102,8 +102,8 @@ which satisfy the bound vacuously.
 - **From source, anywhere.** `BBBT4_Spec.v` and `BBBT4_Champion.v`, which
   take about 3 minutes, and the tests.
 - **Box only.** The census walk (`make census-tr-walk`) uses
-  `native_compute`. Each unit peaks near 5.8 GB, so it needs the census opam
-  switch with `coq-native` and about 32 GB of memory. `CloseoutFinalTr.v` and
+  `native_compute`. Each unit peaks near 2.6 GB (5.8 GB before PR #246), and
+  it needs the census opam switch with `coq-native`. `CloseoutFinalTr.v` and
   `BBBT4_Value.v` load its output. Expect roughly 9 CPU-hours, or about 2 h
   wall time at 5 jobs. With `native_compute`, the native compiler, and so the
   OCaml toolchain, is part of the trusted base. The state-level census has the
@@ -208,9 +208,9 @@ It does the following:
 The `Axioms:` block it prints for `BBBT4_value` should list
 `functional_extensionality_dep` and nothing else. Nothing committed is
 trusted, because the instruction-level walk has no committed `.vo`. Memory
-sets the job counts: a walk unit peaks near 5.8 GB. Override with
-`WALK_TR_JOBS=` and `CLOSEOUT_TR_JOBS=`. Budget several hours on an
-8-core, 32 GB machine.
+sets the job counts: the walk budgets 4 GB per job. Override with
+`WALK_TR_JOBS=` and `CLOSEOUT_TR_JOBS=`. Budget about 6 hours on an
+8-core, 32 GB machine (§8.2).
 
 The same steps by hand:
 
@@ -233,7 +233,7 @@ For an independent re-check of the compiled terms, run
 | Claim stated (`BBBT4_Spec.v`) | done |
 | Lower bound (`BBBT4_Champion.v`) | done, builds from source |
 | Closeout: 10,924 of 10,924 rows (`closeout_tr_complete`) | done, CI |
-| Upper bound and value (`CloseoutFinalTr.v`, `BBBT4_Value.v`) | **done, verified end to end** (§8.1) |
+| Upper bound and value (`CloseoutFinalTr.v`, `BBBT4_Value.v`) | **done, verified end to end** (§8.1, §8.2) |
 | `coqchk` of the full chain | pending, box |
 | Independent reproduction on a second machine | pending |
 
@@ -275,4 +275,35 @@ one core each, and gated the walk. The walk itself took 13.1 CPU-h: a
 median of 435 s per unit and a slowest unit (`UnitTr_63`) of 1,313 s, so
 about 3.3 h of wall time at 4 jobs. Per-unit times are in
 [`bbbt4_walk_times_2026-10-06.txt`](bbbt4_walk_times_2026-10-06.txt).
-Cutting the build time is the next piece of work.
+Cutting the build time was the next piece of work (§8.2).
+
+### 8.2 The second verification run, after the speedups (2026-10-11)
+
+PR #246 cut the build time without changing any statement, machine list or
+deferred row:
+
+- it split the RepWL stages into independent compilation units;
+- it replaced the closure search with stored, kernel-checked certificates
+  for 32 proven-tier machines and 22 closeout rows
+  (`Checkers/RepWLStoredTr.v`, `rw_check_stored_tr_sound`);
+- it bundled the 7,122 lap boards into 73 files;
+- it gave the walk units a computation-only layer (`RunTr_Compute.v`,
+  `RunTr_WalkCompute.v`), so they no longer load the proven-tier boards.
+
+The final assembly still checks every proven-tier certificate: `RunTr.v`
+proves the data-only lists equal to the proved ones by kernel conversion
+before `decider_tr_WF` is proved.
+
+`make proof-tr-all` was then run on the same 8-core / 32 GB WSL2 box at
+commit `455d4d9679147a30cff6241e7535fbb25b0b9c3d`, the head merged as
+PR #246. It took about 6 hours and printed:
+
+```
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+  : forall (A : Type) (B : A -> Type) (f g : forall x : A, B x),
+    (forall x : A, f x = g x) -> f = g
+------------------------------------------------------------
+proof-tr-all COMPLETE at 455d4d9679147a30cff6241e7535fbb25b0b9c3d.
+BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)
+```

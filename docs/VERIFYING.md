@@ -377,16 +377,16 @@ BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)
 
 Resources:
 
-* **Memory sets the job counts.**  A walk unit peaks near 5.8 GB, so the
-  walk runs one job per 6 GB available (`WALK_TR_JOBS`), capped at the
-  physical cores.  The batches run one job per 3 GB (`CLOSEOUT_TR_JOBS`).  A
-  32 GB box gets 4 and 9.  To override:
+* **Memory sets the job counts.**  The walk units load only the
+  computation layer (`RunTr_WalkCompute`), not the proven-tier boards, and
+  peak near 2.6 GB.  The walk runs one job per 4 GB available
+  (`WALK_TR_JOBS`), capped at the physical cores.  The batches run one job
+  per 3 GB (`CLOSEOUT_TR_JOBS`).  A 32 GB box gets 7 and 9.  To override:
   `make proof-tr-all WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6`.
-* **Time.**  The verified run on 2026-10-06 (8 cores / 32 GB, WSL2) took
-  most of a day.  The walk itself was 13.1 CPU-hours, about 3.3 h of wall
-  time at 4 jobs.  Two serial RepWL stages took several more hours before it
-  ([`BBBT4_REVIEW.md`](BBBT4_REVIEW.md) §8.1).  Work to cut this is under
-  way.
+* **Time.**  About 6 hours on 8 cores / 32 GB (WSL2), verified 2026-10-11
+  at `455d4d96` ([`BBBT4_REVIEW.md`](BBBT4_REVIEW.md) §8.2).  The first
+  verified run, on 2026-10-06 before the speedups of PR #246, took most of
+  a day (§8.1).
 * **Stack.**  Steps 3 and 4 raise the stack limit themselves, as `make all`
   does, because `COQNATIVE` overflows 8 MB on the largest batches.  If your
   hard limit is lower, run `ulimit -s unlimited` first.
