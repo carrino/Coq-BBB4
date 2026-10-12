@@ -855,9 +855,9 @@ instr-core: Makefile.coq
 # units are kept across reruns (delete the .vo to redo one).  The
 # generator is idempotent -- rerun it after changing CENSUS_TR_UNITS.
 CENSUS_TR_UNITS ?= 96
-# The proven-tier prerequisites can use the batch budget independently
-# of the memory budget for simultaneous native walks. Standalone callers
-# retain the old default; proof-tr-all passes its batch job count below.
+# The proven-tier prerequisites get their own job count, separate from
+# the walk's.  Standalone callers keep the old default; proof-tr-all
+# passes PREREQ_TR_JOBS, sized from memory (PREREQ_TR_RSS_GB, below).
 CENSUS_TR_PREREQ_JOBS ?= $(WALK_JOBS)
 
 census-tr-units:
@@ -978,17 +978,25 @@ closeout-tr-final: closeout-tr
 # per worker, capped at the physical cores. Target-box validation remains
 # pending; see docs/CENSUS_RUNTIME.md. The batches peak under
 # ~2.5 GB (the CI budget), so CLOSEOUT_TR_JOBS uses CLOSEOUT_TR_RSS_GB.
-# On a 32 GB box (~30 GB available), that is 7 walk jobs and up to 9 batch
-# jobs. Override either: `make proof-tr-all
-# WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6'.  A rerun keeps finished work (walk
+# The walk's PREREQUISITES (the proven tiers, built before step 3) are
+# heavier than either: the 26 LAPQ lap bundles peak at ~3.6 GB each in
+# coqc alone (BundleLAPQ_009: 3.64 GB, 2026-10-12) and the nine IRules
+# batches at 6-8 GB (three at a time, Makefile.coq.local).  Nine jobs
+# OOM-killed a clean build on a 32 GB box (BundleLAPQ_009, Error 137,
+# 2026-10-11), so PREREQ_TR_JOBS sizes at PREREQ_TR_RSS_GB.
+# On a 32 GB box (~30 GB available), that is 4 prerequisite jobs, 7 walk
+# jobs and up to 9 batch jobs. Override any: `make proof-tr-all
+# PREREQ_TR_JOBS=3 WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6'.  A rerun keeps finished work (walk
 # units newer than their source and RunTr_WalkCompute.vo, built .vo);
 # to force a full re-walk,
 # delete theories/CensusTr/Compute/*.vo first.
 WALK_TR_RSS_GB ?= 4
 CLOSEOUT_TR_RSS_GB ?= 3
+PREREQ_TR_RSS_GB ?= 6
 _mem_jobs = $(shell m=$$(awk -v r=$(1) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-1}; c=$(2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_TR_JOBS ?= $(call _mem_jobs,$(WALK_TR_RSS_GB),$(WALK_CORES))
 CLOSEOUT_TR_JOBS ?= $(call _mem_jobs,$(CLOSEOUT_TR_RSS_GB),$(BUILD_JOBS))
+PREREQ_TR_JOBS ?= $(call _mem_jobs,$(PREREQ_TR_RSS_GB),$(BUILD_JOBS))
 
 proof-tr-all:
 	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
@@ -999,7 +1007,7 @@ _proof-tr-all-run:
 	@echo "# proof-tr-all: BBB_tr(4) = 32,779,478 from source.         "
 	@echo "# commit $$(git rev-parse HEAD 2>/dev/null)"
 	@echo "# $$(coqc --version | head -1) / OCaml $$(ocamlfind ocamlopt -version 2>/dev/null)"
-	@echo "# walk jobs $(WALK_TR_JOBS), batch jobs $(CLOSEOUT_TR_JOBS)"
+	@echo "# prerequisite jobs $(PREREQ_TR_JOBS), walk jobs $(WALK_TR_JOBS), batch jobs $(CLOSEOUT_TR_JOBS)"
 	@echo "############################################################"
 	@# same reasons as _proof-all-run: a stale Makefile.coq bakes in the
 	@# wrong native setting, and a tree built by another toolchain cannot
@@ -1024,7 +1032,7 @@ _proof-tr-all-run:
 	git diff --quiet -- theories/CensusTr/Compute/ \
 	  || { echo ">>> theories/CensusTr/Compute/ differs from the commit"; exit 1; }
 	@echo ">>> [2/4] the census walk: census_tr"
-	$(MAKE) census-tr-walk WALK_JOBS=$(WALK_TR_JOBS) CENSUS_TR_PREREQ_JOBS=$(CLOSEOUT_TR_JOBS)
+	$(MAKE) census-tr-walk WALK_JOBS=$(WALK_TR_JOBS) CENSUS_TR_PREREQ_JOBS=$(PREREQ_TR_JOBS)
 	@echo ">>> [3/4] the closeout, the champion, the tests"
 	@# the stack: under the census switch every .vo is also COQNATIVE'd,
 	@# and the OCaml compiler overflows the default 8 MB stack on the
