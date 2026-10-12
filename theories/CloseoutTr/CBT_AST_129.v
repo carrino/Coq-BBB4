@@ -8260,7 +8260,7 @@ Definition fuelphase_AST_129_0000_r1 : list (list Sym) := [[S0; S0; S0; S0; S0; 
 (* spec 0RB1LD_1RC1RC_1LA1RA_1RA0LD *)
 Definition r_AST_129_0000 : list (option Trans) := [t0RB;t1LD;t1RC;t1RC;t1LA;t1RA;t1RA;t0LD].
 Lemma cv_AST_129_0000 : coversTr (row_to_tm r_AST_129_0000).
-Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_phase2tr_sound _ 7 50168 fuelphase_AST_129_0000_l0 fuelphase_AST_129_0000_l1 fuelphase_AST_129_0000_r0 fuelphase_AST_129_0000_r1 fuelphase_AST_129_0000). vm_compute. reflexivity. Qed.
+Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_phase2tr_sound _ 7 50168 fuelphase_AST_129_0000_l0 fuelphase_AST_129_0000_l1 fuelphase_AST_129_0000_r0 fuelphase_AST_129_0000_r1 fuelphase_AST_129_0000). native_compute. reflexivity. Qed.
 
 Definition cbtrows_AST_129 : list (list (option Trans)) :=
   [r_AST_129_0000].

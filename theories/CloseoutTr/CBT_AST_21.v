@@ -5225,12 +5225,12 @@ fun target : Instr => match target with
 (* spec 0RB1LD_1RC1RA_0LA1RA_1RA0LD *)
 Definition r_AST_21_0000 : list (option Trans) := [t0RB;t1LD;t1RC;t1RA;t0LA;t1RA;t1RA;t0LD].
 Lemma cv_AST_21_0000 : coversTr (row_to_tm r_AST_21_0000).
-Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 11776 51 fueltr_AST_21_0000). vm_compute. reflexivity. Qed.
+Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 11776 51 fueltr_AST_21_0000). native_compute. reflexivity. Qed.
 
 (* spec 1RB0LA_0RC1LA_1RD0RA_1LB0RA *)
 Definition r_AST_21_0001 : list (option Trans) := [t1RB;t0LA;t0RC;t1LA;t1RD;t0RA;t1LB;t0RA].
 Lemma cv_AST_21_0001 : coversTr (row_to_tm r_AST_21_0001).
-Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 17672 69 fueltr_AST_21_0001). vm_compute. reflexivity. Qed.
+Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 17672 69 fueltr_AST_21_0001). native_compute. reflexivity. Qed.
 
 Definition cbtrows_AST_21 : list (list (option Trans)) :=
   [r_AST_21_0000;

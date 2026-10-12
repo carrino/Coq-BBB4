@@ -8968,22 +8968,22 @@ fun target : Instr => match target with
 (* spec 0RB1LD_0RC1RB_1LD0RA_1LA0LD *)
 Definition r_FTA_21_0000 : list (option Trans) := [t0RB;t1LD;t0RC;t1RB;t1LD;t0RA;t1LA;t0LD].
 Lemma cv_FTA_21_0000 : coversTr (row_to_tm r_FTA_21_0000).
-Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 18352 62 fueltr_FTA_21_0000). vm_compute. reflexivity. Qed.
+Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 18352 62 fueltr_FTA_21_0000). native_compute. reflexivity. Qed.
 
 (* spec 0RB1LD_0RC1RB_1LD0RD_1LA0LD *)
 Definition r_FTA_21_0001 : list (option Trans) := [t0RB;t1LD;t0RC;t1RB;t1LD;t0RD;t1LA;t0LD].
 Lemma cv_FTA_21_0001 : coversTr (row_to_tm r_FTA_21_0001).
-Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 15504 65 fueltr_FTA_21_0001). vm_compute. reflexivity. Qed.
+Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 15504 65 fueltr_FTA_21_0001). native_compute. reflexivity. Qed.
 
 (* spec 0RB1RA_1LC0RC_1LD0LC_0RA1LC *)
 Definition r_FTA_21_0002 : list (option Trans) := [t0RB;t1RA;t1LC;t0RC;t1LD;t0LC;t0RA;t1LC].
 Lemma cv_FTA_21_0002 : coversTr (row_to_tm r_FTA_21_0002).
-Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 15472 65 fueltr_FTA_21_0002). vm_compute. reflexivity. Qed.
+Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 15472 65 fueltr_FTA_21_0002). native_compute. reflexivity. Qed.
 
 (* spec 0RB1RA_1LC0RD_1LD0LC_0RA1LC *)
 Definition r_FTA_21_0003 : list (option Trans) := [t0RB;t1RA;t1LC;t0RD;t1LD;t0LC;t0RA;t1LC].
 Lemma cv_FTA_21_0003 : coversTr (row_to_tm r_FTA_21_0003).
-Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 18320 62 fueltr_FTA_21_0003). vm_compute. reflexivity. Qed.
+Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 6 0 18320 62 fueltr_FTA_21_0003). native_compute. reflexivity. Qed.
 
 Definition cbtrows_FTA_21 : list (list (option Trans)) :=
   [r_FTA_21_0000;

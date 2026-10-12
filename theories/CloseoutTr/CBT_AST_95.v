@@ -20196,9 +20196,9 @@ fun target : Instr => match target with
 Definition r_AST_95_0000 : list (option Trans) := [t1RB;t0LA;t0RC;t1RB;t0RD;t1RC;t1LD;t1LA].
 Lemma cv_AST_95_0000 : coversTr (row_to_tm r_AST_95_0000).
 Proof. apply coversTr_nqh,neverqhtr_mirror.
-assert(H0:ngram_check_fuelmix_target_fast (mirror_tm(row_to_tm r_AST_95_0000)) 6 0 10112 45 skip_AST_95_0000 cert0_AST_95_0000=true)by(vm_compute;reflexivity).
+assert(H0:ngram_check_fuelmix_target_fast (mirror_tm(row_to_tm r_AST_95_0000)) 6 0 10112 45 skip_AST_95_0000 cert0_AST_95_0000=true)by(native_compute;reflexivity).
   pose proof(ngram_check_fuelmix_target_fast_sound (mirror_tm(row_to_tm r_AST_95_0000)) 6 0 10112 45 skip_AST_95_0000 cert0_AST_95_0000 H0)as R0.
-assert(H1:ngram_check_fuelmix_target_fast (mirror_tm(row_to_tm r_AST_95_0000)) 10 0 153520 215 only_AST_95_0000 cert1_AST_95_0000=true)by(vm_compute;reflexivity).
+assert(H1:ngram_check_fuelmix_target_fast (mirror_tm(row_to_tm r_AST_95_0000)) 10 0 153520 215 only_AST_95_0000 cert1_AST_95_0000=true)by(native_compute;reflexivity).
   pose proof(ngram_check_fuelmix_target_fast_sound (mirror_tm(row_to_tm r_AST_95_0000)) 10 0 153520 215 only_AST_95_0000 cert1_AST_95_0000 H1)as R1.
 intros[q s]Hf N. destruct q,s;first[apply R0;[reflexivity|exact Hf]|apply R1;[reflexivity|exact Hf]]. Qed.
 

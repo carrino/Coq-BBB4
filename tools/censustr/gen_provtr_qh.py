@@ -24,6 +24,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gen_walk_shards import tm_lambda  # noqa: E402
+from fast_bound_checks import rewrite_file  # noqa: E402
 
 FUEL = 200000
 ROUNDS = 512
@@ -169,6 +170,7 @@ def stage(scanfile, probedir, outdir, chunk, start, strict=False):
                 term = '(Forall_cons _ qhtr_%s %s)' % (x[3:], term)
             f.write('Lemma pqh_%s_qhtr :\n  Forall (fun tm => NonHalt tm /\\ QHBoundTr %d tm /\\ QuasiHaltsTr tm) pqh_%s.\n'
                     'Proof. exact %s. Qed.\n' % (nn, B_TR, nn, term))
+        rewrite_file(path)
         n += 1
     with open(os.path.join(outdir, 'provtr_qh_manifest.tsv'), 'w') as f:
         for r in man:

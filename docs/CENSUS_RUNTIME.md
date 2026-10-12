@@ -3605,3 +3605,75 @@ conversion (4.15x). Peak child RSS was 1.09 and 1.25 GiB respectively. Every
 batch's final theorem retained only `functional_extensionality_dep`. These
 compiles shared the host with other validation jobs, so these are CPU totals,
 not a prediction of their contribution to parallel wall time.
+
+### Avoid repeatedly constructing the unary census bound
+
+The broad build exposed a larger issue in the quasi-halting proofs: each
+`vm_cast_no_check` of a small `n <=? 32779478` comparison evaluates the large
+unary right-hand operand. Thousands of separate goals repeat that allocation.
+
+`CensusTr/BoundCheckTr.v` proves the conversion of the fixed bound to binary
+`N` once, then proves, for every natural `n`, that the binary comparison
+implies the original boolean `Nat.leb` goal. Generated proofs apply this
+lemma before evaluating their bound checks. Their machine checkers, input
+parameters, original bound goals and public conclusions remain unchanged.
+The helper has closed assumptions and passed independent `coqchk` with VM
+conversion, including the numeral-conversion proof originally built natively.
+
+`fast_bound_checks.py` applies this transformation to 5,868 comparisons:
+3,032 census-stage proofs, 2,502 canonical LAPQ boards, 327 ladder boards and
+seven closeout proofs. The 26 LAPQ bundles are regenerated from the canonical
+boards. Their generators emit the same normalization, and the closeout
+generator checks its consistency before collecting the proof inventory.
+
+| Complete workload | Unary CPU seconds | Binary CPU seconds | Speedup | Peak RSS before → after |
+|---|---:|---:|---:|---:|
+| QH_00, 250 translated-cycler proofs | 287.721 | 2.806 | 102.6x | 2.98 → 0.47 GiB |
+| BundleLAPQ_000, 100 lap proofs | 131.683 | 13.328 | 9.88x | 3.31 → 0.85 GiB |
+
+The one-time numeral lemma took 2.066 CPU seconds and 1.27 GiB. The comparisons
+use CPU time because the baseline ran with three compiler workers. QH_00's
+consumer theorem retains only `functional_extensionality_dep`. A source audit
+verified unchanged data and theorem statements across all affected files,
+including the regenerated bundles. Four tests cover the supported proof
+shapes, preservation of unrelated goals, idempotence and exact reversal.
+
+For a repeatable comparison, restore the original proof scripts into a
+separate file, then compile that file and a copy of the current source with
+`tools/time_command.py`; the production objects remain untouched:
+
+```sh
+mkdir -p work/bound-bench
+python3 tools/censustr/fast_bound_checks.py --expand \
+  theories/CensusTr/ProvTr_QH_00.v > work/bound-bench/QH00_reference.v
+cp theories/CensusTr/ProvTr_QH_00.v work/bound-bench/QH00_binary.v
+python3 tools/time_command.py --log work/bound-bench/times.jsonl --phase reference -- \
+  coqc -native-compiler ondemand -Q theories BBB4 work/bound-bench/QH00_reference.v
+python3 tools/time_command.py --log work/bound-bench/times.jsonl --phase binary -- \
+  coqc -native-compiler ondemand -Q theories BBB4 work/bound-bench/QH00_binary.v
+```
+
+Build dependencies, including `BoundCheckTr.vo`, first. Use the census
+toolchain and the raised stack limit documented above.
+
+### Native evaluation for large packed certificates
+
+Packing also makes native conversion profitable for the larger supplied
+certificates. The generator selects packed files of at least 500,000 bytes;
+12 files meet that threshold. The smaller files keep VM evaluation, since
+native compilation overhead can outweigh their evaluation savings.
+
+| Packed workload | VM CPU seconds | Native CPU seconds |
+|---|---:|---:|
+| AST_33 | 80.524 | 29.797 |
+| AST_95 | 49.288 | 21.374 |
+| FTA_21 | 17.917 | 10.439 |
+| AST_05, retained on VM | 1.892 | 2.528 |
+
+These are additional gains after packing, with unchanged checkers. The AST_95
+experiment used a native cast; production retains the reduction/reflexivity
+proof shape with `native_compute`. All 12 production files subsequently
+compiled successfully. All 61 packed files whose dependencies were already
+available also passed compilation. The complete target validation continues
+from the saved prerequisites; these measurements do not establish a cold
+eight-core wall time.

@@ -28,6 +28,8 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+sys.path.insert(1, os.path.join(HERE, '..', 'censustr'))
+from fast_bound_checks import rewrite as fast_bound_checks  # noqa: E402
 
 from ladderarm import (ArmShape, normalize, parse_cfg, parse_tm,     # noqa: E402
                        _common_suffix, _split_marker, to_sside)
@@ -3623,7 +3625,7 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
                 1)
     L.append(closure)
 
-    open(out, 'w').write(''.join(L))
+    open(out, 'w').write(fast_bound_checks(''.join(L)))
     return good, bad, cd
 
 

@@ -12032,7 +12032,7 @@ fun target : Instr => match target with
 (* spec 1RB0LA_0RC0RD_1LA0RA_0LC1RA *)
 Definition r_AST_33_0000 : list (option Trans) := [t1RB;t0LA;t0RC;t0RD;t1LA;t0RA;t0LC;t1RA].
 Lemma cv_AST_33_0000 : coversTr (row_to_tm r_AST_33_0000).
-Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 7 0 73416 110 fueltr_AST_33_0000). vm_compute. reflexivity. Qed.
+Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelwtr_sound _ 7 0 73416 110 fueltr_AST_33_0000). native_compute. reflexivity. Qed.
 
 Definition cbtrows_AST_33 : list (list (option Trans)) :=
   [r_AST_33_0000].

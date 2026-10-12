@@ -4,6 +4,7 @@
     cyclers, each certified by [tcycler_check_qhboundtr] (side L runs
     the checker on [mirror_tm]).  Append [pqh_00] to [provqh_tr]
     (CensusTr/RunTr.v). *)
+From BBB4.CensusTr Require Import BoundCheckTr.
 From Coq Require Import Arith List.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement Mirror.
 From BBB4.Checkers Require Import TCyclerTr TCyclerQHTr.
@@ -23,7 +24,7 @@ Definition tm_tq00_0000 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0000 : NonHalt tm_tq00_0000 /\ QHBoundTr 32779478 tm_tq00_0000 /\ QuasiHaltsTr tm_tq00_0000.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0000 1 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0000 1 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0LC---_0LB---_------  side L  n1=1 P=2 W=0 *)
 Definition tm_tq00_0001 : TM := fun q s =>
@@ -38,7 +39,7 @@ Definition tm_tq00_0001 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0001 : NonHalt tm_tq00_0001 /\ QHBoundTr 32779478 tm_tq00_0001 /\ QuasiHaltsTr tm_tq00_0001.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0001 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0001 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0LC---_0LC---_------  side L  n1=2 P=1 W=0 *)
 Definition tm_tq00_0002 : TM := fun q s =>
@@ -53,7 +54,7 @@ Definition tm_tq00_0002 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0002 : NonHalt tm_tq00_0002 /\ QHBoundTr 32779478 tm_tq00_0002 /\ QuasiHaltsTr tm_tq00_0002.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0002 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0002 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0LC---_0RC---_------  side R  n1=2 P=1 W=0 *)
 Definition tm_tq00_0003 : TM := fun q s =>
@@ -68,7 +69,7 @@ Definition tm_tq00_0003 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0003 : NonHalt tm_tq00_0003 /\ QHBoundTr 32779478 tm_tq00_0003 /\ QuasiHaltsTr tm_tq00_0003.
-Proof. apply (tcycler_qh_stage tm_tq00_0003 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0003 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0LC---_1LB---_------  side L  n1=1 P=2 W=0 *)
 Definition tm_tq00_0004 : TM := fun q s =>
@@ -83,7 +84,7 @@ Definition tm_tq00_0004 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0004 : NonHalt tm_tq00_0004 /\ QHBoundTr 32779478 tm_tq00_0004 /\ QuasiHaltsTr tm_tq00_0004.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0004 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0004 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0LC---_1LC---_------  side L  n1=2 P=1 W=0 *)
 Definition tm_tq00_0005 : TM := fun q s =>
@@ -98,7 +99,7 @@ Definition tm_tq00_0005 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0005 : NonHalt tm_tq00_0005 /\ QHBoundTr 32779478 tm_tq00_0005 /\ QuasiHaltsTr tm_tq00_0005.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0005 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0005 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0LC---_1RC---_------  side R  n1=2 P=1 W=0 *)
 Definition tm_tq00_0006 : TM := fun q s =>
@@ -113,7 +114,7 @@ Definition tm_tq00_0006 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0006 : NonHalt tm_tq00_0006 /\ QHBoundTr 32779478 tm_tq00_0006 /\ QuasiHaltsTr tm_tq00_0006.
-Proof. apply (tcycler_qh_stage tm_tq00_0006 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0006 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0RB---_------_------  side R  n1=1 P=1 W=0 *)
 Definition tm_tq00_0007 : TM := fun q s =>
@@ -128,7 +129,7 @@ Definition tm_tq00_0007 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0007 : NonHalt tm_tq00_0007 /\ QHBoundTr 32779478 tm_tq00_0007 /\ QuasiHaltsTr tm_tq00_0007.
-Proof. apply (tcycler_qh_stage tm_tq00_0007 1 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0007 1 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0RC---_0LC---_------  side L  n1=2 P=1 W=0 *)
 Definition tm_tq00_0008 : TM := fun q s =>
@@ -143,7 +144,7 @@ Definition tm_tq00_0008 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0008 : NonHalt tm_tq00_0008 /\ QHBoundTr 32779478 tm_tq00_0008 /\ QuasiHaltsTr tm_tq00_0008.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0008 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0008 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0RC---_0RB---_------  side R  n1=1 P=2 W=0 *)
 Definition tm_tq00_0009 : TM := fun q s =>
@@ -158,7 +159,7 @@ Definition tm_tq00_0009 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0009 : NonHalt tm_tq00_0009 /\ QHBoundTr 32779478 tm_tq00_0009 /\ QuasiHaltsTr tm_tq00_0009.
-Proof. apply (tcycler_qh_stage tm_tq00_0009 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0009 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0RC---_0RC---_------  side R  n1=2 P=1 W=0 *)
 Definition tm_tq00_0010 : TM := fun q s =>
@@ -173,7 +174,7 @@ Definition tm_tq00_0010 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0010 : NonHalt tm_tq00_0010 /\ QHBoundTr 32779478 tm_tq00_0010 /\ QuasiHaltsTr tm_tq00_0010.
-Proof. apply (tcycler_qh_stage tm_tq00_0010 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0010 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0RC---_1LC---_------  side L  n1=2 P=1 W=0 *)
 Definition tm_tq00_0011 : TM := fun q s =>
@@ -188,7 +189,7 @@ Definition tm_tq00_0011 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0011 : NonHalt tm_tq00_0011 /\ QHBoundTr 32779478 tm_tq00_0011 /\ QuasiHaltsTr tm_tq00_0011.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0011 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0011 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0RC---_1RB---_------  side R  n1=1 P=2 W=0 *)
 Definition tm_tq00_0012 : TM := fun q s =>
@@ -203,7 +204,7 @@ Definition tm_tq00_0012 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0012 : NonHalt tm_tq00_0012 /\ QHBoundTr 32779478 tm_tq00_0012 /\ QuasiHaltsTr tm_tq00_0012.
-Proof. apply (tcycler_qh_stage tm_tq00_0012 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0012 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_0RC---_1RC---_------  side R  n1=2 P=1 W=0 *)
 Definition tm_tq00_0013 : TM := fun q s =>
@@ -218,7 +219,7 @@ Definition tm_tq00_0013 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0013 : NonHalt tm_tq00_0013 /\ QHBoundTr 32779478 tm_tq00_0013 /\ QuasiHaltsTr tm_tq00_0013.
-Proof. apply (tcycler_qh_stage tm_tq00_0013 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0013 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1LB---_------_------  side L  n1=1 P=1 W=0 *)
 Definition tm_tq00_0014 : TM := fun q s =>
@@ -233,7 +234,7 @@ Definition tm_tq00_0014 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0014 : NonHalt tm_tq00_0014 /\ QHBoundTr 32779478 tm_tq00_0014 /\ QuasiHaltsTr tm_tq00_0014.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0014 1 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0014 1 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1LC---_0LB---_------  side L  n1=1 P=2 W=0 *)
 Definition tm_tq00_0015 : TM := fun q s =>
@@ -248,7 +249,7 @@ Definition tm_tq00_0015 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0015 : NonHalt tm_tq00_0015 /\ QHBoundTr 32779478 tm_tq00_0015 /\ QuasiHaltsTr tm_tq00_0015.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0015 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0015 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1LC---_0LC---_------  side L  n1=2 P=1 W=0 *)
 Definition tm_tq00_0016 : TM := fun q s =>
@@ -263,7 +264,7 @@ Definition tm_tq00_0016 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0016 : NonHalt tm_tq00_0016 /\ QHBoundTr 32779478 tm_tq00_0016 /\ QuasiHaltsTr tm_tq00_0016.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0016 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0016 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1LC---_1LB---_------  side L  n1=1 P=2 W=0 *)
 Definition tm_tq00_0017 : TM := fun q s =>
@@ -278,7 +279,7 @@ Definition tm_tq00_0017 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0017 : NonHalt tm_tq00_0017 /\ QHBoundTr 32779478 tm_tq00_0017 /\ QuasiHaltsTr tm_tq00_0017.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0017 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0017 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1LC---_1LC---_------  side L  n1=2 P=1 W=0 *)
 Definition tm_tq00_0018 : TM := fun q s =>
@@ -293,7 +294,7 @@ Definition tm_tq00_0018 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0018 : NonHalt tm_tq00_0018 /\ QHBoundTr 32779478 tm_tq00_0018 /\ QuasiHaltsTr tm_tq00_0018.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0018 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0018 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1LC0RD_1LD0LB_1RB0LC  side L  n1=18 P=19 W=0 *)
 Definition tm_tq00_0019 : TM := fun q s =>
@@ -308,7 +309,7 @@ Definition tm_tq00_0019 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0019 : NonHalt tm_tq00_0019 /\ QHBoundTr 32779478 tm_tq00_0019 /\ QuasiHaltsTr tm_tq00_0019.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0019 18 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0019 18 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1LC0RD_1RD0LB_1RB0RC  side R  n1=18 P=19 W=0 *)
 Definition tm_tq00_0020 : TM := fun q s =>
@@ -323,7 +324,7 @@ Definition tm_tq00_0020 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0020 : NonHalt tm_tq00_0020 /\ QHBoundTr 32779478 tm_tq00_0020 /\ QuasiHaltsTr tm_tq00_0020.
-Proof. apply (tcycler_qh_stage tm_tq00_0020 18 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0020 18 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1RB---_------_------  side R  n1=1 P=1 W=0 *)
 Definition tm_tq00_0021 : TM := fun q s =>
@@ -338,7 +339,7 @@ Definition tm_tq00_0021 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0021 : NonHalt tm_tq00_0021 /\ QHBoundTr 32779478 tm_tq00_0021 /\ QuasiHaltsTr tm_tq00_0021.
-Proof. apply (tcycler_qh_stage tm_tq00_0021 1 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0021 1 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1RC---_0RB---_------  side R  n1=1 P=2 W=0 *)
 Definition tm_tq00_0022 : TM := fun q s =>
@@ -353,7 +354,7 @@ Definition tm_tq00_0022 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0022 : NonHalt tm_tq00_0022 /\ QHBoundTr 32779478 tm_tq00_0022 /\ QuasiHaltsTr tm_tq00_0022.
-Proof. apply (tcycler_qh_stage tm_tq00_0022 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0022 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1RC---_0RC---_------  side R  n1=2 P=1 W=0 *)
 Definition tm_tq00_0023 : TM := fun q s =>
@@ -368,7 +369,7 @@ Definition tm_tq00_0023 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0023 : NonHalt tm_tq00_0023 /\ QHBoundTr 32779478 tm_tq00_0023 /\ QuasiHaltsTr tm_tq00_0023.
-Proof. apply (tcycler_qh_stage tm_tq00_0023 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0023 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1RC---_1RB---_------  side R  n1=1 P=2 W=0 *)
 Definition tm_tq00_0024 : TM := fun q s =>
@@ -383,7 +384,7 @@ Definition tm_tq00_0024 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0024 : NonHalt tm_tq00_0024 /\ QHBoundTr 32779478 tm_tq00_0024 /\ QuasiHaltsTr tm_tq00_0024.
-Proof. apply (tcycler_qh_stage tm_tq00_0024 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0024 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1RC---_1RC---_------  side R  n1=2 P=1 W=0 *)
 Definition tm_tq00_0025 : TM := fun q s =>
@@ -398,7 +399,7 @@ Definition tm_tq00_0025 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0025 : NonHalt tm_tq00_0025 /\ QHBoundTr 32779478 tm_tq00_0025 /\ QuasiHaltsTr tm_tq00_0025.
-Proof. apply (tcycler_qh_stage tm_tq00_0025 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0025 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1RC0LD_1LD0RB_1LB0LC  side L  n1=18 P=19 W=0 *)
 Definition tm_tq00_0026 : TM := fun q s =>
@@ -413,7 +414,7 @@ Definition tm_tq00_0026 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0026 : NonHalt tm_tq00_0026 /\ QHBoundTr 32779478 tm_tq00_0026 /\ QuasiHaltsTr tm_tq00_0026.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0026 18 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0026 18 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB---_1RC0LD_1RD0RB_1LB0RC  side R  n1=18 P=19 W=0 *)
 Definition tm_tq00_0027 : TM := fun q s =>
@@ -428,7 +429,7 @@ Definition tm_tq00_0027 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0027 : NonHalt tm_tq00_0027 /\ QHBoundTr 32779478 tm_tq00_0027 /\ QuasiHaltsTr tm_tq00_0027.
-Proof. apply (tcycler_qh_stage tm_tq00_0027 18 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0027 18 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LB_0RC1LD_1RD1RC_1LB0LA  side L  n1=95 P=30 W=0 *)
 Definition tm_tq00_0028 : TM := fun q s =>
@@ -443,7 +444,7 @@ Definition tm_tq00_0028 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0028 : NonHalt tm_tq00_0028 /\ QHBoundTr 32779478 tm_tq00_0028 /\ QuasiHaltsTr tm_tq00_0028.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0028 95 30 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0028 95 30 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LB_1LC0RB_0LD1LA_1RD1RB  side R  n1=41 P=42 W=2 *)
 Definition tm_tq00_0029 : TM := fun q s =>
@@ -458,7 +459,7 @@ Definition tm_tq00_0029 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0029 : NonHalt tm_tq00_0029 /\ QHBoundTr 32779478 tm_tq00_0029 /\ QuasiHaltsTr tm_tq00_0029.
-Proof. apply (tcycler_qh_stage tm_tq00_0029 41 42 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0029 41 42 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LB_1LC1RB_1LA1RD_1RC0RD  side R  n1=21 P=22 W=2 *)
 Definition tm_tq00_0030 : TM := fun q s =>
@@ -473,7 +474,7 @@ Definition tm_tq00_0030 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq00_0030 : NonHalt tm_tq00_0030 /\ QHBoundTr 32779478 tm_tq00_0030 /\ QuasiHaltsTr tm_tq00_0030.
-Proof. apply (tcycler_qh_stage tm_tq00_0030 21 22 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0030 21 22 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LB_1LC1RD_1RD0LC_1LA1RC  side L  n1=32 P=33 W=0 *)
 Definition tm_tq00_0031 : TM := fun q s =>
@@ -488,7 +489,7 @@ Definition tm_tq00_0031 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0031 : NonHalt tm_tq00_0031 /\ QHBoundTr 32779478 tm_tq00_0031 /\ QuasiHaltsTr tm_tq00_0031.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0031 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0031 32 33 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LB_1RC1LC_1RD1LA_1LA1RC  side L  n1=74 P=75 W=6 *)
 Definition tm_tq00_0032 : TM := fun q s =>
@@ -503,7 +504,7 @@ Definition tm_tq00_0032 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0032 : NonHalt tm_tq00_0032 /\ QHBoundTr 32779478 tm_tq00_0032 /\ QuasiHaltsTr tm_tq00_0032.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0032 74 75 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0032 74 75 6 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LB_1RC1LC_1RD1LA_1LD1RC  side L  n1=74 P=75 W=4 *)
 Definition tm_tq00_0033 : TM := fun q s =>
@@ -518,7 +519,7 @@ Definition tm_tq00_0033 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0033 : NonHalt tm_tq00_0033 /\ QHBoundTr 32779478 tm_tq00_0033 /\ QuasiHaltsTr tm_tq00_0033.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0033 74 75 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0033 74 75 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LB_1RC1RD_1LD0RD_1RB0LA  side R  n1=24 P=24 W=0 *)
 Definition tm_tq00_0034 : TM := fun q s =>
@@ -533,7 +534,7 @@ Definition tm_tq00_0034 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0034 : NonHalt tm_tq00_0034 /\ QHBoundTr 32779478 tm_tq00_0034 /\ QuasiHaltsTr tm_tq00_0034.
-Proof. apply (tcycler_qh_stage tm_tq00_0034 24 24 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0034 24 24 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LC_0LC1RD_1LA1LD_1RB1LA  side L  n1=106 P=107 W=11 *)
 Definition tm_tq00_0035 : TM := fun q s =>
@@ -548,7 +549,7 @@ Definition tm_tq00_0035 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0035 : NonHalt tm_tq00_0035 /\ QHBoundTr 32779478 tm_tq00_0035 /\ QuasiHaltsTr tm_tq00_0035.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0035 106 107 11 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0035 106 107 11 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LC_1LC1RA_1LD1RB_0RB0LA  side R  n1=69 P=70 W=8 *)
 Definition tm_tq00_0036 : TM := fun q s =>
@@ -563,7 +564,7 @@ Definition tm_tq00_0036 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0036 : NonHalt tm_tq00_0036 /\ QHBoundTr 32779478 tm_tq00_0036 /\ QuasiHaltsTr tm_tq00_0036.
-Proof. apply (tcycler_qh_stage tm_tq00_0036 69 70 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0036 69 70 8 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LC_1LC1RA_1LD1RB_0RC0LA  side R  n1=69 P=70 W=2 *)
 Definition tm_tq00_0037 : TM := fun q s =>
@@ -578,7 +579,7 @@ Definition tm_tq00_0037 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0037 : NonHalt tm_tq00_0037 /\ QHBoundTr 32779478 tm_tq00_0037 /\ QuasiHaltsTr tm_tq00_0037.
-Proof. apply (tcycler_qh_stage tm_tq00_0037 69 70 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0037 69 70 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LC_1LC1RD_1RC1RD_1LA0RB  side R  n1=133 P=134 W=5 *)
 Definition tm_tq00_0038 : TM := fun q s =>
@@ -593,7 +594,7 @@ Definition tm_tq00_0038 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0038 : NonHalt tm_tq00_0038 /\ QHBoundTr 32779478 tm_tq00_0038 /\ QuasiHaltsTr tm_tq00_0038.
-Proof. apply (tcycler_qh_stage tm_tq00_0038 133 134 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0038 133 134 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LC_1RC1RD_1LA1LD_1RB1LA  side L  n1=106 P=107 W=7 *)
 Definition tm_tq00_0039 : TM := fun q s =>
@@ -608,7 +609,7 @@ Definition tm_tq00_0039 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0039 : NonHalt tm_tq00_0039 /\ QHBoundTr 32779478 tm_tq00_0039 /\ QuasiHaltsTr tm_tq00_0039.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0039 106 107 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0039 106 107 7 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LC_1RC1RD_1LD0LD_1RB1LA  side L  n1=28 P=29 W=4 *)
 Definition tm_tq00_0040 : TM := fun q s =>
@@ -623,7 +624,7 @@ Definition tm_tq00_0040 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0040 : NonHalt tm_tq00_0040 /\ QHBoundTr 32779478 tm_tq00_0040 /\ QuasiHaltsTr tm_tq00_0040.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0040 28 29 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0040 28 29 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_0LC1RC_1LD0RA_1LA0LC  side L  n1=34 P=35 W=2 *)
 Definition tm_tq00_0041 : TM := fun q s =>
@@ -638,7 +639,7 @@ Definition tm_tq00_0041 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0041 : NonHalt tm_tq00_0041 /\ QHBoundTr 32779478 tm_tq00_0041 /\ QuasiHaltsTr tm_tq00_0041.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0041 34 35 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0041 34 35 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_0LC1RC_1RB1LA_1LA1LC  side L  n1=106 P=107 W=6 *)
 Definition tm_tq00_0042 : TM := fun q s =>
@@ -653,7 +654,7 @@ Definition tm_tq00_0042 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0042 : NonHalt tm_tq00_0042 /\ QHBoundTr 32779478 tm_tq00_0042 /\ QuasiHaltsTr tm_tq00_0042.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0042 106 107 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0042 106 107 6 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_0LC1RC_1RB1LA_1RC1LC  side L  n1=96 P=97 W=6 *)
 Definition tm_tq00_0043 : TM := fun q s =>
@@ -668,7 +669,7 @@ Definition tm_tq00_0043 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0043 : NonHalt tm_tq00_0043 /\ QHBoundTr 32779478 tm_tq00_0043 /\ QuasiHaltsTr tm_tq00_0043.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0043 96 97 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0043 96 97 6 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1LA0RC_1LB1RB_1RD1RB  side R  n1=157 P=158 W=0 *)
 Definition tm_tq00_0044 : TM := fun q s =>
@@ -683,7 +684,7 @@ Definition tm_tq00_0044 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0044 : NonHalt tm_tq00_0044 /\ QHBoundTr 32779478 tm_tq00_0044 /\ QuasiHaltsTr tm_tq00_0044.
-Proof. apply (tcycler_qh_stage tm_tq00_0044 157 158 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0044 157 158 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1LA0RC_1LD1RB_1RD1RB  side R  n1=133 P=134 W=4 *)
 Definition tm_tq00_0045 : TM := fun q s =>
@@ -698,7 +699,7 @@ Definition tm_tq00_0045 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0045 : NonHalt tm_tq00_0045 /\ QHBoundTr 32779478 tm_tq00_0045 /\ QuasiHaltsTr tm_tq00_0045.
-Proof. apply (tcycler_qh_stage tm_tq00_0045 133 134 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0045 133 134 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1LA1RC_1LB1RD_0RC0LB  side R  n1=69 P=70 W=1 *)
 Definition tm_tq00_0046 : TM := fun q s =>
@@ -713,7 +714,7 @@ Definition tm_tq00_0046 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq00_0046 : NonHalt tm_tq00_0046 /\ QHBoundTr 32779478 tm_tq00_0046 /\ QuasiHaltsTr tm_tq00_0046.
-Proof. apply (tcycler_qh_stage tm_tq00_0046 69 70 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0046 69 70 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1LA1RC_1RB0LC_1LC1RB  side L  n1=32 P=33 W=0 *)
 Definition tm_tq00_0047 : TM := fun q s =>
@@ -728,7 +729,7 @@ Definition tm_tq00_0047 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0047 : NonHalt tm_tq00_0047 /\ QHBoundTr 32779478 tm_tq00_0047 /\ QuasiHaltsTr tm_tq00_0047.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0047 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0047 32 33 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1LA1RC_1RB1LA_1LC0LC  side L  n1=30 P=31 W=3 *)
 Definition tm_tq00_0048 : TM := fun q s =>
@@ -743,7 +744,7 @@ Definition tm_tq00_0048 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0048 : NonHalt tm_tq00_0048 /\ QHBoundTr 32779478 tm_tq00_0048 /\ QuasiHaltsTr tm_tq00_0048.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0048 30 31 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0048 30 31 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1LC1RC_1LA0RB_1RD1RC  side R  n1=157 P=158 W=8 *)
 Definition tm_tq00_0049 : TM := fun q s =>
@@ -758,7 +759,7 @@ Definition tm_tq00_0049 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0049 : NonHalt tm_tq00_0049 /\ QHBoundTr 32779478 tm_tq00_0049 /\ QuasiHaltsTr tm_tq00_0049.
-Proof. apply (tcycler_qh_stage tm_tq00_0049 157 158 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0049 157 158 8 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1LC1RC_1LD0RA_1LA0LC  side L  n1=34 P=35 W=2 *)
 Definition tm_tq00_0050 : TM := fun q s =>
@@ -773,7 +774,7 @@ Definition tm_tq00_0050 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0050 : NonHalt tm_tq00_0050 /\ QHBoundTr 32779478 tm_tq00_0050 /\ QuasiHaltsTr tm_tq00_0050.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0050 34 35 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0050 34 35 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1LC1RC_1RB1LA_1LA1LC  side L  n1=42 P=30 W=0 *)
 Definition tm_tq00_0051 : TM := fun q s =>
@@ -788,7 +789,7 @@ Definition tm_tq00_0051 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0051 : NonHalt tm_tq00_0051 /\ QHBoundTr 32779478 tm_tq00_0051 /\ QuasiHaltsTr tm_tq00_0051.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0051 42 30 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0051 42 30 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1LC1RD_1LA1RB_0RB0LC  side R  n1=69 P=70 W=8 *)
 Definition tm_tq00_0052 : TM := fun q s =>
@@ -803,7 +804,7 @@ Definition tm_tq00_0052 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0052 : NonHalt tm_tq00_0052 /\ QHBoundTr 32779478 tm_tq00_0052 /\ QuasiHaltsTr tm_tq00_0052.
-Proof. apply (tcycler_qh_stage tm_tq00_0052 69 70 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0052 69 70 8 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1RC0LB_1LA1RB_1LB1RC  side L  n1=32 P=33 W=1 *)
 Definition tm_tq00_0053 : TM := fun q s =>
@@ -818,7 +819,7 @@ Definition tm_tq00_0053 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0053 : NonHalt tm_tq00_0053 /\ QHBoundTr 32779478 tm_tq00_0053 /\ QuasiHaltsTr tm_tq00_0053.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0053 32 33 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0053 32 33 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1RC0LB_1LC1RD_1RB1LA  side L  n1=26 P=27 W=2 *)
 Definition tm_tq00_0054 : TM := fun q s =>
@@ -833,7 +834,7 @@ Definition tm_tq00_0054 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0054 : NonHalt tm_tq00_0054 /\ QHBoundTr 32779478 tm_tq00_0054 /\ QuasiHaltsTr tm_tq00_0054.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0054 26 27 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0054 26 27 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1RC1LA_1LC1RB_1LB0LB  side L  n1=36 P=37 W=0 *)
 Definition tm_tq00_0055 : TM := fun q s =>
@@ -848,7 +849,7 @@ Definition tm_tq00_0055 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq00_0055 : NonHalt tm_tq00_0055 /\ QHBoundTr 32779478 tm_tq00_0055 /\ QuasiHaltsTr tm_tq00_0055.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0055 36 37 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0055 36 37 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1RC1LA_1RD1RB_1LB0LB  side L  n1=28 P=29 W=0 *)
 Definition tm_tq00_0056 : TM := fun q s =>
@@ -863,7 +864,7 @@ Definition tm_tq00_0056 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq00_0056 : NonHalt tm_tq00_0056 /\ QHBoundTr 32779478 tm_tq00_0056 /\ QuasiHaltsTr tm_tq00_0056.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0056 28 29 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0056 28 29 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1RC1LD_1RD1RA_1LB0RC  side R  n1=81 P=43 W=0 *)
 Definition tm_tq00_0057 : TM := fun q s =>
@@ -878,7 +879,7 @@ Definition tm_tq00_0057 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0057 : NonHalt tm_tq00_0057 /\ QHBoundTr 32779478 tm_tq00_0057 /\ QuasiHaltsTr tm_tq00_0057.
-Proof. apply (tcycler_qh_stage tm_tq00_0057 81 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0057 81 43 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0LD_1RC1RB_1LA0RB_1RD1LC  side R  n1=21 P=22 W=1 *)
 Definition tm_tq00_0058 : TM := fun q s =>
@@ -893,7 +894,7 @@ Definition tm_tq00_0058 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0058 : NonHalt tm_tq00_0058 /\ QHBoundTr 32779478 tm_tq00_0058 /\ QuasiHaltsTr tm_tq00_0058.
-Proof. apply (tcycler_qh_stage tm_tq00_0058 21 22 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0058 21 22 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RB_1LC1RA_1RD0LD_0RC1RB  side R  n1=39 P=40 W=2 *)
 Definition tm_tq00_0059 : TM := fun q s =>
@@ -908,7 +909,7 @@ Definition tm_tq00_0059 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0059 : NonHalt tm_tq00_0059 /\ QHBoundTr 32779478 tm_tq00_0059 /\ QuasiHaltsTr tm_tq00_0059.
-Proof. apply (tcycler_qh_stage tm_tq00_0059 39 40 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0059 39 40 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RB_1RC0LB_0RD1RA_1LD1LB  side L  n1=41 P=42 W=2 *)
 Definition tm_tq00_0060 : TM := fun q s =>
@@ -923,7 +924,7 @@ Definition tm_tq00_0060 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq00_0060 : NonHalt tm_tq00_0060 /\ QHBoundTr 32779478 tm_tq00_0060 /\ QuasiHaltsTr tm_tq00_0060.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0060 41 42 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0060 41 42 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RB_1RC0LD_1LC1RB_1LB1LA  side L  n1=28 P=29 W=0 *)
 Definition tm_tq00_0061 : TM := fun q s =>
@@ -938,7 +939,7 @@ Definition tm_tq00_0061 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0061 : NonHalt tm_tq00_0061 /\ QHBoundTr 32779478 tm_tq00_0061 /\ QuasiHaltsTr tm_tq00_0061.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0061 28 29 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0061 28 29 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RB_1RC0LD_1LD1RB_1LB1LA  side L  n1=42 P=43 W=0 *)
 Definition tm_tq00_0062 : TM := fun q s =>
@@ -953,7 +954,7 @@ Definition tm_tq00_0062 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0062 : NonHalt tm_tq00_0062 /\ QHBoundTr 32779478 tm_tq00_0062 /\ QuasiHaltsTr tm_tq00_0062.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0062 42 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0062 42 43 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RB_1RC0RC_1LD1RA_1RA1LC  side R  n1=30 P=31 W=3 *)
 Definition tm_tq00_0063 : TM := fun q s =>
@@ -968,7 +969,7 @@ Definition tm_tq00_0063 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0063 : NonHalt tm_tq00_0063 /\ QHBoundTr 32779478 tm_tq00_0063 /\ QuasiHaltsTr tm_tq00_0063.
-Proof. apply (tcycler_qh_stage tm_tq00_0063 30 31 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0063 30 31 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RB_1RC1LD_1LD0RC_1RA1LC  side R  n1=32 P=33 W=0 *)
 Definition tm_tq00_0064 : TM := fun q s =>
@@ -983,7 +984,7 @@ Definition tm_tq00_0064 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0064 : NonHalt tm_tq00_0064 /\ QHBoundTr 32779478 tm_tq00_0064 /\ QuasiHaltsTr tm_tq00_0064.
-Proof. apply (tcycler_qh_stage tm_tq00_0064 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0064 32 33 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RC_0LC1RA_1LD1LC_1RB0LC  side L  n1=27 P=22 W=0 *)
 Definition tm_tq00_0065 : TM := fun q s =>
@@ -998,7 +999,7 @@ Definition tm_tq00_0065 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0065 : NonHalt tm_tq00_0065 /\ QHBoundTr 32779478 tm_tq00_0065 /\ QuasiHaltsTr tm_tq00_0065.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0065 27 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0065 27 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RC_1LC1RC_0LD1LC_1RA1LD  side L  n1=41 P=42 W=4 *)
 Definition tm_tq00_0066 : TM := fun q s =>
@@ -1013,7 +1014,7 @@ Definition tm_tq00_0066 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq00_0066 : NonHalt tm_tq00_0066 /\ QHBoundTr 32779478 tm_tq00_0066 /\ QuasiHaltsTr tm_tq00_0066.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0066 41 42 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0066 41 42 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RC_1RC1LD_1LC1LD_1RA0LB  side L  n1=133 P=134 W=5 *)
 Definition tm_tq00_0067 : TM := fun q s =>
@@ -1028,7 +1029,7 @@ Definition tm_tq00_0067 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq00_0067 : NonHalt tm_tq00_0067 /\ QHBoundTr 32779478 tm_tq00_0067 /\ QuasiHaltsTr tm_tq00_0067.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0067 133 134 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0067 133 134 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RC_1RC1RA_1LD1LC_1RB0LC  side L  n1=49 P=22 W=0 *)
 Definition tm_tq00_0068 : TM := fun q s =>
@@ -1043,7 +1044,7 @@ Definition tm_tq00_0068 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0068 : NonHalt tm_tq00_0068 /\ QHBoundTr 32779478 tm_tq00_0068 /\ QuasiHaltsTr tm_tq00_0068.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0068 49 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0068 49 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RD_0LC1RA_1RB1LC_0LB1RB  side R  n1=51 P=34 W=2 *)
 Definition tm_tq00_0069 : TM := fun q s =>
@@ -1058,7 +1059,7 @@ Definition tm_tq00_0069 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0069 : NonHalt tm_tq00_0069 /\ QHBoundTr 32779478 tm_tq00_0069 /\ QuasiHaltsTr tm_tq00_0069.
-Proof. apply (tcycler_qh_stage tm_tq00_0069 51 34 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0069 51 34 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RD_1LC0RA_1RA0LD_1RB1RA  side R  n1=27 P=28 W=0 *)
 Definition tm_tq00_0070 : TM := fun q s =>
@@ -1073,7 +1074,7 @@ Definition tm_tq00_0070 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_tq00_0070 : NonHalt tm_tq00_0070 /\ QHBoundTr 32779478 tm_tq00_0070 /\ QuasiHaltsTr tm_tq00_0070.
-Proof. apply (tcycler_qh_stage tm_tq00_0070 27 28 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0070 27 28 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RD_1LC0RB_1RA1LB_1RB1LC  side R  n1=32 P=33 W=1 *)
 Definition tm_tq00_0071 : TM := fun q s =>
@@ -1088,7 +1089,7 @@ Definition tm_tq00_0071 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0071 : NonHalt tm_tq00_0071 /\ QHBoundTr 32779478 tm_tq00_0071 /\ QuasiHaltsTr tm_tq00_0071.
-Proof. apply (tcycler_qh_stage tm_tq00_0071 32 33 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0071 32 33 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RD_1LC0RB_1RC1LD_1LB1RA  side R  n1=26 P=27 W=2 *)
 Definition tm_tq00_0072 : TM := fun q s =>
@@ -1103,7 +1104,7 @@ Definition tm_tq00_0072 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_tq00_0072 : NonHalt tm_tq00_0072 /\ QHBoundTr 32779478 tm_tq00_0072 /\ QuasiHaltsTr tm_tq00_0072.
-Proof. apply (tcycler_qh_stage tm_tq00_0072 26 27 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0072 26 27 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RD_1LC1LB_1RA0LB_1LD1RC  side L  n1=21 P=22 W=1 *)
 Definition tm_tq00_0073 : TM := fun q s =>
@@ -1118,7 +1119,7 @@ Definition tm_tq00_0073 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0073 : NonHalt tm_tq00_0073 /\ QHBoundTr 32779478 tm_tq00_0073 /\ QuasiHaltsTr tm_tq00_0073.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0073 21 22 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0073 21 22 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RD_1LC1RA_1LD1LB_1RB0RB  side R  n1=28 P=29 W=0 *)
 Definition tm_tq00_0074 : TM := fun q s =>
@@ -1133,7 +1134,7 @@ Definition tm_tq00_0074 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0074 : NonHalt tm_tq00_0074 /\ QHBoundTr 32779478 tm_tq00_0074 /\ QuasiHaltsTr tm_tq00_0074.
-Proof. apply (tcycler_qh_stage tm_tq00_0074 28 29 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0074 28 29 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RD_1LC1RA_1RC1LB_1RB0RB  side R  n1=36 P=37 W=0 *)
 Definition tm_tq00_0075 : TM := fun q s =>
@@ -1148,7 +1149,7 @@ Definition tm_tq00_0075 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0075 : NonHalt tm_tq00_0075 /\ QHBoundTr 32779478 tm_tq00_0075 /\ QuasiHaltsTr tm_tq00_0075.
-Proof. apply (tcycler_qh_stage tm_tq00_0075 36 37 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0075 36 37 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RD_1LC1RD_1LD1LA_1RB0LC  side L  n1=58 P=43 W=0 *)
 Definition tm_tq00_0076 : TM := fun q s =>
@@ -1163,7 +1164,7 @@ Definition tm_tq00_0076 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0076 : NonHalt tm_tq00_0076 /\ QHBoundTr 32779478 tm_tq00_0076 /\ QuasiHaltsTr tm_tq00_0076.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0076 58 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0076 58 43 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RD_1RC0LD_0LB1RA_1LB1LD  side L  n1=33 P=22 W=0 *)
 Definition tm_tq00_0077 : TM := fun q s =>
@@ -1178,7 +1179,7 @@ Definition tm_tq00_0077 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq00_0077 : NonHalt tm_tq00_0077 /\ QHBoundTr 32779478 tm_tq00_0077 /\ QuasiHaltsTr tm_tq00_0077.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0077 33 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0077 33 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB0RD_1RC0LD_1RD1RA_1LB1LD  side L  n1=27 P=22 W=0 *)
 Definition tm_tq00_0078 : TM := fun q s =>
@@ -1193,7 +1194,7 @@ Definition tm_tq00_0078 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq00_0078 : NonHalt tm_tq00_0078 /\ QHBoundTr 32779478 tm_tq00_0078 /\ QuasiHaltsTr tm_tq00_0078.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0078 27 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0078 27 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LA_1LC0LD_1RC1LB_0LC0LA  side L  n1=23 P=24 W=0 *)
 Definition tm_tq00_0079 : TM := fun q s =>
@@ -1208,7 +1209,7 @@ Definition tm_tq00_0079 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0079 : NonHalt tm_tq00_0079 /\ QHBoundTr 32779478 tm_tq00_0079 /\ QuasiHaltsTr tm_tq00_0079.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0079 23 24 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0079 23 24 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_0LC1RD_1LA1RB_1RC0RD  side R  n1=24 P=18 W=0 *)
 Definition tm_tq00_0080 : TM := fun q s =>
@@ -1223,7 +1224,7 @@ Definition tm_tq00_0080 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq00_0080 : NonHalt tm_tq00_0080 /\ QHBoundTr 32779478 tm_tq00_0080 /\ QuasiHaltsTr tm_tq00_0080.
-Proof. apply (tcycler_qh_stage tm_tq00_0080 24 18 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0080 24 18 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1LA0RC_1RB0RD_1LC0LD  side R  n1=82 P=83 W=9 *)
 Definition tm_tq00_0081 : TM := fun q s =>
@@ -1238,7 +1239,7 @@ Definition tm_tq00_0081 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq00_0081 : NonHalt tm_tq00_0081 /\ QHBoundTr 32779478 tm_tq00_0081 /\ QuasiHaltsTr tm_tq00_0081.
-Proof. apply (tcycler_qh_stage tm_tq00_0081 82 83 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0081 82 83 9 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1LA1RC_0LA0RD_1LB1RB  side R  n1=96 P=97 W=5 *)
 Definition tm_tq00_0082 : TM := fun q s =>
@@ -1253,7 +1254,7 @@ Definition tm_tq00_0082 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0082 : NonHalt tm_tq00_0082 /\ QHBoundTr 32779478 tm_tq00_0082 /\ QuasiHaltsTr tm_tq00_0082.
-Proof. apply (tcycler_qh_stage tm_tq00_0082 96 97 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0082 96 97 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1LA1RC_0LA0RD_1RC1RB  side R  n1=106 P=107 W=5 *)
 Definition tm_tq00_0083 : TM := fun q s =>
@@ -1268,7 +1269,7 @@ Definition tm_tq00_0083 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0083 : NonHalt tm_tq00_0083 /\ QHBoundTr 32779478 tm_tq00_0083 /\ QuasiHaltsTr tm_tq00_0083.
-Proof. apply (tcycler_qh_stage tm_tq00_0083 106 107 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0083 106 107 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1LA1RC_0LC0RD_1LB1RB  side R  n1=90 P=91 W=6 *)
 Definition tm_tq00_0084 : TM := fun q s =>
@@ -1283,7 +1284,7 @@ Definition tm_tq00_0084 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0084 : NonHalt tm_tq00_0084 /\ QHBoundTr 32779478 tm_tq00_0084 /\ QuasiHaltsTr tm_tq00_0084.
-Proof. apply (tcycler_qh_stage tm_tq00_0084 90 91 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0084 90 91 6 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1LA1RC_0LD0RD_1LB1RB  side R  n1=74 P=75 W=8 *)
 Definition tm_tq00_0085 : TM := fun q s =>
@@ -1298,7 +1299,7 @@ Definition tm_tq00_0085 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0085 : NonHalt tm_tq00_0085 /\ QHBoundTr 32779478 tm_tq00_0085 /\ QuasiHaltsTr tm_tq00_0085.
-Proof. apply (tcycler_qh_stage tm_tq00_0085 74 75 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0085 74 75 8 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1LA1RC_1LA0RD_1LB1RB  side R  n1=70 P=71 W=8 *)
 Definition tm_tq00_0086 : TM := fun q s =>
@@ -1313,7 +1314,7 @@ Definition tm_tq00_0086 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0086 : NonHalt tm_tq00_0086 /\ QHBoundTr 32779478 tm_tq00_0086 /\ QuasiHaltsTr tm_tq00_0086.
-Proof. apply (tcycler_qh_stage tm_tq00_0086 70 71 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0086 70 71 8 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1LA1RC_1LA0RD_1LC1RB  side R  n1=70 P=71 W=8 *)
 Definition tm_tq00_0087 : TM := fun q s =>
@@ -1328,7 +1329,7 @@ Definition tm_tq00_0087 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0087 : NonHalt tm_tq00_0087 /\ QHBoundTr 32779478 tm_tq00_0087 /\ QuasiHaltsTr tm_tq00_0087.
-Proof. apply (tcycler_qh_stage tm_tq00_0087 70 71 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0087 70 71 8 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1LA1RC_1LC0RD_1LC1RB  side R  n1=62 P=63 W=7 *)
 Definition tm_tq00_0088 : TM := fun q s =>
@@ -1343,7 +1344,7 @@ Definition tm_tq00_0088 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0088 : NonHalt tm_tq00_0088 /\ QHBoundTr 32779478 tm_tq00_0088 /\ QuasiHaltsTr tm_tq00_0088.
-Proof. apply (tcycler_qh_stage tm_tq00_0088 62 63 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0088 62 63 7 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1RC0LD_1LA0RD_1RC1RD  side R  n1=22 P=22 W=0 *)
 Definition tm_tq00_0089 : TM := fun q s =>
@@ -1358,7 +1359,7 @@ Definition tm_tq00_0089 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma qhtr_tq00_0089 : NonHalt tm_tq00_0089 /\ QHBoundTr 32779478 tm_tq00_0089 /\ QuasiHaltsTr tm_tq00_0089.
-Proof. apply (tcycler_qh_stage tm_tq00_0089 22 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0089 22 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1RC0LD_1RD0RB_0LA0RC  side R  n1=34 P=35 W=3 *)
 Definition tm_tq00_0090 : TM := fun q s =>
@@ -1373,7 +1374,7 @@ Definition tm_tq00_0090 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0090 : NonHalt tm_tq00_0090 /\ QHBoundTr 32779478 tm_tq00_0090 /\ QuasiHaltsTr tm_tq00_0090.
-Proof. apply (tcycler_qh_stage tm_tq00_0090 34 35 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0090 34 35 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1RC1LC_1RD0LB_1LA1RD  side L  n1=109 P=110 W=4 *)
 Definition tm_tq00_0091 : TM := fun q s =>
@@ -1388,7 +1389,7 @@ Definition tm_tq00_0091 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma qhtr_tq00_0091 : NonHalt tm_tq00_0091 /\ QHBoundTr 32779478 tm_tq00_0091 /\ QuasiHaltsTr tm_tq00_0091.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0091 109 110 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0091 109 110 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1RC1LD_1LA1RC_1RC0LB  side L  n1=89 P=90 W=5 *)
 Definition tm_tq00_0092 : TM := fun q s =>
@@ -1403,7 +1404,7 @@ Definition tm_tq00_0092 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq00_0092 : NonHalt tm_tq00_0092 /\ QHBoundTr 32779478 tm_tq00_0092 /\ QuasiHaltsTr tm_tq00_0092.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0092 89 90 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0092 89 90 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LB_1RC1LD_1LB1RC_1LC0LA  side L  n1=49 P=50 W=7 *)
 Definition tm_tq00_0093 : TM := fun q s =>
@@ -1418,7 +1419,7 @@ Definition tm_tq00_0093 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0093 : NonHalt tm_tq00_0093 /\ QHBoundTr 32779478 tm_tq00_0093 /\ QuasiHaltsTr tm_tq00_0093.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0093 49 50 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0093 49 50 7 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_0LC1RA_1RB0LD_1LA1LD  side L  n1=102 P=84 W=0 *)
 Definition tm_tq00_0094 : TM := fun q s =>
@@ -1433,7 +1434,7 @@ Definition tm_tq00_0094 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq00_0094 : NonHalt tm_tq00_0094 /\ QHBoundTr 32779478 tm_tq00_0094 /\ QuasiHaltsTr tm_tq00_0094.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0094 102 84 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0094 102 84 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_0LC1RC_1LD0RA_1LA0LC  side L  n1=21 P=22 W=5 *)
 Definition tm_tq00_0095 : TM := fun q s =>
@@ -1448,7 +1449,7 @@ Definition tm_tq00_0095 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0095 : NonHalt tm_tq00_0095 /\ QHBoundTr 32779478 tm_tq00_0095 /\ QuasiHaltsTr tm_tq00_0095.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0095 21 22 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0095 21 22 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_0RC1RA_1LD0LD_1LA0LC  side L  n1=18 P=19 W=1 *)
 Definition tm_tq00_0096 : TM := fun q s =>
@@ -1463,7 +1464,7 @@ Definition tm_tq00_0096 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0096 : NonHalt tm_tq00_0096 /\ QHBoundTr 32779478 tm_tq00_0096 /\ QuasiHaltsTr tm_tq00_0096.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0096 18 19 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0096 18 19 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1LA1RB_1LA0LD_0RA1LA  side L  n1=46 P=30 W=2 *)
 Definition tm_tq00_0097 : TM := fun q s =>
@@ -1478,7 +1479,7 @@ Definition tm_tq00_0097 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0097 : NonHalt tm_tq00_0097 /\ QHBoundTr 32779478 tm_tq00_0097 /\ QuasiHaltsTr tm_tq00_0097.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0097 46 30 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0097 46 30 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1LC0LA_1RD0LB_1LB1RC  side L  n1=32 P=33 W=0 *)
 Definition tm_tq00_0098 : TM := fun q s =>
@@ -1493,7 +1494,7 @@ Definition tm_tq00_0098 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0098 : NonHalt tm_tq00_0098 /\ QHBoundTr 32779478 tm_tq00_0098 /\ QuasiHaltsTr tm_tq00_0098.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0098 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0098 32 33 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1LC1RA_1RC0LD_1LA1LD  side L  n1=73 P=74 W=8 *)
 Definition tm_tq00_0099 : TM := fun q s =>
@@ -1508,7 +1509,7 @@ Definition tm_tq00_0099 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq00_0099 : NonHalt tm_tq00_0099 /\ QHBoundTr 32779478 tm_tq00_0099 /\ QuasiHaltsTr tm_tq00_0099.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0099 73 74 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0099 73 74 8 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1LC1RC_1LA1RD_0LD0RB  side R  n1=90 P=91 W=4 *)
 Definition tm_tq00_0100 : TM := fun q s =>
@@ -1523,7 +1524,7 @@ Definition tm_tq00_0100 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0100 : NonHalt tm_tq00_0100 /\ QHBoundTr 32779478 tm_tq00_0100 /\ QuasiHaltsTr tm_tq00_0100.
-Proof. apply (tcycler_qh_stage tm_tq00_0100 90 91 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0100 90 91 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1RC0LC_1LB1RD_1LA0RC  side R  n1=59 P=60 W=0 *)
 Definition tm_tq00_0101 : TM := fun q s =>
@@ -1538,7 +1539,7 @@ Definition tm_tq00_0101 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0101 : NonHalt tm_tq00_0101 /\ QHBoundTr 32779478 tm_tq00_0101 /\ QuasiHaltsTr tm_tq00_0101.
-Proof. apply (tcycler_qh_stage tm_tq00_0101 59 60 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0101 59 60 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1RC0RD_1LA0RB_1LB0LD  side R  n1=82 P=83 W=7 *)
 Definition tm_tq00_0102 : TM := fun q s =>
@@ -1553,7 +1554,7 @@ Definition tm_tq00_0102 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq00_0102 : NonHalt tm_tq00_0102 /\ QHBoundTr 32779478 tm_tq00_0102 /\ QuasiHaltsTr tm_tq00_0102.
-Proof. apply (tcycler_qh_stage tm_tq00_0102 82 83 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0102 82 83 7 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1RC1RA_0LD0LD_1LA1LD  side L  n1=18 P=18 W=0 *)
 Definition tm_tq00_0103 : TM := fun q s =>
@@ -1568,7 +1569,7 @@ Definition tm_tq00_0103 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq00_0103 : NonHalt tm_tq00_0103 /\ QHBoundTr 32779478 tm_tq00_0103 /\ QuasiHaltsTr tm_tq00_0103.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0103 18 18 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0103 18 18 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1RC1RB_0LA1RD_1LA0RB  side R  n1=83 P=84 W=10 *)
 Definition tm_tq00_0104 : TM := fun q s =>
@@ -1583,7 +1584,7 @@ Definition tm_tq00_0104 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0104 : NonHalt tm_tq00_0104 /\ QHBoundTr 32779478 tm_tq00_0104 /\ QuasiHaltsTr tm_tq00_0104.
-Proof. apply (tcycler_qh_stage tm_tq00_0104 83 84 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0104 83 84 10 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1RC1RB_0LA1RD_1LD0RB  side R  n1=73 P=74 W=10 *)
 Definition tm_tq00_0105 : TM := fun q s =>
@@ -1598,7 +1599,7 @@ Definition tm_tq00_0105 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0105 : NonHalt tm_tq00_0105 /\ QHBoundTr 32779478 tm_tq00_0105 /\ QuasiHaltsTr tm_tq00_0105.
-Proof. apply (tcycler_qh_stage tm_tq00_0105 73 74 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0105 73 74 10 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1RC1RB_1LA0LD_0RA0LA  side L  n1=94 P=30 W=0 *)
 Definition tm_tq00_0106 : TM := fun q s =>
@@ -1613,7 +1614,7 @@ Definition tm_tq00_0106 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0106 : NonHalt tm_tq00_0106 /\ QHBoundTr 32779478 tm_tq00_0106 /\ QuasiHaltsTr tm_tq00_0106.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0106 94 30 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0106 94 30 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1RC1RD_1LA0LB_0RB1RC  side R  n1=76 P=77 W=10 *)
 Definition tm_tq00_0107 : TM := fun q s =>
@@ -1628,7 +1629,7 @@ Definition tm_tq00_0107 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0107 : NonHalt tm_tq00_0107 /\ QHBoundTr 32779478 tm_tq00_0107 /\ QuasiHaltsTr tm_tq00_0107.
-Proof. apply (tcycler_qh_stage tm_tq00_0107 76 77 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0107 76 77 10 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LC_1RC1RD_1LA0RB_0RB1RC  side R  n1=24 P=25 W=3 *)
 Definition tm_tq00_0108 : TM := fun q s =>
@@ -1643,7 +1644,7 @@ Definition tm_tq00_0108 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0108 : NonHalt tm_tq00_0108 /\ QHBoundTr 32779478 tm_tq00_0108 /\ QuasiHaltsTr tm_tq00_0108.
-Proof. apply (tcycler_qh_stage tm_tq00_0108 24 25 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0108 24 25 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_0LC1RA_1LA1LC_1RB0LC  side L  n1=83 P=84 W=9 *)
 Definition tm_tq00_0109 : TM := fun q s =>
@@ -1658,7 +1659,7 @@ Definition tm_tq00_0109 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0109 : NonHalt tm_tq00_0109 /\ QHBoundTr 32779478 tm_tq00_0109 /\ QuasiHaltsTr tm_tq00_0109.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0109 83 84 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0109 83 84 9 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_0LC1RA_1LA1LC_1RD0LC  side L  n1=73 P=74 W=9 *)
 Definition tm_tq00_0110 : TM := fun q s =>
@@ -1673,7 +1674,7 @@ Definition tm_tq00_0110 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0110 : NonHalt tm_tq00_0110 /\ QHBoundTr 32779478 tm_tq00_0110 /\ QuasiHaltsTr tm_tq00_0110.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0110 73 74 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0110 73 74 9 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_0RC1RD_1RD1RB_1LA0LC  side R  n1=76 P=77 W=1 *)
 Definition tm_tq00_0111 : TM := fun q s =>
@@ -1688,7 +1689,7 @@ Definition tm_tq00_0111 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0111 : NonHalt tm_tq00_0111 /\ QHBoundTr 32779478 tm_tq00_0111 /\ QuasiHaltsTr tm_tq00_0111.
-Proof. apply (tcycler_qh_stage tm_tq00_0111 76 77 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0111 76 77 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1LA0RC_1RB1RC_0LB0LC  side R  n1=33 P=22 W=0 *)
 Definition tm_tq00_0112 : TM := fun q s =>
@@ -1703,7 +1704,7 @@ Definition tm_tq00_0112 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0112 : NonHalt tm_tq00_0112 /\ QHBoundTr 32779478 tm_tq00_0112 /\ QuasiHaltsTr tm_tq00_0112.
-Proof. apply (tcycler_qh_stage tm_tq00_0112 33 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0112 33 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1LA0RC_1RD1RC_0LA1RB  side R  n1=101 P=84 W=0 *)
 Definition tm_tq00_0113 : TM := fun q s =>
@@ -1718,7 +1719,7 @@ Definition tm_tq00_0113 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0113 : NonHalt tm_tq00_0113 /\ QHBoundTr 32779478 tm_tq00_0113 /\ QuasiHaltsTr tm_tq00_0113.
-Proof. apply (tcycler_qh_stage tm_tq00_0113 101 84 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0113 101 84 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1LC1RA_1LA0LD_1LC0LC  side L  n1=18 P=19 W=3 *)
 Definition tm_tq00_0114 : TM := fun q s =>
@@ -1733,7 +1734,7 @@ Definition tm_tq00_0114 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0114 : NonHalt tm_tq00_0114 /\ QHBoundTr 32779478 tm_tq00_0114 /\ QuasiHaltsTr tm_tq00_0114.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0114 18 19 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0114 18 19 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1LC1RD_1LD0LA_1RB0LC  side L  n1=59 P=33 W=0 *)
 Definition tm_tq00_0115 : TM := fun q s =>
@@ -1748,7 +1749,7 @@ Definition tm_tq00_0115 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0115 : NonHalt tm_tq00_0115 /\ QHBoundTr 32779478 tm_tq00_0115 /\ QuasiHaltsTr tm_tq00_0115.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0115 59 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0115 59 33 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1RC0LD_1LA1RC_1RB1LB  side L  n1=109 P=110 W=9 *)
 Definition tm_tq00_0116 : TM := fun q s =>
@@ -1763,7 +1764,7 @@ Definition tm_tq00_0116 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq00_0116 : NonHalt tm_tq00_0116 /\ QHBoundTr 32779478 tm_tq00_0116 /\ QuasiHaltsTr tm_tq00_0116.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0116 109 110 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0116 109 110 9 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1RC0LD_1LA1RC_1RC1LB  side L  n1=89 P=90 W=5 *)
 Definition tm_tq00_0117 : TM := fun q s =>
@@ -1778,7 +1779,7 @@ Definition tm_tq00_0117 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq00_0117 : NonHalt tm_tq00_0117 /\ QHBoundTr 32779478 tm_tq00_0117 /\ QuasiHaltsTr tm_tq00_0117.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0117 89 90 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0117 89 90 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1RC0RB_1LA1RD_0LC1RB  side R  n1=17 P=18 W=4 *)
 Definition tm_tq00_0118 : TM := fun q s =>
@@ -1793,7 +1794,7 @@ Definition tm_tq00_0118 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0118 : NonHalt tm_tq00_0118 /\ QHBoundTr 32779478 tm_tq00_0118 /\ QuasiHaltsTr tm_tq00_0118.
-Proof. apply (tcycler_qh_stage tm_tq00_0118 17 18 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0118 17 18 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1RC0RC_1RD1RB_0LA1LB  side R  n1=58 P=25 W=0 *)
 Definition tm_tq00_0119 : TM := fun q s =>
@@ -1808,7 +1809,7 @@ Definition tm_tq00_0119 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq00_0119 : NonHalt tm_tq00_0119 /\ QHBoundTr 32779478 tm_tq00_0119 /\ QuasiHaltsTr tm_tq00_0119.
-Proof. apply (tcycler_qh_stage tm_tq00_0119 58 25 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0119 58 25 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1RC1RA_1LA1LC_1RB0LC  side L  n1=52 P=53 W=6 *)
 Definition tm_tq00_0120 : TM := fun q s =>
@@ -1823,7 +1824,7 @@ Definition tm_tq00_0120 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0120 : NonHalt tm_tq00_0120 /\ QHBoundTr 32779478 tm_tq00_0120 /\ QuasiHaltsTr tm_tq00_0120.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0120 52 53 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0120 52 53 6 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1RC1RA_1LA1LC_1RD0LC  side L  n1=46 P=47 W=6 *)
 Definition tm_tq00_0121 : TM := fun q s =>
@@ -1838,7 +1839,7 @@ Definition tm_tq00_0121 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0121 : NonHalt tm_tq00_0121 /\ QHBoundTr 32779478 tm_tq00_0121 /\ QuasiHaltsTr tm_tq00_0121.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0121 46 47 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0121 46 47 6 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1RC1RB_1LA0RB_0LA0LB  side R  n1=26 P=22 W=0 *)
 Definition tm_tq00_0122 : TM := fun q s =>
@@ -1853,7 +1854,7 @@ Definition tm_tq00_0122 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq00_0122 : NonHalt tm_tq00_0122 /\ QHBoundTr 32779478 tm_tq00_0122 /\ QuasiHaltsTr tm_tq00_0122.
-Proof. apply (tcycler_qh_stage tm_tq00_0122 26 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0122 26 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1RC1RB_1LA0RB_1LB0LB  side R  n1=21 P=22 W=2 *)
 Definition tm_tq00_0123 : TM := fun q s =>
@@ -1868,7 +1869,7 @@ Definition tm_tq00_0123 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq00_0123 : NonHalt tm_tq00_0123 /\ QHBoundTr 32779478 tm_tq00_0123 /\ QuasiHaltsTr tm_tq00_0123.
-Proof. apply (tcycler_qh_stage tm_tq00_0123 21 22 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0123 21 22 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1RC1RB_1LA0RB_1RC0LB  side R  n1=22 P=22 W=0 *)
 Definition tm_tq00_0124 : TM := fun q s =>
@@ -1883,7 +1884,7 @@ Definition tm_tq00_0124 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq00_0124 : NonHalt tm_tq00_0124 /\ QHBoundTr 32779478 tm_tq00_0124 /\ QuasiHaltsTr tm_tq00_0124.
-Proof. apply (tcycler_qh_stage tm_tq00_0124 22 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0124 22 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1LD_1RC1RD_0LA0RB_1LA1RC  side R  n1=106 P=107 W=10 *)
 Definition tm_tq00_0125 : TM := fun q s =>
@@ -1898,7 +1899,7 @@ Definition tm_tq00_0125 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0125 : NonHalt tm_tq00_0125 /\ QHBoundTr 32779478 tm_tq00_0125 /\ QuasiHaltsTr tm_tq00_0125.
-Proof. apply (tcycler_qh_stage tm_tq00_0125 106 107 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0125 106 107 10 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RB_1LC0RD_1RA0LD_1LC1LD  side L  n1=22 P=22 W=0 *)
 Definition tm_tq00_0126 : TM := fun q s =>
@@ -1913,7 +1914,7 @@ Definition tm_tq00_0126 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq00_0126 : NonHalt tm_tq00_0126 /\ QHBoundTr 32779478 tm_tq00_0126 /\ QuasiHaltsTr tm_tq00_0126.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0126 22 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0126 22 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RB_1LC1RC_1LD0RB_1RA1LD  side R  n1=109 P=110 W=4 *)
 Definition tm_tq00_0127 : TM := fun q s =>
@@ -1928,7 +1929,7 @@ Definition tm_tq00_0127 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq00_0127 : NonHalt tm_tq00_0127 /\ QHBoundTr 32779478 tm_tq00_0127 /\ QuasiHaltsTr tm_tq00_0127.
-Proof. apply (tcycler_qh_stage tm_tq00_0127 109 110 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0127 109 110 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RB_1LC1RD_1RA1LC_1LC0RB  side R  n1=89 P=90 W=5 *)
 Definition tm_tq00_0128 : TM := fun q s =>
@@ -1943,7 +1944,7 @@ Definition tm_tq00_0128 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0128 : NonHalt tm_tq00_0128 /\ QHBoundTr 32779478 tm_tq00_0128 /\ QuasiHaltsTr tm_tq00_0128.
-Proof. apply (tcycler_qh_stage tm_tq00_0128 89 90 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0128 89 90 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_0LC1RA_1LD0LD_1LA1LC  side L  n1=59 P=25 W=0 *)
 Definition tm_tq00_0129 : TM := fun q s =>
@@ -1958,7 +1959,7 @@ Definition tm_tq00_0129 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0129 : NonHalt tm_tq00_0129 /\ QHBoundTr 32779478 tm_tq00_0129 /\ QuasiHaltsTr tm_tq00_0129.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0129 59 25 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0129 59 25 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1LC0RC_1RB1LD_1RA0LC  side L  n1=59 P=60 W=0 *)
 Definition tm_tq00_0130 : TM := fun q s =>
@@ -1973,7 +1974,7 @@ Definition tm_tq00_0130 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0130 : NonHalt tm_tq00_0130 /\ QHBoundTr 32779478 tm_tq00_0130 /\ QuasiHaltsTr tm_tq00_0130.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0130 59 60 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0130 59 60 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC0RA_1LD0RB_1RB1LC  side R  n1=47 P=33 W=0 *)
 Definition tm_tq00_0131 : TM := fun q s =>
@@ -1988,7 +1989,7 @@ Definition tm_tq00_0131 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0131 : NonHalt tm_tq00_0131 /\ QHBoundTr 32779478 tm_tq00_0131 /\ QuasiHaltsTr tm_tq00_0131.
-Proof. apply (tcycler_qh_stage tm_tq00_0131 47 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0131 47 33 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD0LB_0RA1LC  side R  n1=76 P=77 W=0 *)
 Definition tm_tq00_0132 : TM := fun q s =>
@@ -2003,7 +2004,7 @@ Definition tm_tq00_0132 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0132 : NonHalt tm_tq00_0132 /\ QHBoundTr 32779478 tm_tq00_0132 /\ QuasiHaltsTr tm_tq00_0132.
-Proof. apply (tcycler_qh_stage tm_tq00_0132 76 77 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0132 76 77 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD0LB_0RB1LC  side R  n1=76 P=77 W=10 *)
 Definition tm_tq00_0133 : TM := fun q s =>
@@ -2018,7 +2019,7 @@ Definition tm_tq00_0133 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0133 : NonHalt tm_tq00_0133 /\ QHBoundTr 32779478 tm_tq00_0133 /\ QuasiHaltsTr tm_tq00_0133.
-Proof. apply (tcycler_qh_stage tm_tq00_0133 76 77 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0133 76 77 10 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD0LB_1LA1LC  side R  n1=76 P=77 W=5 *)
 Definition tm_tq00_0134 : TM := fun q s =>
@@ -2033,7 +2034,7 @@ Definition tm_tq00_0134 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0134 : NonHalt tm_tq00_0134 /\ QHBoundTr 32779478 tm_tq00_0134 /\ QuasiHaltsTr tm_tq00_0134.
-Proof. apply (tcycler_qh_stage tm_tq00_0134 76 77 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0134 76 77 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD0LB_1RA1LC  side R  n1=76 P=77 W=5 *)
 Definition tm_tq00_0135 : TM := fun q s =>
@@ -2048,7 +2049,7 @@ Definition tm_tq00_0135 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0135 : NonHalt tm_tq00_0135 /\ QHBoundTr 32779478 tm_tq00_0135 /\ QuasiHaltsTr tm_tq00_0135.
-Proof. apply (tcycler_qh_stage tm_tq00_0135 76 77 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0135 76 77 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD0LB_1RB1LC  side R  n1=76 P=77 W=10 *)
 Definition tm_tq00_0136 : TM := fun q s =>
@@ -2063,7 +2064,7 @@ Definition tm_tq00_0136 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0136 : NonHalt tm_tq00_0136 /\ QHBoundTr 32779478 tm_tq00_0136 /\ QuasiHaltsTr tm_tq00_0136.
-Proof. apply (tcycler_qh_stage tm_tq00_0136 76 77 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0136 76 77 10 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD0RB_0RB1LC  side R  n1=24 P=25 W=3 *)
 Definition tm_tq00_0137 : TM := fun q s =>
@@ -2078,7 +2079,7 @@ Definition tm_tq00_0137 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0137 : NonHalt tm_tq00_0137 /\ QHBoundTr 32779478 tm_tq00_0137 /\ QuasiHaltsTr tm_tq00_0137.
-Proof. apply (tcycler_qh_stage tm_tq00_0137 24 25 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0137 24 25 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD0RB_1RB1LC  side R  n1=24 P=25 W=3 *)
 Definition tm_tq00_0138 : TM := fun q s =>
@@ -2093,7 +2094,7 @@ Definition tm_tq00_0138 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0138 : NonHalt tm_tq00_0138 /\ QHBoundTr 32779478 tm_tq00_0138 /\ QuasiHaltsTr tm_tq00_0138.
-Proof. apply (tcycler_qh_stage tm_tq00_0138 24 25 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0138 24 25 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0LC_1LD0LB_0RA1LB  side L  n1=18 P=19 W=0 *)
 Definition tm_tq00_0139 : TM := fun q s =>
@@ -2108,7 +2109,7 @@ Definition tm_tq00_0139 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq00_0139 : NonHalt tm_tq00_0139 /\ QHBoundTr 32779478 tm_tq00_0139 /\ QuasiHaltsTr tm_tq00_0139.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0139 18 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0139 18 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0LC_1RA1LB_1LB1LC  side L  n1=22 P=23 W=2 *)
 Definition tm_tq00_0140 : TM := fun q s =>
@@ -2123,7 +2124,7 @@ Definition tm_tq00_0140 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0140 : NonHalt tm_tq00_0140 /\ QHBoundTr 32779478 tm_tq00_0140 /\ QuasiHaltsTr tm_tq00_0140.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0140 22 23 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0140 22 23 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0RB_1LD0LB_1RA0RC  side L  n1=46 P=47 W=1 *)
 Definition tm_tq00_0141 : TM := fun q s =>
@@ -2138,7 +2139,7 @@ Definition tm_tq00_0141 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0141 : NonHalt tm_tq00_0141 /\ QHBoundTr 32779478 tm_tq00_0141 /\ QuasiHaltsTr tm_tq00_0141.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0141 46 47 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0141 46 47 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0RD_1RA1LC_1LB1RB  side R  n1=109 P=110 W=9 *)
 Definition tm_tq00_0142 : TM := fun q s =>
@@ -2153,7 +2154,7 @@ Definition tm_tq00_0142 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0142 : NonHalt tm_tq00_0142 /\ QHBoundTr 32779478 tm_tq00_0142 /\ QuasiHaltsTr tm_tq00_0142.
-Proof. apply (tcycler_qh_stage tm_tq00_0142 109 110 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0142 109 110 9 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0RD_1RA1LC_1LC1RB  side R  n1=89 P=90 W=5 *)
 Definition tm_tq00_0143 : TM := fun q s =>
@@ -2168,7 +2169,7 @@ Definition tm_tq00_0143 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0143 : NonHalt tm_tq00_0143 /\ QHBoundTr 32779478 tm_tq00_0143 /\ QuasiHaltsTr tm_tq00_0143.
-Proof. apply (tcycler_qh_stage tm_tq00_0143 89 90 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0143 89 90 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LB_1RA0LB_1LC0RB  side L  n1=22 P=22 W=0 *)
 Definition tm_tq00_0144 : TM := fun q s =>
@@ -2183,7 +2184,7 @@ Definition tm_tq00_0144 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0144 : NonHalt tm_tq00_0144 /\ QHBoundTr 32779478 tm_tq00_0144 /\ QuasiHaltsTr tm_tq00_0144.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0144 22 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0144 22 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LB_1RA0LB_1RB0RB  side L  n1=21 P=22 W=2 *)
 Definition tm_tq00_0145 : TM := fun q s =>
@@ -2198,7 +2199,7 @@ Definition tm_tq00_0145 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0145 : NonHalt tm_tq00_0145 /\ QHBoundTr 32779478 tm_tq00_0145 /\ QuasiHaltsTr tm_tq00_0145.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0145 21 22 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0145 21 22 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1LA1LD_1LC0LC  side L  n1=37 P=25 W=0 *)
 Definition tm_tq00_0146 : TM := fun q s =>
@@ -2213,7 +2214,7 @@ Definition tm_tq00_0146 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0146 : NonHalt tm_tq00_0146 /\ QHBoundTr 32779478 tm_tq00_0146 /\ QuasiHaltsTr tm_tq00_0146.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0146 37 25 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0146 37 25 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC0RB_1LD0LB_1RA0LC  side L  n1=82 P=83 W=2 *)
 Definition tm_tq00_0147 : TM := fun q s =>
@@ -2228,7 +2229,7 @@ Definition tm_tq00_0147 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0147 : NonHalt tm_tq00_0147 /\ QHBoundTr 32779478 tm_tq00_0147 /\ QuasiHaltsTr tm_tq00_0147.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0147 82 83 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0147 82 83 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0LB0LB_------_------  side L  n1=3 P=1 W=0 *)
 Definition tm_tq00_0148 : TM := fun q s =>
@@ -2243,7 +2244,7 @@ Definition tm_tq00_0148 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0148 : NonHalt tm_tq00_0148 /\ QHBoundTr 32779478 tm_tq00_0148 /\ QuasiHaltsTr tm_tq00_0148.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0148 3 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0148 3 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0LB0RB_------_------  side L  n1=3 P=1 W=0 *)
 Definition tm_tq00_0149 : TM := fun q s =>
@@ -2258,7 +2259,7 @@ Definition tm_tq00_0149 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0149 : NonHalt tm_tq00_0149 /\ QHBoundTr 32779478 tm_tq00_0149 /\ QuasiHaltsTr tm_tq00_0149.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0149 3 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0149 3 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0LB1LB_------_------  side L  n1=3 P=1 W=0 *)
 Definition tm_tq00_0150 : TM := fun q s =>
@@ -2273,7 +2274,7 @@ Definition tm_tq00_0150 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0150 : NonHalt tm_tq00_0150 /\ QHBoundTr 32779478 tm_tq00_0150 /\ QuasiHaltsTr tm_tq00_0150.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0150 3 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0150 3 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0RB---_------_------  side R  n1=1 P=1 W=0 *)
 Definition tm_tq00_0151 : TM := fun q s =>
@@ -2288,7 +2289,7 @@ Definition tm_tq00_0151 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0151 : NonHalt tm_tq00_0151 /\ QHBoundTr 32779478 tm_tq00_0151 /\ QuasiHaltsTr tm_tq00_0151.
-Proof. apply (tcycler_qh_stage tm_tq00_0151 1 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0151 1 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0RC---_0RB---_------  side R  n1=1 P=2 W=0 *)
 Definition tm_tq00_0152 : TM := fun q s =>
@@ -2303,7 +2304,7 @@ Definition tm_tq00_0152 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0152 : NonHalt tm_tq00_0152 /\ QHBoundTr 32779478 tm_tq00_0152 /\ QuasiHaltsTr tm_tq00_0152.
-Proof. apply (tcycler_qh_stage tm_tq00_0152 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0152 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0RC---_0RC---_------  side R  n1=2 P=1 W=0 *)
 Definition tm_tq00_0153 : TM := fun q s =>
@@ -2318,7 +2319,7 @@ Definition tm_tq00_0153 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0153 : NonHalt tm_tq00_0153 /\ QHBoundTr 32779478 tm_tq00_0153 /\ QuasiHaltsTr tm_tq00_0153.
-Proof. apply (tcycler_qh_stage tm_tq00_0153 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0153 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0RC---_1RB---_------  side R  n1=1 P=2 W=0 *)
 Definition tm_tq00_0154 : TM := fun q s =>
@@ -2333,7 +2334,7 @@ Definition tm_tq00_0154 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0154 : NonHalt tm_tq00_0154 /\ QHBoundTr 32779478 tm_tq00_0154 /\ QuasiHaltsTr tm_tq00_0154.
-Proof. apply (tcycler_qh_stage tm_tq00_0154 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0154 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0RC---_1RC---_------  side R  n1=2 P=1 W=0 *)
 Definition tm_tq00_0155 : TM := fun q s =>
@@ -2348,7 +2349,7 @@ Definition tm_tq00_0155 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0155 : NonHalt tm_tq00_0155 /\ QHBoundTr 32779478 tm_tq00_0155 /\ QuasiHaltsTr tm_tq00_0155.
-Proof. apply (tcycler_qh_stage tm_tq00_0155 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0155 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0RC1LD_1LC0RD_1RC0RB  side R  n1=33 P=34 W=1 *)
 Definition tm_tq00_0156 : TM := fun q s =>
@@ -2363,7 +2364,7 @@ Definition tm_tq00_0156 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0156 : NonHalt tm_tq00_0156 /\ QHBoundTr 32779478 tm_tq00_0156 /\ QuasiHaltsTr tm_tq00_0156.
-Proof. apply (tcycler_qh_stage tm_tq00_0156 33 34 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0156 33 34 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0RC1RB_1LD0RD_0LB0RB  side R  n1=34 P=35 W=0 *)
 Definition tm_tq00_0157 : TM := fun q s =>
@@ -2378,7 +2379,7 @@ Definition tm_tq00_0157 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0157 : NonHalt tm_tq00_0157 /\ QHBoundTr 32779478 tm_tq00_0157 /\ QuasiHaltsTr tm_tq00_0157.
-Proof. apply (tcycler_qh_stage tm_tq00_0157 34 35 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0157 34 35 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LB0LB_------_------  side L  n1=3 P=1 W=0 *)
 Definition tm_tq00_0158 : TM := fun q s =>
@@ -2393,7 +2394,7 @@ Definition tm_tq00_0158 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0158 : NonHalt tm_tq00_0158 /\ QHBoundTr 32779478 tm_tq00_0158 /\ QuasiHaltsTr tm_tq00_0158.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0158 3 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0158 3 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LB0RB_------_------  side L  n1=4 P=1 W=0 *)
 Definition tm_tq00_0159 : TM := fun q s =>
@@ -2408,7 +2409,7 @@ Definition tm_tq00_0159 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0159 : NonHalt tm_tq00_0159 /\ QHBoundTr 32779478 tm_tq00_0159 /\ QuasiHaltsTr tm_tq00_0159.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0159 4 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0159 4 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LB1LB_------_------  side L  n1=3 P=1 W=0 *)
 Definition tm_tq00_0160 : TM := fun q s =>
@@ -2423,7 +2424,7 @@ Definition tm_tq00_0160 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0160 : NonHalt tm_tq00_0160 /\ QHBoundTr 32779478 tm_tq00_0160 /\ QuasiHaltsTr tm_tq00_0160.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0160 3 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0160 3 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LB1RB_------_------  side R  n1=2 P=3 W=0 *)
 Definition tm_tq00_0161 : TM := fun q s =>
@@ -2438,7 +2439,7 @@ Definition tm_tq00_0161 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0161 : NonHalt tm_tq00_0161 /\ QHBoundTr 32779478 tm_tq00_0161 /\ QuasiHaltsTr tm_tq00_0161.
-Proof. apply (tcycler_qh_stage tm_tq00_0161 2 3 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0161 2 3 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LC0LD_1RC0LB_0LC1LC  side L  n1=32 P=33 W=0 *)
 Definition tm_tq00_0162 : TM := fun q s =>
@@ -2453,7 +2454,7 @@ Definition tm_tq00_0162 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0162 : NonHalt tm_tq00_0162 /\ QHBoundTr 32779478 tm_tq00_0162 /\ QuasiHaltsTr tm_tq00_0162.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0162 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0162 32 33 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LC0LD_1RC0LB_0LC1RB  side L  n1=33 P=34 W=0 *)
 Definition tm_tq00_0163 : TM := fun q s =>
@@ -2468,7 +2469,7 @@ Definition tm_tq00_0163 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0163 : NonHalt tm_tq00_0163 /\ QHBoundTr 32779478 tm_tq00_0163 /\ QuasiHaltsTr tm_tq00_0163.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0163 33 34 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0163 33 34 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LC0RD_1LD0LB_1RB0LC  side L  n1=18 P=19 W=0 *)
 Definition tm_tq00_0164 : TM := fun q s =>
@@ -2483,7 +2484,7 @@ Definition tm_tq00_0164 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0164 : NonHalt tm_tq00_0164 /\ QHBoundTr 32779478 tm_tq00_0164 /\ QuasiHaltsTr tm_tq00_0164.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0164 18 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0164 18 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1RB---_------_------  side R  n1=1 P=1 W=0 *)
 Definition tm_tq00_0165 : TM := fun q s =>
@@ -2498,7 +2499,7 @@ Definition tm_tq00_0165 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0165 : NonHalt tm_tq00_0165 /\ QHBoundTr 32779478 tm_tq00_0165 /\ QuasiHaltsTr tm_tq00_0165.
-Proof. apply (tcycler_qh_stage tm_tq00_0165 1 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0165 1 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1RC---_0RB---_------  side R  n1=1 P=2 W=0 *)
 Definition tm_tq00_0166 : TM := fun q s =>
@@ -2513,7 +2514,7 @@ Definition tm_tq00_0166 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0166 : NonHalt tm_tq00_0166 /\ QHBoundTr 32779478 tm_tq00_0166 /\ QuasiHaltsTr tm_tq00_0166.
-Proof. apply (tcycler_qh_stage tm_tq00_0166 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0166 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1RC---_0RC---_------  side R  n1=2 P=1 W=0 *)
 Definition tm_tq00_0167 : TM := fun q s =>
@@ -2528,7 +2529,7 @@ Definition tm_tq00_0167 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0167 : NonHalt tm_tq00_0167 /\ QHBoundTr 32779478 tm_tq00_0167 /\ QuasiHaltsTr tm_tq00_0167.
-Proof. apply (tcycler_qh_stage tm_tq00_0167 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0167 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1RC---_1RB---_------  side R  n1=1 P=2 W=0 *)
 Definition tm_tq00_0168 : TM := fun q s =>
@@ -2543,7 +2544,7 @@ Definition tm_tq00_0168 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0168 : NonHalt tm_tq00_0168 /\ QHBoundTr 32779478 tm_tq00_0168 /\ QuasiHaltsTr tm_tq00_0168.
-Proof. apply (tcycler_qh_stage tm_tq00_0168 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0168 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1RC---_1RC---_------  side R  n1=2 P=1 W=0 *)
 Definition tm_tq00_0169 : TM := fun q s =>
@@ -2558,7 +2559,7 @@ Definition tm_tq00_0169 : TM := fun q s =>
   | StD, S1 => None
   end.
 Lemma qhtr_tq00_0169 : NonHalt tm_tq00_0169 /\ QHBoundTr 32779478 tm_tq00_0169 /\ QuasiHaltsTr tm_tq00_0169.
-Proof. apply (tcycler_qh_stage tm_tq00_0169 2 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0169 2 1 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1RC0LD_1LD0RB_1LB0LC  side L  n1=18 P=19 W=3 *)
 Definition tm_tq00_0170 : TM := fun q s =>
@@ -2573,7 +2574,7 @@ Definition tm_tq00_0170 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0170 : NonHalt tm_tq00_0170 /\ QHBoundTr 32779478 tm_tq00_0170 /\ QuasiHaltsTr tm_tq00_0170.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0170 18 19 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0170 18 19 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1RC0LD_1RD0RB_1LB0RC  side R  n1=18 P=19 W=0 *)
 Definition tm_tq00_0171 : TM := fun q s =>
@@ -2588,7 +2589,7 @@ Definition tm_tq00_0171 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0171 : NonHalt tm_tq00_0171 /\ QHBoundTr 32779478 tm_tq00_0171 /\ QuasiHaltsTr tm_tq00_0171.
-Proof. apply (tcycler_qh_stage tm_tq00_0171 18 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0171 18 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1RC0RD_1LC0RB_0RC1LB  side R  n1=33 P=34 W=0 *)
 Definition tm_tq00_0172 : TM := fun q s =>
@@ -2603,7 +2604,7 @@ Definition tm_tq00_0172 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq00_0172 : NonHalt tm_tq00_0172 /\ QHBoundTr 32779478 tm_tq00_0172 /\ QuasiHaltsTr tm_tq00_0172.
-Proof. apply (tcycler_qh_stage tm_tq00_0172 33 34 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0172 33 34 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1RC0RD_1LD0RB_1RB0LC  side R  n1=18 P=19 W=0 *)
 Definition tm_tq00_0173 : TM := fun q s =>
@@ -2618,7 +2619,7 @@ Definition tm_tq00_0173 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq00_0173 : NonHalt tm_tq00_0173 /\ QHBoundTr 32779478 tm_tq00_0173 /\ QuasiHaltsTr tm_tq00_0173.
-Proof. apply (tcycler_qh_stage tm_tq00_0173 18 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0173 18 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LA_0RC0RD_1LA0RB_1LD0LA  side R  n1=23 P=24 W=3 *)
 Definition tm_tq00_0174 : TM := fun q s =>
@@ -2633,7 +2634,7 @@ Definition tm_tq00_0174 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0174 : NonHalt tm_tq00_0174 /\ QHBoundTr 32779478 tm_tq00_0174 /\ QuasiHaltsTr tm_tq00_0174.
-Proof. apply (tcycler_qh_stage tm_tq00_0174 23 24 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0174 23 24 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LA_1RC0RA_1LD0LB_0LA1LC  side R  n1=46 P=47 W=2 *)
 Definition tm_tq00_0175 : TM := fun q s =>
@@ -2648,7 +2649,7 @@ Definition tm_tq00_0175 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0175 : NonHalt tm_tq00_0175 /\ QHBoundTr 32779478 tm_tq00_0175 /\ QuasiHaltsTr tm_tq00_0175.
-Proof. apply (tcycler_qh_stage tm_tq00_0175 46 47 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0175 46 47 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_0LC0LD_1RC1LA_0LB1LB  side L  n1=18 P=19 W=1 *)
 Definition tm_tq00_0176 : TM := fun q s =>
@@ -2663,7 +2664,7 @@ Definition tm_tq00_0176 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq00_0176 : NonHalt tm_tq00_0176 /\ QHBoundTr 32779478 tm_tq00_0176 /\ QuasiHaltsTr tm_tq00_0176.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0176 18 19 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0176 18 19 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_0RC0LD_1LD1RB_1LA1RC  side R  n1=69 P=70 W=1 *)
 Definition tm_tq00_0177 : TM := fun q s =>
@@ -2678,7 +2679,7 @@ Definition tm_tq00_0177 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0177 : NonHalt tm_tq00_0177 /\ QHBoundTr 32779478 tm_tq00_0177 /\ QuasiHaltsTr tm_tq00_0177.
-Proof. apply (tcycler_qh_stage tm_tq00_0177 69 70 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0177 69 70 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_0RC1RD_1LC1LA_0RB1RB  side R  n1=22 P=23 W=3 *)
 Definition tm_tq00_0178 : TM := fun q s =>
@@ -2693,7 +2694,7 @@ Definition tm_tq00_0178 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0178 : NonHalt tm_tq00_0178 /\ QHBoundTr 32779478 tm_tq00_0178 /\ QuasiHaltsTr tm_tq00_0178.
-Proof. apply (tcycler_qh_stage tm_tq00_0178 22 23 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0178 22 23 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_1LA0LC_0LD1LC_1RD0LA  side L  n1=26 P=18 W=0 *)
 Definition tm_tq00_0179 : TM := fun q s =>
@@ -2708,7 +2709,7 @@ Definition tm_tq00_0179 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0179 : NonHalt tm_tq00_0179 /\ QHBoundTr 32779478 tm_tq00_0179 /\ QuasiHaltsTr tm_tq00_0179.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0179 26 18 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0179 26 18 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_1LA0LC_1RC1LD_1RA1LA  side L  n1=28 P=29 W=3 *)
 Definition tm_tq00_0180 : TM := fun q s =>
@@ -2723,7 +2724,7 @@ Definition tm_tq00_0180 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0180 : NonHalt tm_tq00_0180 /\ QHBoundTr 32779478 tm_tq00_0180 /\ QuasiHaltsTr tm_tq00_0180.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0180 28 29 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0180 28 29 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_1LB0LC_1RD1LD_0RB0RA  side L  n1=64 P=65 W=2 *)
 Definition tm_tq00_0181 : TM := fun q s =>
@@ -2738,7 +2739,7 @@ Definition tm_tq00_0181 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq00_0181 : NonHalt tm_tq00_0181 /\ QHBoundTr 32779478 tm_tq00_0181 /\ QuasiHaltsTr tm_tq00_0181.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0181 64 65 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0181 64 65 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_1LC0LC_0LD1LB_1RD0LA  side L  n1=18 P=19 W=0 *)
 Definition tm_tq00_0182 : TM := fun q s =>
@@ -2753,7 +2754,7 @@ Definition tm_tq00_0182 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0182 : NonHalt tm_tq00_0182 /\ QHBoundTr 32779478 tm_tq00_0182 /\ QuasiHaltsTr tm_tq00_0182.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0182 18 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0182 18 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_1LC0RB_0LD1LA_1RD1RB  side R  n1=41 P=42 W=5 *)
 Definition tm_tq00_0183 : TM := fun q s =>
@@ -2768,7 +2769,7 @@ Definition tm_tq00_0183 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0183 : NonHalt tm_tq00_0183 /\ QHBoundTr 32779478 tm_tq00_0183 /\ QuasiHaltsTr tm_tq00_0183.
-Proof. apply (tcycler_qh_stage tm_tq00_0183 41 42 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0183 41 42 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_1LC0RD_1RD1LB_1RB1RA  side R  n1=62 P=43 W=0 *)
 Definition tm_tq00_0184 : TM := fun q s =>
@@ -2783,7 +2784,7 @@ Definition tm_tq00_0184 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_tq00_0184 : NonHalt tm_tq00_0184 /\ QHBoundTr 32779478 tm_tq00_0184 /\ QuasiHaltsTr tm_tq00_0184.
-Proof. apply (tcycler_qh_stage tm_tq00_0184 62 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0184 62 43 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_1LC1RD_0LD1LD_1RA0RB  side R  n1=47 P=37 W=2 *)
 Definition tm_tq00_0185 : TM := fun q s =>
@@ -2798,7 +2799,7 @@ Definition tm_tq00_0185 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0185 : NonHalt tm_tq00_0185 /\ QHBoundTr 32779478 tm_tq00_0185 /\ QuasiHaltsTr tm_tq00_0185.
-Proof. apply (tcycler_qh_stage tm_tq00_0185 47 37 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0185 47 37 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_1RC0RC_0RD0RB_1LD1LA  side R  n1=24 P=23 W=1 *)
 Definition tm_tq00_0186 : TM := fun q s =>
@@ -2813,7 +2814,7 @@ Definition tm_tq00_0186 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0186 : NonHalt tm_tq00_0186 /\ QHBoundTr 32779478 tm_tq00_0186 /\ QuasiHaltsTr tm_tq00_0186.
-Proof. apply (tcycler_qh_stage tm_tq00_0186 24 23 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0186 24 23 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_1RC0RD_1LA1RD_1LB0RB  side R  n1=41 P=42 W=2 *)
 Definition tm_tq00_0187 : TM := fun q s =>
@@ -2828,7 +2829,7 @@ Definition tm_tq00_0187 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0187 : NonHalt tm_tq00_0187 /\ QHBoundTr 32779478 tm_tq00_0187 /\ QuasiHaltsTr tm_tq00_0187.
-Proof. apply (tcycler_qh_stage tm_tq00_0187 41 42 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0187 41 42 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LA0RD_1LA1LC_1LD1RA  side L  n1=22 P=22 W=0 *)
 Definition tm_tq00_0188 : TM := fun q s =>
@@ -2843,7 +2844,7 @@ Definition tm_tq00_0188 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_tq00_0188 : NonHalt tm_tq00_0188 /\ QHBoundTr 32779478 tm_tq00_0188 /\ QuasiHaltsTr tm_tq00_0188.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0188 22 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0188 22 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LA0RD_1RA1LA_1LD1LA  side L  n1=157 P=158 W=1 *)
 Definition tm_tq00_0189 : TM := fun q s =>
@@ -2858,7 +2859,7 @@ Definition tm_tq00_0189 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0189 : NonHalt tm_tq00_0189 /\ QHBoundTr 32779478 tm_tq00_0189 /\ QuasiHaltsTr tm_tq00_0189.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0189 157 158 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0189 157 158 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LA0RD_1RD1LA_1LD1LA  side L  n1=133 P=134 W=5 *)
 Definition tm_tq00_0190 : TM := fun q s =>
@@ -2873,7 +2874,7 @@ Definition tm_tq00_0190 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0190 : NonHalt tm_tq00_0190 /\ QHBoundTr 32779478 tm_tq00_0190 /\ QuasiHaltsTr tm_tq00_0190.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0190 133 134 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0190 133 134 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LA1RA_1LA0LD_1RC0RD  side L  n1=82 P=83 W=10 *)
 Definition tm_tq00_0191 : TM := fun q s =>
@@ -2888,7 +2889,7 @@ Definition tm_tq00_0191 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq00_0191 : NonHalt tm_tq00_0191 /\ QHBoundTr 32779478 tm_tq00_0191 /\ QuasiHaltsTr tm_tq00_0191.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0191 82 83 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0191 82 83 10 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LA1RD_1LA1LC_0RA0RC  side L  n1=32 P=22 W=0 *)
 Definition tm_tq00_0192 : TM := fun q s =>
@@ -2903,7 +2904,7 @@ Definition tm_tq00_0192 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0192 : NonHalt tm_tq00_0192 /\ QHBoundTr 32779478 tm_tq00_0192 /\ QuasiHaltsTr tm_tq00_0192.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0192 32 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0192 32 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LA1RD_1LD1LC_0RB1LA  side L  n1=100 P=84 W=0 *)
 Definition tm_tq00_0193 : TM := fun q s =>
@@ -2918,7 +2919,7 @@ Definition tm_tq00_0193 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0193 : NonHalt tm_tq00_0193 /\ QHBoundTr 32779478 tm_tq00_0193 /\ QuasiHaltsTr tm_tq00_0193.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0193 100 84 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0193 100 84 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LC0RC_1RC1RD_1LA0LD  side L  n1=65 P=66 W=0 *)
 Definition tm_tq00_0194 : TM := fun q s =>
@@ -2933,7 +2934,7 @@ Definition tm_tq00_0194 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq00_0194 : NonHalt tm_tq00_0194 /\ QHBoundTr 32779478 tm_tq00_0194 /\ QuasiHaltsTr tm_tq00_0194.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0194 65 66 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0194 65 66 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LC0RD_1LA1LC_1LD1RA  side L  n1=21 P=22 W=5 *)
 Definition tm_tq00_0195 : TM := fun q s =>
@@ -2948,7 +2949,7 @@ Definition tm_tq00_0195 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_tq00_0195 : NonHalt tm_tq00_0195 /\ QHBoundTr 32779478 tm_tq00_0195 /\ QuasiHaltsTr tm_tq00_0195.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0195 21 22 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0195 21 22 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LC0RD_1RA1LA_1LD1LA  side L  n1=157 P=158 W=6 *)
 Definition tm_tq00_0196 : TM := fun q s =>
@@ -2963,7 +2964,7 @@ Definition tm_tq00_0196 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0196 : NonHalt tm_tq00_0196 /\ QHBoundTr 32779478 tm_tq00_0196 /\ QuasiHaltsTr tm_tq00_0196.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0196 157 158 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0196 157 158 6 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LC0RD_1RD1LA_1LD1LA  side L  n1=133 P=134 W=6 *)
 Definition tm_tq00_0197 : TM := fun q s =>
@@ -2978,7 +2979,7 @@ Definition tm_tq00_0197 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0197 : NonHalt tm_tq00_0197 /\ QHBoundTr 32779478 tm_tq00_0197 /\ QuasiHaltsTr tm_tq00_0197.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0197 133 134 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0197 133 134 6 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LC1RA_1LA0LD_1RC0RD  side L  n1=82 P=83 W=7 *)
 Definition tm_tq00_0198 : TM := fun q s =>
@@ -2993,7 +2994,7 @@ Definition tm_tq00_0198 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq00_0198 : NonHalt tm_tq00_0198 /\ QHBoundTr 32779478 tm_tq00_0198 /\ QuasiHaltsTr tm_tq00_0198.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0198 82 83 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0198 82 83 7 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LC1RA_1RD1LD_0RB0LA  side L  n1=237 P=40 W=0 *)
 Definition tm_tq00_0199 : TM := fun q s =>
@@ -3008,7 +3009,7 @@ Definition tm_tq00_0199 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0199 : NonHalt tm_tq00_0199 /\ QHBoundTr 32779478 tm_tq00_0199 /\ QuasiHaltsTr tm_tq00_0199.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0199 237 40 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0199 237 40 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LC1RD_1LA1LC_0RB0RC  side L  n1=21 P=22 W=0 *)
 Definition tm_tq00_0200 : TM := fun q s =>
@@ -3023,7 +3024,7 @@ Definition tm_tq00_0200 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0200 : NonHalt tm_tq00_0200 /\ QHBoundTr 32779478 tm_tq00_0200 /\ QuasiHaltsTr tm_tq00_0200.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0200 21 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0200 21 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LC1RD_1LA1LC_1LA0RC  side L  n1=21 P=22 W=2 *)
 Definition tm_tq00_0201 : TM := fun q s =>
@@ -3038,7 +3039,7 @@ Definition tm_tq00_0201 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0201 : NonHalt tm_tq00_0201 /\ QHBoundTr 32779478 tm_tq00_0201 /\ QuasiHaltsTr tm_tq00_0201.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0201 21 22 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0201 21 22 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LC1RD_1LA1LC_1RC0RC  side L  n1=21 P=22 W=0 *)
 Definition tm_tq00_0202 : TM := fun q s =>
@@ -3053,7 +3054,7 @@ Definition tm_tq00_0202 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0202 : NonHalt tm_tq00_0202 /\ QHBoundTr 32779478 tm_tq00_0202 /\ QuasiHaltsTr tm_tq00_0202.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0202 21 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0202 21 22 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0LC1RD_1LD1LC_0RB1LA  side L  n1=83 P=84 W=5 *)
 Definition tm_tq00_0203 : TM := fun q s =>
@@ -3068,7 +3069,7 @@ Definition tm_tq00_0203 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0203 : NonHalt tm_tq00_0203 /\ QHBoundTr 32779478 tm_tq00_0203 /\ QuasiHaltsTr tm_tq00_0203.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0203 83 84 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0203 83 84 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0RC0RD_1LA0RB_1LD0LA  side R  n1=112 P=24 W=2 *)
 Definition tm_tq00_0204 : TM := fun q s =>
@@ -3083,7 +3084,7 @@ Definition tm_tq00_0204 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0204 : NonHalt tm_tq00_0204 /\ QHBoundTr 32779478 tm_tq00_0204 /\ QuasiHaltsTr tm_tq00_0204.
-Proof. apply (tcycler_qh_stage tm_tq00_0204 112 24 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0204 112 24 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0RC0RD_1LA1LC_0LC0LA  side L  n1=28 P=28 W=0 *)
 Definition tm_tq00_0205 : TM := fun q s =>
@@ -3098,7 +3099,7 @@ Definition tm_tq00_0205 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0205 : NonHalt tm_tq00_0205 /\ QHBoundTr 32779478 tm_tq00_0205 /\ QuasiHaltsTr tm_tq00_0205.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0205 28 28 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0205 28 28 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0RC0RD_1LA1LC_1RC0LA  side L  n1=40 P=28 W=0 *)
 Definition tm_tq00_0206 : TM := fun q s =>
@@ -3113,7 +3114,7 @@ Definition tm_tq00_0206 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0206 : NonHalt tm_tq00_0206 /\ QHBoundTr 32779478 tm_tq00_0206 /\ QuasiHaltsTr tm_tq00_0206.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0206 40 28 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0206 40 28 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0RC0RD_1RD1LA_1LD1LA  side L  n1=133 P=134 W=10 *)
 Definition tm_tq00_0207 : TM := fun q s =>
@@ -3128,7 +3129,7 @@ Definition tm_tq00_0207 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0207 : NonHalt tm_tq00_0207 /\ QHBoundTr 32779478 tm_tq00_0207 /\ QuasiHaltsTr tm_tq00_0207.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0207 133 134 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0207 133 134 10 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0RC1RC_1RD1LA_1LC0RC  side L  n1=59 P=60 W=0 *)
 Definition tm_tq00_0208 : TM := fun q s =>
@@ -3143,7 +3144,7 @@ Definition tm_tq00_0208 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0208 : NonHalt tm_tq00_0208 /\ QHBoundTr 32779478 tm_tq00_0208 /\ QuasiHaltsTr tm_tq00_0208.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0208 59 60 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0208 59 60 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_0RC1RD_1LA1LC_1LA0RC  side L  n1=21 P=22 W=2 *)
 Definition tm_tq00_0209 : TM := fun q s =>
@@ -3158,7 +3159,7 @@ Definition tm_tq00_0209 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0209 : NonHalt tm_tq00_0209 /\ QHBoundTr 32779478 tm_tq00_0209 /\ QuasiHaltsTr tm_tq00_0209.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0209 21 22 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0209 21 22 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA0RC_1RC1RD_1LA0LD  side L  n1=65 P=66 W=0 *)
 Definition tm_tq00_0210 : TM := fun q s =>
@@ -3173,7 +3174,7 @@ Definition tm_tq00_0210 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq00_0210 : NonHalt tm_tq00_0210 /\ QHBoundTr 32779478 tm_tq00_0210 /\ QuasiHaltsTr tm_tq00_0210.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0210 65 66 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0210 65 66 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA0RD_1RA1LA_1LD1LA  side L  n1=157 P=158 W=7 *)
 Definition tm_tq00_0211 : TM := fun q s =>
@@ -3188,7 +3189,7 @@ Definition tm_tq00_0211 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0211 : NonHalt tm_tq00_0211 /\ QHBoundTr 32779478 tm_tq00_0211 /\ QuasiHaltsTr tm_tq00_0211.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0211 157 158 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0211 157 158 7 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA0RD_1RC1RB_1LB1RB  side R  n1=157 P=158 W=4 *)
 Definition tm_tq00_0212 : TM := fun q s =>
@@ -3203,7 +3204,7 @@ Definition tm_tq00_0212 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0212 : NonHalt tm_tq00_0212 /\ QHBoundTr 32779478 tm_tq00_0212 /\ QuasiHaltsTr tm_tq00_0212.
-Proof. apply (tcycler_qh_stage tm_tq00_0212 157 158 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0212 157 158 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA0RD_1RC1RB_1LC1RB  side R  n1=133 P=134 W=6 *)
 Definition tm_tq00_0213 : TM := fun q s =>
@@ -3218,7 +3219,7 @@ Definition tm_tq00_0213 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq00_0213 : NonHalt tm_tq00_0213 /\ QHBoundTr 32779478 tm_tq00_0213 /\ QuasiHaltsTr tm_tq00_0213.
-Proof. apply (tcycler_qh_stage tm_tq00_0213 133 134 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0213 133 134 6 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA0RD_1RD1LA_1LD1LA  side L  n1=133 P=134 W=6 *)
 Definition tm_tq00_0214 : TM := fun q s =>
@@ -3233,7 +3234,7 @@ Definition tm_tq00_0214 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0214 : NonHalt tm_tq00_0214 /\ QHBoundTr 32779478 tm_tq00_0214 /\ QuasiHaltsTr tm_tq00_0214.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0214 133 134 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0214 133 134 6 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA1RA_1LA0LD_1RC0RD  side L  n1=82 P=83 W=1 *)
 Definition tm_tq00_0215 : TM := fun q s =>
@@ -3248,7 +3249,7 @@ Definition tm_tq00_0215 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq00_0215 : NonHalt tm_tq00_0215 /\ QHBoundTr 32779478 tm_tq00_0215 /\ QuasiHaltsTr tm_tq00_0215.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0215 82 83 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0215 82 83 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA1RA_1LA1LD_1RD1LA  side L  n1=26 P=27 W=0 *)
 Definition tm_tq00_0216 : TM := fun q s =>
@@ -3263,7 +3264,7 @@ Definition tm_tq00_0216 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0216 : NonHalt tm_tq00_0216 /\ QHBoundTr 32779478 tm_tq00_0216 /\ QuasiHaltsTr tm_tq00_0216.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0216 26 27 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0216 26 27 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA1RD_0RD0LB_1LB1RC  side R  n1=69 P=70 W=0 *)
 Definition tm_tq00_0217 : TM := fun q s =>
@@ -3278,7 +3279,7 @@ Definition tm_tq00_0217 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq00_0217 : NonHalt tm_tq00_0217 /\ QHBoundTr 32779478 tm_tq00_0217 /\ QuasiHaltsTr tm_tq00_0217.
-Proof. apply (tcycler_qh_stage tm_tq00_0217 69 70 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0217 69 70 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA1RD_1LA1LC_0LC0RC  side L  n1=21 P=22 W=2 *)
 Definition tm_tq00_0218 : TM := fun q s =>
@@ -3293,7 +3294,7 @@ Definition tm_tq00_0218 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0218 : NonHalt tm_tq00_0218 /\ QHBoundTr 32779478 tm_tq00_0218 /\ QuasiHaltsTr tm_tq00_0218.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0218 21 22 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0218 21 22 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA1RD_1LA1LC_1RB0RC  side L  n1=21 P=22 W=2 *)
 Definition tm_tq00_0219 : TM := fun q s =>
@@ -3308,7 +3309,7 @@ Definition tm_tq00_0219 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq00_0219 : NonHalt tm_tq00_0219 /\ QHBoundTr 32779478 tm_tq00_0219 /\ QuasiHaltsTr tm_tq00_0219.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0219 21 22 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0219 21 22 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LA1RD_1LD1RB_1RB0LD  side L  n1=32 P=33 W=2 *)
 Definition tm_tq00_0220 : TM := fun q s =>
@@ -3323,7 +3324,7 @@ Definition tm_tq00_0220 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq00_0220 : NonHalt tm_tq00_0220 /\ QHBoundTr 32779478 tm_tq00_0220 /\ QuasiHaltsTr tm_tq00_0220.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0220 32 33 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0220 32 33 2 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LB0RC_1RC1RD_1LA0LD  side L  n1=65 P=66 W=0 *)
 Definition tm_tq00_0221 : TM := fun q s =>
@@ -3338,7 +3339,7 @@ Definition tm_tq00_0221 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq00_0221 : NonHalt tm_tq00_0221 /\ QHBoundTr 32779478 tm_tq00_0221 /\ QuasiHaltsTr tm_tq00_0221.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0221 65 66 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0221 65 66 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LB1RA_1LA0LD_1RC0RD  side L  n1=82 P=83 W=5 *)
 Definition tm_tq00_0222 : TM := fun q s =>
@@ -3353,7 +3354,7 @@ Definition tm_tq00_0222 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq00_0222 : NonHalt tm_tq00_0222 /\ QHBoundTr 32779478 tm_tq00_0222 /\ QuasiHaltsTr tm_tq00_0222.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0222 82 83 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0222 82 83 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LB1RA_1LA1LD_1RC0RA  side L  n1=28 P=29 W=1 *)
 Definition tm_tq00_0223 : TM := fun q s =>
@@ -3368,7 +3369,7 @@ Definition tm_tq00_0223 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq00_0223 : NonHalt tm_tq00_0223 /\ QHBoundTr 32779478 tm_tq00_0223 /\ QuasiHaltsTr tm_tq00_0223.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0223 28 29 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0223 28 29 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LB1RC_1RD1LA_1RB0LD  side L  n1=26 P=27 W=3 *)
 Definition tm_tq00_0224 : TM := fun q s =>
@@ -3383,7 +3384,7 @@ Definition tm_tq00_0224 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq00_0224 : NonHalt tm_tq00_0224 /\ QHBoundTr 32779478 tm_tq00_0224 /\ QuasiHaltsTr tm_tq00_0224.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0224 26 27 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0224 26 27 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC0LA_0LD1LA_1RD1LB  side L  n1=24 P=25 W=4 *)
 Definition tm_tq00_0225 : TM := fun q s =>
@@ -3398,7 +3399,7 @@ Definition tm_tq00_0225 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq00_0225 : NonHalt tm_tq00_0225 /\ QHBoundTr 32779478 tm_tq00_0225 /\ QuasiHaltsTr tm_tq00_0225.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0225 24 25 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0225 24 25 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC0RC_1RC0LD_1LC1LA  side L  n1=31 P=32 W=0 *)
 Definition tm_tq00_0226 : TM := fun q s =>
@@ -3413,7 +3414,7 @@ Definition tm_tq00_0226 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0226 : NonHalt tm_tq00_0226 /\ QHBoundTr 32779478 tm_tq00_0226 /\ QuasiHaltsTr tm_tq00_0226.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0226 31 32 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0226 31 32 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC0RD_0LA0LD_1LA1LC  side L  n1=27 P=28 W=0 *)
 Definition tm_tq00_0227 : TM := fun q s =>
@@ -3428,7 +3429,7 @@ Definition tm_tq00_0227 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0227 : NonHalt tm_tq00_0227 /\ QHBoundTr 32779478 tm_tq00_0227 /\ QuasiHaltsTr tm_tq00_0227.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0227 27 28 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0227 27 28 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC0RD_0RC0LD_1LA1LC  side L  n1=49 P=50 W=0 *)
 Definition tm_tq00_0228 : TM := fun q s =>
@@ -3443,7 +3444,7 @@ Definition tm_tq00_0228 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq00_0228 : NonHalt tm_tq00_0228 /\ QHBoundTr 32779478 tm_tq00_0228 /\ QuasiHaltsTr tm_tq00_0228.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0228 49 50 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0228 49 50 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC0RD_1RA1LA_1LD1LA  side L  n1=157 P=158 W=7 *)
 Definition tm_tq00_0229 : TM := fun q s =>
@@ -3458,7 +3459,7 @@ Definition tm_tq00_0229 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0229 : NonHalt tm_tq00_0229 /\ QHBoundTr 32779478 tm_tq00_0229 /\ QuasiHaltsTr tm_tq00_0229.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0229 157 158 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0229 157 158 7 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC0RD_1RD1LA_1LD1LA  side L  n1=133 P=134 W=4 *)
 Definition tm_tq00_0230 : TM := fun q s =>
@@ -3473,7 +3474,7 @@ Definition tm_tq00_0230 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0230 : NonHalt tm_tq00_0230 /\ QHBoundTr 32779478 tm_tq00_0230 /\ QuasiHaltsTr tm_tq00_0230.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0230 133 134 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0230 133 134 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA0LD_0LC1LA  side L  n1=32 P=33 W=0 *)
 Definition tm_tq00_0231 : TM := fun q s =>
@@ -3488,7 +3489,7 @@ Definition tm_tq00_0231 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0231 : NonHalt tm_tq00_0231 /\ QHBoundTr 32779478 tm_tq00_0231 /\ QuasiHaltsTr tm_tq00_0231.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0231 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0231 32 33 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA0LD_0RB1LA  side L  n1=32 P=33 W=4 *)
 Definition tm_tq00_0232 : TM := fun q s =>
@@ -3503,7 +3504,7 @@ Definition tm_tq00_0232 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0232 : NonHalt tm_tq00_0232 /\ QHBoundTr 32779478 tm_tq00_0232 /\ QuasiHaltsTr tm_tq00_0232.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0232 32 33 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0232 32 33 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA0LD_0RC1LA  side L  n1=34 P=33 W=4 *)
 Definition tm_tq00_0233 : TM := fun q s =>
@@ -3518,7 +3519,7 @@ Definition tm_tq00_0233 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0233 : NonHalt tm_tq00_0233 /\ QHBoundTr 32779478 tm_tq00_0233 /\ QuasiHaltsTr tm_tq00_0233.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0233 34 33 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0233 34 33 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA0LD_0RD1LA  side L  n1=32 P=33 W=3 *)
 Definition tm_tq00_0234 : TM := fun q s =>
@@ -3533,7 +3534,7 @@ Definition tm_tq00_0234 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0234 : NonHalt tm_tq00_0234 /\ QHBoundTr 32779478 tm_tq00_0234 /\ QuasiHaltsTr tm_tq00_0234.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0234 32 33 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0234 32 33 3 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA0LD_1LA1LA  side L  n1=32 P=33 W=0 *)
 Definition tm_tq00_0235 : TM := fun q s =>
@@ -3548,7 +3549,7 @@ Definition tm_tq00_0235 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0235 : NonHalt tm_tq00_0235 /\ QHBoundTr 32779478 tm_tq00_0235 /\ QuasiHaltsTr tm_tq00_0235.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0235 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0235 32 33 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA0LD_1LB1LA  side L  n1=32 P=33 W=4 *)
 Definition tm_tq00_0236 : TM := fun q s =>
@@ -3563,7 +3564,7 @@ Definition tm_tq00_0236 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0236 : NonHalt tm_tq00_0236 /\ QHBoundTr 32779478 tm_tq00_0236 /\ QuasiHaltsTr tm_tq00_0236.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0236 32 33 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0236 32 33 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA0LD_1RD1LA  side L  n1=32 P=33 W=0 *)
 Definition tm_tq00_0237 : TM := fun q s =>
@@ -3578,7 +3579,7 @@ Definition tm_tq00_0237 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0237 : NonHalt tm_tq00_0237 /\ QHBoundTr 32779478 tm_tq00_0237 /\ QuasiHaltsTr tm_tq00_0237.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0237 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0237 32 33 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA1LD_0RA0RA  side L  n1=42 P=43 W=0 *)
 Definition tm_tq00_0238 : TM := fun q s =>
@@ -3593,7 +3594,7 @@ Definition tm_tq00_0238 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq00_0238 : NonHalt tm_tq00_0238 /\ QHBoundTr 32779478 tm_tq00_0238 /\ QuasiHaltsTr tm_tq00_0238.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0238 42 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0238 42 43 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA1LD_1LB0RA  side L  n1=42 P=43 W=4 *)
 Definition tm_tq00_0239 : TM := fun q s =>
@@ -3608,7 +3609,7 @@ Definition tm_tq00_0239 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq00_0239 : NonHalt tm_tq00_0239 /\ QHBoundTr 32779478 tm_tq00_0239 /\ QuasiHaltsTr tm_tq00_0239.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0239 42 43 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0239 42 43 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA1LD_1RC0RA  side L  n1=42 P=43 W=0 *)
 Definition tm_tq00_0240 : TM := fun q s =>
@@ -3623,7 +3624,7 @@ Definition tm_tq00_0240 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq00_0240 : NonHalt tm_tq00_0240 /\ QHBoundTr 32779478 tm_tq00_0240 /\ QuasiHaltsTr tm_tq00_0240.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0240 42 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0240 42 43 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA1LD_1RD0RA  side L  n1=42 P=43 W=1 *)
 Definition tm_tq00_0241 : TM := fun q s =>
@@ -3638,7 +3639,7 @@ Definition tm_tq00_0241 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq00_0241 : NonHalt tm_tq00_0241 /\ QHBoundTr 32779478 tm_tq00_0241 /\ QuasiHaltsTr tm_tq00_0241.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0241 42 43 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0241 42 43 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RA_1LA1LD_1RD1LA  side L  n1=26 P=27 W=0 *)
 Definition tm_tq00_0242 : TM := fun q s =>
@@ -3653,7 +3654,7 @@ Definition tm_tq00_0242 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0242 : NonHalt tm_tq00_0242 /\ QHBoundTr 32779478 tm_tq00_0242 /\ QuasiHaltsTr tm_tq00_0242.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0242 26 27 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0242 26 27 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RB_1LA1LD_0RB1LA  side L  n1=170 P=19 W=0 *)
 Definition tm_tq00_0243 : TM := fun q s =>
@@ -3668,7 +3669,7 @@ Definition tm_tq00_0243 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0243 : NonHalt tm_tq00_0243 /\ QHBoundTr 32779478 tm_tq00_0243 /\ QuasiHaltsTr tm_tq00_0243.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0243 170 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0243 170 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RB_1LA1LD_1LA1LA  side L  n1=75 P=19 W=0 *)
 Definition tm_tq00_0244 : TM := fun q s =>
@@ -3683,7 +3684,7 @@ Definition tm_tq00_0244 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0244 : NonHalt tm_tq00_0244 /\ QHBoundTr 32779478 tm_tq00_0244 /\ QuasiHaltsTr tm_tq00_0244.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0244 75 19 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0244 75 19 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RB_1RA1LD_1RB0LA  side L  n1=30 P=31 W=0 *)
 Definition tm_tq00_0245 : TM := fun q s =>
@@ -3698,7 +3699,7 @@ Definition tm_tq00_0245 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0245 : NonHalt tm_tq00_0245 /\ QHBoundTr 32779478 tm_tq00_0245 /\ QuasiHaltsTr tm_tq00_0245.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0245 30 31 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0245 30 31 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RB_1RD1LD_1RB0LA  side L  n1=30 P=31 W=0 *)
 Definition tm_tq00_0246 : TM := fun q s =>
@@ -3713,7 +3714,7 @@ Definition tm_tq00_0246 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq00_0246 : NonHalt tm_tq00_0246 /\ QHBoundTr 32779478 tm_tq00_0246 /\ QuasiHaltsTr tm_tq00_0246.
-Proof. apply (tcycler_qh_stage_L tm_tq00_0246 30 31 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq00_0246 30 31 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1LC1RD_1RC1RD_1LA0RB  side R  n1=133 P=134 W=5 *)
 Definition tm_tq00_0247 : TM := fun q s =>
@@ -3728,7 +3729,7 @@ Definition tm_tq00_0247 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq00_0247 : NonHalt tm_tq00_0247 /\ QHBoundTr 32779478 tm_tq00_0247 /\ QuasiHaltsTr tm_tq00_0247.
-Proof. apply (tcycler_qh_stage tm_tq00_0247 133 134 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0247 133 134 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1RC0RA_0LD0RB_0RA1LA  side R  n1=34 P=35 W=4 *)
 Definition tm_tq00_0248 : TM := fun q s =>
@@ -3743,7 +3744,7 @@ Definition tm_tq00_0248 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0248 : NonHalt tm_tq00_0248 /\ QHBoundTr 32779478 tm_tq00_0248 /\ QuasiHaltsTr tm_tq00_0248.
-Proof. apply (tcycler_qh_stage tm_tq00_0248 34 35 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0248 34 35 4 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LC_1RC0RA_0LD0RB_0RB1LA  side R  n1=34 P=35 W=5 *)
 Definition tm_tq00_0249 : TM := fun q s =>
@@ -3758,7 +3759,7 @@ Definition tm_tq00_0249 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq00_0249 : NonHalt tm_tq00_0249 /\ QHBoundTr 32779478 tm_tq00_0249 /\ QuasiHaltsTr tm_tq00_0249.
-Proof. apply (tcycler_qh_stage tm_tq00_0249 34 35 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (tcycler_qh_stage tm_tq00_0249 34 35 5 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 Definition pqh_00 : list TM :=
   [tm_tq00_0000;

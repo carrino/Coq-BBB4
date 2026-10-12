@@ -20,6 +20,7 @@
     Differentially validated against the raw simulator on BOTH branches --
     step counts AND exact configurations -- for 198 anchors.
     Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
+From BBB4.CensusTr Require Import BoundCheckTr.
 From Coq Require Import Arith Lia Bool List PArith Wellfounded.
 From BBB4 Require Import BBB4_Statement CTape Mirror.
 From Coq Require Import FunctionalExtensionality.
@@ -285,7 +286,7 @@ Proof.
   - intros p _. apply lap_0RB0LD_0LC1RC_1LD1RC_1RD1LA.
   - intros t Ht p _. apply fire_0RB0LD_0LC1RC_1LD1RC_1RD1LA. exact Ht.
   - exact wit_0RB0LD_0LC1RC_1LD1RC_1RD1LA.
-  - vm_cast_no_check (eq_refl true).
+  - apply bound_tr_leb; vm_cast_no_check (eq_refl true).
 Qed.
 
 Theorem qhtr_0RB0LD_0LC1RC_1LD1RC_1RD1LA : NonHalt tm_0RB0LD_0LC1RC_1LD1RC_1RD1LA /\ QHBoundTr 32779478 tm_0RB0LD_0LC1RC_1LD1RC_1RD1LA /\ QuasiHaltsTr tm_0RB0LD_0LC1RC_1LD1RC_1RD1LA.

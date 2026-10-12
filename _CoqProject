@@ -12815,6 +12815,7 @@ theories/CensusTr/RWCerts/DataTr_RW_14_0087.v
 theories/CensusTr/RWCerts/DataTr_RW_15_0023.v
 theories/CensusTr/RWCerts/DataTr_RW_15_0053.v
 theories/CensusTr/RWCerts/DataTr_RW_15_0097.v
+theories/CensusTr/BoundCheckTr.v
 theories/CloseoutTr/CloseoutKitTr.v
 theories/CloseoutTr/RWCerts/Data_BR_00_0000.v
 theories/CloseoutTr/RWCerts/Data_BR_00_0001.v

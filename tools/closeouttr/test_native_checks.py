@@ -1,10 +1,23 @@
 #!/usr/bin/env python3
 import unittest
+from unittest.mock import patch
 
 from native_checks import proof_evaluator, rewrite
 
 
 class NativeChecksTests(unittest.TestCase):
+    def test_large_compact_certificates_only(self):
+        source = ('(* COMPACT CERTIFICATE TABLES v1 *)\n'
+                  'Lemma cert : checker data = true.\n'
+                  'Proof. vm_compute. reflexivity. Qed.\n')
+        self.assertEqual(rewrite(source), source)
+        with patch('native_checks.COMPACT_NATIVE_MIN_BYTES', len(source.encode())):
+            after = rewrite(source)
+            self.assertEqual(after, source.replace('vm_compute', 'native_compute'))
+            self.assertEqual(rewrite(after), after)
+            unmarked = source.replace('COMPACT CERTIFICATE TABLES v1', 'literal tables')
+            self.assertEqual(rewrite(unmarked), unmarked)
+
     def test_only_search_cast_changes(self):
         for checker in ['rank_tier_tr_sound', 'rw_tier_tr_sound', 'mb_tier_tr_sound']:
             source = ('Definition row := [t1RB;tN].\nLemma cert : coversTr tm.\n'

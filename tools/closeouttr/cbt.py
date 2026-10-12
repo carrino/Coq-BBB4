@@ -24,11 +24,14 @@ write the same file.  Library use:
 """
 import os
 import re
-from native_checks import proof_evaluator
+import sys
+from native_checks import proof_evaluator, rewrite as native_checks
 from compact_tables import rewrite as compact_tables
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
+sys.path.insert(0, os.path.join(REPO, 'tools', 'censustr'))
+from fast_bound_checks import rewrite as fast_bound_checks  # noqa: E402
 CT = os.path.join(REPO, 'theories', 'CloseoutTr')
 
 TAG_RE = re.compile(r'^[A-Z][A-Z0-9]{0,7}$')
@@ -102,7 +105,7 @@ def write_batch(tag, nn, requires, entries, blurb, overwrite=False, preamble='')
         f.write('Proof. exact %s. Qed.\n' % term)
     with open(path) as f:
         source = f.read()
-    compact = compact_tables(source, 'CBT_' + base)
+    compact = native_checks(fast_bound_checks(compact_tables(source, 'CBT_' + base)))
     if compact != source:
         with open(path, 'w') as f:
             f.write(compact)

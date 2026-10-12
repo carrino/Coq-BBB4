@@ -10535,12 +10535,12 @@ Definition fuelphase_AST_131_0001_r1 : list (list Sym) := [[S0; S0; S0; S0; S0; 
 (* spec 1RB1LB_1LC0RD_1RD0LB_0LA1RA *)
 Definition r_AST_131_0000 : list (option Trans) := [t1RB;t1LB;t1LC;t0RD;t1RD;t0LB;t0LA;t1RA].
 Lemma cv_AST_131_0000 : coversTr (row_to_tm r_AST_131_0000).
-Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_phase2tr_sound _ 5 14928 fuelphase_AST_131_0000_l0 fuelphase_AST_131_0000_l1 fuelphase_AST_131_0000_r0 fuelphase_AST_131_0000_r1 fuelphase_AST_131_0000). vm_compute. reflexivity. Qed.
+Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_phase2tr_sound _ 5 14928 fuelphase_AST_131_0000_l0 fuelphase_AST_131_0000_l1 fuelphase_AST_131_0000_r0 fuelphase_AST_131_0000_r1 fuelphase_AST_131_0000). native_compute. reflexivity. Qed.
 
 (* spec 1RB1LB_0LC1RD_1LA1LA_1LB0RD *)
 Definition r_AST_131_0001 : list (option Trans) := [t1RB;t1LB;t0LC;t1RD;t1LA;t1LA;t1LB;t0RD].
 Lemma cv_AST_131_0001 : coversTr (row_to_tm r_AST_131_0001).
-Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_phase2tr_sound _ 7 50176 fuelphase_AST_131_0001_l0 fuelphase_AST_131_0001_l1 fuelphase_AST_131_0001_r0 fuelphase_AST_131_0001_r1 fuelphase_AST_131_0001). vm_compute. reflexivity. Qed.
+Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_phase2tr_sound _ 7 50176 fuelphase_AST_131_0001_l0 fuelphase_AST_131_0001_l1 fuelphase_AST_131_0001_r0 fuelphase_AST_131_0001_r1 fuelphase_AST_131_0001). native_compute. reflexivity. Qed.
 
 Definition cbtrows_AST_131 : list (list (option Trans)) :=
   [r_AST_131_0000;

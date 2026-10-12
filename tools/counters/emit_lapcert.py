@@ -36,6 +36,8 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
+sys.path.insert(1, os.path.join(REPO, 'tools', 'censustr'))
+from fast_bound_checks import rewrite as fast_bound_checks  # noqa: E402
 
 from emit_interleave import (parse, carry, ENC, LAB, ST, SYM,          # noqa: E402
                              DeriveError, derive_tail_best,
@@ -2606,7 +2608,7 @@ def render_tr(D, spec, dspec, mirrored):
                  % (PREFIX_QH if QH_MODE else PREFIX_TR, ID,
                     'QUASIHALTING-side ' if QH_MODE else ''),
                  src, count=1)
-    return src
+    return fast_bound_checks(src)
 
 
 def coqc(path):
