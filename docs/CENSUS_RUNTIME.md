@@ -3719,15 +3719,20 @@ checking with VM conversion. The generator reproduces all 40 certificates in
 the five files exactly, retaining VM evaluation for the smaller anchors.
 
 On this Coq 8.18 / OCaml 4.14 environment, the complete 309,417,105-step-anchor
-proof (`TCyc_05`) takes **141.787 CPU seconds** with the original checker and
-native evaluation, versus **19.028 CPU seconds** with the equivalent checker:
-**7.45x faster**. Peak RSS falls from **2.445 to 0.721 GiB**. The production file
-independently compiled in 19.8 CPU seconds. Other builds were running, so these
-are CPU comparisons rather than isolated wall-time measurements.
-The new checker also passed using VM evaluation in 143.897 CPU seconds,
-independently confirming the large proof without native conversion. Comparing
-that with its 19.028-second native run gives another 7.56x evaluator gain;
-the original checker's VM baseline is still running.
+proof (`TCyc_05`) passed in all four configurations:
+
+| Checker | Evaluator | CPU seconds | Peak GiB |
+|---|---|---:|---:|
+| Original | VM (previous production) | 911.789 | 2.783 |
+| Original | Native | 141.788 | 2.445 |
+| Equivalent fast checker | VM | 143.897 | 0.734 |
+| Equivalent fast checker | Native (new production) | 19.028 | 0.721 |
+
+The combined change is **47.9x faster** on this complete proof. Comparing native
+on both sides isolates a **7.45x checker gain**; the new checker also passes
+using VM conversion. The production file independently compiled in 19.8 CPU
+seconds. Other builds were running, so these are CPU comparisons rather than
+isolated wall-time measurements, and they are not whole-build speedups.
 
 Blindly changing state batches to native evaluation did not help: the complete
 100-proof `QHB_00` batch went from 2.789 to 15.188 CPU seconds, and the 27-proof
