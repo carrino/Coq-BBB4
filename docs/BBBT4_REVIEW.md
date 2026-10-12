@@ -210,7 +210,7 @@ The `Axioms:` block it prints for `BBBT4_value` should list
 trusted, because the instruction-level walk has no committed `.vo`. Memory
 sets the job counts: the walk budgets 4 GB per job. Override with
 `PREREQ_TR_JOBS=`, `WALK_TR_JOBS=` and `CLOSEOUT_TR_JOBS=`. Budget 6 hours
-or more on an 8-core, 32 GB machine (§8.2).
+about 7 hours on an 8-core, 32 GB machine (§8.3).
 
 The same steps by hand:
 
@@ -233,7 +233,7 @@ For an independent re-check of the compiled terms, run
 | Claim stated (`BBBT4_Spec.v`) | done |
 | Lower bound (`BBBT4_Champion.v`) | done, builds from source |
 | Closeout: 10,924 of 10,924 rows (`closeout_tr_complete`) | done, CI |
-| Upper bound and value (`CloseoutFinalTr.v`, `BBBT4_Value.v`) | **done, verified end to end** (§8.1, §8.2) |
+| Upper bound and value (`CloseoutFinalTr.v`, `BBBT4_Value.v`) | **done, verified end to end** (§8.1–8.3) |
 | `coqchk` of the full chain | pending, box |
 | Independent reproduction on a second machine | pending |
 
@@ -316,4 +316,33 @@ the docs) was OOM-killed after 2 h 31 min, in the walk's prerequisites
 jobs, and nine LAPQ bundles at ~3.6 GB each, beside the 6-8 GB IRules
 batches, exceed 32 GB; the earlier run had those files built already. The
 phase now has its own memory budget (`PREREQ_TR_RSS_GB`, 6 GB per job, so
-4 jobs on 32 GB). A clean-tree timing is pending.
+4 jobs on 32 GB; PR #251).
+
+### 8.3 The third verification run, from a clean tree (2026-10-12)
+
+The clean tree of §8.2's out-of-memory rerun was carried through to the end
+at `bb35b8d9e5999dafca61a5c797dd00386391ad2b`, main after PR #251. The
+banner read `prerequisite jobs 4, walk jobs 7, batch jobs 9`. The build ran
+in three parts, each resuming from the files the previous one finished:
+
+| Part | Commit | Wall time | Outcome |
+|---|---|---:|---|
+| 1 | `8aa8a34b` | 2 h 31 min | killed in the prerequisites (9 jobs, out of memory) |
+| 2 | `8aa8a34b` | 7 min | killed again in the prerequisites |
+| 3 | `bb35b8d9` | 4 h 37 min | **complete** |
+
+The total, 7 h 15 min, is a slight overestimate of one clean run: part 1
+ran its prerequisites at 9 jobs, and each kill discarded the files in
+flight. Part 3 printed:
+
+```
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+  : forall (A : Type) (B : A -> Type) (f g : forall x : A, B x),
+    (forall x : A, f x = g x) -> f = g
+------------------------------------------------------------
+proof-tr-all COMPLETE at bb35b8d9e5999dafca61a5c797dd00386391ad2b.
+BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)
+```
+
+Part 3 used 1,746 CPU-minutes (29 CPU-hours) of user time.

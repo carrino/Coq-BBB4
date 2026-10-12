@@ -387,10 +387,10 @@ Resources:
   6–8 GB.  A 32 GB box gets 4 prerequisite jobs, 7 walk jobs and 9 batch
   jobs.  To override:
   `make proof-tr-all PREREQ_TR_JOBS=3 WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6`.
-* **Time.**  6 hours or more on 8 cores / 32 GB (WSL2).  The run verified
-  2026-10-11 at `455d4d96` took about 6 hours, but it reused part of an
-  earlier build ([`BBBT4_REVIEW.md`](BBBT4_REVIEW.md) §8.2); a clean-tree
-  timing is pending.  The first
+* **Time.**  About 7 hours on 8 cores / 32 GB (WSL2).  The clean-tree
+  build verified 2026-10-12 at `bb35b8d9` ran in three parts, after two
+  out-of-memory stops that are now fixed, totalling 7 h 15 min
+  ([`BBBT4_REVIEW.md`](BBBT4_REVIEW.md) §8.3).  The first
   verified run, on 2026-10-06 before the speedups of PR #246, took most of
   a day (§8.1).
 * **Stack.**  Steps 3 and 4 raise the stack limit themselves, as `make all`
