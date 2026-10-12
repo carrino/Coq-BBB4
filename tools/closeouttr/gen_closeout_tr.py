@@ -30,6 +30,7 @@ REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
 from cbt import CT, spec_row  # noqa: E402
 from native_checks import rewrite as native_checks  # noqa: E402
+from compact_tables import rewrite as compact_tables  # noqa: E402
 from gen_rw_stored import read_certificates, generated_files as stored_rw_files  # noqa: E402
 sys.path.insert(0, os.path.join(REPO, 'tools', 'censustr'))
 from gen_lap_bundles import generate as generate_lap_bundles, read_bundle_map, rewrite_imports  # noqa: E402
@@ -211,7 +212,7 @@ def main():
             files[path] = rewrite_imports(files.get(path, open(path).read()), lap_bundles)
     for module, _, _ in bs:
         path = os.path.join(CT, module+'.v')
-        files[path] = native_checks(files.get(path, open(path).read()))
+        files[path] = compact_tables(native_checks(files.get(path, open(path).read())), module)
     stale = [p for p, txt in files.items()
              if not os.path.exists(p) or open(p).read() != txt]
     if a.check:

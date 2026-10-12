@@ -3462,3 +3462,118 @@ descriptors. Existing per-unit walk times remain available as well.
 The seven-hour run has no recorded phase breakdown, so these results cannot
 yet determine the complete eight-core build time. The new phase records make
 the next full run usable for locating the remaining bottleneck.
+
+## Instruction proof follow-up: SCC ranks and compact closeout tables
+
+The next profiling pass found two broader sources of work: repeated graph
+relaxation in RepWL certificate search, and elaboration of millions of repeated
+numerals in supplied closeout certificates. Both changes keep the existing
+verified checkers and the original public theorem statements.
+
+### Rank the SCC graph once
+
+`CensusTr/RepWLSearchTr.v` uses the source-first SCC order already computed by
+`RepWLSearch`. It visits components in reverse order, assigning each component
+one plus the maximum rank of its outgoing successors (zero for a sink). Ranks
+are stored at the nodes' positive indices. This avoids repeatedly relaxing all
+edges and converting unary component numbers into positive map keys. A graph
+with a single component needs only the default-zero map. The final acyclic
+round uses the same traversal on singleton components.
+
+This code only produces certificates. `rw_check_neverqhtr` and
+`mb_check_neverqhtr`, their edge checks, and their soundness theorems are
+unchanged. The state-level search is also unchanged. The instruction RepWL and
+multiblock producers call the new search; their parameters and the machine
+lists stay the same.
+
+Same-host measurements with Coq 8.18.0 / OCaml 4.14.2, native conversion in
+both variants:
+
+| Workload | Relaxation CPU seconds | SCC-order CPU seconds | Speedup |
+|---|---:|---:|---:|
+| Proven RepWL row 09:18 | 31.255 | 8.566 | 3.65x |
+| Proven RepWL row 15:20 | 167.560 | 46.351 | 3.62x |
+| Complete RW_03 closeout, 50 proofs | 206.509 | 87.809 | 2.35x |
+| Complete MB_00 closeout, 4 proofs | 18.259 | 18.853 | 0.97x |
+| 77 matching prerequisite files, 426 proofs | 1322.413 | 713.706 | 1.85x |
+
+The individual-row and MB samples ran without competing proof builds. The
+50-proof batch and prerequisite comparison ran alongside the broad build, so
+the table uses child CPU time rather than interpreting their wall times as
+isolated timings. The MB sample shows that the rank change does not improve
+every workload. This is an additional improvement over the native search
+changes above, not another VM/native comparison.
+
+`Tests/RepWLSearchTr_Regression.v` compares the result with the original rank
+algorithms on all 512 directed graphs on three vertices in all six vertex
+orders, including cycles and disconnected graphs. It also covers a larger
+graph with multiple cyclic components, a tail, a self-loop and an isolated
+vertex. Both VM and native tests pass, with closed assumptions. Independent
+`coqchk` validation also passed. These finite tests are not a universal
+equivalence proof: acceptance of every production certificate remains the
+responsibility of the existing verified checker.
+
+`tools/censustr/bench_repwl_ranks.py` emits a separate reference producer using
+the old relaxation routines, compiles identical complete proof files against
+both producers, and audits their final consumer theorems. It preserves the
+production proof objects and records source hashes, timings and memory:
+
+```sh
+python3 tools/censustr/bench_repwl_ranks.py --output work/repwl-ranks \
+  theories/CensusTr/RWParts/ProvTr_RW_15_P005.v \
+  theories/CloseoutTr/CBT_RW_03.v
+```
+
+Build the current native computation dependencies first. For an isolated
+comparison, stop other compiler jobs before running the benchmark.
+
+### Pack large supplied certificate tables
+
+`tools/closeouttr/compact_tables.py` converts increasing positive-key rank
+tables and gates into shared dictionaries plus hexadecimal chunks. It uses
+the existing `HexFuelData` decoder; there is no new checker or trusted
+certificate import. Both `cbt.write_batch` and `gen_closeout_tr.py` apply this
+normalization. Small files, duplicate/unsorted tables, dictionaries outside the
+encoding's bounds, and existing hand-packed FuelPhase files retain their
+previous representation.
+
+94 files change, from 158,971,702 to 21,508,882 source bytes. Independent
+decoding reproduced every original table and gate. Expanding the complete
+files reproduced their original source after whitespace/numeral normalization
+and the explicitly recognized `map N.to_nat` data conversion. All public
+theorem declarations, batch names, row order, checker parameters and proof
+checks remain unchanged: 626 batches, 10,924 closeout rows.
+
+For AST_95, the initial complete-file comparison measured:
+
+| Representation | Wall seconds | CPU seconds | Peak child RSS |
+|---|---:|---:|---:|
+| Original literal tables | 161.286 | 160.693 | 4.61 GiB |
+| Shared positive constants | 73.674 | 72.861 | 2.31 GiB |
+| Packed tables | 50.037 | 49.946 | 1.68 GiB |
+
+All three used the original VM proof scripts. The production emitter, which
+also shares the unary rank tails, checked the same batch in 49.288 CPU seconds
+at 1.68 GiB. Its 60.2-second wall time included contention with the inventory
+check and is not an isolated timing. Separate Coq conversion proofs establish
+that both production certificate functions equal the original functions;
+their assumptions are closed. The final batch theorem has only the existing
+`functional_extensionality_dep` assumption. Independent `coqchk` validation of
+the packed batch passed with the bytecode compiler enabled.
+
+Six Python tests cover chunk boundaries, a fixed independently specified wire
+example, exact `N`-decoder recognition, unchanged unordered/duplicate tables,
+dictionary overflow, malformed payloads and round-trip/idempotence behavior.
+The closeout generator's consistency check passes. For inspection, expand a
+packed file without modifying its canonical source:
+
+```sh
+python3 tools/closeouttr/compact_tables.py --expand \
+  theories/CloseoutTr/CBT_AST_95.v > work/AST95-expanded.v
+python3 tools/closeouttr/test_compact_tables.py
+python3 tools/closeouttr/gen_closeout_tr.py --check
+```
+
+These measurements describe individual files and a substantial prerequisite
+sample. They are not a cold end-to-end build measurement and do not establish
+the final eight-core wall time.

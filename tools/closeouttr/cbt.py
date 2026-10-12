@@ -25,6 +25,7 @@ write the same file.  Library use:
 import os
 import re
 from native_checks import proof_evaluator
+from compact_tables import rewrite as compact_tables
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -99,4 +100,10 @@ def write_batch(tag, nn, requires, entries, blurb, overwrite=False, preamble='')
         for x in reversed(names):
             term = '(Forall_cons _ cv_%s %s)' % (x, term)
         f.write('Proof. exact %s. Qed.\n' % term)
+    with open(path) as f:
+        source = f.read()
+    compact = compact_tables(source, 'CBT_' + base)
+    if compact != source:
+        with open(path, 'w') as f:
+            f.write(compact)
     return path
