@@ -3254,3 +3254,120 @@ question rests on.
 Two numbers this round would still like, in cost order: the native
 `--iter 0` row (M2 -- minutes, no walk), and that walk-rss table (free,
 whenever a walk happens for any reason).
+
+
+## Instruction census: short-circuit checks and native RepWL evaluation (2026-10-12)
+
+The instruction pipeline still evaluated work after a check had already failed.
+`List.forallb` uses `andb`, an ordinary function whose arguments are both evaluated
+by Coq's VM and native evaluators. In `ClosureTr`, a failing instruction could
+therefore still trigger certificate searches for all the remaining instructions;
+a failing edge could still trigger checks on the remaining closure nodes.
+
+`allb_tr` branches inside its recursion. Its general `allb_tr_eq` theorem proves
+that it returns the same boolean as `List.forallb` for every predicate and list.
+The instruction closure checks use it for closedness, rank peeling, rank checks
+and lexicographic checks. `cfires` similarly stops on the first matching
+instruction; `cfires_short_equiv` proves equality with the previous scan for
+every machine, configuration, target and prefix length. The candidate filter in
+`try_qhbtr` and the conjunctions in `WrapTr` now branch before evaluating the
+expensive check. These conjunction changes are definitionally equal to the old
+expressions. All checker soundness proofs remain checked by Coq.
+
+The last-fire filter also used to simulate the same prefix separately for each
+of the eight instruction targets. `last_fires` maintains a concrete eight-field
+record during one scan. `last_fires_spec` proves each field equal to the old
+single-target scan, and `qh_last_fires_spec` proves equality of the complete
+ordered candidate list for every machine. The horizon and treatment of the
+halting configuration and never-fired instructions are unchanged.
+
+The 1,430 proven-tier RepWL searches now use `native_cast_no_check`, the same
+native evaluator already used by the census walk, in place of
+`vm_cast_no_check`. The 32 supplied-certificate checks retain their VM casts.
+The generator and its inventory parser support both evaluators. Replacing
+`native_cast_no_check` with `vm_cast_no_check` in every changed generated part
+recovers the original source byte-for-byte: machine definitions, parameters,
+checker applications, row order, wrappers and theorem statements are unchanged.
+On a Coq built without native support, Coq falls back to its VM; `proof-tr-all`
+already requires and activates a native-capable compiler.
+
+Two isolated, single-process checks from RW_09, Coq 8.18.0 / OCaml 4.14.2,
+Linux x86-64 on AMD EPYC 9V74 (4 CPU quota, 16 GiB memory), dependencies prebuilt:
+
+| RepWL row | VM wall seconds | Native wall seconds | Speedup |
+|---|---:|---:|---:|
+| 09:0 | 2.744 | 1.205 | 2.28x |
+| 09:18 | 122.995 | 32.361 | 3.80x |
+
+Both evaluators proved the exact same boolean goal with closed assumptions.
+For row 09:18, peak RSS was 665,378,816 bytes with VM and 690,397,184 bytes with
+native evaluation. These are individual search measurements, not whole-stage
+or whole-build timings. Reproduce them after building the native checker:
+
+```sh
+python3 tools/censustr/bench_rw_evaluator.py --row 09:18 --output work/rw-evaluator
+```
+
+Two unchanged production walk units were also compiled in fresh processes on
+that machine, before and after the checker changes, with no competing compiler
+jobs. Both units proved their goals with closed assumptions in both runs:
+
+| Walk unit | Before wall seconds | After wall seconds | Speedup |
+|---|---:|---:|---:|
+| 10 | 48.642 | 29.216 | 1.66x |
+| 63 | 1,014.373 | 442.735 | 2.29x |
+
+Peak RSS changed from 1,611,997,184 to 1,364,283,392 bytes for unit 10 and
+from 2,496,872,448 to 2,478,698,496 bytes for unit 63. These serial speedup
+ratios need no adjustment for the target machine's eight cores. Whole-build
+wall time also depends on parallelism, memory and serial assembly work.
+
+The build also precompiles the native dependencies of `RunTr_WalkCompute` before
+building the proven tiers. Proof-only prerequisites and closeout batches use
+`-native-compiler ondemand`, avoiding eager native companions that the lean walk
+does not load. The original target dependency graph contains 3,448 libraries,
+169 of which are needed by the computation layer: this avoids 3,279 eager
+native compilations on a fresh build. This is native-capable mode, not
+`-native-compiler no`: all proofs still execute, all theorems are checked,
+and any native computation can still compile code when needed.
+`make proof-tr-all TR_PROOF_NATIVE=yes` restores
+eager native companions for comparison. Memory job budgets are unchanged.
+
+The new `ShortCircuitTr_Regression.v` checks a valid eight-instruction cycle in
+both VM and native evaluation, rejects a bypass self-loop, missing successors,
+a missing node and an empty lex certificate, and audits the changed soundness
+theorems. It is included in `proof-tr-all`. The walk-recipe tests check that the
+computational prerequisites build first with native precompilation, proof-only
+prerequisites use on-demand mode, and the eager override works, in addition to
+the existing incremental and failure checks.
+
+All 23 RW_09 proofs and their assembled `ptw_09_nqhtr` theorem compiled with
+native evaluation. The three parts' Coq-reported compile times changed from
+132.480 / 320.233 / 248.933 seconds (VM) to 36.230 / 80.707 / 65.201 seconds
+(native), at three compiler workers. This was concurrent validation with other
+checks, not an isolated stage benchmark. The existing stored-certificate
+corruption suite and closeout batch `CBT_BR_00` also compiled in on-demand mode.
+All three consumer assumption audits report only
+`functional_extensionality_dep`. The six generator/inventory tests and five
+walk-recipe tests pass, as do generated-file and project checks. An independent
+`coqchk` of `ShortCircuitTr_Regression` and its dependency closure passed.
+
+Reproduce the unit measurements with the same script in the before and after
+trees, with the same native-capable Coq and no competing compiler jobs:
+
+```sh
+make Makefile.coq
+make -f Makefile.coq -j3 theories/CensusTr/RunTr_WalkCompute.vo
+python3 tools/censustr/bench_short_circuit.py --units 10 63 --output work/short-bench
+make -f Makefile.coq theories/Tests/ShortCircuitTr_Regression.vo
+python3 tools/censustr/test_walk_make.py
+```
+
+The benchmark forcibly compiles copies of the actual, unchanged unit sources in
+fresh processes and requires closed assumptions for each. It records wall/CPU
+time, peak RSS, compiler version, revision and source hashes. Its objects stay
+outside the production walk. Use a new output directory for each run.
+
+The requested 2–3 hour goal is for the complete build on the target machine.
+A selected-unit comparison does not establish that end-to-end time; the final
+`BBBT4_value` assembly and a full cold build must still be measured separately.

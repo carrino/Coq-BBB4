@@ -18,7 +18,7 @@ Definition tm_rw13_0064 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma nqhtr_rw13_0064 : NeverQuasiHaltsTr tm_rw13_0064.
-Proof. apply (rw_tier_tr_sound _ 12 2 0 20608 47). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 12 2 0 20608 47). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_13_p017 : list TM :=
   [tm_rw13_0064].

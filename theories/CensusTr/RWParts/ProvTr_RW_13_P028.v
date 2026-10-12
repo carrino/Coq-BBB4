@@ -18,7 +18,7 @@ Definition tm_rw13_0090 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma nqhtr_rw13_0090 : NeverQuasiHaltsTr tm_rw13_0090.
-Proof. apply (rw_tier_tr_sound _ 4 2 0 130032 29). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 4 2 0 130032 29). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_13_p028 : list TM :=
   [tm_rw13_0090].

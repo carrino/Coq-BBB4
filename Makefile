@@ -859,6 +859,12 @@ CENSUS_TR_UNITS ?= 96
 # the walk's.  Standalone callers keep the old default; proof-tr-all
 # passes PREREQ_TR_JOBS, sized from memory (PREREQ_TR_RSS_GB, below).
 CENSUS_TR_PREREQ_JOBS ?= $(WALK_JOBS)
+# The walk evaluates only RunTr_WalkCompute's dependency closure. Precompile
+# native code for that closure, but keep proof-only boards/batches on demand:
+# all proofs still run and Coq still checks every theorem. Compiling native
+# copies of thousands of proof-only libraries adds work the walk never uses.
+# Set TR_PROOF_NATIVE=yes to restore eager native compilation of those files.
+TR_PROOF_NATIVE ?= ondemand
 
 census-tr-units:
 	@python3 tools/censustr/gen_walk_units.py --units $(CENSUS_TR_UNITS)
@@ -869,7 +875,12 @@ census-tr-units:
 # explicit: proof-tr-all passes WALK_TR_JOBS, and standalone callers can
 # set WALK_JOBS. See docs/CENSUS_RUNTIME.md for measurements of the split.
 census-tr-walk: Makefile.coq
-	$(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) theories/CensusTr/RunTr_Split.vo
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	$(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
+	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler yes' theories/CensusTr/RunTr_WalkCompute.vo
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	$(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
+	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(TR_PROOF_NATIVE)' theories/CensusTr/RunTr_Split.vo
 	@mkdir -p census_probes
 	@ulimit -s $(STACK_KB) 2>/dev/null \
 	  || echo ">>> WARNING: could not raise stack to $(STACK_KB)"
@@ -1008,6 +1019,7 @@ _proof-tr-all-run:
 	@echo "# commit $$(git rev-parse HEAD 2>/dev/null)"
 	@echo "# $$(coqc --version | head -1) / OCaml $$(ocamlfind ocamlopt -version 2>/dev/null)"
 	@echo "# prerequisite jobs $(PREREQ_TR_JOBS), walk jobs $(WALK_TR_JOBS), batch jobs $(CLOSEOUT_TR_JOBS)"
+	@echo "# proof native mode $(TR_PROOF_NATIVE); computation native mode yes"
 	@echo "############################################################"
 	@# same reasons as _proof-all-run: a stale Makefile.coq bakes in the
 	@# wrong native setting, and a tree built by another toolchain cannot
@@ -1034,14 +1046,16 @@ _proof-tr-all-run:
 	@echo ">>> [2/4] the census walk: census_tr"
 	$(MAKE) census-tr-walk WALK_JOBS=$(WALK_TR_JOBS) CENSUS_TR_PREREQ_JOBS=$(PREREQ_TR_JOBS)
 	@echo ">>> [3/4] the closeout, the champion, the tests"
-	@# the stack: under the census switch every .vo is also COQNATIVE'd,
-	@# and the OCaml compiler overflows the default 8 MB stack on the
-	@# large batch files (CBT_AST_134..136, 2026-10-06) -- as for `all'.
+	@# Keep the raised stack for native computations and for the eager
+	@# TR_PROOF_NATIVE=yes override: the OCaml compiler overflows 8 MB on
+	@# large native batch companions (CBT_AST_134..136, 2026-10-06).
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	$(MAKE) -f Makefile.coq -j$(CLOSEOUT_TR_JOBS) \
+	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(TR_PROOF_NATIVE)' \
 	  theories/CloseoutTr/CloseoutTr.vo \
 	  theories/BBBT4_Champion.vo theories/Counters/BlankTailTr.vo \
-	  theories/Tests/ChampionTr_Corruption.vo theories/Tests/ConventionTr_Example.vo
+	  theories/Tests/ChampionTr_Corruption.vo theories/Tests/ConventionTr_Example.vo \
+	  theories/Tests/ShortCircuitTr_Regression.vo
 	@echo ">>> [4/4] bbbt4_bound and BBBT4_value"
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/CloseoutFinalTr.v

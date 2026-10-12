@@ -18,7 +18,7 @@ Definition tm_rw14_0081 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma nqhtr_rw14_0081 : NeverQuasiHaltsTr tm_rw14_0081.
-Proof. apply (rw_tier_tr_sound _ 4 2 0 46576 26). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 4 2 0 46576 26). native_cast_no_check (eq_refl true). Qed.
 
 (* 0RB1RA_1RC0LD_0LD0RD_1RA1LC  L=6 T=2 t=0 fuel=10560 M=29 *)
 Definition tm_rw14_0082 : TM := fun q s =>
@@ -33,7 +33,7 @@ Definition tm_rw14_0082 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma nqhtr_rw14_0082 : NeverQuasiHaltsTr tm_rw14_0082.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 10560 29). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 10560 29). native_cast_no_check (eq_refl true). Qed.
 
 (* 0RB1RB_0RC0RD_1LD1RA_1LB0LC  L=6 T=2 t=0 fuel=9808 M=29 *)
 Definition tm_rw14_0083 : TM := fun q s =>
@@ -48,7 +48,7 @@ Definition tm_rw14_0083 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma nqhtr_rw14_0083 : NeverQuasiHaltsTr tm_rw14_0083.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 9808 29). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 9808 29). native_cast_no_check (eq_refl true). Qed.
 
 (* 0RB1RC_1LC1RA_1LD0RB_1RB0LC  L=6 T=2 t=0 fuel=19264 M=30 *)
 Definition tm_rw14_0084 : TM := fun q s =>
@@ -63,7 +63,7 @@ Definition tm_rw14_0084 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma nqhtr_rw14_0084 : NeverQuasiHaltsTr tm_rw14_0084.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 19264 30). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 19264 30). native_cast_no_check (eq_refl true). Qed.
 
 (* 0RB1RD_1RC0LC_1LD0LB_0RA1LB  L=6 T=2 t=0 fuel=27288 M=30 *)
 Definition tm_rw14_0085 : TM := fun q s =>
@@ -78,7 +78,7 @@ Definition tm_rw14_0085 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma nqhtr_rw14_0085 : NeverQuasiHaltsTr tm_rw14_0085.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 27288 30). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 27288 30). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_14_p034 : list TM :=
   [tm_rw14_0081;

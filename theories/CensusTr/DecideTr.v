@@ -48,6 +48,70 @@ Fixpoint last_fire (tm : TM) (gas : nat) (c : cconf) (k : nat)
       end
   end.
 
+(** Collect all eight last-fire times in one simulation. A concrete record
+    makes the scan evaluate once before the eight lookups, including under
+    the native evaluator; no chain of function updates retains old tapes. *)
+Record FireTimes := mkFireTimes {
+  fire_A0 : option nat; fire_A1 : option nat;
+  fire_B0 : option nat; fire_B1 : option nat;
+  fire_C0 : option nat; fire_C1 : option nat;
+  fire_D0 : option nat; fire_D1 : option nat
+}.
+
+Definition no_fires : FireTimes :=
+  mkFireTimes None None None None None None None None.
+
+Definition fire_time (times : FireTimes) (tg : Instr) : option nat :=
+  match tg with
+  | (StA, S0) => fire_A0 times | (StA, S1) => fire_A1 times
+  | (StB, S0) => fire_B0 times | (StB, S1) => fire_B1 times
+  | (StC, S0) => fire_C0 times | (StC, S1) => fire_C1 times
+  | (StD, S0) => fire_D0 times | (StD, S1) => fire_D1 times
+  end.
+
+Definition record_fire (times : FireTimes) (tg : Instr) (k : nat) : FireTimes :=
+  let '(mkFireTimes a0 a1 b0 b1 c0 c1 d0 d1) := times in
+  match tg with
+  | (StA, S0) => mkFireTimes (Some k) a1 b0 b1 c0 c1 d0 d1
+  | (StA, S1) => mkFireTimes a0 (Some k) b0 b1 c0 c1 d0 d1
+  | (StB, S0) => mkFireTimes a0 a1 (Some k) b1 c0 c1 d0 d1
+  | (StB, S1) => mkFireTimes a0 a1 b0 (Some k) c0 c1 d0 d1
+  | (StC, S0) => mkFireTimes a0 a1 b0 b1 (Some k) c1 d0 d1
+  | (StC, S1) => mkFireTimes a0 a1 b0 b1 c0 (Some k) d0 d1
+  | (StD, S0) => mkFireTimes a0 a1 b0 b1 c0 c1 (Some k) d1
+  | (StD, S1) => mkFireTimes a0 a1 b0 b1 c0 c1 d0 (Some k)
+  end.
+
+Lemma fire_time_record : forall times fired tg k,
+  fire_time (record_fire times fired k) tg =
+  (if instr_eqb fired tg then Some k else fire_time times tg).
+Proof.
+  intros [] [q s] [q' s'] k. destruct q, s, q', s'; reflexivity.
+Qed.
+
+Fixpoint last_fires (tm : TM) (gas : nat) (c : cconf) (k : nat)
+    (times : FireTimes) : FireTimes :=
+  match gas with
+  | 0 => times
+  | S g =>
+      let times' := record_fire times (cinstr c) k in
+      match cstep tm c with
+      | None => times'
+      | Some c' => last_fires tm g c' (S k) times'
+      end
+  end.
+
+Lemma last_fires_spec : forall tm gas c k times tg,
+  fire_time (last_fires tm gas c k times) tg =
+  last_fire tm gas c k tg (fire_time times tg).
+Proof.
+  intros tm gas. induction gas as [|gas IH]; intros c k times tg;
+    cbn [last_fires last_fire]; [reflexivity|].
+  destruct (cstep tm c).
+  - rewrite IH, fire_time_record. reflexivity.
+  - apply fire_time_record.
+Qed.
+
 (** ** The cycle tiers at transition level
 
     [glift] plants the window's head cell regardless of the abstract
@@ -358,12 +422,31 @@ Definition qhb_tmax_tr : nat :=
     the rung's own [t] steps would "pin" every busy instruction at its
     last within-window fire near the window edge. *)
 Definition qh_last_fires (tm : TM) : list (Instr * nat) :=
+  let times := last_fires tm (16 * qhb_tmax_tr) c0 0 no_fires in
+  fold_right
+    (fun tg acc =>
+       match fire_time times tg with
+       | Some s => (tg, s) :: acc
+       | None => acc
+       end) [] all_Instr.
+
+(** Exact equality with the old eight simulations, including list order,
+    never-fired targets, the halting configuration and the horizon boundary. *)
+Lemma qh_last_fires_spec : forall tm,
+  qh_last_fires tm =
   fold_right
     (fun tg acc =>
        match last_fire tm (16 * qhb_tmax_tr) c0 0 tg None with
        | Some s => (tg, s) :: acc
        | None => acc
        end) [] all_Instr.
+Proof.
+  intros tm. unfold qh_last_fires.
+  generalize all_Instr. intros tgs. induction tgs as [|[q s] tgs IH];
+    cbn [fold_right].
+  - reflexivity.
+  - rewrite last_fires_spec, IH. destruct q, s; reflexivity.
+Qed.
 
 (** the claimed-quiet set at horizon [t]: a transition-QH machine
     typically quiets SEVERAL instructions, and the wrapped closure's
@@ -417,10 +500,13 @@ Definition try_rw_qhbtr_at (tm : TM) (lf : list (Instr * nat))
 
 Definition try_qhbtr (tm : TM) : bool :=
   let lf := qh_last_fires tm in
-  existsb (fun p => snd p <? qhb_tmax_tr) lf &&
+  (* A failed candidate filter must not evaluate any closure ladder.
+     [andb] evaluates both arguments under native_compute/vm_compute. *)
+  if existsb (fun p => snd p <? qhb_tmax_tr) lf then
   (if anyb (try_qhbtr_at tm lf) qhb_rungs then true
    else if anyb (try_qhbtr_lex_at tm lf) qhb_lex_rungs then true
-   else anyb (try_rw_qhbtr_at tm lf) rw_qhb_rungs).
+   else anyb (try_rw_qhbtr_at tm lf) rw_qhb_rungs)
+  else false.
 
 Lemma try_qhbtr_sound : forall tm,
   try_qhbtr tm = true ->

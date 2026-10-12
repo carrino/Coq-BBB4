@@ -18,7 +18,7 @@ Definition tm_rw15_0060 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma nqhtr_rw15_0060 : NeverQuasiHaltsTr tm_rw15_0060.
-Proof. apply (rw_tier_tr_sound _ 10 2 0 188760 43). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 10 2 0 188760 43). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_15_p018 : list TM :=
   [tm_rw15_0060].

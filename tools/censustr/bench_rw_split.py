@@ -6,6 +6,8 @@ Coq toolchain. This is a phase benchmark, not a from-source proof build.
 All selected stage checks are recompiled even if their .vo files exist.
 Native companion compilation, when requested, is timed as part of each
 unit. Run before and after sequentially to avoid cross-run contention.
+Both phases deliberately force VM conversion to isolate the split; use
+bench_rw_evaluator.py to measure the VM/native evaluation change.
 
 Example:
   python3 tools/censustr/bench_rw_split.py --stages 09 --jobs 4 \
@@ -71,6 +73,7 @@ def main():
                   baseline_ref=args.baseline_ref,
                   coq_version=subprocess.check_output([args.coqc, '--version'], text=True).strip(),
                   native_companions=bool(args.coqnative), results=[])
+    record['proof_evaluator'] = 'vm'
     def save():
         (output/'timings.json').write_text(json.dumps(record, indent=2)+'\n')
     def run(path):

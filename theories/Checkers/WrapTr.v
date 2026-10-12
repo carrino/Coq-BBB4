@@ -31,6 +31,12 @@ From BBB4.Checkers.IRules Require Import Engine AnchorVisits AnchorVisitsTr.
 Import ListNotations.
 Open Scope nat_scope.
 
+(** Branch before growing a closure or searching liveness certificates.
+    Unlike a call to [andb], this notation short-circuits under native and
+    VM evaluation; it is definitionally equal to boolean conjunction. *)
+Local Notation "a &&& b" := (if a then b else false)
+  (at level 40, left associativity).
+
 (** ** The multi-cell halt-redirect machine *)
 
 Definition tr_inb (t : Instr) (tgs : list Instr) : bool :=
@@ -111,10 +117,10 @@ Qed.
 (** per-pair prefix pinning: [tg] fires at [s] and not in [(s, t]] *)
 Definition wrap_pin_ok (tm : TM) (t : nat) (p : Instr * nat) : bool :=
   let '(tg, s) := p in
-  (s <? t) &&
+  (s <? t) &&&
   match csteps tm s c0 with
   | Some cs =>
-      instr_eqb (cinstr cs) tg &&
+      instr_eqb (cinstr cs) tg &&&
       match cstep tm cs with
       | Some cs1 => negb (cfires tm cs1 (t - s) tg)
       | None => false
@@ -128,16 +134,16 @@ Definition wrap_closed_live_trs (tmw : TM) (lset rset : gset)
   match close_tr cconf cconf_enc (ng_succs tmw lset rset)
               fuel [] PositiveSet.empty [a0] with
   | Some Sl =>
-      closed_tr_b cconf cconf_enc (ng_succs tmw lset rset) Sl &&
-      mem_tr cconf cconf_enc a0 Sl &&
+      closed_tr_b cconf cconf_enc (ng_succs tmw lset rset) Sl &&&
+      mem_tr cconf cconf_enc a0 Sl &&&
       live_ok_tr cconf cconf_enc cinstr (ng_succs tmw lset rset) Sl
   | None => false
   end.
 
 Definition ngram_check_qhboundtr (tm : TM) (tgs : list (Instr * nat))
     (n t fuel rounds : nat) : bool :=
-  (1 <=? n) && (1 <=? length tgs) &&
-  forallb (wrap_pin_ok tm t) tgs &&
+  (1 <=? n) &&& (1 <=? length tgs) &&&
+  forallb (wrap_pin_ok tm t) tgs &&&
   match csteps tm t c0 with
   | Some ct =>
       let tmw := tm_wrap_trs tm (map fst tgs) in
@@ -146,7 +152,7 @@ Definition ngram_check_qhboundtr (tm : TM) (tgs : list (Instr * nat))
       let rset0 := gadds (ng_seed_side n r) gempty in
       let a0 := ng_start n ct in
       let '(lset, rset) := ng_grow tmw a0 fuel rounds lset0 rset0 in
-      ng_seed_ok n lset rset ct &&
+      ng_seed_ok n lset rset ct &&&
       wrap_closed_live_trs tmw lset rset fuel a0
   | None => false
   end.
@@ -164,8 +170,8 @@ Definition wrap_closed_live_lex_trs (tm : TM) (n : nat)
   match close_tr cconf cconf_enc (ng_succs tmw lset rset)
               fuel [] PositiveSet.empty [a0] with
   | Some Sl =>
-      closed_tr_b cconf cconf_enc (ng_succs tmw lset rset) Sl &&
-      mem_tr cconf cconf_enc a0 Sl &&
+      closed_tr_b cconf cconf_enc (ng_succs tmw lset rset) Sl &&&
+      mem_tr cconf cconf_enc a0 Sl &&&
       live_lex_ok_tr cconf cconf_enc cinstr (ng_succs tmw lset rset) Sl
         (fun tg' => map (ng_comp_denote tmw n) (cert tg'))
   | None => false
@@ -173,8 +179,8 @@ Definition wrap_closed_live_lex_trs (tm : TM) (n : nat)
 
 Definition ngram_check_qhboundtr_lex (tm : TM) (tgs : list (Instr * nat))
     (n t fuel rounds : nat) (cert : Instr -> list ngcomp) : bool :=
-  (1 <=? n) && (1 <=? length tgs) &&
-  forallb (wrap_pin_ok tm t) tgs &&
+  (1 <=? n) &&& (1 <=? length tgs) &&&
+  forallb (wrap_pin_ok tm t) tgs &&&
   match csteps tm t c0 with
   | Some ct =>
       let tmw := tm_wrap_trs tm (map fst tgs) in
@@ -183,7 +189,7 @@ Definition ngram_check_qhboundtr_lex (tm : TM) (tgs : list (Instr * nat))
       let rset0 := gadds (ng_seed_side n r) gempty in
       let a0 := ng_start n ct in
       let '(lset, rset) := ng_grow tmw a0 fuel rounds lset0 rset0 in
-      ng_seed_ok n lset rset ct &&
+      ng_seed_ok n lset rset ct &&&
       wrap_closed_live_lex_trs tm n tmw lset rset fuel a0 cert
   | None => false
   end.
@@ -508,14 +514,14 @@ Section WrapGeneric.
 
   Definition wrap_check_qhboundtr_g (fuel : nat) (a0 : A)
       (cert : Instr -> list (lexcomp A)) : bool :=
-    (1 <=? length tgs) &&
-    forallb (wrap_pin_ok tm t) tgs &&
+    (1 <=? length tgs) &&&
+    forallb (wrap_pin_ok tm t) tgs &&&
     match csteps tm t c0 with
     | Some _ =>
         match close_tr A a_enc succs fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
-            closed_tr_b A a_enc succs Sl &&
-            mem_tr A a_enc a0 Sl &&
+            closed_tr_b A a_enc succs Sl &&&
+            mem_tr A a_enc a0 Sl &&&
             live_lex_ok_tr A a_enc a_instr succs Sl cert
         | None => false
         end

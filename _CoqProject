@@ -5887,6 +5887,7 @@ theories/Tests/LapAvoid_Corruption.v
 theories/Tests/Champion_Corruption.v
 theories/Tests/ChampionTr_Corruption.v
 theories/Tests/ConventionTr_Example.v
+theories/Tests/ShortCircuitTr_Regression.v
 theories/Tests/SweepNqh_Corruption.v
 theories/Machines/Counters/LAPC_0RB0LC_1LA1RB_0RC1LD_1RC0LD.v
 theories/Machines/Counters/LAPC_0RB0LC_1LA1RB_1RD0LC_0RD1LC.v

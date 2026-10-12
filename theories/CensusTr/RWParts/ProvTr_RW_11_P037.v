@@ -18,7 +18,7 @@ Definition tm_rw11_0080 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma nqhtr_rw11_0080 : NeverQuasiHaltsTr tm_rw11_0080.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 29712 31). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 29712 31). native_cast_no_check (eq_refl true). Qed.
 
 (* 0RB1RC_1RC0RD_0LD1RA_0LA1LD  L=6 T=2 t=0 fuel=49080 M=30 *)
 Definition tm_rw11_0081 : TM := fun q s =>
@@ -33,7 +33,7 @@ Definition tm_rw11_0081 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma nqhtr_rw11_0081 : NeverQuasiHaltsTr tm_rw11_0081.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 49080 30). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 49080 30). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_11_p037 : list TM :=
   [tm_rw11_0080;

@@ -18,7 +18,7 @@ Definition tm_rw15_0075 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma nqhtr_rw15_0075 : NeverQuasiHaltsTr tm_rw15_0075.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 16576 29). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 16576 29). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RA_0LA0LB_0LC1LC  L=6 T=2 t=0 fuel=10344 M=29 *)
 Definition tm_rw15_0076 : TM := fun q s =>
@@ -33,7 +33,7 @@ Definition tm_rw15_0076 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma nqhtr_rw15_0076 : NeverQuasiHaltsTr tm_rw15_0076.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 10344 29). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 10344 29). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_15_p025 : list TM :=
   [tm_rw15_0075;

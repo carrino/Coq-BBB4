@@ -206,7 +206,7 @@ ROW_RE = re.compile(
     r'(Definition tm_rw(\d+)_(\d+) : TM :=.*?\n  end\.)\n'
     r'Lemma nqhtr_rw\8_\9 : NeverQuasiHaltsTr tm_rw\8_\9\.\n'
     r'Proof\. apply \(rw_tier_tr_sound _ (\d+) (\d+) (\d+) (\d+) (\d+)\)\. '
-    r'vm_cast_no_check \(eq_refl true\)\. Qed\.', re.M | re.S)
+    r'(?:vm|native)_cast_no_check \(eq_refl true\)\. Qed\.', re.M | re.S)
 
 
 def inventory(stagedir, manifest):
@@ -345,7 +345,12 @@ Import ListNotations.
                 names.append(name)
                 params = ' '.join(str(r[k]) for k in FIELDS[3:])
                 key = (r['stage'], r['index'])
+                # The search is expensive; use the same native evaluator as
+                # the census walk. RepWLTr's native dependencies are prebuilt
+                # by census-tr-walk. Stored certificates retain their VM check.
+                cast = 'native_cast_no_check'
                 if key in certificates:
+                    cast = 'vm_cast_no_check'
                     cm = f'DataTr_RW_{nn:02d}_{r["index"]:04d}'
                     files[f'RWCerts/{cm}.v'] = rw_stored.render(certificates[key])
                     body.append(f'From BBB4.CensusTr.RWCerts Require {cm}.')
@@ -358,7 +363,7 @@ Import ListNotations.
                     '(* ' + r['spec'] + '  ' + ' '.join(f'{k}={r[k]}' for k in FIELDS[3:]) + ' *)',
                     tm_lambda('tm_' + name, r['spec']),
                     f'Lemma nqhtr_{name} : NeverQuasiHaltsTr tm_{name}.',
-                    f'Proof. apply ({proof}). vm_cast_no_check (eq_refl true). Qed.\n'])
+                    f'Proof. apply ({proof}). {cast} (eq_refl true). Qed.\n'])
                 wrapper.extend([
                     f'Definition tm_{name} : TM := {mod}.tm_{name}.',
                     f'Lemma nqhtr_{name} : NeverQuasiHaltsTr tm_{name}.',

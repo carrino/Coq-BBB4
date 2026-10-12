@@ -31,6 +31,11 @@ class StageSplitTests(unittest.TestCase):
                     [int(stage), int(index), spec, *map(int, params)])))
         self.assertEqual(found, self.rows)
         self.assertEqual(len(found), 1462)
+        for path, text in generated.items():
+            if path.startswith('RWParts/'):
+                self.assertNotIn('vm_cast_no_check', text)
+                self.assertEqual(text.count('native_cast_no_check'),
+                                 len(list(gen.ROW_RE.finditer(text))))
 
     def test_heavy_checks_are_independent(self):
         for n in sorted(set(r['stage'] for r in self.rows)):
@@ -61,7 +66,10 @@ class StageSplitTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             manifest = HERE / 'provtr_rw_stages.tsv'
             gen.split_stages(manifest, tmp, 10, 100000, 9, False, None)
-            part = next((Path(tmp)/'RWParts').glob('*.v'))
+            # Filesystem iteration can pick a stored-certificate-only part,
+            # which has no search application to corrupt.
+            part = next(p for p in sorted((Path(tmp)/'RWParts').glob('*.v'))
+                        if 'rw_tier_tr_sound _ ' in p.read_text())
             part.write_text(part.read_text().replace('rw_tier_tr_sound _ ',
                                                     'rw_tier_tr_sound _ 999 ', 1))
             with self.assertRaises(ValueError):
@@ -80,6 +88,7 @@ class StageSplitTests(unittest.TestCase):
             part = files['RWParts/ProvTr_RW_00_P000.v']
             self.assertIn(gen.tm_lambda('tm_rw00_0000', row['spec']), part)
             self.assertIn('rw_check_stored_tr_sound _ 1 2 0 8 ', part)
+            self.assertIn('vm_cast_no_check (eq_refl true)', part)
             self.assertIn('RWCerts/DataTr_RW_00_0000.v', files)
             data['t'] = 1
             path.write_text(json.dumps(data))
