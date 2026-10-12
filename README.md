@@ -98,7 +98,7 @@ and nothing else.  It was verified end to end on 2026-10-06 and again,
 after the build speedups, on 2026-10-11
 ([`docs/BBBT4_REVIEW.md`](docs/BBBT4_REVIEW.md) §8.1–8.2).  It needs
 the same census opam switch as `make proof` and budgets 4 GB of RAM
-per walk job.  It takes about 6 hours on 8 cores / 32 GB, against
+per walk job.  It takes 6 hours or more on 8 cores / 32 GB, against
 ~80–90 min for the state build.  Details are in
 [`docs/VERIFYING.md`](docs/VERIFYING.md), Tier C.
 
@@ -146,7 +146,7 @@ is one from-source build on your own machine.
    (BBB_tr(4) = 32,779,478): the instruction-level census walk, the
    10,924-row closeout, the champion, and `Print Assumptions
    BBBT4_value`.  Nothing is precompiled.  Trust: the kernel alone.
-   About 6 hours on 8 cores / 32 GB (2026-10-11); same toolchain
+   6 hours or more on 8 cores / 32 GB (2026-10-11); same toolchain
    as rung 3, and 4 GB of RAM per walk job.
 
 For the extra-careful, `coqchk -o` re-verifies compiled proof terms
@@ -165,7 +165,7 @@ make proof      # the whole claim from source: base build, census walk,
                 # BBB4_value and its report (~80-90 min, census switch)
 make proof-tr-all  # the instruction-level claim from source:
                 # BBBT4_value, BBB_tr(4) = 32,779,478 (census switch,
-                # 4 GB per walk job; about 6 h on 8 cores / 32 GB)
+                # 4 GB per walk job; 6+ h on 8 cores / 32 GB)
 ```
 
 **Or, to trust nothing but the kernel, one command:**
@@ -318,7 +318,7 @@ checked by CI in seconds, no re-walk), in parallel workstreams:
 `bbbt4_bound : forall tm, QHBoundTr B_tr tm` (`CloseoutFinalTr.v`)
 is the unconditional instruction-level upper bound, after
 `make proof-tr-all` (the instruction-level `make proof-all`; native
-toolchain, about 6 hours; see Tier C of
+toolchain, 6 hours or more; see Tier C of
 [`docs/VERIFYING.md`](docs/VERIFYING.md)).  The same champion attains it (`BBBT4_Champion.v`), so
 **BBB_tr(4) = 32,779,478**: `BBBT4_value : BBBT4_statement`
 (claim in `theories/BBBT4_Spec.v`, proof in

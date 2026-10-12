@@ -209,8 +209,8 @@ The `Axioms:` block it prints for `BBBT4_value` should list
 `functional_extensionality_dep` and nothing else. Nothing committed is
 trusted, because the instruction-level walk has no committed `.vo`. Memory
 sets the job counts: the walk budgets 4 GB per job. Override with
-`WALK_TR_JOBS=` and `CLOSEOUT_TR_JOBS=`. Budget about 6 hours on an
-8-core, 32 GB machine (§8.2).
+`PREREQ_TR_JOBS=`, `WALK_TR_JOBS=` and `CLOSEOUT_TR_JOBS=`. Budget 6 hours
+or more on an 8-core, 32 GB machine (§8.2).
 
 The same steps by hand:
 
@@ -296,7 +296,9 @@ before `decider_tr_WF` is proved.
 
 `make proof-tr-all` was then run on the same 8-core / 32 GB WSL2 box at
 commit `455d4d9679147a30cff6241e7535fbb25b0b9c3d`, the head merged as
-PR #246. It took about 6 hours and printed:
+PR #246. It ran in the working tree of the first run, so files whose
+sources #246 did not change were reused, not rebuilt; it took about 6
+hours and printed:
 
 ```
 Axioms:
@@ -307,3 +309,11 @@ FunctionalExtensionality.functional_extensionality_dep
 proof-tr-all COMPLETE at 455d4d9679147a30cff6241e7535fbb25b0b9c3d.
 BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)
 ```
+
+A clean-tree rerun on 2026-10-11 at `8aa8a34b` (the same proof; main after
+the docs) was OOM-killed after 2 h 31 min, in the walk's prerequisites
+(`BundleLAPQ_009`, Error 137). #246 had raised that phase from 4 to 9
+jobs, and nine LAPQ bundles at ~3.6 GB each, beside the 6-8 GB IRules
+batches, exceed 32 GB; the earlier run had those files built already. The
+phase now has its own memory budget (`PREREQ_TR_RSS_GB`, 6 GB per job, so
+4 jobs on 32 GB). A clean-tree timing is pending.
