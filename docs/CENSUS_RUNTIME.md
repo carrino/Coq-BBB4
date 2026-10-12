@@ -3577,3 +3577,31 @@ python3 tools/closeouttr/gen_closeout_tr.py --check
 These measurements describe individual files and a substantial prerequisite
 sample. They are not a cold end-to-end build measurement and do not establish
 the final eight-core wall time.
+
+### Remaining rank proofs and portable job sizing
+
+The broad prerequisite run also identified 309 rank-search proofs in the ten
+`ProvTr_RK_*` batches that still used VM conversion. They now use native
+conversion, and `gen_provtr_rk.py` emits the same choice. A complete 85-proof
+`ProvTr_RK_08` comparison took 93.190 CPU seconds in the VM and 22.8 CPU seconds
+natively (about 4.1x). Both ran alongside the three-worker prerequisite build;
+the native batch's consumer assumption audit reports only the existing
+`functional_extensionality_dep`.
+
+`tools/proof_resources.py` fixes two resource-detection issues: the instruction
+job limits previously fell back to one worker on macOS because `/proc/meminfo`
+does not exist there, and Linux containers used their host's memory/core
+counts instead of their own limits. The helper reads reclaimable macOS pages
+from `vm_stat`, physical cores from `sysctl`/`lscpu`, and visible cgroup v2 CPU
+and memory limits on Linux. It retains the two-GiB reserve and the per-worker
+budgets. Explicit `PREREQ_TR_JOBS`, `WALK_TR_JOBS` and `CLOSEOUT_TR_JOBS`
+overrides still bypass automatic sizing. Tests cover macOS's page-size
+conversion, eight-core/32-GiB sizing, unknown/low memory and nested container
+limits. The state walk's existing memory-budget formulas are unchanged.
+
+All ten rank batches subsequently rebuilt successfully: the 309 proofs took
+872.812 CPU seconds with VM conversion and 210.460 CPU seconds with native
+conversion (4.15x). Peak child RSS was 1.09 and 1.25 GiB respectively. Every
+batch's final theorem retained only `functional_extensionality_dep`. These
+compiles shared the host with other validation jobs, so these are CPU totals,
+not a prediction of their contribution to parallel wall time.

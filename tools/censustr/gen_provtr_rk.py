@@ -97,7 +97,7 @@ def stage(rowsfile, probedir, outdir, chunk, start):
                 nm = 'tm_' + sp.replace('---', 'XXX')
                 f.write('(* %s  n=%d t=%d *)\n%s\n' % (sp, rn, t, tm_lambda(nm, sp)))
                 f.write('Lemma nqhtr_%s : NeverQuasiHaltsTr %s.\n'
-                        'Proof. apply (rank_tier_tr_sound %s %d %d %d %d). vm_cast_no_check (eq_refl true). Qed.\n\n'
+                        'Proof. apply (rank_tier_tr_sound %s %d %d %d %d). native_cast_no_check (eq_refl true). Qed.\n\n'
                         % (nm[3:], nm, nm, rn, t, FUEL, ROUNDS))
                 names.append(nm)
                 man.append((sp, 'nqhtr_%s' % nm[3:], 'ProvTr_RK_%s.v' % nn, '%d,%d' % (rn, t)))

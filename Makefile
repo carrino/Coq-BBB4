@@ -189,10 +189,9 @@ WALK_RSS_GB ?= 1
 # contention came out at 421 core-min against the pre-lean walk's 385 --
 # the units did not get slower, the accounting did.
 #
-# lscpu's (Core,Socket) pairs are the portable count; fall back to nproc
-# where lscpu is absent.  Override with `make ... WALK_CORES=N'.
-WALK_CORES ?= $(shell c=$$(lscpu -p=Core,Socket 2>/dev/null | grep -v '^\#' | sort -u | wc -l 2>/dev/null); \
-  if [ -z "$$c" ] || [ "$$c" -lt 1 ]; then c=$$(nproc 2>/dev/null || echo 2); fi; echo $$c)
+# Count physical cores on Linux/macOS and respect container CPU quotas.
+# Override with `make ... WALK_CORES=N'.
+WALK_CORES ?= $(shell python3 tools/proof_resources.py --cores)
 
 WALK_AUTO := $(shell m=$$(awk -v r=$(WALK_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$(WALK_CORES); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_JOBS ?= $(WALK_AUTO)
@@ -458,7 +457,7 @@ _census-walk: _census-prepare
 # core-min, i.e. most of a day, for want of a flag.
 #
 # Override either: `make proof-all BUILD_JOBS=8 WALK_JOBS=4'.
-BUILD_JOBS ?= $(shell nproc 2>/dev/null || echo 4)
+BUILD_JOBS ?= $(shell nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 
 # CENSUS_SWITCH / CENSUS_OCAML / CENSUS_COQ / CENSUS_BOOTSTRAP:
 # tools/census_toolchain.sh ensures a Coq that can do native_compute and
@@ -1008,7 +1007,7 @@ closeout-tr-final: closeout-tr
 WALK_TR_RSS_GB ?= 4
 CLOSEOUT_TR_RSS_GB ?= 3
 PREREQ_TR_RSS_GB ?= 6
-_mem_jobs = $(shell m=$$(awk -v r=$(1) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-1}; c=$(2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+_mem_jobs = $(shell python3 tools/proof_resources.py --rss-gib $(1) --core-cap $(2))
 WALK_TR_JOBS ?= $(call _mem_jobs,$(WALK_TR_RSS_GB),$(WALK_CORES))
 CLOSEOUT_TR_JOBS ?= $(call _mem_jobs,$(CLOSEOUT_TR_RSS_GB),$(BUILD_JOBS))
 PREREQ_TR_JOBS ?= $(call _mem_jobs,$(PREREQ_TR_RSS_GB),$(BUILD_JOBS))
