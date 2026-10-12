@@ -3724,6 +3724,10 @@ native evaluation, versus **19.028 CPU seconds** with the equivalent checker:
 **7.45x faster**. Peak RSS falls from **2.445 to 0.721 GiB**. The production file
 independently compiled in 19.8 CPU seconds. Other builds were running, so these
 are CPU comparisons rather than isolated wall-time measurements.
+The new checker also passed using VM evaluation in 143.897 CPU seconds,
+independently confirming the large proof without native conversion. Comparing
+that with its 19.028-second native run gives another 7.56x evaluator gain;
+the original checker's VM baseline is still running.
 
 Blindly changing state batches to native evaluation did not help: the complete
 100-proof `QHB_00` batch went from 2.789 to 15.188 CPU seconds, and the 27-proof
