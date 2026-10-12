@@ -4,11 +4,12 @@
     certificate machines on the verified translated-cycler checker
     (parameters: anchor_step, period_steps, reach; side L via the
     mirrored corollary).  Anchors above 10M steps use the binary-fuel
-    front end (TCyclerN) so the fuel numeral does not materialize. *)
+    front end (TCyclerNFast) so the fuel numeral does not materialize;
+    the equivalent checker skips prefix scans for recurring states. *)
 
 From Coq Require Import NArith.
 From BBB4 Require Import BBB4_Statement CTape Mirror.
-From BBB4.Checkers Require Import TCycler TCyclerN.
+From BBB4.Checkers Require Import TCycler TCyclerNFast.
 
 
 
@@ -28,6 +29,6 @@ Definition tm_tcyc_040 : TM := fun q s =>
 
 Theorem nqh_1RB0LD_1RC1LD_1LD0RC_0LA1LB : NeverQuasiHaltsSt tm_tcyc_040.
 Proof.
-  apply (tcycler_check_neverqh_N_sound _ 309417105%N 7129704%N 2802).
-  vm_compute. reflexivity.
+  apply (tcycler_check_neverqh_N_fast_sound _ 309417105%N 7129704%N 2802).
+  native_compute. reflexivity.
 Qed.

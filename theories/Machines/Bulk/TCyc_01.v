@@ -4,7 +4,8 @@
     certificate machines on the verified translated-cycler checker
     (parameters: anchor_step, period_steps, reach; side L via the
     mirrored corollary).  Anchors above 10M steps use the binary-fuel
-    front end (TCyclerN) so the fuel numeral does not materialize. *)
+    front end (TCyclerNFast) so the fuel numeral does not materialize;
+    the equivalent checker skips prefix scans for recurring states. *)
 
 From BBB4 Require Import BBB4_Statement CTape Mirror.
 From BBB4.Checkers Require Import TCycler.

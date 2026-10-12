@@ -28,6 +28,7 @@ theories/Checkers/TCycler.v
 theories/Checkers/TCyclerTr.v
 theories/Checkers/TCyclerQHTr.v
 theories/Checkers/TCyclerN.v
+theories/Checkers/TCyclerNFast.v
 theories/Checkers/TCyclerAllNTr.v
 theories/Checkers/Wrap.v
 theories/Checkers/Fuel.v

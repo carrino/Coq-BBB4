@@ -3673,8 +3673,8 @@ native compilation overhead can outweigh their evaluation savings.
 These are additional gains after packing, with unchanged checkers. The AST_95
 experiment used a native cast; production retains the reduction/reflexivity
 proof shape with `native_compute`. All 12 production files subsequently
-compiled successfully. All 61 packed files whose dependencies were already
-available also passed compilation. The complete target validation continues
+compiled successfully. The subsequent auxiliary pass finished all 94 packed
+files and all 327 binary-bound ladder boards successfully. The complete target validation continues
 from the saved prerequisites; these measurements do not establish a cold
 eight-core wall time.
 
@@ -3692,3 +3692,61 @@ followed by `RunTr_Split.v`; those final serial assemblies do not multiply
 with the prerequisite job count. The walk and closeout budgets remain
 separate. This resource change improves scheduling; it is not an end-to-end
 timing claim.
+
+## State proof follow-up: avoid repeated long-prefix scans (2026-10-12)
+
+The state census does not have the instruction batches' repeated comparison
+against a unary 32,779,478. Its ordinary bound is 2,000; `CloseoutKit.B_champ`
+already uses Horner arithmetic and propositional inequalities. The binary-bound
+fix therefore does not imply a similar speedup for `proof-all`.
+
+There is a separate expensive repetition in `TCyclerN`: after simulating the
+anchor, its never-quasihalting check simulates the entire prefix again for each
+of four states, before testing whether that state occurs in the repeating
+guarded lap. `TCyclerNFast` checks the lap first and stops at the first matching
+state. A successful lap visit makes the prefix scan unnecessary; if the visit
+fails, the original prefix condition is still checked.
+
+`tcycler_check_neverqh_N_fast_eq` proves equality with the original checker
+for **all** machines and certificate parameters, including rejected inputs.
+Both that theorem and `gvisits_short_eq` have closed assumptions and passed
+independent `coqchk`. The soundness theorem reuses `TCyclerN`'s original theorem.
+The four large-anchor boards (`TCyc_02` through `TCyc_05`) use this checker with
+native evaluation. Their machine definitions, parameters and theorem statements
+are unchanged; all four production files compile, with only the existing
+functional-extensionality assumption. `TCyc_02` also passed independent kernel
+checking with VM conversion. The generator reproduces all 40 certificates in
+the five files exactly, retaining VM evaluation for the smaller anchors.
+
+On this Coq 8.18 / OCaml 4.14 environment, the complete 309,417,105-step-anchor
+proof (`TCyc_05`) takes **141.787 CPU seconds** with the original checker and
+native evaluation, versus **19.028 CPU seconds** with the equivalent checker:
+**7.45x faster**. Peak RSS falls from **2.445 to 0.721 GiB**. The production file
+independently compiled in 19.8 CPU seconds. Other builds were running, so these
+are CPU comparisons rather than isolated wall-time measurements.
+
+Blindly changing state batches to native evaluation did not help: the complete
+100-proof `QHB_00` batch went from 2.789 to 15.188 CPU seconds, and the 27-proof
+`RepWL_Batch_01` batch was essentially unchanged (77.786 versus 77.403 seconds).
+Those files retain their existing VM proofs.
+
+The state build now eagerly compiles native code only for the computation
+dependency closure, including the fast cycle checker: **84 modules**, compared
+with **2,585** modules in the complete state build graph. The other **2,501**
+modules still undergo their original proof checks, using native code on demand.
+`STATE_PROOF_NATIVE=yes` restores eager native compilation for comparison. This
+addresses the earlier profile's native-compilation overhead, but its actual
+end-to-end saving needs a fresh `proof-all` measurement; the historical 107
+CPU-minutes of native work includes computation modules that are still needed.
+
+Reproduce complete-batch evaluator and checker comparisons without overwriting
+production objects (build their computation dependencies first):
+
+```sh
+python3 tools/bench_state_checks.py --output work/state-cycles \
+  --reference-revision 5aa7cd98d theories/Machines/Bulk/TCyc_05.v
+```
+
+The script records source hashes, Coq version, CPU/wall time, peak RSS and
+assumption audits for both evaluators. No cold end-to-end state timing is
+claimed here.

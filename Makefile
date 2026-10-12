@@ -65,9 +65,21 @@ STATE_TARGETS := theories/BBB4_Statement.vo theories/BBB4_Spec.vo \
   theories/Closeout/CoreRows.vo theories/Closeout/Closeout.vo \
   theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.vo
 
+# Only the computation dependency closure needs eager native code. The
+# remaining boards are kernel-checked as before, but never evaluated by the
+# census. Preserve VM-only toolchains for standalone state-build callers.
+# STATE_PROOF_NATIVE=yes restores the old eager compilation for comparison.
+STATE_PROOF_NATIVE ?= ondemand
+STATE_COMPUTE_NATIVE ?= $(shell coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')
+
 state-build: Makefile.coq
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	 $(MAKE) -f Makefile.coq -j$(BUILD_JOBS) $(STATE_TARGETS)
+	 $(MAKE) -f Makefile.coq -j$(BUILD_JOBS) \
+	   COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(STATE_COMPUTE_NATIVE)' \
+	   theories/Checkers/TCyclerNFast.vo theories/Census/Run_Compute_Split.vo
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 $(MAKE) -f Makefile.coq -j$(BUILD_JOBS) \
+	   COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(STATE_PROOF_NATIVE)' $(STATE_TARGETS)
 .PHONY: state-build
 
 Makefile.coq: _CoqProject
