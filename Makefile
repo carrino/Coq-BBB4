@@ -1060,7 +1060,7 @@ _proof-tr-all-run:
 	  theories/CloseoutTr/CloseoutTr.vo \
 	  theories/BBBT4_Champion.vo theories/Counters/BlankTailTr.vo \
 	  theories/Tests/ChampionTr_Corruption.vo theories/Tests/ConventionTr_Example.vo \
-	  theories/Tests/ShortCircuitTr_Regression.vo
+	  theories/Tests/ShortCircuitTr_Regression.vo theories/Tests/RepWLSearchTr_Regression.vo
 	@echo ">>> [4/4] bbbt4_bound and BBBT4_value"
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	$(_tr_time) final-bound -- coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/CloseoutFinalTr.v

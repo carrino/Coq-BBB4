@@ -29,6 +29,7 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape PosEnc
 From BBB4.Checkers Require Import RepWL WrapTr.
 From BBB4.Census Require Import RepWLSearch.
 From BBB4.CensusTr Require Import TNF_QHTr RepWLTr.
+From BBB4.CensusTr Require Import RepWLSearchTr.
 Import ListNotations.
 Open Scope nat_scope.
 
@@ -507,7 +508,7 @@ Definition mb_procedure_tr (tm : TM) (P : mbpar)
   let idxs := iidxs nodes in
   let Kc := S (S (length nodes)) in
   let rfuel := S (length nodes * 8 + 8) in
-  match iproc_rounds 300 tm arr Kc rfuel idxs g [] with
+  match iproc_rounds_tr 300 tm arr Kc rfuel idxs g [] with
   | Some comps => comps
   | None => []
   end.
