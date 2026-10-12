@@ -991,22 +991,21 @@ closeout-tr-final: closeout-tr
 # per worker, capped at the physical cores. Target-box validation remains
 # pending; see docs/CENSUS_RUNTIME.md. The batches peak under
 # ~2.5 GB (the CI budget), so CLOSEOUT_TR_JOBS uses CLOSEOUT_TR_RSS_GB.
-# The walk's PREREQUISITES (the proven tiers, built before step 3) are
-# heavier than either: the 26 LAPQ lap bundles peak at ~3.6 GB each in
-# coqc alone (BundleLAPQ_009: 3.64 GB, 2026-10-12). The nine 6-8 GB
-# state IRules batches are no longer prerequisites: instruction proofs
-# now copy only their certificate data and check it in independent parts.
-# Keep the conservative budget until the complete revised prerequisite
-# build's peak memory has been measured; the earlier nine-job build OOMed.
-# On a 32 GB box (~30 GB available), that is 4 prerequisite jobs, 7 walk
-# jobs and up to 9 batch jobs. Override any: `make proof-tr-all
+# PREREQUISITES use 3 GiB per parallel worker: RepWL parts peak at 1.93
+# GiB; binary bound comparisons cut all 26 LAPQ bundles below 0.9 GiB.
+# The nine 6-8 GB state IRules batches are no longer prerequisites.
+# RunTr's final assembly peaks at 4.23 GiB, but runs after all its proof
+# dependencies; RunTr_Split then follows it. These serial assemblies do
+# not multiply with the prerequisite job count. See CENSUS_RUNTIME.md.
+# On an eight-core, 32 GiB box (~30 GiB available), that is 8 prerequisite
+# jobs, 7 walk jobs and 8 batch jobs. Override any: `make proof-tr-all
 # PREREQ_TR_JOBS=3 WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6'.  A rerun keeps finished work (walk
 # units newer than their source and RunTr_WalkCompute.vo, built .vo);
 # to force a full re-walk,
 # delete theories/CensusTr/Compute/*.vo first.
 WALK_TR_RSS_GB ?= 4
 CLOSEOUT_TR_RSS_GB ?= 3
-PREREQ_TR_RSS_GB ?= 6
+PREREQ_TR_RSS_GB ?= 3
 _mem_jobs = $(shell python3 tools/proof_resources.py --rss-gib $(1) --core-cap $(2))
 WALK_TR_JOBS ?= $(call _mem_jobs,$(WALK_TR_RSS_GB),$(WALK_CORES))
 CLOSEOUT_TR_JOBS ?= $(call _mem_jobs,$(CLOSEOUT_TR_RSS_GB),$(BUILD_JOBS))

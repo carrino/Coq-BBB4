@@ -3677,3 +3677,18 @@ compiled successfully. All 61 packed files whose dependencies were already
 available also passed compilation. The complete target validation continues
 from the saved prerequisites; these measurements do not establish a cold
 eight-core wall time.
+
+### Revised prerequisite parallelism
+
+All revised prerequisites have now compiled successfully. The parallel RepWL
+parts peak at 1.93 GiB, all 26 binary-bound LAPQ bundles stay below 0.9 GiB,
+and the native rank batches peak at 1.25 GiB. The prerequisite worker budget
+is therefore reduced from six to three GiB, retaining the two-GiB reserve.
+On the user's eight-core Linux machine with 32 GiB RAM and about 30 GiB
+available, this permits eight prerequisite workers instead of four.
+
+`RunTr.v` peaks at 4.23 GiB. It runs after its proof dependencies have finished,
+followed by `RunTr_Split.v`; those final serial assemblies do not multiply
+with the prerequisite job count. The walk and closeout budgets remain
+separate. This resource change improves scheduling; it is not an end-to-end
+timing claim.
