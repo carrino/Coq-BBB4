@@ -859,12 +859,14 @@ CENSUS_TR_UNITS ?= 96
 # the walk's.  Standalone callers keep the old default; proof-tr-all
 # passes PREREQ_TR_JOBS, sized from memory (PREREQ_TR_RSS_GB, below).
 CENSUS_TR_PREREQ_JOBS ?= $(WALK_JOBS)
-# The walk evaluates only RunTr_WalkCompute's dependency closure. Precompile
-# native code for that closure, but keep proof-only boards/batches on demand:
+# Precompile native code for the walk computation and the closeout's multiblock
+# search, but keep proof-only boards/batches on demand:
 # all proofs still run and Coq still checks every theorem. Compiling native
 # copies of thousands of proof-only libraries adds work the walk never uses.
 # Set TR_PROOF_NATIVE=yes to restore eager native compilation of those files.
 TR_PROOF_NATIVE ?= ondemand
+TR_TIMINGS ?= census_probes/proof-tr-times.jsonl
+_tr_time = python3 tools/time_command.py --log "$(TR_TIMINGS)" --phase
 
 census-tr-units:
 	@python3 tools/censustr/gen_walk_units.py --units $(CENSUS_TR_UNITS)
@@ -876,10 +878,11 @@ census-tr-units:
 # set WALK_JOBS. See docs/CENSUS_RUNTIME.md for measurements of the split.
 census-tr-walk: Makefile.coq
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	$(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
-	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler yes' theories/CensusTr/RunTr_WalkCompute.vo
+	$(_tr_time) computation-dependencies -- $(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
+	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler yes' \
+	  theories/CensusTr/RepWLMBTr.vo theories/CensusTr/RunTr_WalkCompute.vo
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	$(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
+	$(_tr_time) proof-prerequisites -- $(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
 	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(TR_PROOF_NATIVE)' theories/CensusTr/RunTr_Split.vo
 	@mkdir -p census_probes
 	@ulimit -s $(STACK_KB) 2>/dev/null \
@@ -896,7 +899,7 @@ census-tr-walk: Makefile.coq
 	         && [ "$${f%.v}.vo" -nt theories/CensusTr/RunTr_WalkCompute.vo ] \
 	         && [ "$${f%.v}.vo" -nt "$$f" ] \
 	         || echo "$$f"; done \
-	   | xargs -r -P $(WALK_JOBS) -n1 sh -c \
+	   | $(_tr_time) census-units -- xargs -r -P $(WALK_JOBS) -n1 sh -c \
 	    'f=$$1; s=$$(date +%s); \
 	     coqc -Q theories BBB4 -w -abstract-large-number "$$f" \
 	       > "$$f.log" 2>&1 \
@@ -907,7 +910,7 @@ census-tr-walk: Makefile.coq
 	@n=$$(ls theories/CensusTr/Compute/UnitTr_*.v | wc -l); \
 	 d=$$(ls theories/CensusTr/Compute/UnitTr_*.vo 2>/dev/null | wc -l); \
 	 echo ">>> units done: $$d / $$n"; [ "$$d" = "$$n" ]
-	coqc -Q theories BBB4 -w -abstract-large-number \
+	$(_tr_time) census-assembly -- coqc -Q theories BBB4 -w -abstract-large-number \
 	  theories/CensusTr/Compute/Census_TheoremTr.v
 	@echo ">>> census_tr : forall tm, QHBoundTr B_tr tm \\/ Deferred D_tr tm -- CHECKED"
 .PHONY: census-tr-walk
@@ -991,10 +994,11 @@ closeout-tr-final: closeout-tr
 # ~2.5 GB (the CI budget), so CLOSEOUT_TR_JOBS uses CLOSEOUT_TR_RSS_GB.
 # The walk's PREREQUISITES (the proven tiers, built before step 3) are
 # heavier than either: the 26 LAPQ lap bundles peak at ~3.6 GB each in
-# coqc alone (BundleLAPQ_009: 3.64 GB, 2026-10-12) and the nine IRules
-# batches at 6-8 GB (three at a time, Makefile.coq.local).  Nine jobs
-# OOM-killed a clean build on a 32 GB box (BundleLAPQ_009, Error 137,
-# 2026-10-11), so PREREQ_TR_JOBS sizes at PREREQ_TR_RSS_GB.
+# coqc alone (BundleLAPQ_009: 3.64 GB, 2026-10-12). The nine 6-8 GB
+# state IRules batches are no longer prerequisites: instruction proofs
+# now copy only their certificate data and check it in independent parts.
+# Keep the conservative budget until the complete revised prerequisite
+# build's peak memory has been measured; the earlier nine-job build OOMed.
 # On a 32 GB box (~30 GB available), that is 4 prerequisite jobs, 7 walk
 # jobs and up to 9 batch jobs. Override any: `make proof-tr-all
 # PREREQ_TR_JOBS=3 WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6'.  A rerun keeps finished work (walk
@@ -1041,6 +1045,7 @@ _proof-tr-all-run:
 	@echo ">>> [1/4] generated files current"
 	python3 tools/closeouttr/gen_closeout_tr.py --check
 	python3 tools/censustr/gen_walk_units.py --check --units $(CENSUS_TR_UNITS)
+	python3 tools/censustr/gen_irulestr_parts.py --check
 	git diff --quiet -- theories/CensusTr/Compute/ \
 	  || { echo ">>> theories/CensusTr/Compute/ differs from the commit"; exit 1; }
 	@echo ">>> [2/4] the census walk: census_tr"
@@ -1050,7 +1055,7 @@ _proof-tr-all-run:
 	@# TR_PROOF_NATIVE=yes override: the OCaml compiler overflows 8 MB on
 	@# large native batch companions (CBT_AST_134..136, 2026-10-06).
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	$(MAKE) -f Makefile.coq -j$(CLOSEOUT_TR_JOBS) \
+	$(_tr_time) closeout-champion-tests -- $(MAKE) -f Makefile.coq -j$(CLOSEOUT_TR_JOBS) \
 	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(TR_PROOF_NATIVE)' \
 	  theories/CloseoutTr/CloseoutTr.vo \
 	  theories/BBBT4_Champion.vo theories/Counters/BlankTailTr.vo \
@@ -1058,9 +1063,9 @@ _proof-tr-all-run:
 	  theories/Tests/ShortCircuitTr_Regression.vo
 	@echo ">>> [4/4] bbbt4_bound and BBBT4_value"
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/CloseoutFinalTr.v
+	$(_tr_time) final-bound -- coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/CloseoutFinalTr.v
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/BBBT4_Value.v
+	$(_tr_time) final-value -- coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/BBBT4_Value.v
 	@echo "------------------------------------------------------------"
 	@echo "proof-tr-all COMPLETE at $$(git rev-parse HEAD 2>/dev/null)."
 	@echo "BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)"

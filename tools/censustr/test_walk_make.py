@@ -24,6 +24,8 @@ class WalkRecipeTests(unittest.TestCase):
         self.compute.mkdir(parents=True)
         self.bin = self.root / 'bin'
         self.bin.mkdir()
+        (self.root / 'tools').mkdir()
+        shutil.copy(REPO / 'tools/time_command.py', self.root / 'tools/time_command.py')
         (self.root / '_CoqProject').write_text('')
         (self.root / 'Makefile.coq').write_text('# scheduling fixture\n')
         self.write('RunTr_WalkCompute.vo', 30)
@@ -80,9 +82,16 @@ with Path('prerequisite_args.jsonl').open('a') as f:
         for build in builds:
             self.assertIn('-j3', build)
         self.assertEqual(builds[0][-1], 'theories/CensusTr/RunTr_WalkCompute.vo')
+        self.assertIn('theories/CensusTr/RepWLMBTr.vo', builds[0])
         self.assertIn('COQEXTRAFLAGS= -native-compiler yes', builds[0])
         self.assertEqual(builds[1][-1], 'theories/CensusTr/RunTr_Split.vo')
         self.assertIn('COQEXTRAFLAGS= -native-compiler ondemand', builds[1])
+        phases = [json.loads(line) for line in
+                  (self.root / 'census_probes/proof-tr-times.jsonl').read_text().splitlines()]
+        self.assertEqual([p['phase'] for p in phases],
+                         ['computation-dependencies', 'proof-prerequisites',
+                          'census-units', 'census-assembly'])
+        self.assertTrue(all(p['exit_code'] == 0 for p in phases))
 
     def test_eager_native_override(self):
         result, _ = self.run_recipe(native='yes')
@@ -109,6 +118,10 @@ with Path('prerequisite_args.jsonl').open('a') as f:
         result, calls = self.run_recipe(fail='UnitTr_00')
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(calls, ['UnitTr_00'], result.stdout + result.stderr)
+        phases = [json.loads(line) for line in
+                  (self.root / 'census_probes/proof-tr-times.jsonl').read_text().splitlines()]
+        self.assertEqual(phases[-1]['phase'], 'census-units')
+        self.assertNotEqual(phases[-1]['exit_code'], 0)
 
 
 if __name__ == '__main__':

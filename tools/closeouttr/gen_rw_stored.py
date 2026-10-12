@@ -66,8 +66,11 @@ def rewrite_batch(source, certificates):
                     'vm_cast_no_check (eq_refl true). Qed.')
 
         old, new = prefix + proof(original), prefix + proof(stored)
+        native_old = old.replace('vm_cast_no_check', 'native_cast_no_check')
         if old in source:
             source = source.replace(old, new, 1)
+        elif native_old in source:
+            source = source.replace(native_old, new, 1)
         elif new not in source:
             raise ValueError(f'unrecognized proof or mismatched parameters: {name}')
         imports.append(f'From BBB4.CloseoutTr.RWCerts Require {module}.')

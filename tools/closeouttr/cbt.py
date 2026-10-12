@@ -24,6 +24,7 @@ write the same file.  Library use:
 """
 import os
 import re
+from native_checks import proof_evaluator
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -90,7 +91,7 @@ def write_batch(tag, nn, requires, entries, blurb, overwrite=False, preamble='')
             names.append(nm)
             f.write('(* spec %s *)\n' % spec)
             f.write('Definition r_%s : list (option Trans) := %s.\n' % (nm, spec_row(spec)))
-            f.write('Lemma cv_%s : coversTr (row_to_tm r_%s).\nProof. %s Qed.\n\n' % (nm, nm, proof.strip()))
+            f.write('Lemma cv_%s : coversTr (row_to_tm r_%s).\nProof. %s Qed.\n\n' % (nm, nm, proof_evaluator(proof.strip())))
         f.write('Definition cbtrows_%s : list (list (option Trans)) :=\n  [' % base)
         f.write(';\n   '.join('r_%s' % x for x in names))
         f.write('].\n\nLemma cbt_%s_covers : Forall coversTr (map row_to_tm cbtrows_%s).\n' % (base, base))

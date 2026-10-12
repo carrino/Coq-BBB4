@@ -3371,3 +3371,94 @@ outside the production walk. Use a new output directory for each run.
 The requested 2–3 hour goal is for the complete build on the target machine.
 A selected-unit comparison does not establish that end-to-end time; the final
 `BBBT4_value` assembly and a full cold build must still be measured separately.
+
+## Instruction census: remove unused state proofs and accelerate closeout (2026-10-12)
+
+The instruction assembly imported all nine `IRules_Batch_*` state boards to
+obtain machine definitions and certificate data. Those imports forced 250
+state-level proofs, including anchor simulations, even though the instruction
+proofs use `irules_check_neverqhtr_sound` and never use the state theorems as
+premises. These were also the batches previously reported at 6–8 GB each.
+
+`gen_irulestr_parts.py` now copies the required machine and certificate
+definitions verbatim from those canonical state sources and runs all 97
+original instruction proofs in 13 independent parts. Every original theorem
+statement and proof body is preserved byte-for-byte. The `IRulesTr_Batch_01`
+wrapper retains the original public theorem names, and `RunTr` retains its
+original ordered machine list, `Forall` proof and data conversion gate.
+The state boards and the state census are unchanged. The prerequisite job
+budget remains conservative until the full revised build's memory is measured.
+
+The generated dependency graph confirms that exactly those nine state boards
+leave the target closure and the 13 instruction parts enter it. All 97
+instruction proofs and their compatibility wrapper compiled in 121.4 seconds
+at three workers, with prerequisites prebuilt; the largest part's peak RSS was
+1,209,577,472 bytes. A consumer compiled the original `prov_tr_irtr_all` proof
+and proved by reflexivity that its entire ordered list is the original first
+97 entries of `prov_tr_data`. The property proof retains only
+`functional_extensionality_dep`; the list-equality proof has closed assumptions.
+These are validation measurements, not a timing of the old versus new full
+prerequisite phase.
+
+Independent `coqchk` passed for `MetaTr` and its dependency closure, each of
+the 13 parts, and the compatibility wrapper. The parts and wrapper were
+checked with `-norec` after checking their shared prerequisites; the checks
+used `-bytecode-compiler yes`. A monolithic default `coqchk` was stopped as
+it approached this host's 16 GiB limit. Separate checker processes bound
+memory while covering the same libraries; no proof is omitted.
+
+Closeout still used VM conversion for expensive searches after the proven-tier
+RepWL checks had moved to native conversion. `native_checks.py` now selects
+the rank, RepWL and multiblock search soundness applications: 1,183 checks in
+46 batches. It changes only their evaluator casts. Supplied-certificate and
+small direct checks retain their previous evaluator. Both `cbt.write_batch`
+and `gen_closeout_tr.py --check` enforce the selection. `RepWLMBTr` is
+precompiled natively alongside the walk computation dependencies so that
+individual proof files can reuse its native code.
+
+Two full closeout batches were compiled twice in fresh processes, with
+prebuilt dependencies and no competing compiler jobs, on the same Coq 8.18.0 /
+OCaml 4.14.2 host used above. Complete-file timings were:
+
+| Batch | VM seconds | Native seconds | Speedup |
+|---|---:|---:|---:|
+| `CBT_NG_11` (50 rank searches) | 734.316 | 162.236 | 4.53x |
+| `CBT_MB_00` (4 multiblock searches) | 84.280 | 18.628 | 4.52x |
+
+Both complete batch theorems report only `functional_extensionality_dep`.
+The NG row uses Coq's reported compile times; the MB row uses external process
+wall time (including startup). Native peak RSS was 2,630,619,136 bytes for NG
+and 843,427,840 bytes for MB, versus 874,340,352 bytes for MB's VM run.
+This comparison is against
+the earlier optimization's checker code in both runs: it measures an additional
+closeout speedup, not the short-circuit gain already reported above.
+
+All 50 RepWL proofs in `CBT_RW_03` also passed native checking and their
+assembled theorem's assumption audit (193.2 seconds, 969,707,520 bytes peak
+RSS). This is validation of the third selected checker family; no matched
+VM timing was collected for that batch. The five IRules inventory tests,
+five walk-recipe tests, two evaluator-selection tests and three stored-proof
+generation tests passed, together with the generated-file and project checks.
+Every changed closeout source becomes byte-for-byte identical to its original
+when its new native casts are changed back to VM casts.
+
+```sh
+python3 tools/closeouttr/bench_native_checks.py --batches NG_11 RW_03 \
+  --output work/closeout-native
+python3 tools/censustr/gen_irulestr_parts.py --check
+python3 tools/censustr/test_irulestr_parts.py
+python3 tools/closeouttr/test_native_checks.py
+```
+
+`make proof-tr-all` now prints wall and CPU time separately for computation
+dependencies, proof prerequisites, census units, census assembly, closeout /
+champion / tests, final bound and final value. Records append to
+`census_probes/proof-tr-times.jsonl` (override with `TR_TIMINGS=...`), including
+start time, command and exit code; reruns retain earlier records. Child peak
+RSS in the JSON is the largest child process, not the combined memory of
+parallel workers. The wrapper preserves command failure and make's jobserver
+descriptors. Existing per-unit walk times remain available as well.
+
+The seven-hour run has no recorded phase breakdown, so these results cannot
+yet determine the complete eight-core build time. The new phase records make
+the next full run usable for locating the remaining bottleneck.

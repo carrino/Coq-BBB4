@@ -12,12 +12,12 @@ Import ListNotations.
 (* spec 1RB0LD_0RC0RB_1LD1RA_1LC1LA *)
 Definition r_BR_07_0000 : list (option Trans) := [t1RB;t0LD;t0RC;t0RB;t1LD;t1RA;t1LC;t1LA].
 Lemma cv_BR_07_0000 : coversTr (row_to_tm r_BR_07_0000).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 11 2 0 96296 36). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 11 2 0 96296 36). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LB_1LC0RD_0RC0LD_1LA1RD *)
 Definition r_BR_07_0001 : list (option Trans) := [t1RB;t0LB;t1LC;t0RD;t0RC;t0LD;t1LA;t1RD].
 Lemma cv_BR_07_0001 : coversTr (row_to_tm r_BR_07_0001).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 14 2 0 175512 46). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 14 2 0 175512 46). native_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_BR_07 : list (list (option Trans)) :=
   [r_BR_07_0000;

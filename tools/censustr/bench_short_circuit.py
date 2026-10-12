@@ -23,6 +23,7 @@ def worker(source, log, result):
     resource.setrlimit(resource.RLIMIT_STACK, (hard, hard))
     command = ['coqc', '-Q', 'theories', 'BBB4', '-native-compiler', 'ondemand',
                '-w', '-abstract-large-number', str(source)]
+    before = resource.getrusage(resource.RUSAGE_CHILDREN)
     start = time.monotonic()
     with open(log, 'w') as stream:
         proc = subprocess.run(command, cwd=REPO, stdout=stream,
@@ -30,7 +31,8 @@ def worker(source, log, result):
     usage = resource.getrusage(resource.RUSAGE_CHILDREN)
     closed = 'Closed under the global context' in Path(log).read_text()
     record = dict(command=command, wall_seconds=time.monotonic() - start,
-                  user_seconds=usage.ru_utime, system_seconds=usage.ru_stime,
+                  user_seconds=usage.ru_utime - before.ru_utime,
+                  system_seconds=usage.ru_stime - before.ru_stime,
                   max_rss_bytes=usage.ru_maxrss * (1 if sys.platform == 'darwin' else 1024),
                   exit_code=proc.returncode, closed_assumptions=closed)
     Path(result).write_text(json.dumps(record, indent=2) + '\n')

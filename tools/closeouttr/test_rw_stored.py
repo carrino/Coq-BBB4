@@ -37,6 +37,11 @@ class StoredCloseoutTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 gen.rewrite_batch(self.source, {self.name: dict(self.cert, **{field: value})})
 
+    def test_native_search_can_be_replaced_by_stored_check(self):
+        native = self.source.replace('vm_cast_no_check', 'native_cast_no_check')
+        self.assertEqual(gen.rewrite_batch(native, {self.name: self.cert}),
+                         gen.rewrite_batch(self.source, {self.name: self.cert}))
+
 
 if __name__ == '__main__':
     unittest.main()
