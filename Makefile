@@ -72,11 +72,19 @@ STATE_TARGETS := theories/BBB4_Statement.vo theories/BBB4_Spec.vo \
 STATE_PROOF_NATIVE ?= ondemand
 STATE_COMPUTE_NATIVE ?= $(shell coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')
 
+# A .vo built `ondemand' (no native code) by the other proof target looks up
+# to date to make, and native compilation of anything importing it then fails
+# (`Unbound module NBBB4_...').  ensure_native.py runs coqnative on such files
+# in the computation closure before it is compiled natively.
+STATE_COMPUTE_TARGETS := theories/Checkers/TCyclerNFast.vo theories/Census/Run_Compute_Split.vo
+TR_COMPUTE_TARGETS := theories/CensusTr/RepWLMBTr.vo theories/CensusTr/RunTr_WalkCompute.vo
+
 state-build: Makefile.coq
+	@python3 tools/ensure_native.py $(STATE_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	 $(MAKE) -f Makefile.coq -j$(BUILD_JOBS) \
 	   COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(STATE_COMPUTE_NATIVE)' \
-	   theories/Checkers/TCyclerNFast.vo theories/Census/Run_Compute_Split.vo
+	   $(STATE_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	 $(MAKE) -f Makefile.coq -j$(BUILD_JOBS) \
 	   COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(STATE_PROOF_NATIVE)' $(STATE_TARGETS)
@@ -888,10 +896,11 @@ census-tr-units:
 # explicit: proof-tr-all passes WALK_TR_JOBS, and standalone callers can
 # set WALK_JOBS. See docs/CENSUS_RUNTIME.md for measurements of the split.
 census-tr-walk: Makefile.coq
+	@python3 tools/ensure_native.py $(TR_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	$(_tr_time) computation-dependencies -- $(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
 	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler yes' \
-	  theories/CensusTr/RepWLMBTr.vo theories/CensusTr/RunTr_WalkCompute.vo
+	  $(TR_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	$(_tr_time) proof-prerequisites -- $(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
 	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(TR_PROOF_NATIVE)' theories/CensusTr/RunTr_Split.vo

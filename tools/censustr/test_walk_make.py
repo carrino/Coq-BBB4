@@ -26,6 +26,7 @@ class WalkRecipeTests(unittest.TestCase):
         self.bin.mkdir()
         (self.root / 'tools').mkdir()
         shutil.copy(REPO / 'tools/time_command.py', self.root / 'tools/time_command.py')
+        shutil.copy(REPO / 'tools/ensure_native.py', self.root / 'tools/ensure_native.py')
         (self.root / '_CoqProject').write_text('')
         (self.root / 'Makefile.coq').write_text('# scheduling fixture\n')
         self.write('RunTr_WalkCompute.vo', 30)
