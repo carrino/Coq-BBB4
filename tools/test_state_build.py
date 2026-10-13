@@ -17,6 +17,8 @@ class StateBuildTests(unittest.TestCase):
             root = Path(tmp)
             (root / '_CoqProject').touch()
             (root / 'Makefile.coq').touch()
+            (root / 'tools').mkdir()
+            shutil.copy(REPO / 'tools/ensure_native.py', root / 'tools/ensure_native.py')
             recorder = root / 'record_make'
             recorder.write_text('''#!/usr/bin/env python3
 import json, os, sys

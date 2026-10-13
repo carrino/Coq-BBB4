@@ -70,13 +70,29 @@ STATE_TARGETS := theories/BBB4_Statement.vo theories/BBB4_Spec.vo \
 # census. Preserve VM-only toolchains for standalone state-build callers.
 # STATE_PROOF_NATIVE=yes restores the old eager compilation for comparison.
 STATE_PROOF_NATIVE ?= ondemand
+# The final files (CloseoutFinal*, BBB4_Theorem, BBB4_Value, BBBT4_Value) are
+# compiled by plain coqc, whose default under the census switch is
+# `-native-compiler yes': it writes their native code, which must link against
+# every import's.  Their imports were built ondemand, with none, so that fails
+# (`Unbound module NBBB4_Closeout_CloseoutKit', clean-tree proof-all,
+# 2026-10-13).  Nothing evaluates the final files natively, and ondemand still
+# compiles whatever a native_compute in them would need.
+FINAL_NATIVE := -w -deprecated-native-compiler-option -native-compiler ondemand
 STATE_COMPUTE_NATIVE ?= $(shell coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')
 
+# A .vo built `ondemand' (no native code) by the other proof target looks up
+# to date to make, and native compilation of anything importing it then fails
+# (`Unbound module NBBB4_...').  ensure_native.py runs coqnative on such files
+# in the computation closure before it is compiled natively.
+STATE_COMPUTE_TARGETS := theories/Checkers/TCyclerNFast.vo theories/Census/Run_Compute_Split.vo
+TR_COMPUTE_TARGETS := theories/CensusTr/RepWLMBTr.vo theories/CensusTr/RunTr_WalkCompute.vo
+
 state-build: Makefile.coq
+	@python3 tools/ensure_native.py $(STATE_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	 $(MAKE) -f Makefile.coq -j$(BUILD_JOBS) \
 	   COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(STATE_COMPUTE_NATIVE)' \
-	   theories/Checkers/TCyclerNFast.vo theories/Census/Run_Compute_Split.vo
+	   $(STATE_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	 $(MAKE) -f Makefile.coq -j$(BUILD_JOBS) \
 	   COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(STATE_PROOF_NATIVE)' $(STATE_TARGETS)
@@ -522,9 +538,11 @@ _proof-all-run:
 	 echo "$$H" > "$$S"
 	$(MAKE) state-build
 	$(MAKE) census-verify
-	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v
-	coqc -Q theories BBB4 theories/Closeout/BBB4_Theorem.v
-	coqc -Q theories BBB4 theories/Closeout/BBB4_Value.v
+	@# FINAL_NATIVE: see its definition (the final files' imports were
+	@# built ondemand, with no native code to link against).
+	coqc -Q theories BBB4 $(FINAL_NATIVE) theories/Closeout/CloseoutFinal.v
+	coqc -Q theories BBB4 $(FINAL_NATIVE) theories/Closeout/BBB4_Theorem.v
+	coqc -Q theories BBB4 $(FINAL_NATIVE) theories/Closeout/BBB4_Value.v
 	@python3 tools/proof_report.py
 	@echo "------------------------------------------------------------"
 	@echo "proof-all COMPLETE.  The 'Trust tier' line in the report above"
@@ -888,10 +906,11 @@ census-tr-units:
 # explicit: proof-tr-all passes WALK_TR_JOBS, and standalone callers can
 # set WALK_JOBS. See docs/CENSUS_RUNTIME.md for measurements of the split.
 census-tr-walk: Makefile.coq
+	@python3 tools/ensure_native.py $(TR_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	$(_tr_time) computation-dependencies -- $(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
 	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler yes' \
-	  theories/CensusTr/RepWLMBTr.vo theories/CensusTr/RunTr_WalkCompute.vo
+	  $(TR_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	$(_tr_time) proof-prerequisites -- $(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
 	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(TR_PROOF_NATIVE)' theories/CensusTr/RunTr_Split.vo
@@ -975,7 +994,7 @@ closeout-tr: Makefile.coq
 .PHONY: closeout-tr
 
 closeout-tr-final: closeout-tr
-	coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/CloseoutFinalTr.v
+	coqc -Q theories BBB4 -w -abstract-large-number $(FINAL_NATIVE) theories/CloseoutTr/CloseoutFinalTr.v
 	echo 'From BBB4.CloseoutTr Require Import CloseoutTr CloseoutFinalTr. Print Assumptions bbbt4_target.' \
 	  | coqtop -Q theories BBB4 -w none 2>&1 | grep -v '^$$' | tail -5
 .PHONY: closeout-tr-final
@@ -1073,9 +1092,9 @@ _proof-tr-all-run:
 	  theories/Tests/ShortCircuitTr_Regression.vo theories/Tests/RepWLSearchTr_Regression.vo
 	@echo ">>> [4/4] bbbt4_bound and BBBT4_value"
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	$(_tr_time) final-bound -- coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/CloseoutFinalTr.v
+	$(_tr_time) final-bound -- coqc -Q theories BBB4 -w -abstract-large-number $(FINAL_NATIVE) theories/CloseoutTr/CloseoutFinalTr.v
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	$(_tr_time) final-value -- coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/BBBT4_Value.v
+	$(_tr_time) final-value -- coqc -Q theories BBB4 -w -abstract-large-number $(FINAL_NATIVE) theories/CloseoutTr/BBBT4_Value.v
 	@echo "------------------------------------------------------------"
 	@echo "proof-tr-all COMPLETE at $$(git rev-parse HEAD 2>/dev/null)."
 	@echo "BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)"
