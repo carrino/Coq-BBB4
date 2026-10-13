@@ -1,0 +1,23 @@
+name: Native Coq 8.18
+description: Install the same native-capable compiler used by the full proof targets
+runs:
+  using: composite
+  steps:
+    - uses: avsm/setup-ocaml@v3
+      with:
+        ocaml-compiler: 4.14.2
+        cache-prefix: coq-8.18-native-v1
+    - name: Install Coq with native compilation
+      shell: bash
+      env:
+        OPAMJOBS: '2'
+      run: opam install -y coq.8.18.0 coq-native
+    - name: Verify the native compiler
+      shell: bash
+      run: |
+        opam exec -- coqc --version
+        opam exec -- coqc -config | grep -E '^COQ_NATIVE_COMPILER_DEFAULT=(yes|ondemand)$'
+        probe=$(mktemp -d)
+        printf 'Example native_probe : 1 + 1 = 2. Proof. native_compute; reflexivity. Qed.\n' > "$probe/NativeProbe.v"
+        opam exec -- coqc -w +native-compiler-disabled "$probe/NativeProbe.v"
+        rm -rf "$probe"

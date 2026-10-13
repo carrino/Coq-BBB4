@@ -76,6 +76,8 @@ jobs:
           make -f Makefile.coq -j4 theories/Machines/TCycler_Examples.vo
       - name: Instruction-level (transition-level) statement + ported checkers + one certificate stage
         run: make -f Makefile.coq -j4 theories/Checkers/NGramHistTr.vo theories/Checkers/TCyclerTr.vo theories/Checkers/TCyclerQHTr.vo theories/CensusTr/ProvTr_TC_10.vo
+      - name: Build scheduling regression tests
+        run: python3 -m unittest discover -s tools -p "test_ci_*.py"
       - name: "Hygiene: zero Admitted in theories/"
         run: "! grep -rn 'Admitted\\.' theories --include='*.v'"
       - name: "Hygiene: every .v under theories/ is built or explicitly exempt"
@@ -94,7 +96,7 @@ jobs:
   # checked by coqc from this commit's sources.
   #
   # Why reusing the shard .vo is sound.  The shards and the final job all
-  # check out this same commit and install the same apt coqc, so a .vo is
+  # check out this same commit and install the same native Coq/OCaml toolchain, so a .vo is
   # exactly what the final job would have produced itself (coqc is
   # deterministic; `ci_shard.py --merge` also insists that a file two shards
   # both built is byte-identical).  Nothing is trusted from a shard beyond
@@ -118,6 +120,9 @@ jobs:
   closeout-shard:
     if: github.event_name == 'push' || github.head_ref == 'claude/instruction-beeping-proof-scope-ww7zdk' || contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
     # The floor is the slowest single batch, which no split can shorten:
     # the deep-RepWL CBT_BR_02 / CBT_BR_00 take 35-46 min alone, depending
     # on the runner (the same batch varies up to ~2x between runners).
@@ -137,34 +142,7 @@ jobs:
       SHARDS: 6
     steps:
       - uses: actions/checkout@v4
-      # apt talks to the runner's package mirror, which sometimes hangs
-      # mid-fetch (observed 2026-08-19: 43 minutes of silence after an
-      # InRelease line, eating the whole job timeout as "cancelled").
-      # Bound each attempt and retry, so a bad mirror costs minutes,
-      # not the run.  `time` is for `make TIMED=1`.
-      # The mirror can also be slow rather than hung: ~200 KB/s on
-      # 2026-09-30, when the 15-minute step timed out mid-download on two
-      # shards.  Keep the downloaded .deb files between runs (apt reuses a
-      # cached .deb whose version matches, and fetches only what changed),
-      # and give a slow download room: 600 s an attempt, 25 minutes a step.
-      - uses: actions/cache@v4
-        with:
-          path: ~/apt-debs
-          key: apt-debs-${{ runner.os }}-coq-v1
-      - name: Install Coq
-        timeout-minutes: 25
-        run: |
-          mkdir -p ~/apt-debs/partial
-          for i in 1 2 3; do
-            sudo timeout 300 apt-get update && \
-            sudo timeout 600 apt-get install -y -o Dir::Cache::archives=$HOME/apt-debs coq time && break
-            echo "apt attempt $i failed or hung; retrying"
-            [ "$i" = 3 ] && exit 1
-            sleep 10
-          done
-          sudo rm -rf ~/apt-debs/partial ~/apt-debs/lock
-          sudo chown -R "$(id -u):$(id -g)" ~/apt-debs
-          echo "$(ls ~/apt-debs | wc -l) .deb files in the apt cache"
+      - uses: ./.github/actions/setup-native-coq
       - name: Generate Makefile.coq
         run: make Makefile.coq
       - name: "This shard's batches (the split covers every CBT_*.v exactly once)"
@@ -174,7 +152,7 @@ jobs:
           python3 tools/closeouttr/ci_shard.py ${{ matrix.shard }} $SHARDS > shard-targets.txt
           cat shard-targets.txt
       - name: "Kernel-check this shard's batches"
-        run: make -f Makefile.coq -j4 TIMED=1 $(cat shard-targets.txt) 2>&1 | tee shard-${{ matrix.shard }}.log
+        run: bash tools/ci_native_build.sh TIMED=1 $(cat shard-targets.txt) 2>&1 | tee shard-${{ matrix.shard }}.log
       # Everything this shard compiled: untracked .vo/.glob (the committed
       # census .vo are tracked, so they are never shipped).
       - name: Pack the shard's .vo
@@ -192,44 +170,21 @@ jobs:
           retention-days: 7
   closeout-final:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
     needs: closeout-shard
     if: always() && (github.event_name == 'push' || github.head_ref == 'claude/instruction-beeping-proof-scope-ww7zdk' || contains(github.event.pull_request.labels.*.name, 'full-ci'))
     timeout-minutes: 60
     steps:
       - name: Every shard passed
+        shell: bash
         if: needs.closeout-shard.result != 'success'
         run: |
           echo "closeout-shard: ${{ needs.closeout-shard.result }}; see the red shard for the rejected batch"
           exit 1
       - uses: actions/checkout@v4
-      # apt talks to the runner's package mirror, which sometimes hangs
-      # mid-fetch (observed 2026-08-19: 43 minutes of silence after an
-      # InRelease line, eating the whole job timeout as "cancelled").
-      # Bound each attempt and retry, so a bad mirror costs minutes,
-      # not the run.
-      # The mirror can also be slow rather than hung: ~200 KB/s on
-      # 2026-09-30, when the 15-minute step timed out mid-download on two
-      # shards.  Keep the downloaded .deb files between runs (apt reuses a
-      # cached .deb whose version matches, and fetches only what changed),
-      # and give a slow download room: 600 s an attempt, 25 minutes a step.
-      - uses: actions/cache@v4
-        with:
-          path: ~/apt-debs
-          key: apt-debs-${{ runner.os }}-coq-v1
-      - name: Install Coq
-        timeout-minutes: 25
-        run: |
-          mkdir -p ~/apt-debs/partial
-          for i in 1 2 3; do
-            sudo timeout 300 apt-get update && \
-            sudo timeout 600 apt-get install -y -o Dir::Cache::archives=$HOME/apt-debs coq time && break
-            echo "apt attempt $i failed or hung; retrying"
-            [ "$i" = 3 ] && exit 1
-            sleep 10
-          done
-          sudo rm -rf ~/apt-debs/partial ~/apt-debs/lock
-          sudo chown -R "$(id -u):$(id -g)" ~/apt-debs
-          echo "$(ls ~/apt-debs | wc -l) .deb files in the apt cache"
+      - uses: ./.github/actions/setup-native-coq
       - name: Generate Makefile.coq
         run: make Makefile.coq
       - name: "Instruction-level closeout: generated files current"
@@ -253,54 +208,63 @@ jobs:
           fi
           echo "all $(echo $targets | wc -w) batches up to date"
       - name: "Instruction-level closeout: the split kernel-checked over every batch"
-        run: make -f Makefile.coq -j4 theories/CloseoutTr/CloseoutTr.vo
+        run: bash tools/ci_native_build.sh theories/CloseoutTr/CloseoutTr.vo
   # Research-session PRs: the generated files must be current, and every
   # .v the PR adds or changes (its batches, boards, checkers) must compile,
-  # with whatever it imports.  Minutes on one runner instead of the full
-  # sharded closeout on every chunk pushed.
-  closeout-changed:
+  # with whatever it imports. Use one runner for small PRs and up to six
+  # for broad changes, with the same complete changed-file coverage.
+  closeout-plan:
     if: github.event_name == 'pull_request' && !(github.event_name == 'push' || github.head_ref == 'claude/instruction-beeping-proof-scope-ww7zdk' || contains(github.event.pull_request.labels.*.name, 'full-ci'))
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      # The mirror can also be slow rather than hung: ~200 KB/s on
-      # 2026-09-30, when the 15-minute step timed out mid-download on two
-      # shards.  Keep the downloaded .deb files between runs (apt reuses a
-      # cached .deb whose version matches, and fetches only what changed),
-      # and give a slow download room: 600 s an attempt, 25 minutes a step.
-      - uses: actions/cache@v4
+      - id: plan
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: echo "matrix=$(python3 tools/ci_changed.py --base "$BASE_SHA" --matrix)" >> "$GITHUB_OUTPUT"
+  closeout-changed-shard:
+    needs: closeout-plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.closeout-plan.outputs.matrix) }}
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
         with:
-          path: ~/apt-debs
-          key: apt-debs-${{ runner.os }}-coq-v1
-      - name: Install Coq
-        timeout-minutes: 25
-        run: |
-          mkdir -p ~/apt-debs/partial
-          for i in 1 2 3; do
-            sudo timeout 300 apt-get update && \
-            sudo timeout 600 apt-get install -y -o Dir::Cache::archives=$HOME/apt-debs coq time && break
-            echo "apt attempt $i failed or hung; retrying"
-            [ "$i" = 3 ] && exit 1
-            sleep 10
-          done
-          sudo rm -rf ~/apt-debs/partial ~/apt-debs/lock
-          sudo chown -R "$(id -u):$(id -g)" ~/apt-debs
-          echo "$(ls ~/apt-debs | wc -l) .deb files in the apt cache"
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-native-coq
       - name: Generate Makefile.coq
         run: make Makefile.coq
       - name: "Instruction-level closeout: generated files current"
         run: |
           python3 tools/closeouttr/gen_closeout_tr.py --check
           python3 tools/closeouttr/ci_shard.py --check 6
-      - name: "Kernel-check every .v this PR adds or changes (the split itself runs in the integration PR)"
+      - name: Kernel-check this shard of changed proofs
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          SHARD: ${{ matrix.shard }}
+          SHARDS: ${{ matrix.shards }}
         run: |
-          base=${{ github.event.pull_request.base.sha }}
-          targets=$(git diff --name-only --diff-filter=AM "$base"...HEAD -- 'theories/*.v' \
-                    | grep -v -e '^theories/CloseoutTr/CloseoutTr\.v$' -e '^theories/CloseoutTr/RemainingTr\.v$' \
-                    | sed 's/\.v$/.vo/' || true)
-          if [ -z "$targets" ]; then echo "no .v added or changed"; exit 0; fi
-          echo "$targets" | wc -l
-          make -f Makefile.coq -j4 $targets
+          python3 tools/ci_changed.py --base "$BASE_SHA" --shard "$SHARD" --shards "$SHARDS" > changed-targets.txt
+          mapfile -t targets < changed-targets.txt
+          bash tools/ci_native_build.sh "${targets[@]}"
+  # Keep the existing required-check name; a failed/cancelled shard must
+  # never turn into a successful skipped aggregate.
+  closeout-changed:
+    needs: [closeout-plan, closeout-changed-shard]
+    if: always() && github.event_name == 'pull_request' && !(github.event_name == 'push' || github.head_ref == 'claude/instruction-beeping-proof-scope-ww7zdk' || contains(github.event.pull_request.labels.*.name, 'full-ci'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every changed proof shard passed
+        env:
+          PLAN_RESULT: ${{ needs.closeout-plan.result }}
+          SHARD_RESULT: ${{ needs.closeout-changed-shard.result }}
+        run: test "$PLAN_RESULT" = success && test "$SHARD_RESULT" = success

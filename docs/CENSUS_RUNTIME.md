@@ -3759,3 +3759,30 @@ python3 tools/bench_state_checks.py --output work/state-cycles \
 The script records source hashes, Coq version, CPU/wall time, peak RSS and
 assumption audits for both evaluators. No cold end-to-end state timing is
 claimed here.
+
+
+### Completed full-target validation (2026-10-12)
+
+Both targets completed on the 4-core-quota, 16 GiB Linux machine at
+`3be1bee018bd9ea2c9c7d0d30ab72cca340a4e69`:
+
+| Target | Wall time | Census validation | Final assumptions |
+| --- | ---: | --- | --- |
+| `proof-tr-all` | 2 h 6 min | All 96 units rewalked | `functional_extensionality_dep` only |
+| `proof-all` | 1 h 23 min | Full state census rewalked; source stamp verified | `functional_extensionality_dep` only |
+
+These were **incremental full-target validations**, with previously compiled
+prerequisite objects retained. State computation preparation and benchmarks
+also overlapped the instruction run. They are not cold-build timings or a
+measurement on an 8-core machine. Instruction jobs were 3/4/3 for prerequisites,
+walk, and closeout. State jobs were 3/4/2 for build, walk, and assembly, with
+additional order-only edges serializing the large IRules batches on 16 GiB.
+
+CI now installs Coq 8.18.0 with native compilation for closeout jobs and checks
+that native computation is available. The apt-based core job still exercises
+the VM-only toolchain. Changed-proof CI partitions the existing target set
+across one to six runners (up to 600 files per runner before the six-runner cap),
+with an aggregate check that fails if any shard fails or is cancelled. Each
+runner precompiles computation dependencies and checks all assigned proofs
+with native code on demand; no compiled proof cache is restored. The existing
+integration-only exclusions (`CloseoutTr.v` and `RemainingTr.v`) are unchanged.
