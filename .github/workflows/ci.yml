@@ -153,11 +153,12 @@ jobs:
           cat shard-targets.txt
       - name: "Kernel-check this shard's batches"
         run: bash tools/ci_native_build.sh TIMED=1 $(cat shard-targets.txt) 2>&1 | tee shard-${{ matrix.shard }}.log
-      # Everything this shard compiled: untracked .vo/.glob (the committed
-      # census .vo are tracked, so they are never shipped).
+      # Everything this shard compiled: untracked .vo/.glob under theories/
+      # (not the opam switch's _opam/ stdlib, which setup-ocaml puts in the
+      # workspace; ci_shard.py --merge rejects anything outside theories/).
       - name: Pack the shard's .vo
         run: |
-          git ls-files -o -- '*.vo' '*.glob' > shard-files.txt
+          git ls-files -o -- 'theories/*.vo' 'theories/*.glob' > shard-files.txt
           echo "$(grep -c '\.vo$' shard-files.txt) .vo built on this shard"
           tar cf closeout-shard-${{ matrix.shard }}.tar -T shard-files.txt
       - uses: actions/upload-artifact@v4
