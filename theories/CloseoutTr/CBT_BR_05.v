@@ -12,27 +12,27 @@ Import ListNotations.
 (* spec 1RB1LD_1RC0RB_0LA0RB_0LA1LC *)
 Definition r_BR_05_0000 : list (option Trans) := [t1RB;t1LD;t1RC;t0RB;t0LA;t0RB;t0LA;t1LC].
 Lemma cv_BR_05_0000 : coversTr (row_to_tm r_BR_05_0000).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 6 2 0 72232 22). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 6 2 0 72232 22). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LD_1RC0RB_1LC0RA_0LA1LC *)
 Definition r_BR_05_0001 : list (option Trans) := [t1RB;t1LD;t1RC;t0RB;t1LC;t0RA;t0LA;t1LC].
 Lemma cv_BR_05_0001 : coversTr (row_to_tm r_BR_05_0001).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 8 2 0 16712 28). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 8 2 0 16712 28). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1RC_1LC0RD_0RC0LD_1RA0LA *)
 Definition r_BR_05_0002 : list (option Trans) := [t1RB;t1RC;t1LC;t0RD;t0RC;t0LD;t1RA;t0LA].
 Lemma cv_BR_05_0002 : coversTr (row_to_tm r_BR_05_0002).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 10 2 0 80056 33). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 10 2 0 80056 33). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1RD_1LC0RA_1LA0LB_1RB0LC *)
 Definition r_BR_05_0003 : list (option Trans) := [t1RB;t1RD;t1LC;t0RA;t1LA;t0LB;t1RB;t0LC].
 Lemma cv_BR_05_0003 : coversTr (row_to_tm r_BR_05_0003).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 6 2 0 45224 23). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 6 2 0 45224 23). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1RD_1LC0LD_0RA1LB_0LC1RC *)
 Definition r_BR_05_0004 : list (option Trans) := [t1RB;t1RD;t1LC;t0LD;t0RA;t1LB;t0LC;t1RC].
 Lemma cv_BR_05_0004 : coversTr (row_to_tm r_BR_05_0004).
-Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 9 2 0 80112 30). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 9 2 0 80112 30). native_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_BR_05 : list (list (option Trans)) :=
   [r_BR_05_0000;

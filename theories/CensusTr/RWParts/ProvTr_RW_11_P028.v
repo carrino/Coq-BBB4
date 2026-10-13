@@ -18,7 +18,7 @@ Definition tm_rw11_0071 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma nqhtr_rw11_0071 : NeverQuasiHaltsTr tm_rw11_0071.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 25072 31). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 25072 31). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_11_p028 : list TM :=
   [tm_rw11_0071].

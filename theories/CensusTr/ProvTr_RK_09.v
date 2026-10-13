@@ -22,7 +22,7 @@ Definition tm_1RB1LA_0LC0RD_1RA1LD_1LB0RA : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma nqhtr_1RB1LA_0LC0RD_1RA1LD_1LB0RA : NeverQuasiHaltsTr tm_1RB1LA_0LC0RD_1RA1LD_1LB0RA.
-Proof. apply (rank_tier_tr_sound tm_1RB1LA_0LC0RD_1RA1LD_1LB0RA 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB1LA_0LC0RD_1RA1LD_1LB0RA 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LA_0RC1RD_1LC1LA_0RB0RC  n=6 t=0 *)
 Definition tm_1RB0LA_0RC1RD_1LC1LA_0RB0RC : TM := fun q s =>
@@ -37,7 +37,7 @@ Definition tm_1RB0LA_0RC1RD_1LC1LA_0RB0RC : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma nqhtr_1RB0LA_0RC1RD_1LC1LA_0RB0RC : NeverQuasiHaltsTr tm_1RB0LA_0RC1RD_1LC1LA_0RB0RC.
-Proof. apply (rank_tier_tr_sound tm_1RB0LA_0RC1RD_1LC1LA_0RB0RC 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0LA_0RC1RD_1LC1LA_0RB0RC 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0RD_1LC0RD_1LD0LC_1RA0LC  n=6 t=0 *)
 Definition tm_1RB0RD_1LC0RD_1LD0LC_1RA0LC : TM := fun q s =>
@@ -52,7 +52,7 @@ Definition tm_1RB0RD_1LC0RD_1LD0LC_1RA0LC : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma nqhtr_1RB0RD_1LC0RD_1LD0LC_1RA0LC : NeverQuasiHaltsTr tm_1RB0RD_1LC0RD_1LD0LC_1RA0LC.
-Proof. apply (rank_tier_tr_sound tm_1RB0RD_1LC0RD_1LD0LC_1RA0LC 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0RD_1LC0RD_1LD0LC_1RA0LC 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LA_0RC0RA_0LD1RA_1LD0LA  n=6 t=0 *)
 Definition tm_1RB0LA_0RC0RA_0LD1RA_1LD0LA : TM := fun q s =>
@@ -67,7 +67,7 @@ Definition tm_1RB0LA_0RC0RA_0LD1RA_1LD0LA : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma nqhtr_1RB0LA_0RC0RA_0LD1RA_1LD0LA : NeverQuasiHaltsTr tm_1RB0LA_0RC0RA_0LD1RA_1LD0LA.
-Proof. apply (rank_tier_tr_sound tm_1RB0LA_0RC0RA_0LD1RA_1LD0LA 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0LA_0RC0RA_0LD1RA_1LD0LA 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LC_1RC0RA_1LA0LD_1LC1RB  n=6 t=0 *)
 Definition tm_1RB0LC_1RC0RA_1LA0LD_1LC1RB : TM := fun q s =>
@@ -82,7 +82,7 @@ Definition tm_1RB0LC_1RC0RA_1LA0LD_1LC1RB : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma nqhtr_1RB0LC_1RC0RA_1LA0LD_1LC1RB : NeverQuasiHaltsTr tm_1RB0LC_1RC0RA_1LA0LD_1LC1RB.
-Proof. apply (rank_tier_tr_sound tm_1RB0LC_1RC0RA_1LA0LD_1LC1RB 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0LC_1RC0RA_1LA0LD_1LC1RB 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0RA_0LC1RA_1RA0LD_1LC1RD  n=6 t=0 *)
 Definition tm_1RB0RA_0LC1RA_1RA0LD_1LC1RD : TM := fun q s =>
@@ -97,7 +97,7 @@ Definition tm_1RB0RA_0LC1RA_1RA0LD_1LC1RD : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma nqhtr_1RB0RA_0LC1RA_1RA0LD_1LC1RD : NeverQuasiHaltsTr tm_1RB0RA_0LC1RA_1RA0LD_1LC1RD.
-Proof. apply (rank_tier_tr_sound tm_1RB0RA_0LC1RA_1RA0LD_1LC1RD 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0RA_0LC1RA_1RA0LD_1LC1RD 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0RC0RD_1LA0LA_1LD1RA  n=6 t=0 *)
 Definition tm_1RB1LC_0RC0RD_1LA0LA_1LD1RA : TM := fun q s =>
@@ -112,7 +112,7 @@ Definition tm_1RB1LC_0RC0RD_1LA0LA_1LD1RA : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma nqhtr_1RB1LC_0RC0RD_1LA0LA_1LD1RA : NeverQuasiHaltsTr tm_1RB1LC_0RC0RD_1LA0LA_1LD1RA.
-Proof. apply (rank_tier_tr_sound tm_1RB1LC_0RC0RD_1LA0LA_1LD1RA 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB1LC_0RC0RD_1LA0LA_1LD1RA 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_0RC0LA_1LD1RA_1LB1RD  n=6 t=0 *)
 Definition tm_1RB0LD_0RC0LA_1LD1RA_1LB1RD : TM := fun q s =>
@@ -127,7 +127,7 @@ Definition tm_1RB0LD_0RC0LA_1LD1RA_1LB1RD : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma nqhtr_1RB0LD_0RC0LA_1LD1RA_1LB1RD : NeverQuasiHaltsTr tm_1RB0LD_0RC0LA_1LD1RA_1LB1RD.
-Proof. apply (rank_tier_tr_sound tm_1RB0LD_0RC0LA_1LD1RA_1LB1RD 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0LD_0RC0LA_1LD1RA_1LB1RD 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_0RC1RB_1RD0RA_1LA0RC  n=6 t=0 *)
 Definition tm_1RB0LD_0RC1RB_1RD0RA_1LA0RC : TM := fun q s =>
@@ -142,7 +142,7 @@ Definition tm_1RB0LD_0RC1RB_1RD0RA_1LA0RC : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma nqhtr_1RB0LD_0RC1RB_1RD0RA_1LA0RC : NeverQuasiHaltsTr tm_1RB0LD_0RC1RB_1RD0RA_1LA0RC.
-Proof. apply (rank_tier_tr_sound tm_1RB0LD_0RC1RB_1RD0RA_1LA0RC 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0LD_0RC1RB_1RD0RA_1LA0RC 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_1RC0RA_1LA0RA_1LA0LD  n=6 t=0 *)
 Definition tm_1RB0LD_1RC0RA_1LA0RA_1LA0LD : TM := fun q s =>
@@ -157,7 +157,7 @@ Definition tm_1RB0LD_1RC0RA_1LA0RA_1LA0LD : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma nqhtr_1RB0LD_1RC0RA_1LA0RA_1LA0LD : NeverQuasiHaltsTr tm_1RB0LD_1RC0RA_1LA0RA_1LA0LD.
-Proof. apply (rank_tier_tr_sound tm_1RB0LD_1RC0RA_1LA0RA_1LA0LD 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0LD_1RC0RA_1LA0RA_1LA0LD 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LB_1LC0RD_1LA0LB_1RB0RA  n=6 t=0 *)
 Definition tm_1RB0LB_1LC0RD_1LA0LB_1RB0RA : TM := fun q s =>
@@ -172,7 +172,7 @@ Definition tm_1RB0LB_1LC0RD_1LA0LB_1RB0RA : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma nqhtr_1RB0LB_1LC0RD_1LA0LB_1RB0RA : NeverQuasiHaltsTr tm_1RB0LB_1LC0RD_1LA0LB_1RB0RA.
-Proof. apply (rank_tier_tr_sound tm_1RB0LB_1LC0RD_1LA0LB_1RB0RA 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0LB_1LC0RD_1LA0LB_1RB0RA 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0RA_0LC1RA_1LA1LD_0LC1LD  n=6 t=0 *)
 Definition tm_1RB0RA_0LC1RA_1LA1LD_0LC1LD : TM := fun q s =>
@@ -187,7 +187,7 @@ Definition tm_1RB0RA_0LC1RA_1LA1LD_0LC1LD : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma nqhtr_1RB0RA_0LC1RA_1LA1LD_0LC1LD : NeverQuasiHaltsTr tm_1RB0RA_0LC1RA_1LA1LD_0LC1LD.
-Proof. apply (rank_tier_tr_sound tm_1RB0RA_0LC1RA_1LA1LD_0LC1LD 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0RA_0LC1RA_1LA1LD_0LC1LD 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0RA_1LC1RA_1RD0LD_1LB1RB  n=6 t=0 *)
 Definition tm_1RB0RA_1LC1RA_1RD0LD_1LB1RB : TM := fun q s =>
@@ -202,7 +202,7 @@ Definition tm_1RB0RA_1LC1RA_1RD0LD_1LB1RB : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma nqhtr_1RB0RA_1LC1RA_1RD0LD_1LB1RB : NeverQuasiHaltsTr tm_1RB0RA_1LC1RA_1RD0LD_1LB1RB.
-Proof. apply (rank_tier_tr_sound tm_1RB0RA_1LC1RA_1RD0LD_1LB1RB 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0RA_1LC1RA_1RD0LD_1LB1RB 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RA_1LD0LC_0RB0LD  n=6 t=0 *)
 Definition tm_1RB1RA_1LC0RA_1LD0LC_0RB0LD : TM := fun q s =>
@@ -217,7 +217,7 @@ Definition tm_1RB1RA_1LC0RA_1LD0LC_0RB0LD : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma nqhtr_1RB1RA_1LC0RA_1LD0LC_0RB0LD : NeverQuasiHaltsTr tm_1RB1RA_1LC0RA_1LD0LC_0RB0LD.
-Proof. apply (rank_tier_tr_sound tm_1RB1RA_1LC0RA_1LD0LC_0RB0LD 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB1RA_1LC0RA_1LD0LC_0RB0LD 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LC_1LC0RB_1RD0LD_1LA1RB  n=6 t=0 *)
 Definition tm_1RB0LC_1LC0RB_1RD0LD_1LA1RB : TM := fun q s =>
@@ -232,7 +232,7 @@ Definition tm_1RB0LC_1LC0RB_1RD0LD_1LA1RB : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma nqhtr_1RB0LC_1LC0RB_1RD0LD_1LA1RB : NeverQuasiHaltsTr tm_1RB0LC_1LC0RB_1RD0LD_1LA1RB.
-Proof. apply (rank_tier_tr_sound tm_1RB0LC_1LC0RB_1RD0LD_1LA1RB 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0LC_1LC0RB_1RD0LD_1LA1RB 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LA_0RC1RC_0LD1RA_1LA0RA  n=6 t=0 *)
 Definition tm_1RB0LA_0RC1RC_0LD1RA_1LA0RA : TM := fun q s =>
@@ -247,7 +247,7 @@ Definition tm_1RB0LA_0RC1RC_0LD1RA_1LA0RA : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma nqhtr_1RB0LA_0RC1RC_0LD1RA_1LA0RA : NeverQuasiHaltsTr tm_1RB0LA_0RC1RC_0LD1RA_1LA0RA.
-Proof. apply (rank_tier_tr_sound tm_1RB0LA_0RC1RC_0LD1RA_1LA0RA 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0LA_0RC1RC_0LD1RA_1LA0RA 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0RA_0LC1RA_0LD1LC_1RA1RB  n=6 t=0 *)
 Definition tm_1RB0RA_0LC1RA_0LD1LC_1RA1RB : TM := fun q s =>
@@ -262,7 +262,7 @@ Definition tm_1RB0RA_0LC1RA_0LD1LC_1RA1RB : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma nqhtr_1RB0RA_0LC1RA_0LD1LC_1RA1RB : NeverQuasiHaltsTr tm_1RB0RA_0LC1RA_0LD1LC_1RA1RB.
-Proof. apply (rank_tier_tr_sound tm_1RB0RA_0LC1RA_0LD1LC_1RA1RB 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB0RA_0LC1RA_0LD1LC_1RA1RB 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_1LA0LB_0LB1LC  n=6 t=0 *)
 Definition tm_1RB1RD_1LC0RA_1LA0LB_0LB1LC : TM := fun q s =>
@@ -277,7 +277,7 @@ Definition tm_1RB1RD_1LC0RA_1LA0LB_0LB1LC : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma nqhtr_1RB1RD_1LC0RA_1LA0LB_0LB1LC : NeverQuasiHaltsTr tm_1RB1RD_1LC0RA_1LA0LB_0LB1LC.
-Proof. apply (rank_tier_tr_sound tm_1RB1RD_1LC0RA_1LA0LB_0LB1LC 6 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rank_tier_tr_sound tm_1RB1RD_1LC0RA_1LA0LB_0LB1LC 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 Definition prk_09 : list TM :=
   [tm_1RB1LA_0LC0RD_1RA1LD_1LB0RA;

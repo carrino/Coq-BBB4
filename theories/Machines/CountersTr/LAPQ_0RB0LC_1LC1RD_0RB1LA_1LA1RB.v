@@ -21,6 +21,7 @@
     Differentially validated against the raw simulator on BOTH branches --
     step counts AND exact configurations -- for 192 interior anchors (interior); 6 overflow phases, j = 2..7 (246 inner laps) (nested overflow).
     Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
+From BBB4.CensusTr Require Import BoundCheckTr.
 From Coq Require Import Arith Lia Bool List PArith Wellfounded.
 From BBB4 Require Import BBB4_Statement CTape Mirror.
 From Coq Require Import FunctionalExtensionality.
@@ -426,7 +427,7 @@ Proof.
   - intros p _. apply lap_0RB0LC_1LC1RD_0RB1LA_1LA1RB.
   - intros t Ht p _. apply fire_0RB0LC_1LC1RD_0RB1LA_1LA1RB. exact Ht.
   - exact wit_0RB0LC_1LC1RD_0RB1LA_1LA1RB.
-  - vm_cast_no_check (eq_refl true).
+  - apply bound_tr_leb; vm_cast_no_check (eq_refl true).
 Qed.
 
 Theorem qhtr_0RB0LC_1LC1RD_0RB1LA_1LA1RB : NonHalt tm_0RB0LC_1LC1RD_0RB1LA_1LA1RB /\ QHBoundTr 32779478 tm_0RB0LC_1LC1RD_0RB1LA_1LA1RB /\ QuasiHaltsTr tm_0RB0LC_1LC1RD_0RB1LA_1LA1RB.

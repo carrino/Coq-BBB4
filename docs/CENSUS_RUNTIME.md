@@ -3254,3 +3254,535 @@ question rests on.
 Two numbers this round would still like, in cost order: the native
 `--iter 0` row (M2 -- minutes, no walk), and that walk-rss table (free,
 whenever a walk happens for any reason).
+
+
+## Instruction census: short-circuit checks and native RepWL evaluation (2026-10-12)
+
+The instruction pipeline still evaluated work after a check had already failed.
+`List.forallb` uses `andb`, an ordinary function whose arguments are both evaluated
+by Coq's VM and native evaluators. In `ClosureTr`, a failing instruction could
+therefore still trigger certificate searches for all the remaining instructions;
+a failing edge could still trigger checks on the remaining closure nodes.
+
+`allb_tr` branches inside its recursion. Its general `allb_tr_eq` theorem proves
+that it returns the same boolean as `List.forallb` for every predicate and list.
+The instruction closure checks use it for closedness, rank peeling, rank checks
+and lexicographic checks. `cfires` similarly stops on the first matching
+instruction; `cfires_short_equiv` proves equality with the previous scan for
+every machine, configuration, target and prefix length. The candidate filter in
+`try_qhbtr` and the conjunctions in `WrapTr` now branch before evaluating the
+expensive check. These conjunction changes are definitionally equal to the old
+expressions. All checker soundness proofs remain checked by Coq.
+
+The last-fire filter also used to simulate the same prefix separately for each
+of the eight instruction targets. `last_fires` maintains a concrete eight-field
+record during one scan. `last_fires_spec` proves each field equal to the old
+single-target scan, and `qh_last_fires_spec` proves equality of the complete
+ordered candidate list for every machine. The horizon and treatment of the
+halting configuration and never-fired instructions are unchanged.
+
+The 1,430 proven-tier RepWL searches now use `native_cast_no_check`, the same
+native evaluator already used by the census walk, in place of
+`vm_cast_no_check`. The 32 supplied-certificate checks retain their VM casts.
+The generator and its inventory parser support both evaluators. Replacing
+`native_cast_no_check` with `vm_cast_no_check` in every changed generated part
+recovers the original source byte-for-byte: machine definitions, parameters,
+checker applications, row order, wrappers and theorem statements are unchanged.
+On a Coq built without native support, Coq falls back to its VM; `proof-tr-all`
+already requires and activates a native-capable compiler.
+
+Two isolated, single-process checks from RW_09, Coq 8.18.0 / OCaml 4.14.2,
+Linux x86-64 on AMD EPYC 9V74 (4 CPU quota, 16 GiB memory), dependencies prebuilt:
+
+| RepWL row | VM wall seconds | Native wall seconds | Speedup |
+|---|---:|---:|---:|
+| 09:0 | 2.744 | 1.205 | 2.28x |
+| 09:18 | 122.995 | 32.361 | 3.80x |
+
+Both evaluators proved the exact same boolean goal with closed assumptions.
+For row 09:18, peak RSS was 665,378,816 bytes with VM and 690,397,184 bytes with
+native evaluation. These are individual search measurements, not whole-stage
+or whole-build timings. Reproduce them after building the native checker:
+
+```sh
+python3 tools/censustr/bench_rw_evaluator.py --row 09:18 --output work/rw-evaluator
+```
+
+Two unchanged production walk units were also compiled in fresh processes on
+that machine, before and after the checker changes, with no competing compiler
+jobs. Both units proved their goals with closed assumptions in both runs:
+
+| Walk unit | Before wall seconds | After wall seconds | Speedup |
+|---|---:|---:|---:|
+| 10 | 48.642 | 29.216 | 1.66x |
+| 63 | 1,014.373 | 442.735 | 2.29x |
+
+Peak RSS changed from 1,611,997,184 to 1,364,283,392 bytes for unit 10 and
+from 2,496,872,448 to 2,478,698,496 bytes for unit 63. These serial speedup
+ratios need no adjustment for the target machine's eight cores. Whole-build
+wall time also depends on parallelism, memory and serial assembly work.
+
+The build also precompiles the native dependencies of `RunTr_WalkCompute` before
+building the proven tiers. Proof-only prerequisites and closeout batches use
+`-native-compiler ondemand`, avoiding eager native companions that the lean walk
+does not load. The original target dependency graph contains 3,448 libraries,
+169 of which are needed by the computation layer: this avoids 3,279 eager
+native compilations on a fresh build. This is native-capable mode, not
+`-native-compiler no`: all proofs still execute, all theorems are checked,
+and any native computation can still compile code when needed.
+`make proof-tr-all TR_PROOF_NATIVE=yes` restores
+eager native companions for comparison. Memory job budgets are unchanged.
+
+The new `ShortCircuitTr_Regression.v` checks a valid eight-instruction cycle in
+both VM and native evaluation, rejects a bypass self-loop, missing successors,
+a missing node and an empty lex certificate, and audits the changed soundness
+theorems. It is included in `proof-tr-all`. The walk-recipe tests check that the
+computational prerequisites build first with native precompilation, proof-only
+prerequisites use on-demand mode, and the eager override works, in addition to
+the existing incremental and failure checks.
+
+All 23 RW_09 proofs and their assembled `ptw_09_nqhtr` theorem compiled with
+native evaluation. The three parts' Coq-reported compile times changed from
+132.480 / 320.233 / 248.933 seconds (VM) to 36.230 / 80.707 / 65.201 seconds
+(native), at three compiler workers. This was concurrent validation with other
+checks, not an isolated stage benchmark. The existing stored-certificate
+corruption suite and closeout batch `CBT_BR_00` also compiled in on-demand mode.
+All three consumer assumption audits report only
+`functional_extensionality_dep`. The six generator/inventory tests and five
+walk-recipe tests pass, as do generated-file and project checks. An independent
+`coqchk` of `ShortCircuitTr_Regression` and its dependency closure passed.
+
+Reproduce the unit measurements with the same script in the before and after
+trees, with the same native-capable Coq and no competing compiler jobs:
+
+```sh
+make Makefile.coq
+make -f Makefile.coq -j3 theories/CensusTr/RunTr_WalkCompute.vo
+python3 tools/censustr/bench_short_circuit.py --units 10 63 --output work/short-bench
+make -f Makefile.coq theories/Tests/ShortCircuitTr_Regression.vo
+python3 tools/censustr/test_walk_make.py
+```
+
+The benchmark forcibly compiles copies of the actual, unchanged unit sources in
+fresh processes and requires closed assumptions for each. It records wall/CPU
+time, peak RSS, compiler version, revision and source hashes. Its objects stay
+outside the production walk. Use a new output directory for each run.
+
+The requested 2–3 hour goal is for the complete build on the target machine.
+A selected-unit comparison does not establish that end-to-end time; the final
+`BBBT4_value` assembly and a full cold build must still be measured separately.
+
+## Instruction census: remove unused state proofs and accelerate closeout (2026-10-12)
+
+The instruction assembly imported all nine `IRules_Batch_*` state boards to
+obtain machine definitions and certificate data. Those imports forced 250
+state-level proofs, including anchor simulations, even though the instruction
+proofs use `irules_check_neverqhtr_sound` and never use the state theorems as
+premises. These were also the batches previously reported at 6–8 GB each.
+
+`gen_irulestr_parts.py` now copies the required machine and certificate
+definitions verbatim from those canonical state sources and runs all 97
+original instruction proofs in 13 independent parts. Every original theorem
+statement and proof body is preserved byte-for-byte. The `IRulesTr_Batch_01`
+wrapper retains the original public theorem names, and `RunTr` retains its
+original ordered machine list, `Forall` proof and data conversion gate.
+The state boards and the state census are unchanged. The prerequisite job
+budget remains conservative until the full revised build's memory is measured.
+
+The generated dependency graph confirms that exactly those nine state boards
+leave the target closure and the 13 instruction parts enter it. All 97
+instruction proofs and their compatibility wrapper compiled in 121.4 seconds
+at three workers, with prerequisites prebuilt; the largest part's peak RSS was
+1,209,577,472 bytes. A consumer compiled the original `prov_tr_irtr_all` proof
+and proved by reflexivity that its entire ordered list is the original first
+97 entries of `prov_tr_data`. The property proof retains only
+`functional_extensionality_dep`; the list-equality proof has closed assumptions.
+These are validation measurements, not a timing of the old versus new full
+prerequisite phase.
+
+Independent `coqchk` passed for `MetaTr` and its dependency closure, each of
+the 13 parts, and the compatibility wrapper. The parts and wrapper were
+checked with `-norec` after checking their shared prerequisites; the checks
+used `-bytecode-compiler yes`. A monolithic default `coqchk` was stopped as
+it approached this host's 16 GiB limit. Separate checker processes bound
+memory while covering the same libraries; no proof is omitted.
+
+Closeout still used VM conversion for expensive searches after the proven-tier
+RepWL checks had moved to native conversion. `native_checks.py` now selects
+the rank, RepWL and multiblock search soundness applications: 1,183 checks in
+46 batches. It changes only their evaluator casts. Supplied-certificate and
+small direct checks retain their previous evaluator. Both `cbt.write_batch`
+and `gen_closeout_tr.py --check` enforce the selection. `RepWLMBTr` is
+precompiled natively alongside the walk computation dependencies so that
+individual proof files can reuse its native code.
+
+Two full closeout batches were compiled twice in fresh processes, with
+prebuilt dependencies and no competing compiler jobs, on the same Coq 8.18.0 /
+OCaml 4.14.2 host used above. Complete-file timings were:
+
+| Batch | VM seconds | Native seconds | Speedup |
+|---|---:|---:|---:|
+| `CBT_NG_11` (50 rank searches) | 734.316 | 162.236 | 4.53x |
+| `CBT_MB_00` (4 multiblock searches) | 84.280 | 18.628 | 4.52x |
+
+Both complete batch theorems report only `functional_extensionality_dep`.
+The NG row uses Coq's reported compile times; the MB row uses external process
+wall time (including startup). Native peak RSS was 2,630,619,136 bytes for NG
+and 843,427,840 bytes for MB, versus 874,340,352 bytes for MB's VM run.
+This comparison is against
+the earlier optimization's checker code in both runs: it measures an additional
+closeout speedup, not the short-circuit gain already reported above.
+
+All 50 RepWL proofs in `CBT_RW_03` also passed native checking and their
+assembled theorem's assumption audit (193.2 seconds, 969,707,520 bytes peak
+RSS). This is validation of the third selected checker family; no matched
+VM timing was collected for that batch. The five IRules inventory tests,
+five walk-recipe tests, two evaluator-selection tests and three stored-proof
+generation tests passed, together with the generated-file and project checks.
+Every changed closeout source becomes byte-for-byte identical to its original
+when its new native casts are changed back to VM casts.
+
+```sh
+python3 tools/closeouttr/bench_native_checks.py --batches NG_11 RW_03 \
+  --output work/closeout-native
+python3 tools/censustr/gen_irulestr_parts.py --check
+python3 tools/censustr/test_irulestr_parts.py
+python3 tools/closeouttr/test_native_checks.py
+```
+
+`make proof-tr-all` now prints wall and CPU time separately for computation
+dependencies, proof prerequisites, census units, census assembly, closeout /
+champion / tests, final bound and final value. Records append to
+`census_probes/proof-tr-times.jsonl` (override with `TR_TIMINGS=...`), including
+start time, command and exit code; reruns retain earlier records. Child peak
+RSS in the JSON is the largest child process, not the combined memory of
+parallel workers. The wrapper preserves command failure and make's jobserver
+descriptors. Existing per-unit walk times remain available as well.
+
+The seven-hour run has no recorded phase breakdown, so these results cannot
+yet determine the complete eight-core build time. The new phase records make
+the next full run usable for locating the remaining bottleneck.
+
+## Instruction proof follow-up: SCC ranks and compact closeout tables
+
+The next profiling pass found two broader sources of work: repeated graph
+relaxation in RepWL certificate search, and elaboration of millions of repeated
+numerals in supplied closeout certificates. Both changes keep the existing
+verified checkers and the original public theorem statements.
+
+### Rank the SCC graph once
+
+`CensusTr/RepWLSearchTr.v` uses the source-first SCC order already computed by
+`RepWLSearch`. It visits components in reverse order, assigning each component
+one plus the maximum rank of its outgoing successors (zero for a sink). Ranks
+are stored at the nodes' positive indices. This avoids repeatedly relaxing all
+edges and converting unary component numbers into positive map keys. A graph
+with a single component needs only the default-zero map. The final acyclic
+round uses the same traversal on singleton components.
+
+This code only produces certificates. `rw_check_neverqhtr` and
+`mb_check_neverqhtr`, their edge checks, and their soundness theorems are
+unchanged. The state-level search is also unchanged. The instruction RepWL and
+multiblock producers call the new search; their parameters and the machine
+lists stay the same.
+
+Same-host measurements with Coq 8.18.0 / OCaml 4.14.2, native conversion in
+both variants:
+
+| Workload | Relaxation CPU seconds | SCC-order CPU seconds | Speedup |
+|---|---:|---:|---:|
+| Proven RepWL row 09:18 | 31.255 | 8.566 | 3.65x |
+| Proven RepWL row 15:20 | 167.560 | 46.351 | 3.62x |
+| Complete RW_03 closeout, 50 proofs | 206.509 | 87.809 | 2.35x |
+| Complete MB_00 closeout, 4 proofs | 18.259 | 18.853 | 0.97x |
+| 77 matching prerequisite files, 426 proofs | 1322.413 | 713.706 | 1.85x |
+
+The individual-row and MB samples ran without competing proof builds. The
+50-proof batch and prerequisite comparison ran alongside the broad build, so
+the table uses child CPU time rather than interpreting their wall times as
+isolated timings. The MB sample shows that the rank change does not improve
+every workload. This is an additional improvement over the native search
+changes above, not another VM/native comparison.
+
+`Tests/RepWLSearchTr_Regression.v` compares the result with the original rank
+algorithms on all 512 directed graphs on three vertices in all six vertex
+orders, including cycles and disconnected graphs. It also covers a larger
+graph with multiple cyclic components, a tail, a self-loop and an isolated
+vertex. Both VM and native tests pass, with closed assumptions. Independent
+`coqchk` validation also passed. These finite tests are not a universal
+equivalence proof: acceptance of every production certificate remains the
+responsibility of the existing verified checker.
+
+`tools/censustr/bench_repwl_ranks.py` emits a separate reference producer using
+the old relaxation routines, compiles identical complete proof files against
+both producers, and audits their final consumer theorems. It preserves the
+production proof objects and records source hashes, timings and memory:
+
+```sh
+python3 tools/censustr/bench_repwl_ranks.py --output work/repwl-ranks \
+  theories/CensusTr/RWParts/ProvTr_RW_15_P005.v \
+  theories/CloseoutTr/CBT_RW_03.v
+```
+
+Build the current native computation dependencies first. For an isolated
+comparison, stop other compiler jobs before running the benchmark.
+
+### Pack large supplied certificate tables
+
+`tools/closeouttr/compact_tables.py` converts increasing positive-key rank
+tables and gates into shared dictionaries plus hexadecimal chunks. It uses
+the existing `HexFuelData` decoder; there is no new checker or trusted
+certificate import. Both `cbt.write_batch` and `gen_closeout_tr.py` apply this
+normalization. Small files, duplicate/unsorted tables, dictionaries outside the
+encoding's bounds, and existing hand-packed FuelPhase files retain their
+previous representation.
+
+94 files change, from 158,971,702 to 21,508,882 source bytes. Independent
+decoding reproduced every original table and gate. Expanding the complete
+files reproduced their original source after whitespace/numeral normalization
+and the explicitly recognized `map N.to_nat` data conversion. All public
+theorem declarations, batch names, row order, checker parameters and proof
+checks remain unchanged: 626 batches, 10,924 closeout rows.
+
+For AST_95, the initial complete-file comparison measured:
+
+| Representation | Wall seconds | CPU seconds | Peak child RSS |
+|---|---:|---:|---:|
+| Original literal tables | 161.286 | 160.693 | 4.61 GiB |
+| Shared positive constants | 73.674 | 72.861 | 2.31 GiB |
+| Packed tables | 50.037 | 49.946 | 1.68 GiB |
+
+All three used the original VM proof scripts. The production emitter, which
+also shares the unary rank tails, checked the same batch in 49.288 CPU seconds
+at 1.68 GiB. Its 60.2-second wall time included contention with the inventory
+check and is not an isolated timing. Separate Coq conversion proofs establish
+that both production certificate functions equal the original functions;
+their assumptions are closed. The final batch theorem has only the existing
+`functional_extensionality_dep` assumption. Independent `coqchk` validation of
+the packed batch passed with the bytecode compiler enabled.
+
+Six Python tests cover chunk boundaries, a fixed independently specified wire
+example, exact `N`-decoder recognition, unchanged unordered/duplicate tables,
+dictionary overflow, malformed payloads and round-trip/idempotence behavior.
+The closeout generator's consistency check passes. For inspection, expand a
+packed file without modifying its canonical source:
+
+```sh
+python3 tools/closeouttr/compact_tables.py --expand \
+  theories/CloseoutTr/CBT_AST_95.v > work/AST95-expanded.v
+python3 tools/closeouttr/test_compact_tables.py
+python3 tools/closeouttr/gen_closeout_tr.py --check
+```
+
+These measurements describe individual files and a substantial prerequisite
+sample. They are not a cold end-to-end build measurement and do not establish
+the final eight-core wall time.
+
+### Remaining rank proofs and portable job sizing
+
+The broad prerequisite run also identified 309 rank-search proofs in the ten
+`ProvTr_RK_*` batches that still used VM conversion. They now use native
+conversion, and `gen_provtr_rk.py` emits the same choice. A complete 85-proof
+`ProvTr_RK_08` comparison took 93.190 CPU seconds in the VM and 22.8 CPU seconds
+natively (about 4.1x). Both ran alongside the three-worker prerequisite build;
+the native batch's consumer assumption audit reports only the existing
+`functional_extensionality_dep`.
+
+`tools/proof_resources.py` fixes two resource-detection issues: the instruction
+job limits previously fell back to one worker on macOS because `/proc/meminfo`
+does not exist there, and Linux containers used their host's memory/core
+counts instead of their own limits. The helper reads reclaimable macOS pages
+from `vm_stat`, physical cores from `sysctl`/`lscpu`, and visible cgroup v2 CPU
+and memory limits on Linux. It retains the two-GiB reserve and the per-worker
+budgets. Explicit `PREREQ_TR_JOBS`, `WALK_TR_JOBS` and `CLOSEOUT_TR_JOBS`
+overrides still bypass automatic sizing. Tests cover macOS's page-size
+conversion, eight-core/32-GiB sizing, unknown/low memory and nested container
+limits. The state walk's existing memory-budget formulas are unchanged.
+
+All ten rank batches subsequently rebuilt successfully: the 309 proofs took
+872.812 CPU seconds with VM conversion and 210.460 CPU seconds with native
+conversion (4.15x). Peak child RSS was 1.09 and 1.25 GiB respectively. Every
+batch's final theorem retained only `functional_extensionality_dep`. These
+compiles shared the host with other validation jobs, so these are CPU totals,
+not a prediction of their contribution to parallel wall time.
+
+### Avoid repeatedly constructing the unary census bound
+
+The broad build exposed a larger issue in the quasi-halting proofs: each
+`vm_cast_no_check` of a small `n <=? 32779478` comparison evaluates the large
+unary right-hand operand. Thousands of separate goals repeat that allocation.
+
+`CensusTr/BoundCheckTr.v` proves the conversion of the fixed bound to binary
+`N` once, then proves, for every natural `n`, that the binary comparison
+implies the original boolean `Nat.leb` goal. Generated proofs apply this
+lemma before evaluating their bound checks. Their machine checkers, input
+parameters, original bound goals and public conclusions remain unchanged.
+The helper has closed assumptions and passed independent `coqchk` with VM
+conversion, including the numeral-conversion proof originally built natively.
+
+`fast_bound_checks.py` applies this transformation to 5,868 comparisons:
+3,032 census-stage proofs, 2,502 canonical LAPQ boards, 327 ladder boards and
+seven closeout proofs. The 26 LAPQ bundles are regenerated from the canonical
+boards. Their generators emit the same normalization, and the closeout
+generator checks its consistency before collecting the proof inventory.
+
+| Complete workload | Unary CPU seconds | Binary CPU seconds | Speedup | Peak RSS before → after |
+|---|---:|---:|---:|---:|
+| QH_00, 250 translated-cycler proofs | 287.721 | 2.806 | 102.6x | 2.98 → 0.47 GiB |
+| BundleLAPQ_000, 100 lap proofs | 131.683 | 13.328 | 9.88x | 3.31 → 0.85 GiB |
+
+The one-time numeral lemma took 2.066 CPU seconds and 1.27 GiB. The comparisons
+use CPU time because the baseline ran with three compiler workers. QH_00's
+consumer theorem retains only `functional_extensionality_dep`. A source audit
+verified unchanged data and theorem statements across all affected files,
+including the regenerated bundles. Four tests cover the supported proof
+shapes, preservation of unrelated goals, idempotence and exact reversal.
+
+For a repeatable comparison, restore the original proof scripts into a
+separate file, then compile that file and a copy of the current source with
+`tools/time_command.py`; the production objects remain untouched:
+
+```sh
+mkdir -p work/bound-bench
+python3 tools/censustr/fast_bound_checks.py --expand \
+  theories/CensusTr/ProvTr_QH_00.v > work/bound-bench/QH00_reference.v
+cp theories/CensusTr/ProvTr_QH_00.v work/bound-bench/QH00_binary.v
+python3 tools/time_command.py --log work/bound-bench/times.jsonl --phase reference -- \
+  coqc -native-compiler ondemand -Q theories BBB4 work/bound-bench/QH00_reference.v
+python3 tools/time_command.py --log work/bound-bench/times.jsonl --phase binary -- \
+  coqc -native-compiler ondemand -Q theories BBB4 work/bound-bench/QH00_binary.v
+```
+
+Build dependencies, including `BoundCheckTr.vo`, first. Use the census
+toolchain and the raised stack limit documented above.
+
+### Native evaluation for large packed certificates
+
+Packing also makes native conversion profitable for the larger supplied
+certificates. The generator selects packed files of at least 500,000 bytes;
+12 files meet that threshold. The smaller files keep VM evaluation, since
+native compilation overhead can outweigh their evaluation savings.
+
+| Packed workload | VM CPU seconds | Native CPU seconds |
+|---|---:|---:|
+| AST_33 | 80.524 | 29.797 |
+| AST_95 | 49.288 | 21.374 |
+| FTA_21 | 17.917 | 10.439 |
+| AST_05, retained on VM | 1.892 | 2.528 |
+
+These are additional gains after packing, with unchanged checkers. The AST_95
+experiment used a native cast; production retains the reduction/reflexivity
+proof shape with `native_compute`. All 12 production files subsequently
+compiled successfully. The subsequent auxiliary pass finished all 94 packed
+files and all 327 binary-bound ladder boards successfully. The complete target validation continues
+from the saved prerequisites; these measurements do not establish a cold
+eight-core wall time.
+
+### Revised prerequisite parallelism
+
+All revised prerequisites have now compiled successfully. The parallel RepWL
+parts peak at 1.93 GiB, all 26 binary-bound LAPQ bundles stay below 0.9 GiB,
+and the native rank batches peak at 1.25 GiB. The prerequisite worker budget
+is therefore reduced from six to three GiB, retaining the two-GiB reserve.
+On the user's eight-core Linux machine with 32 GiB RAM and about 30 GiB
+available, this permits eight prerequisite workers instead of four.
+
+`RunTr.v` peaks at 4.23 GiB. It runs after its proof dependencies have finished,
+followed by `RunTr_Split.v`; those final serial assemblies do not multiply
+with the prerequisite job count. The walk and closeout budgets remain
+separate. This resource change improves scheduling; it is not an end-to-end
+timing claim.
+
+## State proof follow-up: avoid repeated long-prefix scans (2026-10-12)
+
+The state census does not have the instruction batches' repeated comparison
+against a unary 32,779,478. Its ordinary bound is 2,000; `CloseoutKit.B_champ`
+already uses Horner arithmetic and propositional inequalities. The binary-bound
+fix therefore does not imply a similar speedup for `proof-all`.
+
+There is a separate expensive repetition in `TCyclerN`: after simulating the
+anchor, its never-quasihalting check simulates the entire prefix again for each
+of four states, before testing whether that state occurs in the repeating
+guarded lap. `TCyclerNFast` checks the lap first and stops at the first matching
+state. A successful lap visit makes the prefix scan unnecessary; if the visit
+fails, the original prefix condition is still checked.
+
+`tcycler_check_neverqh_N_fast_eq` proves equality with the original checker
+for **all** machines and certificate parameters, including rejected inputs.
+Both that theorem and `gvisits_short_eq` have closed assumptions and passed
+independent `coqchk`. The soundness theorem reuses `TCyclerN`'s original theorem.
+The four large-anchor boards (`TCyc_02` through `TCyc_05`) use this checker with
+native evaluation. Their machine definitions, parameters and theorem statements
+are unchanged; all four production files compile, with only the existing
+functional-extensionality assumption. `TCyc_02` also passed independent kernel
+checking with VM conversion. The generator reproduces all 40 certificates in
+the five files exactly, retaining VM evaluation for the smaller anchors.
+
+On this Coq 8.18 / OCaml 4.14 environment, the complete 309,417,105-step-anchor
+proof (`TCyc_05`) passed in all four configurations:
+
+| Checker | Evaluator | CPU seconds | Peak GiB |
+|---|---|---:|---:|
+| Original | VM (previous production) | 911.789 | 2.783 |
+| Original | Native | 141.788 | 2.445 |
+| Equivalent fast checker | VM | 143.897 | 0.734 |
+| Equivalent fast checker | Native (new production) | 19.028 | 0.721 |
+
+The combined change is **47.9x faster** on this complete proof. Comparing native
+on both sides isolates a **7.45x checker gain**; the new checker also passes
+using VM conversion. The production file independently compiled in 19.8 CPU
+seconds. Other builds were running, so these are CPU comparisons rather than
+isolated wall-time measurements, and they are not whole-build speedups.
+
+Blindly changing state batches to native evaluation did not help: the complete
+100-proof `QHB_00` batch went from 2.789 to 15.188 CPU seconds, and the 27-proof
+`RepWL_Batch_01` batch was essentially unchanged (77.786 versus 77.403 seconds).
+Those files retain their existing VM proofs.
+
+The state build now eagerly compiles native code only for the computation
+dependency closure, including the fast cycle checker: **84 modules**, compared
+with **2,585** modules in the complete state build graph. The other **2,501**
+modules still undergo their original proof checks, using native code on demand.
+`STATE_PROOF_NATIVE=yes` restores eager native compilation for comparison. This
+addresses the earlier profile's native-compilation overhead, but its actual
+end-to-end saving needs a fresh `proof-all` measurement; the historical 107
+CPU-minutes of native work includes computation modules that are still needed.
+
+Reproduce complete-batch evaluator and checker comparisons without overwriting
+production objects (build their computation dependencies first):
+
+```sh
+python3 tools/bench_state_checks.py --output work/state-cycles \
+  --reference-revision 5aa7cd98d theories/Machines/Bulk/TCyc_05.v
+```
+
+The script records source hashes, Coq version, CPU/wall time, peak RSS and
+assumption audits for both evaluators. No cold end-to-end state timing is
+claimed here.
+
+
+### Completed full-target validation (2026-10-12)
+
+Both targets completed on the 4-core-quota, 16 GiB Linux machine at
+`3be1bee018bd9ea2c9c7d0d30ab72cca340a4e69`:
+
+| Target | Wall time | Census validation | Final assumptions |
+| --- | ---: | --- | --- |
+| `proof-tr-all` | 2 h 6 min | All 96 units rewalked | `functional_extensionality_dep` only |
+| `proof-all` | 1 h 23 min | Full state census rewalked; source stamp verified | `functional_extensionality_dep` only |
+
+These were **incremental full-target validations**, with previously compiled
+prerequisite objects retained. State computation preparation and benchmarks
+also overlapped the instruction run. They are not cold-build timings or a
+measurement on an 8-core machine. Instruction jobs were 3/4/3 for prerequisites,
+walk, and closeout. State jobs were 3/4/2 for build, walk, and assembly, with
+additional order-only edges serializing the large IRules batches on 16 GiB.
+
+CI now installs Coq 8.18.0 with native compilation for closeout jobs and checks
+that native computation is available. The apt-based core job still exercises
+the VM-only toolchain. Changed-proof CI partitions the existing target set
+across one to six runners (up to 600 files per runner before the six-runner cap),
+with an aggregate check that fails if any shard fails or is cancelled. Each
+runner precompiles computation dependencies and checks all assigned proofs
+with native code on demand; no compiled proof cache is restored. The existing
+integration-only exclusions (`CloseoutTr.v` and `RemainingTr.v`) are unchanged.

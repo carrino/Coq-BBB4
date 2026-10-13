@@ -30,14 +30,36 @@ From BBB4.Checkers.IRules Require Import Engine AnchorVisits AnchorVisitsTr.
 Import ListNotations.
 Open Scope nat_scope.
 
+(** [List.forallb] evaluates its tail even after a failed check in the
+    native/VM evaluators: [andb] is an ordinary strict function. Here a
+    tail can include seven more rank or lexicographic certificate searches.
+    Keep the branch in the recursive function so those searches are skipped.
+    The equality below preserves the result for every predicate and list. *)
+Fixpoint allb_tr {A : Type} (f : A -> bool) (xs : list A) : bool :=
+  match xs with
+  | [] => true
+  | x :: rest => if f x then allb_tr f rest else false
+  end.
+
+Lemma allb_tr_eq : forall A (f : A -> bool) xs,
+  allb_tr f xs = forallb f xs.
+Proof.
+  intros A f xs. induction xs as [|x xs IH]; simpl; [reflexivity|].
+  rewrite IH. destruct (f x); reflexivity.
+Qed.
+
+Lemma allb_tr_forall : forall A (f : A -> bool) xs,
+  allb_tr f xs = true <-> (forall x, In x xs -> f x = true).
+Proof. intros. rewrite allb_tr_eq. apply forallb_forall. Qed.
+
 (** prefix scan: does instruction [tg] fire among the configurations
     [0 .. len-1] from [c]?  ([cvisits]'s shape, at instruction
     granularity.) *)
 Fixpoint cfires (tm : TM) (c : cconf) (len : nat) (tg : Instr) : bool :=
   match len with
   | 0 => false
-  | S m => instr_eqb (cinstr c) tg
-           || match cstep tm c with
+  | S m => if instr_eqb (cinstr c) tg then true
+           else match cstep tm c with
               | Some c' => cfires tm c' m tg
               | None => false
               end
@@ -92,21 +114,21 @@ Section ClosureTrEngine.
 
   Definition node_ok_tr (sp : PositiveSet.t) (a : A) : bool :=
     match succs a with
-    | Some l => forallb (fun a' => pset_mem A a_enc a' sp) l
+    | Some l => allb_tr (fun a' => pset_mem A a_enc a' sp) l
     | None => false
     end.
 
   Definition closed_tr_b (Sl : list A) : bool :=
-    forallb (node_ok_tr (apool_tr Sl)) Sl.
+    allb_tr (node_ok_tr (apool_tr Sl)) Sl.
 
   Definition edge_ok_tr (tg : Instr) (rnk : A -> nat) (a a' : A) : bool :=
     implb (negb (instr_eqb (a_instr a') tg)) (rnk a' <? rnk a).
 
   Definition rank_ok_tr (Sl : list A) (tg : Instr) (rnk : A -> nat) : bool :=
-    forallb (fun a =>
+    allb_tr (fun a =>
       if instr_eqb (a_instr a) tg then true
       else match succs a with
-           | Some l => forallb (edge_ok_tr tg rnk a) l
+           | Some l => allb_tr (edge_ok_tr tg rnk a) l
            | None => false
            end) Sl.
 
@@ -130,7 +152,7 @@ Section ClosureTrEngine.
       (rem : list A) : PositiveMap.tree nat * list A * bool :=
     fold_left (fun '(r, stuck, prog) a =>
       let sl := nontg_succs tg a in
-      if forallb (ranked_tr r) sl
+      if allb_tr (ranked_tr r) sl
       then (PositiveMap.add (a_enc a)
               (match sl with
                | [] => 0
@@ -159,7 +181,7 @@ Section ClosureTrEngine.
     | Some ct =>
         match close_tr fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
-            forallb (fun tg =>
+            allb_tr (fun tg =>
               if (if cfires tm c0 t tg then true
                   else existsb (fun a => instr_eqb (a_instr a) tg) Sl)
               then rank_ok_tr Sl tg (compute_ranks_tr Sl tg)
@@ -287,11 +309,11 @@ Section ClosureTrEngine.
     split.
     - unfold mem_tr, apool_tr. apply pset_of_In_tr.
       apply Hroot. left; reflexivity.
-    - unfold closed_tr_b. apply forallb_forall.
+    - unfold closed_tr_b. apply allb_tr_forall.
       intros x Hx.
       destruct (Hclosed x Hx) as (l & Hs & Hl).
       unfold node_ok_tr. rewrite Hs.
-      apply forallb_forall.
+      apply allb_tr_forall.
       intros y Hy. unfold apool_tr. apply pset_of_In_tr. exact (Hl y Hy).
   Qed.
 
@@ -308,13 +330,13 @@ Section ClosureTrEngine.
   Proof.
     intros Sl a c Hcl HIn Hcov.
     assert (Hnode : node_ok_tr (apool_tr Sl) a = true).
-    { unfold closed_tr_b in Hcl. rewrite forallb_forall in Hcl. auto. }
+    { unfold closed_tr_b in Hcl. rewrite allb_tr_forall in Hcl. auto. }
     unfold node_ok_tr in Hnode.
     destruct (succs a) as [l|] eqn:Es; [|discriminate].
     pose proof (succs_sound a c Hcov) as Hss. rewrite Es in Hss.
     destruct (step tm c) as [c'|] eqn:Est; [|contradiction].
     destruct Hss as (a' & HInl & Hcov').
-    rewrite forallb_forall in Hnode.
+    rewrite allb_tr_forall in Hnode.
     exists c', l, a'.
     repeat split; try assumption.
     apply mem_In_tr. unfold mem_tr. auto.
@@ -362,9 +384,9 @@ Section ClosureTrEngine.
         exists c'. split; [assumption|].
         rewrite <- (covers_instr a' c' Hcov'). assumption.
       + assert (Hlt : rnk a' < rnk a).
-        { unfold rank_ok_tr in Hro. rewrite forallb_forall in Hro.
+        { unfold rank_ok_tr in Hro. rewrite allb_tr_forall in Hro.
           specialize (Hro a HIn). rewrite Eq, Es in Hro.
-          rewrite forallb_forall in Hro.
+          rewrite allb_tr_forall in Hro.
           specialize (Hro a' HInl).
           unfold edge_ok_tr in Hro. rewrite Eq' in Hro. simpl in Hro.
           apply Nat.ltb_lt. assumption. }
@@ -392,9 +414,9 @@ Section ClosureTrEngine.
         * cbn [stepn]. rewrite Hstep. reflexivity.
         * rewrite <- (covers_instr a' c' Hcov'). exact Eq'.
       + assert (Hlt : rnk a' < rnk a).
-        { unfold rank_ok_tr in Hro. rewrite forallb_forall in Hro.
+        { unfold rank_ok_tr in Hro. rewrite allb_tr_forall in Hro.
           specialize (Hro a HIn). rewrite Eq, Es in Hro.
-          rewrite forallb_forall in Hro. specialize (Hro a' HInl).
+          rewrite allb_tr_forall in Hro. specialize (Hro a' HInl).
           unfold edge_ok_tr in Hro. rewrite Eq' in Hro. simpl in Hro.
           apply Nat.ltb_lt. exact Hro. }
         destruct (IH a' c' ltac:(lia) HIn' Hcov') as (j & c'' & Hsteps & Hq).
@@ -408,7 +430,7 @@ Section ClosureTrEngine.
     existsb (fun a => instr_eqb (a_instr a) tg) Sl.
 
   Definition live_ok_tr (Sl : list A) : bool :=
-    forallb (fun tg =>
+    allb_tr (fun tg =>
       if appears_tr Sl tg then rank_ok_tr Sl tg (compute_ranks_tr Sl tg)
       else true) all_Instr.
 
@@ -435,7 +457,7 @@ Section ClosureTrEngine.
   Proof.
     intros Sl a0 c0' tg Hcl Hlive HIn Hcov Happ N.
     assert (Hro : rank_ok_tr Sl tg (compute_ranks_tr Sl tg) = true).
-    { unfold live_ok_tr in Hlive. rewrite forallb_forall in Hlive.
+    { unfold live_ok_tr in Hlive. rewrite allb_tr_forall in Hlive.
       specialize (Hlive tg (all_Instr_complete tg)).
       rewrite Happ in Hlive. exact Hlive. }
     destruct (closure_invariant_tr Sl Hcl a0 c0' HIn Hcov N)
@@ -460,10 +482,10 @@ Section ClosureTrEngine.
 
   Definition lex_ok_tr (Sl : list A) (tg : Instr)
       (comps : list (lexcomp A)) : bool :=
-    forallb (fun a =>
+    allb_tr (fun a =>
       if instr_eqb (a_instr a) tg then true
       else match succs a with
-           | Some l => forallb (fun a' =>
+           | Some l => allb_tr (fun a' =>
                          if instr_eqb (a_instr a') tg then true
                          else lex_edge_ok A comps a a') l
            | None => false
@@ -471,7 +493,7 @@ Section ClosureTrEngine.
 
   Definition live_lex_ok_tr (Sl : list A)
       (cert : Instr -> list (lexcomp A)) : bool :=
-    forallb (fun tg =>
+    allb_tr (fun tg =>
       if appears_tr Sl tg
       then (if rank_ok_tr Sl tg (compute_ranks_tr Sl tg) then true
             else lex_ok_tr Sl tg (cert tg))
@@ -525,9 +547,9 @@ Section ClosureTrEngine.
         * cbn [stepn]. rewrite Hstep. reflexivity.
         * rewrite <- (covers_instr a' _ Hcov'). exact Eq'.
       + assert (He : lex_edge_ok A comps a a' = true).
-        { unfold lex_ok_tr in Hok. rewrite forallb_forall in Hok.
+        { unfold lex_ok_tr in Hok. rewrite allb_tr_forall in Hok.
           specialize (Hok a HIn). rewrite Eq, Es in Hok.
-          rewrite forallb_forall in Hok.
+          rewrite allb_tr_forall in Hok.
           specialize (Hok a' HInl). rewrite Eq' in Hok.
           simpl in Hok. exact Hok. }
         destruct (IH (lex_tuple A comps a' cc')
@@ -553,7 +575,7 @@ Section ClosureTrEngine.
       as (ccN & aN & HstN & HInN & HcovN).
     assert (HstN' : stepn tm N (lift cc0) = Some (lift ccN))
       by (apply csteps_lift; exact HstN).
-    unfold live_lex_ok_tr in Hlive. rewrite forallb_forall in Hlive.
+    unfold live_lex_ok_tr in Hlive. rewrite allb_tr_forall in Hlive.
     specialize (Hlive tg (all_Instr_complete tg)). rewrite Happ in Hlive.
     simpl in Hlive. apply orb_true_iff in Hlive as [Hro | Hlex].
     - destruct (rank_reach_tr Sl tg (compute_ranks_tr Sl tg) Hcl Hro
@@ -606,9 +628,9 @@ Section ClosureTrEngine.
         exists (lift cc'). split; [assumption|].
         rewrite <- (covers_instr a' _ Hcov'). assumption.
       + assert (He : lex_edge_ok A comps a a' = true).
-        { unfold lex_ok_tr in Hok. rewrite forallb_forall in Hok.
+        { unfold lex_ok_tr in Hok. rewrite allb_tr_forall in Hok.
           specialize (Hok a HIn). rewrite Eq, Es in Hok.
-          rewrite forallb_forall in Hok.
+          rewrite allb_tr_forall in Hok.
           specialize (Hok a' HInl). rewrite Eq' in Hok.
           simpl in Hok. assumption. }
         destruct (IH (lex_tuple A comps a' cc')
@@ -627,7 +649,7 @@ Section ClosureTrEngine.
     | Some ct =>
         match close_tr fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
-            forallb (fun tg =>
+            allb_tr (fun tg =>
               if (if cfires tm c0 t tg then true
                   else existsb (fun a => instr_eqb (a_instr a) tg) Sl)
               then lex_ok_tr Sl tg (cert tg)
@@ -656,7 +678,7 @@ Section ClosureTrEngine.
     { rewrite <- lift_c0. apply csteps_lift; assumption. }
     intros tg Hvq N.
     assert (Hro : lex_ok_tr Sl tg (cert tg) = true).
-    { rewrite forallb_forall in Hq.
+    { rewrite allb_tr_forall in Hq.
       specialize (Hq tg (all_Instr_complete tg)).
       destruct Hvq as (n0 & cn & Hcn & Hqn).
       assert (Hprem : (if cfires tm c0 t tg then true
@@ -718,7 +740,7 @@ Section ClosureTrEngine.
     { rewrite <- lift_c0. apply csteps_lift; assumption. }
     intros tg Hvq N.
     assert (Hro : rank_ok_tr Sl tg (compute_ranks_tr Sl tg) = true).
-    { rewrite forallb_forall in Hq.
+    { rewrite allb_tr_forall in Hq.
       specialize (Hq tg (all_Instr_complete tg)).
       destruct Hvq as (n0 & cn & Hcn & Hqn).
       assert (Hprem : (if cfires tm c0 t tg then true

@@ -22,10 +22,7 @@ From BBB4.CensusTr Require Export RunTr_Compute.
 (* Keep every original proven-tier certificate in the soundness chain.
    Native walk units import RunTr_WalkCompute instead; only the final
    assembly needs these proofs. *)
-From BBB4.Machines Require Import
-  IRules_Batch_00 IRules_Batch_01 IRules_Batch_02 IRules_Batch_03
-  IRules_Batch_04 IRules_Batch_05 IRules_Batch_06 IRules_Batch_07
-  IRules_Batch_08 IRulesTr_Batch_01.
+From BBB4.Machines Require Import IRulesTr_Batch_01.
 (* the transition-level lap-certificate boards (Machines/CountersTr,
    Counters/LapGlueTr), collected by tools/censustr/gen_provtr_lap.py *)
 From BBB4.CensusTr Require Import
@@ -151,8 +148,6 @@ Definition prov_tr_irtr : list TM :=
    tm_1RB0RC_0RC1RB_1LD1RC_1LA1LD;
    tm_1RB1RD_0LC1RD_1LC1LA_1LB0RD].
 
-(** the proven tier: the 7 v1 IRules certificates surviving the Tr gate
-    plus the lap-certificate counter boards *)
 (** the proven tier: IRulesTr certificates, the lap-certificate
     boards (ProvTr_Lap_NN), the translated-cycler certificates
     (ProvTr_TC_NN, Checkers/TCyclerTr), the RepWL-at-tape-period

@@ -12,7 +12,7 @@ Import ListNotations.
 (* spec 1RB1LB_1LC0RB_0LD0LB_0RA1LD *)
 Definition r_BX_08_0000 : list (option Trans) := [t1RB;t1LB;t1LC;t0RB;t0LD;t0LB;t0RA;t1LD].
 Lemma cv_BX_08_0000 : coversTr (row_to_tm r_BX_08_0000).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 8 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 8 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_BX_08 : list (list (option Trans)) :=
   [r_BX_08_0000].

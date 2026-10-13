@@ -12,22 +12,22 @@ Import ListNotations.
 (* spec 0RB1RD_1RC1RA_1LD0LA_1RA0LC *)
 Definition r_BR_09_0000 : list (option Trans) := [t0RB;t1RD;t1RC;t1RA;t1LD;t0LA;t1RA;t0LC].
 Lemma cv_BR_09_0000 : coversTr (row_to_tm r_BR_09_0000).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 7 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 7 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LD_0RC1RA_1RD1RB_1LA0LB *)
 Definition r_BR_09_0001 : list (option Trans) := [t1RB;t0LD;t0RC;t1RA;t1RD;t1RB;t1LA;t0LB].
 Lemma cv_BR_09_0001 : coversTr (row_to_tm r_BR_09_0001).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 7 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 7 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0RC_1LC0RA_0LD1LB_1LA1LC *)
 Definition r_BR_09_0002 : list (option Trans) := [t1RB;t0RC;t1LC;t0RA;t0LD;t1LB;t1LA;t1LC].
 Lemma cv_BR_09_0002 : coversTr (row_to_tm r_BR_09_0002).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 7 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 7 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1RD_1LC0LD_1RD0LB_0RA1RC *)
 Definition r_BR_09_0003 : list (option Trans) := [t1RB;t1RD;t1LC;t0LD;t1RD;t0LB;t0RA;t1RC].
 Lemma cv_BR_09_0003 : coversTr (row_to_tm r_BR_09_0003).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 7 0 200000 512). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 7 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_BR_09 : list (list (option Trans)) :=
   [r_BR_09_0000;

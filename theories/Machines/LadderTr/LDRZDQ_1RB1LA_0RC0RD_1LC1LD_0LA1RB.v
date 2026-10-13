@@ -15,6 +15,7 @@
     value, not as definitions in the kernel (LADDER_PLAN.md 4f).
 
     Axiom footprint: [functional_extensionality_dep], via [CTape.lift]. *)
+From BBB4.CensusTr Require Import BoundCheckTr.
 From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Census Require Import TNF_QH.
@@ -509,7 +510,7 @@ Lemma wit_1RB1LA_0RC0RD_1LC1LD_0LA1RB :
 Proof. vm_compute. reflexivity. Qed.
 
 Lemma bnd_1RB1LA_0RC0RD_1LC1LD_0LA1RB : (13 <=? 32779478) = true.
-Proof. vm_cast_no_check (eq_refl true). Qed.
+Proof. apply bound_tr_leb; vm_cast_no_check (eq_refl true). Qed.
 
 Theorem qhtr_1RB1LA_0RC0RD_1LC1LD_0LA1RB :
   NonHalt tm_1RB1LA_0RC0RD_1LC1LD_0LA1RB /\ QHBoundTr 32779478 tm_1RB1LA_0RC0RD_1LC1LD_0LA1RB /\ QuasiHaltsTr tm_1RB1LA_0RC0RD_1LC1LD_0LA1RB.

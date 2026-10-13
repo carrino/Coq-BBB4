@@ -18,7 +18,7 @@ Definition tm_rw07_0012 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma nqhtr_rw07_0012 : NeverQuasiHaltsTr tm_rw07_0012.
-Proof. apply (rw_tier_tr_sound _ 9 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 9 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_07_p002 : list TM :=
   [tm_rw07_0012].

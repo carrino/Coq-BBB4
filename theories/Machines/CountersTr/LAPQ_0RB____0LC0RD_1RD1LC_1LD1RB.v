@@ -20,6 +20,7 @@
     Differentially validated against the raw simulator on BOTH branches --
     step counts AND exact configurations -- for 198 anchors.
     Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
+From BBB4.CensusTr Require Import BoundCheckTr.
 From Coq Require Import Arith Lia Bool List PArith Wellfounded.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import WTape LapGlue LapGlueQH LapGlueAbs
@@ -239,5 +240,5 @@ Proof.
   - intros p _. apply lap_0RB____0LC0RD_1RD1LC_1LD1RB.
   - intros t Ht p _. apply fire_0RB____0LC0RD_1RD1LC_1LD1RB. exact Ht.
   - exact wit_0RB____0LC0RD_1RD1LC_1LD1RB.
-  - vm_cast_no_check (eq_refl true).
+  - apply bound_tr_leb; vm_cast_no_check (eq_refl true).
 Qed.

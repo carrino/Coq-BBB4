@@ -28,6 +28,7 @@ theories/Checkers/TCycler.v
 theories/Checkers/TCyclerTr.v
 theories/Checkers/TCyclerQHTr.v
 theories/Checkers/TCyclerN.v
+theories/Checkers/TCyclerNFast.v
 theories/Checkers/TCyclerAllNTr.v
 theories/Checkers/Wrap.v
 theories/Checkers/Fuel.v
@@ -5887,6 +5888,8 @@ theories/Tests/LapAvoid_Corruption.v
 theories/Tests/Champion_Corruption.v
 theories/Tests/ChampionTr_Corruption.v
 theories/Tests/ConventionTr_Example.v
+theories/Tests/ShortCircuitTr_Regression.v
+theories/Tests/RepWLSearchTr_Regression.v
 theories/Tests/SweepNqh_Corruption.v
 theories/Machines/Counters/LAPC_0RB0LC_1LA1RB_0RC1LD_1RC0LD.v
 theories/Machines/Counters/LAPC_0RB0LC_1LA1RB_1RD0LC_0RD1LC.v
@@ -7161,6 +7164,7 @@ theories/BBBT4_Champion.v
 theories/CensusTr/TNF_QHTr.v
 theories/CensusTr/DecideTr.v
 theories/CensusTr/QHConveyorTr.v
+theories/CensusTr/RepWLSearchTr.v
 theories/CensusTr/RepWLTr.v
 theories/CensusTr/RepWLMBTr.v
 theories/CensusTr/DeferredTr_00.v
@@ -7265,6 +7269,19 @@ theories/CensusTr/RunTr.v
 theories/CensusTr/RunTr_Split.v
 theories/Checkers/IRules/AnchorVisitsTr.v
 theories/Checkers/IRules/MetaTr.v
+theories/Machines/IRulesTrParts/IRulesTrPart_00.v
+theories/Machines/IRulesTrParts/IRulesTrPart_01.v
+theories/Machines/IRulesTrParts/IRulesTrPart_02.v
+theories/Machines/IRulesTrParts/IRulesTrPart_03.v
+theories/Machines/IRulesTrParts/IRulesTrPart_04.v
+theories/Machines/IRulesTrParts/IRulesTrPart_05.v
+theories/Machines/IRulesTrParts/IRulesTrPart_06.v
+theories/Machines/IRulesTrParts/IRulesTrPart_07.v
+theories/Machines/IRulesTrParts/IRulesTrPart_08.v
+theories/Machines/IRulesTrParts/IRulesTrPart_09.v
+theories/Machines/IRulesTrParts/IRulesTrPart_10.v
+theories/Machines/IRulesTrParts/IRulesTrPart_11.v
+theories/Machines/IRulesTrParts/IRulesTrPart_12.v
 theories/Machines/IRulesTr_Batch_01.v
 theories/ClosureTr.v
 theories/Checkers/NGramTr.v
@@ -12799,6 +12816,7 @@ theories/CensusTr/RWCerts/DataTr_RW_14_0087.v
 theories/CensusTr/RWCerts/DataTr_RW_15_0023.v
 theories/CensusTr/RWCerts/DataTr_RW_15_0053.v
 theories/CensusTr/RWCerts/DataTr_RW_15_0097.v
+theories/CensusTr/BoundCheckTr.v
 theories/CloseoutTr/CloseoutKitTr.v
 theories/CloseoutTr/RWCerts/Data_BR_00_0000.v
 theories/CloseoutTr/RWCerts/Data_BR_00_0001.v

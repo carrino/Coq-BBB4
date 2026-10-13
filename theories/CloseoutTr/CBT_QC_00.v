@@ -2,6 +2,7 @@
 
     Transition-level closeout batch QC_00: 6 deferred rows, quiet-instruction cyclers (TCyclerQHTr, tcycler_qh_stage).
     Collected by tools/closeouttr/gen_closeout_tr.py. *)
+From BBB4.CensusTr Require Import BoundCheckTr.
 From Coq Require Import Arith List ZArith.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.Census Require Import Deferred_Defs.
@@ -12,32 +13,32 @@ Import ListNotations.
 (* spec 0RB---_0LC---_0RB---_------ *)
 Definition r_QC_00_0000 : list (option Trans) := [t0RB;tN;t0LC;tN;t0RB;tN;tN;tN].
 Lemma cv_QC_00_0000 : coversTr (row_to_tm r_QC_00_0000).
-Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* spec 0RB---_1LA1LA_------_------ *)
 Definition r_QC_00_0001 : list (option Trans) := [t0RB;tN;t1LA;t1LA;tN;tN;tN;tN].
 Lemma cv_QC_00_0001 : coversTr (row_to_tm r_QC_00_0001).
-Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 2 2 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 2 2 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* spec 1RB---_0LB1RB_------_------ *)
 Definition r_QC_00_0002 : list (option Trans) := [t1RB;tN;t0LB;t1RB;tN;tN;tN;tN].
 Lemma cv_QC_00_0002 : coversTr (row_to_tm r_QC_00_0002).
-Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* spec 1RB---_0LC---_---1RB_------ *)
 Definition r_QC_00_0003 : list (option Trans) := [t1RB;tN;t0LC;tN;tN;t1RB;tN;tN].
 Lemma cv_QC_00_0003 : coversTr (row_to_tm r_QC_00_0003).
-Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* spec 1RB---_0RC---_0LB---_------ *)
 Definition r_QC_00_0004 : list (option Trans) := [t1RB;tN;t0RC;tN;t0LB;tN;tN;tN].
 Lemma cv_QC_00_0004 : coversTr (row_to_tm r_QC_00_0004).
-Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 1 2 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 1 2 1 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* spec 1RB1RB_0LA---_------_------ *)
 Definition r_QC_00_0005 : list (option Trans) := [t1RB;t1RB;t0LA;tN;tN;tN;tN;tN].
 Lemma cv_QC_00_0005 : coversTr (row_to_tm r_QC_00_0005).
-Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 1 2 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_qh3, (tcycler_qh_stage_L _ 1 2 0 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 Definition cbtrows_QC_00 : list (list (option Trans)) :=
   [r_QC_00_0000;

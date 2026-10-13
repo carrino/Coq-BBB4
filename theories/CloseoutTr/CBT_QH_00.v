@@ -2,6 +2,7 @@
 
     Transition-level closeout batch QH_00: 1 deferred rows, quasihalting by the wrapped RepWL tier (rwqh_stage).
     Collected by tools/closeouttr/gen_closeout_tr.py. *)
+From BBB4.CensusTr Require Import BoundCheckTr.
 From Coq Require Import Arith List ZArith.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.Census Require Import Deferred_Defs.
@@ -12,7 +13,7 @@ Import ListNotations.
 (* spec 0RB---_0RC---_0LB---_------ *)
 Definition r_QH_00_0000 : list (option Trans) := [t0RB;tN;t0RC;tN;t0LB;tN;tN;tN].
 Lemma cv_QH_00_0000 : coversTr (row_to_tm r_QH_00_0000).
-Proof. apply coversTr_qh3, (rwqh_stage _ [((StA, S0), 0)] 2 2 64 88 11 32779478). all: vm_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_qh3, (rwqh_stage _ [((StA, S0), 0)] 2 2 64 88 11 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 Definition cbtrows_QH_00 : list (list (option Trans)) :=
   [r_QH_00_0000].

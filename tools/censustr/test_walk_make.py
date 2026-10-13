@@ -24,6 +24,8 @@ class WalkRecipeTests(unittest.TestCase):
         self.compute.mkdir(parents=True)
         self.bin = self.root / 'bin'
         self.bin.mkdir()
+        (self.root / 'tools').mkdir()
+        shutil.copy(REPO / 'tools/time_command.py', self.root / 'tools/time_command.py')
         (self.root / '_CoqProject').write_text('')
         (self.root / 'Makefile.coq').write_text('# scheduling fixture\n')
         self.write('RunTr_WalkCompute.vo', 30)
@@ -46,7 +48,8 @@ p.with_suffix('.vo').write_text('test fixture only')
         self.submake.write_text('''#!/usr/bin/env python3
 import json,sys
 from pathlib import Path
-Path('prerequisite_args.json').write_text(json.dumps(sys.argv[1:]))
+with Path('prerequisite_args.jsonl').open('a') as f:
+    f.write(json.dumps(sys.argv[1:])+'\\n')
 ''')
         self.submake.chmod(0o755)
 
@@ -55,13 +58,14 @@ Path('prerequisite_args.json').write_text(json.dumps(sys.argv[1:]))
         path.write_text('test fixture only\n')
         os.utime(path, (timestamp, timestamp))
 
-    def run_recipe(self, fail=None):
+    def run_recipe(self, fail=None, native=None):
         env = dict(os.environ, PATH=str(self.bin) + os.pathsep + os.environ['PATH'])
         if fail:
             env['FAIL_UNIT'] = fail
         result = subprocess.run(
             [shutil.which('make'), '-f', str(REPO / 'Makefile'), 'census-tr-walk',
              'WALK_JOBS=1', 'WALK_CORES=1', 'BUILD_JOBS=1',
+             *([] if native is None else ['TR_PROOF_NATIVE=' + native]),
              'CENSUS_TR_PREREQ_JOBS=3', 'MAKE=' + str(self.submake)],
             cwd=self.root, env=env, capture_output=True, text=True, timeout=30)
         path = self.root / 'compiler_calls.txt'
@@ -72,7 +76,30 @@ Path('prerequisite_args.json').write_text(json.dumps(sys.argv[1:]))
         result, calls = self.run_recipe()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(calls, ['Census_TheoremTr'])
-        self.assertIn('-j3', json.loads((self.root / 'prerequisite_args.json').read_text()))
+        builds = [json.loads(line) for line in
+                  (self.root / 'prerequisite_args.jsonl').read_text().splitlines()]
+        self.assertEqual(len(builds), 2)
+        for build in builds:
+            self.assertIn('-j3', build)
+        self.assertEqual(builds[0][-1], 'theories/CensusTr/RunTr_WalkCompute.vo')
+        self.assertIn('theories/CensusTr/RepWLMBTr.vo', builds[0])
+        self.assertIn('COQEXTRAFLAGS= -native-compiler yes', builds[0])
+        self.assertEqual(builds[1][-1], 'theories/CensusTr/RunTr_Split.vo')
+        self.assertIn('COQEXTRAFLAGS= -native-compiler ondemand', builds[1])
+        phases = [json.loads(line) for line in
+                  (self.root / 'census_probes/proof-tr-times.jsonl').read_text().splitlines()]
+        self.assertEqual([p['phase'] for p in phases],
+                         ['computation-dependencies', 'proof-prerequisites',
+                          'census-units', 'census-assembly'])
+        self.assertTrue(all(p['exit_code'] == 0 for p in phases))
+
+    def test_eager_native_override(self):
+        result, _ = self.run_recipe(native='yes')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        builds = [json.loads(line) for line in
+                  (self.root / 'prerequisite_args.jsonl').read_text().splitlines()]
+        for build in builds:
+            self.assertIn('COQEXTRAFLAGS= -native-compiler yes', build)
 
     def test_rebuild_changed_unit_source(self):
         self.write('Compute/UnitTr_00.v', 50)
@@ -91,6 +118,10 @@ Path('prerequisite_args.json').write_text(json.dumps(sys.argv[1:]))
         result, calls = self.run_recipe(fail='UnitTr_00')
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(calls, ['UnitTr_00'], result.stdout + result.stderr)
+        phases = [json.loads(line) for line in
+                  (self.root / 'census_probes/proof-tr-times.jsonl').read_text().splitlines()]
+        self.assertEqual(phases[-1]['phase'], 'census-units')
+        self.assertNotEqual(phases[-1]['exit_code'], 0)
 
 
 if __name__ == '__main__':

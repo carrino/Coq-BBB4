@@ -50,6 +50,7 @@ sys.path.insert(0, os.path.join(REPO, 'tools'))
 sys.path.insert(0, HERE)
 import repwl_prover as rp  # noqa: E402
 from gen_walk_shards import tm_lambda  # noqa: E402
+from fast_bound_checks import rewrite_file  # noqa: E402
 
 T_CANDS = (0, 64, 256, 1024, 4096, 16384)
 # closures past this are not handed to Coq's tier: its search on a 52K-node
@@ -625,6 +626,7 @@ def do_stage_qh(a):
             for x in reversed(names):
                 term = '(Forall_cons _ qhtr_%s %s)' % (x, term)
             f.write('Proof. exact %s. Qed.\n' % term)
+        rewrite_file(path)
         n += 1
     print('%d certified -> %d stage file(s) (ProvTr_QH_%02d..)' % (len(rs), n - a.start, a.start))
 
