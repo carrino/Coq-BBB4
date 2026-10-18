@@ -1,5 +1,90 @@
 # Why the census walk is slow, and how to make it fast
 
+This document preserves measurements and goals from successive revisions.
+For current fresh-build results, see the 2026-10-18 section below. Earlier
+runtime estimates and acceptance goals describe the revisions and hardware
+named alongside them.
+
+## Completed fresh results (2026-10-18)
+
+The completed state build took **1 h 48 m 54 s**; the latest completed
+instruction build (v4) took **2 h 15 m 38 s**. Both used Coq 8.18.0 with native
+compilation and OCaml 4.14.2, on Linux with a **four-CPU quota and 16 GiB RAM**.
+The state result meets the two-hour cloud goal. TR remains **15 m 38 s over**;
+a sub-hour desktop result has not been measured.
+
+The TR target passed in **8,138.086529 wall seconds / 30,151.961544 CPU
+seconds**. All 96 census units, all 626 closeout batches and all nine recorded
+phases succeeded. Its final compiler assumption block contained only
+`FunctionalExtensionality.functional_extensionality_dep`. Collection verified
+the frozen source overlay and all **2,542 recorded compiled Coq inputs**.
+
+| Recorded TR phase | Wall seconds |
+| --- | ---: |
+| Computation dependencies | 542.241 |
+| Proof prerequisites | 2,879.733 |
+| Census units | 1,621.418 |
+| Census assembly | 17.956 |
+| Closeout certificate native cache | 0.280 |
+| Closeout certificate dependencies | 91.867 |
+| Closeout, champion and tests | 2,705.448 |
+| Final bound | 46.394 |
+| Final value | 195.138 |
+
+The full-target total also includes orchestration outside these phases.
+Compiler and unit records are nested within the phases, not additional work
+to add to that total. The installed-toolchain runs started without compiled
+project artifacts; OS caches were not flushed. Native/data preparation is
+included. Toolchain installation, checkout preparation and optional offline
+certificate/hint generation are separate.
+
+Maximum TR child RSS was **9.80 GiB**, during the serial final theorem; it is
+not simultaneous build RSS. Sampled cgroup usage approached 16 GiB including
+cache. The memory-pressure `max` counter increased by 54,939, while OOM,
+OOM-kill and group-kill counters stayed at zero. Per-worker scheduling budgets
+are estimates, not enforced memory limits. Lower-memory configurations have
+not been validated.
+
+The state run's detailed measurements remain in the 2026-10-17 section below.
+A pre-v4 applicability audit matched all **2,865 recorded state Coq inputs**
+and reviewed state roots, defaults and project order. This supports retaining
+the measured state result; it is not another state build or a guarantee of
+identical dependency-scanning and host overhead.
+
+V4 includes the advisory table for all 96 TR units: **256,390 rows in 251
+modules of at most 1,024 rows**. Hints choose existing checkers and parameters;
+the checker still validates each actual machine, and missing, invalid or
+failed entries use the original fallback. Arbitrary hints are sound; this is
+not a claim of whole-decider equality. Stored RW certificates similarly pass
+the Coq closure/ranking checks. Ordinary builds compile and verify this supplied
+data without rerunning its offline searches. For scale, the completed parallel
+hint-collection campaign took 7,532.214735 wall / 29,500.729556 CPU seconds;
+its earlier preparation, audits and exploratory work are separate again.
+
+Other v4 changes include TR-only suppression of coqdoc `.glob` indexes,
+closeout-only weighted NG search and gated binary RW checking. The dynamic
+hinted binary alternative was not adopted. The `.glob` change preserves proof
+objects and native evaluation; standalone, state and documentation builds
+retain their normal indexing behavior. Later experimental certificates and
+compiler configurations are not part of this measured result.
+
+After v4, a build-correctness fix was adopted for toolchain migration. The full
+proof wrappers identify the actual Coq configuration, configured OCaml native
+compiler/ABI and generated-code optimizer inputs. A missing, legacy or changed
+stamp cleans compiled proof/native artifacts before rebuilding; failed probes
+or unsafe cache layouts stop the build. The migration passed 22 focused tests,
+both full-project cleanup fixtures and an installed-toolchain metadata probe.
+It changes no proof source, optimizer defaults or axioms, and claims no speedup.
+Its first migration/setup cost is not included in v4 and must be charged to
+the next build. No experimental toolchain result is claimed here.
+
+For setup, reproducible timing commands and fresh-versus-incremental semantics,
+see [`VERIFYING.md`](VERIFYING.md). In particular, the older 2 h 6 min TR
+validation recorded below retained prerequisite objects and is not comparable
+to these fresh totals.
+
+## Historical investigation (2026-08-04 onward)
+
 _Investigation notes, 2026-08-04.  Comparison target: Coq-BB5 (this
 org's fork), whose BB(5) proof enumerates 181,385,789 machines in
 ~45 min on 13 cores (~10 core-hours) and whose BB(4) proof covers the
@@ -3786,3 +3871,133 @@ with an aggregate check that fails if any shard fails or is cancelled. Each
 runner precompiles computation dependencies and checks all assigned proofs
 with native code on demand; no compiled proof cache is restored. The existing
 integration-only exclusions (`CloseoutTr.v` and `RemainingTr.v`) are unchanged.
+
+### Bounded native searches and memory-aware defaults (2026-10-17)
+
+The complete state target passed from a fresh source checkout in
+**1 h 48 m 54 s** (406.46 CPU-minutes) on an Intel Xeon Platinum 8573C
+container limited to four cores and 16 GiB RAM. Coq 8.18.0 with native
+compilation and OCaml 4.14.2 were already installed. No compiled proof objects
+or native companions were copied into the checkout, filesystem caches were
+not flushed, and no other proof jobs ran concurrently. All 154 census and
+assembly units passed; the final `BBB4_value` lists only the existing
+`functional_extensionality_dep` assumption. No OOM kills were recorded.
+
+| State phase | Wall time | CPU time |
+| --- | ---: | ---: |
+| Base build | 51.23 min | 196.12 min |
+| Census and assembly | 54.99 min | 207.67 min |
+| Final closeout, bound, and value | 2.12 min | 2.12 min |
+
+The largest single child process used 5.78 GiB RSS; this is not the total
+memory of concurrent workers. The four-core cloud target is met for this
+state build. A separate desktop run under one hour has not been measured.
+
+The first fresh instruction build was interrupted by an execution-container
+restart after its computation dependencies, proof prerequisites, and 74 of
+96 census units had passed. No complete instruction-target timing is claimed
+for that run; its partial records are retained separately.
+
+The transition walk previously evaluated the published bound `B_tr = 32779478`
+as a unary natural in every worker. Dynamic checks now use `B_search_tr = 2000`.
+Their bound-producing rung prefixes are at most 1024, the loop scan uses 512,
+and the halt search uses 130. A new four-times-prefix last-fire scan first tries the same verified checkers;
+a failed attempt falls back to the original sixteen-times-prefix scan and
+rung order. `try_qhbtr_preserves` proves that every old success remains a
+success, and `try_qhbtr_with_lf_sound` verifies arbitrary candidate lists.
+`decide_easy_tr_WF_larger` proves soundness at a larger bound while retaining
+the stored QH certificates at that larger bound. `RunTr.v` applies it at the
+original `B_tr`; neither the published value nor the final theorem changes.
+The original `decide_easy_tr_WF` interface remains available.
+
+N-gram seeding now slides along each tape list instead of repeatedly indexing
+from its beginning. `ng_seed_side_spec` and `seed_ok_side_spec` prove equality
+with the original definitions for every input, including ordering, blank
+padding, the final offset, and zero-width windows. The grow algorithm, fuels,
+rungs, machine tables, and census partition are unchanged. A proposed
+incremental grow algorithm was discarded after representative complete units
+failed to improve despite faster microbenchmarks.
+
+`BUILD_JOBS` now respects physical cores and container CPU quotas. Memory sizing
+counts reclaimable clean file cache, capped by both host availability and the
+container limit, instead of treating cache from earlier compilation as pinned
+memory. Transition workers budget 3 GiB each plus a shared 2 GiB reserve.
+The 250 state IRules certificates now compile in 34 parts of at most eight
+machines. Original batch modules retain their canonical machine/certificate
+definitions and public theorem names, with proofs imported from the parts.
+The instruction IRules generator keeps the same 97 machine certificates and
+public theorems in 13 parts, changing their checker goals from VM to native
+conversion. All 97 goals passed with unchanged assumptions. Their combined
+CPU time was 128.84 seconds including shared native preparation, compared with
+436.95 seconds in the earlier fresh VM build; one matched batch took 45.11
+seconds with VM and 5.37 seconds natively. Generated-file replay is exact.
+Order-only dependency chains budget 3 GiB per part and respect physical cores
+(`IRULES_JOBS` overrides the selection). The largest part by summed anchor
+steps passed in 39.1 CPU seconds at 1.21 GiB peak RSS. Other proof files can
+continue using the remaining build jobs.
+
+The 11,787 literal lookup machines now live in 49 physical files of at most
+250 definitions. Their public ordered lists remain kernel-convertible to the
+originals. Reroot lookup data likewise use 32 small files, copying the original
+2,792 machine bodies, including `row_to_tm` applications. `Run.v` reattaches
+`reroot_qh_all` directly by kernel conversion, while `Run_Compute.v` no longer
+imports those proof boards.
+
+State workers now explicitly set `OCAMLRUNPARAM` to an empty value, selecting
+OCaml's runtime GC defaults, with a 2 GiB memory budget. This differs from
+leaving the variable unset: Coq 8.18 then selects its own GC defaults, including
+a 256 MiB minor heap instead of OCaml's 2 MiB minor heap. A matched
+`GGH_0RB_1RC_1LC` proof took 32.54 CPU seconds / 793 MiB peak versus 49.42
+seconds / 453 MiB with the previous `o=40,O=60` tuning. Both builds proved the
+same unit. `WALK_OCAMLRUNPARAM=o=40,O=60` restores the smaller heap.
+
+Additional checker changes avoid repeated closure construction, intern
+instruction-level lexicographic graphs once, reuse loop anchors, and defer
+record candidates until needed. Positive-weight self-loops are rejected
+before Bellman–Ford iteration: universal equivalence lemmas prove the original
+solver returns `None` for those cases. Zero- and negative-weight self-loops
+remain on the original path. One matched instruction unit improved from
+27.51 to 24.29 CPU seconds with this guard; a heavier unit improved from
+354.14 to 248.94 CPU seconds against the earlier profiling build.
+
+QH stages 16–39 now use native conversion (`native_cast_no_check`) for the expensive checker goals and
+retain binary VM bound checks. The 33 stored RepWL certificates also use native
+checking, with data modules precompiled once. A newly stored certificate
+replaces repeated search for `RW_11_0028`; the existing verified checker still
+validates it. Its data compilation and checking together took 30.87 CPU seconds
+versus 106.26 seconds for search and checking in the profiling build.
+
+State builds now append phase records to `census_probes/proof-state-times.jsonl`
+(`STATE_TIMINGS` overrides the path), with per-unit records in
+`census_probes/state-unit-times.jsonl` (`WALK_UNIT_TIMINGS`). Transition builds retain
+`census_probes/proof-tr-times.jsonl` and additionally record each walk unit in
+`census_probes/censustr-unit-times.jsonl` (`TR_UNIT_TIMINGS`). Records include
+wall time, CPU time, maximum child RSS, command, and exit status.
+
+For total timings, run each target in its own fresh checkout with the native
+toolchain already installed:
+
+```sh
+mkdir -p work
+python3 tools/time_command.py --log work/proof-total.jsonl --phase proof-all -- \
+  make proof-all
+```
+
+```sh
+mkdir -p work
+python3 tools/time_command.py --log work/proof-total.jsonl --phase proof-tr-all -- \
+  make proof-tr-all
+```
+
+For compiler-level profiling, append this make argument (it does not require
+GNU `time`):
+
+```sh
+TIMECMD='python3 tools/time_command.py --log work/compiler-times.jsonl --phase compile --'
+```
+
+The n-gram seeding comparison can be repeated after building its native
+dependencies with `python3 tools/bench_ngram_search.py --output work/seed-bench`.
+Its 104-machine corpus checks equality of the actual gram sets at eight rungs.
+The short-tape corpus showed little whole-search CPU change; it is not evidence
+for an end-to-end speedup. The universal Coq equalities provide correctness.

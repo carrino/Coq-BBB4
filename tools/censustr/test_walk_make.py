@@ -27,6 +27,11 @@ class WalkRecipeTests(unittest.TestCase):
         (self.root / 'tools').mkdir()
         shutil.copy(REPO / 'tools/time_command.py', self.root / 'tools/time_command.py')
         shutil.copy(REPO / 'tools/ensure_native.py', self.root / 'tools/ensure_native.py')
+        (self.root / 'tools/censustr').mkdir()
+        shutil.copy(REPO / 'tools/censustr/order_walk_units.py',
+                    self.root / 'tools/censustr/order_walk_units.py')
+        (self.root / 'tools/censustr/walk_costs.json').write_text(json.dumps({
+            'units': 96, 'seconds': {'UnitTr_00': 1, 'UnitTr_01': 9}}))
         (self.root / '_CoqProject').write_text('')
         (self.root / 'Makefile.coq').write_text('# scheduling fixture\n')
         self.write('RunTr_WalkCompute.vo', 30)
@@ -59,13 +64,14 @@ with Path('prerequisite_args.jsonl').open('a') as f:
         path.write_text('test fixture only\n')
         os.utime(path, (timestamp, timestamp))
 
-    def run_recipe(self, fail=None, native=None):
+    def run_recipe(self, fail=None, native=None, units=96):
         env = dict(os.environ, PATH=str(self.bin) + os.pathsep + os.environ['PATH'])
         if fail:
             env['FAIL_UNIT'] = fail
         result = subprocess.run(
             [shutil.which('make'), '-f', str(REPO / 'Makefile'), 'census-tr-walk',
              'WALK_JOBS=1', 'WALK_CORES=1', 'BUILD_JOBS=1',
+             'CENSUS_TR_UNITS=' + str(units),
              *([] if native is None else ['TR_PROOF_NATIVE=' + native]),
              'CENSUS_TR_PREREQ_JOBS=3', 'MAKE=' + str(self.submake)],
             cwd=self.root, env=env, capture_output=True, text=True, timeout=30)
@@ -82,8 +88,9 @@ with Path('prerequisite_args.jsonl').open('a') as f:
         self.assertEqual(len(builds), 2)
         for build in builds:
             self.assertIn('-j3', build)
-        self.assertEqual(builds[0][-1], 'theories/CensusTr/RunTr_WalkCompute.vo')
+        self.assertIn('theories/CensusTr/RunTr_WalkCompute.vo', builds[0])
         self.assertIn('theories/CensusTr/RepWLMBTr.vo', builds[0])
+        self.assertIn('theories/Checkers/IRules/MetaTr.vo', builds[0])
         self.assertIn('COQEXTRAFLAGS= -native-compiler yes', builds[0])
         self.assertEqual(builds[1][-1], 'theories/CensusTr/RunTr_Split.vo')
         self.assertIn('COQEXTRAFLAGS= -native-compiler ondemand', builds[1])
@@ -112,7 +119,21 @@ with Path('prerequisite_args.jsonl').open('a') as f:
         self.write('RunTr_WalkCompute.vo', 50)
         result, calls = self.run_recipe()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(calls, ['UnitTr_01', 'UnitTr_00', 'Census_TheoremTr'])
+
+    def test_different_unit_count_falls_back_without_dropping_units(self):
+        self.write('RunTr_WalkCompute.vo', 50)
+        result, calls = self.run_recipe(units=2)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(calls, ['UnitTr_00', 'UnitTr_01', 'Census_TheoremTr'])
+        self.assertIn('using lexical order', result.stderr)
+
+    def test_sorter_failure_stops_before_assembly_even_with_old_objects(self):
+        (self.root / 'tools/censustr/order_walk_units.py').write_text('raise SystemExit(23)\n')
+        result, calls = self.run_recipe()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertEqual(calls, [])
+        self.assertIn('Error 23', result.stderr)
 
     def test_failed_recompile_is_fatal_even_when_old_object_exists(self):
         self.write('Compute/UnitTr_00.v', 50)

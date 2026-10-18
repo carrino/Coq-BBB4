@@ -7,13 +7,67 @@ There are three tiers.  **Tier A needs no opam**; it verifies every board and
 the whole boarding argument.  Tier B adds the census walk and the value
 theorem: `make proof`, the whole claim from source in one command.  Tier C is
 the instruction-level value, BBB_tr(4) = 32,779,478: `make proof-tr-all`, also
-one command.  No `.vo` are committed (since 2026-10-07), so no tier loads
-anything precompiled.
+one command. No `.vo` are committed (since 2026-10-07); a fresh source
+checkout starts without compiled project artifacts.
+
+## Reproduce the complete targets
+
+The tested native toolchain is **Coq 8.18.0, OCaml 4.14.2 and `coq-native`**,
+with GNU make and Python 3. Completed fresh builds on Linux with a four-CPU
+quota and 16 GiB RAM took **1 h 48 m 54 s for `proof-all`** and
+**2 h 15 m 38 s for `proof-tr-all`**. Lower-memory configurations and a
+sub-hour desktop run have not been validated. See
+[`CENSUS_RUNTIME.md`](CENSUS_RUNTIME.md) for exact conditions and history.
+
+Install opam and its system prerequisites, then set up the tested switch once:
+
+```bash
+opam switch create census 4.14.2
+opam install --switch=census coq.8.18.0 coq-native
+eval "$(opam env --switch=census)"
+```
+
+The proof wrappers can also find an existing native-capable Coq, activate
+`census`, or bootstrap it through `tools/census_toolchain.sh`. Automatic setup
+may download and build the toolchain; that one-time cost is outside the
+reported installed-toolchain timings. The helper checks native availability;
+the versions above identify the measured configuration.
+
+Choose `make proof-all` (or its alias `make proof`) for the state theorem,
+or `make proof-tr-all` for the instruction theorem. No outer `make -j` is
+needed: the wrappers size their workers from CPU and available-memory limits.
+For a timed TR run with a preserved exit status and full log, use Bash:
+
+```bash
+set -o pipefail
+unset OCAMLPARAM OCAMLRUNPARAM CAMLRUNPARAM COQRUNPARAM
+mkdir -p work
+python3 tools/time_command.py --log work/proof-total.jsonl \
+  --phase proof-tr-all -- make proof-tr-all 2>&1 | tee work/proof-tr-all.log
+```
+
+For the state target, substitute `proof-all` in the phase, target and log name.
+Use separate fresh source checkouts for comparable full-build timings. Retain
+the full log, exit status and actual final `Print Assumptions` block. Under
+`census_probes/`, retain `proof-state-times.jsonl` / `state-unit-times.jsonl`
+for state, or `proof-tr-times.jsonl` / `censustr-unit-times.jsonl` for TR.
+Those records are nested measurements; do not add them to the full-target
+total. Native/data preparation is included; checkout preparation and optional
+offline hint/certificate search are separate. A standalone `coqchk -o` audit
+is an additional check outside
+these target timings.
+
+A TR rerun can reuse current proof objects and completed walk units. In
+contrast, `proof-all` calls `census-verify`, which forces a state re-walk while
+allowing eligible base proof objects to be reused. Either run is incremental
+if it starts with compiled artifacts. A missing, legacy or changed toolchain
+stamp causes both proof wrappers to clean compiled proof/native artifacts
+before rebuilding; this migration/setup work belongs in the next build's cost.
 
 ## Tier A — everything except the census walk
 
 `theories/Closeout/Closeout.v`'s dependency closure contains **no census walk
-output**.  Its only census dependencies are
+output**.  Its direct census imports are
 `theories/Census/{TNF_QH,Deferred_Defs,Deferred_Data}.v`; the walk output
 (`Census_Theorem`, `GG_*`, `GGH_*`, `G_*`, `Run_Split*`) is loaded only by
 `CloseoutFinal.v`, `BBB4_Theorem.v` and `BBB4_Value.v`.  So this tier needs
@@ -22,6 +76,7 @@ no `native_compute` and stock apt Coq builds it.
 ```bash
 sudo apt-get install -y coq          # must be 8.18.0; Ubuntu 24.04 ships it
 git clone https://github.com/carrino/Coq-BBB4 && cd Coq-BBB4
+make Makefile.coq
 make -f Makefile.coq -j2 theories/Closeout/Closeout.vo
 ```
 
@@ -95,15 +150,8 @@ in `theories/BBB4_Spec.v`, with no census dependence; reading that file plus
 three files are the only ones that load the census walk output (they
 are deliberately not in `_CoqProject`, so the default `make` never
 touches them), and the walk needs `native_compute`, so the census opam
-switch.  `make proof` sets it up through `tools/census_toolchain.sh`, or
-by hand:
-
-```bash
-opam switch create census 4.14.2
-opam install coq.8.18.0 coq-native
-eval $(opam env --switch=census)
-make proof
-```
+switch. Use the setup above or let `make proof` select it through
+`tools/census_toolchain.sh`.
 
 `make proof` (the same target as `make proof-all`) builds the state
 chain, walks the census from source, compiles the three files with
@@ -117,49 +165,35 @@ means.  (The report has a legacy skipped-machine mode from the burndown
 era; the empty residue never reaches it.)
 
 apt's Coq has **no `native_compute`** and cannot do the walk at all, which is
-why the census switch exists.  Note the OCaml version is load-bearing: `.vo`
-are OCaml-marshalled, so a 4.14.2 `.vo` will not load under 4.14.1 and vice
-versa.
+why the census switch exists. Compiled objects depend on the toolchain;
+do not reuse them across toolchains without the proof wrapper's stamp check.
 
-### The build raises its own stack limit, and needs to
+### Native compilation and stack limits
 
-Under the census switch — and only there — `coqnative` compiles each
-`.vo` into an OCaml module and the OCaml compiler recurses over its
-structure.  The census lookup tiers (`Census/Proven_List.v` and friends)
-are 5,270–6,517 machine definitions apiece, and on the **default 8 MB
-stack that overflows**:
-
-```
-COQNATIVE theories/Census/Proven_List.vo
-Fatal error: exception Stack overflow
-Error: Native compiler exited with status 2
-```
-
-`make` therefore does `ulimit -s unlimited` before building, so this
-should never reach you.  It is worth knowing anyway, because the failure
-has an unusually good disguise: plain `coqc` compiles those files
-without complaint, so it is invisible on any build without a native
-compiler, and it appears only on the census switch — the path someone
-takes precisely *because* they want to check the thing themselves.
-
-If your environment forbids raising the soft limit, `make STACK_KB=...`
-takes any value your hard limit allows (`ulimit -Hs`), and Coq's own
-hint in that error is the fallback.  Measured 2026-08-11: 8192 KB fails,
-unlimited builds all three lists clean.
+The build raises its stack limit with `ulimit -s unlimited` for generated
+OCaml modules. Census lookup tables now use separate files of at most 250
+machine definitions, avoiding the expensive native compilation of the former
+5,270–6,517-definition modules. Other large generated boards still benefit
+from the larger stack. If your environment limits it, set `STACK_KB` to a value
+allowed by `ulimit -Hs`. A lower stack limit is not a tested equivalent
+performance configuration. State walk workers explicitly select OCaml's
+default GC settings with an empty `WALK_OCAMLRUNPARAM`; TR inherits its normal
+Coq/OCaml defaults when the environment variables above are unset.
 
 The whole claim from source is one command:
 
 ```bash
-make proof                # = make proof-all: base build + walk + closeout chain, ~80-90 min
+make proof                # = make proof-all: base build + walk + closeout chain
 ```
 
 It runs the state base build, then `census-verify` (the walk), then the
-three closeout files and `Print Assumptions`.  Nothing precompiled is
-loaded, and the `Axioms:` block at the end is the entire trust surface.  Measured on 8 physical cores / 31 GB, un-niced:
+three closeout files and `Print Assumptions`. A fresh checkout has no compiled
+project inputs; the final compiler's `Axioms:` block gives the assumptions.
+Historically, on 2026-08-12, 8 physical cores / 31 GB, un-niced, measured
 **79 m 38 s end to end** (742 core-min), from `git clean -fdx` with
 nothing pre-configured — a ~40 min base build plus the 42 m 36 s walk.
-The base build is the larger half, and unlike the walk it has had one
-round of profiling and no optimisation.
+The base build and walk have since been optimized. Current fresh-build
+measurements and their conditions are in [`CENSUS_RUNTIME.md`](CENSUS_RUNTIME.md).
 
 To re-walk on its own, without the closeout chain:
 
@@ -172,6 +206,12 @@ This moves any previous walk output to a timestamped backup directory
 deletion is ever needed) and re-walks from source, on a native Linux
 filesystem — not `/mnt/c` under WSL2, where the drive bridge breaks
 `native_compute`.
+
+### Historical state-walk measurements (August 2026)
+
+The following measurements and estimates describe their original revisions.
+Use the completed fresh-build results above for current resource planning;
+in particular, configurations below 16 GiB have not been validated recently.
 
 **How long: it used to depend almost entirely on how many jobs your RAM
 allowed.**  The walk is 385 core-minutes (measured end to end,
@@ -241,20 +281,25 @@ Two job counts, because 15 of the 154 files did not get lean: the 7
 `NodeDecided`, which needs `decider_WF`, which needs the boards.  Coq
 loads a library's environment whole, so there is no way to name
 `decider_WF` without paying for it.  Those run at `WALK_ASM_JOBS`
-(`WALK_ASM_RSS_GB`, **3.5 GB** — measured 2.77) while the other 139 run
-at `WALK_JOBS` (`WALK_RSS_GB`, **1 GB** — measured 0.61).  On 32 GB
-both tiers now get the full core count.
+(`WALK_ASM_RSS_GB`, **3.5 GiB**) while the 136 lean computation files run
+at `WALK_JOBS` (`WALK_RSS_GB`, **2 GiB**, with default GC). The former
+1 GiB setting used more aggressive GC. Each pool is capped by physical
+cores, container CPU quotas, and available memory; the final census theorem
+runs alone.
 
-**Minimum RAM is ~9 GB, and no job count fixes it below that**: the last
-file, `Compute/Census_Theorem.v`, runs alone and measured **6.30 GB**.
+The historical final census assembly measured **6.30 GB**, motivating a
+rough 9 GB minimum at that revision. The 2026-10-17 fresh build was validated
+with **16 GiB** available to the container; lower memory limits were not tested.
+Reducing worker counts does not reduce the memory required by a serial assembly.
 
 The Makefile is authoritative for all of these, and all are settable:
 `WALK_JOBS=N` / `WALK_ASM_JOBS=N` force the fan-outs, `WALK_RSS_GB=N` /
 `WALK_ASM_RSS_GB=N` change the per-file peaks the sizing assumes.  Every
-walk records its own peak RSS and CPU per unit to
-`census_probes/walk-rss.tsv`; `python3 tools/walk_rss_report.py` prints
-the distribution and the jobs it supports, so the second walk on a box
-can be sized from that box's data rather than from this table.
+walk records wall time, CPU time, and peak child RSS per unit to
+`census_probes/state-unit-times.jsonl`. When GNU `time` is installed, the
+legacy `census_probes/walk-rss.tsv` is also available to
+`python3 tools/walk_rss_report.py`. These measurements let subsequent runs
+use the host's own data to select job counts.
 
 ### Measured: 42.6 minutes (2026-08-12)
 
@@ -290,10 +335,10 @@ single unit.
 **WSL2 gives the VM half the host's RAM by default** (up to 8 GB on older
 builds).  A 32 GB Windows box is a 16 GB Linux box unless `.wslconfig`
 says otherwise.  Nothing warns you, and since the units were made lean
-this bites in a nastier place than it used to: the lean layers still get
-your full core count on 16 GB, so the walk looks fine for its whole
-length — and then `Census_Theorem`, the very last file, wants ~7.2 GB and
-runs alone.  A **16 GB Windows box defaults to an 8 GB VM, which is under
+this can affect both parallelism and the final theorem. Lean workers use a
+2 GiB budget plus a shared 2 GiB reserve, while `Census_Theorem`, the very
+last file, runs alone and historically needed about 6–7 GiB. A
+**16 GB Windows box defaults to an 8 GB VM, which is under
 the ~10 GB floor**: you find out after the other 153 files are done.
 Check inside the VM, never from Windows:
 
@@ -314,20 +359,19 @@ swap=0
 
 Then re-check `free -g` inside the VM before starting.  The same trap in
 the other direction is worse: **do not override the job counts upward
-without checking free RAM** — and `WALK_ASM_JOBS` is now the dangerous
-one, since those files are still ~5–7 GB each.  Four of them on a VM
-sized for two is ~28 GB of demand against ~16 GB, and the OOM killer can
-take the whole distro down, not just the walk (this happened:
-2026-07-22 on a 16 GB box, and again 2026-08-08 under WSL2, when every
-file was that heavy).  On any memory-constrained box prefer
+without checking available RAM**. Assemblers use a separate 3.5 GiB budget,
+based on the historical 2.77 GiB measurement. Older builds had 5–7 GiB
+workers and exhausted memory on 2026-07-22 on a 16 GB box and again on
+2026-08-08 under WSL2. On any memory-constrained box prefer
 `WALK_MEMFREE=8G` (GNU parallel), which gates each unit launch on free RAM
 and suspends-and-requeues instead of letting the OOM killer choose a
 victim.
 
-The walk is **resumable and per-unit**: finished units are skipped on re-run,
+`make census` is **resumable and per-unit**: finished units are skipped on re-run,
 and a walk-stamp quarantines any `.vo` that was not produced by walking the
-current tree.  So it can be spread over days: an interrupted walk resumes
-where it stopped.  `python3 tools/census_cache.py --print-hash` prints the
+current tree. An interrupted walk can resume with that target; `census-verify`
+and `proof-all` deliberately force a re-walk instead.
+`python3 tools/census_cache.py --print-hash` prints the
 census input hash the walk-stamp records.
 
 ## Tier C — the instruction-level value: `make proof-tr-all`
@@ -346,14 +390,15 @@ From a fresh clone:
 
 ```bash
 git clone https://github.com/carrino/Coq-BBB4 && cd Coq-BBB4
+set -o pipefail
 make proof-tr-all 2>&1 | tee proof-tr-all.log
 ```
 
 It uses the same toolchain as Tier B (`tools/census_toolchain.sh` finds or
 creates the `census` switch) and runs four steps:
 
-1. **Generated files.**  It checks that the closeout split and the walk units
-   match the commit.
+1. **Generated files.** It checks the closeout split, walk units, IRules parts
+   and advisory hint data for consistency with their sources.
 2. **The census walk.**  It walks 96 native-compute units and assembles
    `census_tr : forall tm, QHBoundTr B_tr tm \/ Deferred D_tr tm`.  The
    prerequisites include the proven tiers (`ProvTr_*`).
@@ -362,6 +407,19 @@ creates the `census` switch) and runs four steps:
    `BBBT4_Champion.vo` and the instruction-level corruption tests.
 4. **The value.**  It compiles `CloseoutFinalTr.v` (`bbbt4_bound`) and then
    `BBBT4_Value.v`.
+
+The supplied advisory table covers all 96 units: 256,390 rows in 251 modules
+of at most 1,024 rows. Each selected checker still verifies the actual machine;
+missing, invalid or failed hints use the original fallback. Stored RW data
+likewise passes the existing Coq certificate checker. These inputs add no
+axiom. Ordinary verification compiles/checks the data and does not run the
+offline hint collector or certificate finder. See
+[`tools/censustr/hints/README.md`](../tools/censustr/hints/README.md) for data
+maintenance.
+
+The full TR wrapper omits coqdoc `.glob` indexes, while retaining proof objects
+and native proof evaluation. Standalone, state and documentation builds retain
+their normal index behavior.
 
 Expected end of the log:
 
@@ -375,19 +433,29 @@ proof-tr-all COMPLETE at <commit>.
 BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)
 ```
 
-Resources:
+Inspect this actual compiler assumption block, not only the explanatory
+completion banner. Resources:
 
 * **Memory sets the job counts.**  The walk units load only the
   computation layer (`RunTr_WalkCompute`), not the proven-tier boards, and
-  peak near 2.6 GB.  The walk runs one job per 4 GB available
+  avoid allocating the published unary bound in each worker. The walk runs
+  one job per 3 GiB available, after a 2 GiB reserve,
   (`WALK_TR_JOBS`), capped at the physical cores.  The batches run one job
-  per 3 GB (`CLOSEOUT_TR_JOBS`).  The walk's prerequisites (the proven
-  tiers, built before the walk) run one job per 6 GB (`PREREQ_TR_JOBS`):
-  the LAPQ lap bundles peak near 3.6 GB each and the IRules batches at
-  6–8 GB.  A 32 GB box gets 4 prerequisite jobs, 7 walk jobs and 9 batch
-  jobs.  To override:
+  per 3 GiB (`CLOSEOUT_TR_JOBS`). The walk's prerequisites (the proven
+  tiers, built before the walk) also use 3 GiB (`PREREQ_TR_JOBS`);
+  the large state IRules batches are no longer dependencies of this target.
+  All three phases respect physical cores and container CPU limits.
+  With sufficient available memory, a four-core / 16 GiB container gets
+  four jobs in each phase; an eight-core / 32 GiB box gets eight.
+  These are scheduling estimates, not process caps. The completed v4 build's
+  largest child used 9.80 GiB during the serial final theorem; lowering the
+  worker count does not reduce that requirement.
+  To override:
   `make proof-tr-all PREREQ_TR_JOBS=3 WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6`.
-* **Time.**  About 7 hours on 8 cores / 32 GB (WSL2).  The clean-tree
+* **Time.** The latest completed fresh run took **2 h 15 m 38 s** on the
+  four-CPU / 16 GiB configuration, still 15 m 38 s over the two-hour goal.
+  See [`CENSUS_RUNTIME.md`](CENSUS_RUNTIME.md) for exact build conditions.
+  Historically, the clean-tree
   build verified 2026-10-12 at `bb35b8d9` ran in three parts, after two
   out-of-memory stops that are now fixed, totalling 7 h 15 min
   ([`BBBT4_REVIEW.md`](BBBT4_REVIEW.md) §8.3).  The first
@@ -395,9 +463,9 @@ Resources:
   a day (§8.1).
 * **Stack.**  Steps 3 and 4 raise the stack limit themselves, as `make all`
   does, because `COQNATIVE` overflows 8 MB on the largest batches.  If your
-  hard limit is lower, run `ulimit -s unlimited` first.
-* **Resuming.**  A rerun keeps finished `.vo` and walked units.  To force a
-  full re-walk, delete `theories/CensusTr/Compute/*.vo`.
+  hard limit is lower, set `STACK_KB` to a value permitted by `ulimit -Hs`.
+* **Resuming.** A compatible rerun keeps finished `.vo` and walked units.
+  Use a fresh source checkout for a fresh full-build measurement.
 
 To re-check the compiled terms with the standalone checker:
 
@@ -420,25 +488,29 @@ including cross-checks on the hardest machines, is
   and `make` (seeing it up to date) will never fix it on its own.
   Prevention is cheap: always compile one-off files as
   `coqc -Q theories BBB4 <file.v>`, never bare `coqc`.
-* **Switching toolchains is invisible to `make`.**  If you build the tree with
-  apt Coq and then switch to the census opam switch, `make` sees thousands of
-  up-to-date `.vo` and skips them — but the opam Coq cannot load apt-built
-  `.vo`.  Decide which Coq you are doing the long build with before you start.
-* **`make all` at high `-j` can run out of memory.**  There are nine
-  `theories/Machines/IRules_Batch_*.v` at ~6–8 GB peak each.
-  `Makefile.coq.local` chains them (order-only) into three columns, so even
-  `-j16` schedules at most three together (~24 GB); on a ~16 GB box use
-  `-j2`, or edit the chains down to one column.  The build is incremental,
-  so an OOM costs only the in-flight files — re-run and it resumes.
+* **Compiled objects depend on the toolchain.** The full proof wrappers stamp
+  the actual Coq/native compiler configuration and generated-code optimizer
+  inputs. A missing, legacy or changed stamp cleans stale proof/native caches
+  before rebuilding. Failed probes or unsafe cache layouts stop the build.
+  Plain `make` does not perform this wrapper check; choose one toolchain for
+  standalone builds and do not mix its objects with another toolchain's.
+* **Size `-j` for available memory.** The state IRules proofs are split
+  into 34 independent parts of at most eight certificates. The largest
+  part by total anchor steps measured 1.21 GiB peak RSS; scheduling budgets
+  3 GiB per part plus the shared 2 GiB reserve. `Makefile.coq.local` caps
+  concurrent parts using available memory and physical cores; override
+  with `IRULES_JOBS=N`. Other files can use the remaining jobs. The build is incremental,
+  so completed base objects can be reused after an interruption. Remember
+  that `proof-all` still forces the state census to be re-walked.
 * **`make proof` needs the census switch; plain `make` does not.**
   The walk is `native_compute`, and `CloseoutFinal.v`, `BBB4_Theorem.v`
   and `BBB4_Value.v` load its output, so they are kept out of
   `_CoqProject` and the default build stays apt-Coq-compatible.  Mixing
   toolchains fails with "inconsistent assumptions" while loading — that is
   the marshalling mismatch, not a proof failure.
-* **CI runs only the light tier.**  A hosted runner has ~7 GB, so neither
-  the full build (the IRules batches peak at ~6–8 GB) nor the walk can live
-  there.  `.github/workflows/ci.yml` builds the core library, the closeout
+* **CI does not run both complete proof targets.** A hosted runner has
+  about 7 GB, close to the peak of the final census assembly alone.
+  `.github/workflows/ci.yml` builds the core library, the closeout
   kit and two end-to-end machine-proof families from source, kernel-checks
   the instruction-level closeout batches (sharded over six runners,
   [`CLOSEOUT_TR.md`](CLOSEOUT_TR.md) "CI"), enforces zero `Admitted`, and

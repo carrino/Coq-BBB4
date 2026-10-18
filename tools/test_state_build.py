@@ -19,6 +19,12 @@ class StateBuildTests(unittest.TestCase):
             (root / 'Makefile.coq').touch()
             (root / 'tools').mkdir()
             shutil.copy(REPO / 'tools/ensure_native.py', root / 'tools/ensure_native.py')
+            # Generator contents/coverage have their own tests. This fixture
+            # checks that state-build runs its freshness gate before make.
+            (root / 'tools/gen_irules_state_parts.py').write_text(
+                'import sys\nfrom pathlib import Path\n'
+                'assert sys.argv[1:] == ["--check"]\n'
+                'Path("irules-checked").touch()\n')
             recorder = root / 'record_make'
             recorder.write_text('''#!/usr/bin/env python3
 import json, os, sys
@@ -40,6 +46,7 @@ if os.environ.get('FAIL_COMPUTE') and sys.argv[-1].endswith('Run_Compute_Split.v
                 env['FAIL_COMPUTE'] = '1'
             result = subprocess.run(command, cwd=root, env=env,
                                     capture_output=True, text=True, timeout=30)
+            self.assertTrue((root / 'irules-checked').exists(), result.stderr)
             calls = [json.loads(s) for s in (root / 'calls.jsonl').read_text().splitlines()]
             return result, calls
 

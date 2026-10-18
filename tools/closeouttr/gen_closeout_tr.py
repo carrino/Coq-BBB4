@@ -29,6 +29,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
 from cbt import CT, spec_row  # noqa: E402
+from weighted_ng_checks import rewrite as weighted_ng_checks
 from native_checks import rewrite as native_checks  # noqa: E402
 from compact_tables import rewrite as compact_tables  # noqa: E402
 from gen_rw_stored import read_certificates, generated_files as stored_rw_files  # noqa: E402
@@ -36,6 +37,8 @@ sys.path.insert(0, os.path.join(REPO, 'tools', 'censustr'))
 from fast_bound_checks import generate as generate_fast_bounds, rewrite as fast_bound_checks  # noqa: E402
 from gen_lap_bundles import generate as generate_lap_bundles, read_bundle_map, rewrite_imports  # noqa: E402
 from gen_provtr_data import generate as generate_proven_data  # noqa: E402
+from gen_ladder_bundles import (generate as generate_ladder_bundles,
+    read_bundle_map as read_ladder_bundle_map, rewrite_imports as rewrite_ladder_imports)  # noqa: E402
 
 DEFERRED = os.path.join(REPO, 'censustr_deferred_v10.txt')
 SPEC_RE = re.compile(r'^\(\* spec (\S+) \*\)$', re.M)
@@ -182,6 +185,7 @@ def main():
     generate_fast_bounds(check=a.check)
     if read_bundle_map():
         generate_lap_bundles(check=a.check)
+    generate_ladder_bundles(check=a.check)
     if os.path.exists(os.path.join(REPO, 'theories/CensusTr/ProvTr_Data.v')):
         generate_proven_data(check=a.check)
     deferred = read_list(DEFERRED)
@@ -212,9 +216,13 @@ def main():
         for module, _, _ in bs:
             path = os.path.join(CT, module+'.v')
             files[path] = rewrite_imports(files.get(path, open(path).read()), lap_bundles)
+    ladder_bundles = read_ladder_bundle_map()
     for module, _, _ in bs:
         path = os.path.join(CT, module+'.v')
-        files[path] = native_checks(fast_bound_checks(compact_tables(files.get(path, open(path).read()), module)))
+        files[path] = rewrite_ladder_imports(files.get(path, open(path).read()), ladder_bundles)
+    for module, _, _ in bs:
+        path = os.path.join(CT, module+'.v')
+        files[path] = native_checks(weighted_ng_checks(fast_bound_checks(compact_tables(files.get(path, open(path).read()), module)), module))
     stale = [p for p, txt in files.items()
              if not os.path.exists(p) or open(p).read() != txt]
     if a.check:

@@ -1,27 +1,9 @@
-# STACK_KB: the build raises its own stack limit before compiling.
-#
-# `coqnative' generates one OCaml module per .vo and the OCaml compiler
-# recurses over its structure.  The census data lists
-# (Census/Proven_List.v and friends) are 5,270-6,517 machine definitions
-# in a file, and on the DEFAULT 8 MB stack that is enough to kill it:
-#
-#     COQNATIVE theories/Census/Proven_List.vo
-#     Fatal error: exception Stack overflow
-#     Error: Native compiler exited with status 2 (in case of stack
-#            overflow, increasing stack size ... often helps)
-#
-# Plain `coqc' compiles the same files without complaint, so this is
-# invisible on any build without a native compiler -- which is most of
-# them, and is why it reached a fresh clone.  It bites under the census
-# (native) opam switch, on the very first build, which is exactly the
-# path someone takes to verify the proof themselves.  Coq's own hint is
-# right; there is no reason to make each person rediscover it.
-#
-# Measured 2026-08-11 on the census switch: 8192 KB overflows, unlimited
-# builds all three lists clean.  A soft-limit raise is allowed up to the
-# hard limit; where it is not permitted, this degrades to exactly the
-# old behaviour and Coq prints the hint above.  Override with
-# `make STACK_KB=262144'.
+# STACK_KB: raise the stack limit for native compilation of generated boards.
+# Large OCaml modules can exceed the default 8 MB stack. Census lookup data
+# now uses separate files of at most 250 machines, reducing compiler cost.
+# Keep the larger limit for other generated modules; if the hard limit
+# prevents the raise, compilation continues with the available stack.
+# Override with `make STACK_KB=262144`.
 STACK_KB ?= unlimited
 all: Makefile.coq
 	@# WARN (never fail) when this coqc has no native compiler.  A plain
@@ -63,7 +45,8 @@ STATE_TARGETS := theories/BBB4_Statement.vo theories/BBB4_Spec.vo \
   theories/Census/Run_Compute_Split.vo \
   theories/Closeout/CloseoutKit.vo theories/Closeout/ShadowKit.vo \
   theories/Closeout/CoreRows.vo theories/Closeout/Closeout.vo \
-  theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.vo
+  theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.vo \
+  theories/Tests/NGramSeed_Regression.vo theories/Tests/BellmanFord_Regression.vo
 
 # Only the computation dependency closure needs eager native code. The
 # remaining boards are kernel-checked as before, but never evaluated by the
@@ -85,9 +68,17 @@ STATE_COMPUTE_NATIVE ?= $(shell coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE
 # (`Unbound module NBBB4_...').  ensure_native.py runs coqnative on such files
 # in the computation closure before it is compiled natively.
 STATE_COMPUTE_TARGETS := theories/Checkers/TCyclerNFast.vo theories/Census/Run_Compute_Split.vo
-TR_COMPUTE_TARGETS := theories/CensusTr/RepWLMBTr.vo theories/CensusTr/RunTr_WalkCompute.vo
+# Supplied RepWL certificates are checked natively too. Include their data
+# and checker dependencies before proof-only RWParts use native conversion.
+TR_RW_CERT_TARGETS := $(patsubst %.v,%.vo,$(wildcard theories/CensusTr/RWCerts/DataTr_RW_*.v))
+# The 97 IRulesTr proof goals also evaluate their shared checker natively.
+# Only Rules, Meta and MetaTr extend the existing computation closure.
+TR_COMPUTE_TARGETS := theories/CensusTr/RepWLBinaryTr.vo \
+  theories/CensusTr/NGramRankCloseoutTr.vo theories/CensusTr/RepWLMBTr.vo theories/CensusTr/RunTr_WalkCompute.vo \
+  theories/Checkers/IRules/MetaTr.vo $(TR_RW_CERT_TARGETS)
 
 state-build: Makefile.coq
+	@python3 tools/gen_irules_state_parts.py --check
 	@python3 tools/ensure_native.py $(STATE_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	 $(MAKE) -f Makefile.coq -j$(BUILD_JOBS) \
@@ -126,8 +117,8 @@ clean:
 # (BBB4_Theorem.v) -> BBB4_value (BBB4_Value.v).  Since 2026-10-07 no
 # census .vo are committed: the walk runs on the verifier's machine, so
 # `make proof' is the one-command from-source build, the same as
-# `make proof-all' (~80-90 min on 8 cores / 32 GB; native_compute, so the
-# census opam switch -- tools/census_toolchain.sh sets it up).
+# `make proof-all'. See docs/CENSUS_RUNTIME.md for measured build times.
+# It needs the census opam switch; tools/census_toolchain.sh sets it up.
 proof: proof-all
 .PHONY: proof
 
@@ -153,55 +144,21 @@ proof: proof-all
 #
 # WALK_JOBS: how many walk units run at once, computed from THIS machine:
 #   min(cores, (available RAM - 2 GB) / WALK_RSS_GB), floor 1
-# At the current 2 GB/unit that is the core count on anything from 10 GB
-# up.  (It was 7 GB/unit until the units were made lean, and then it was
+# At 2 GiB/unit, four workers need 10 GiB available; eight need 18 GiB,
+# including the reserve. (It was 7 GB/unit before the units became lean,
+# and then it was
 # the binding constraint: 16 GB -> 2 jobs, 32 GB -> 4.  Four 6.8 GB units
 # OOM-killed a 16 GB box on the GG_1LC layer, signal 9, 2026-07-22.)
 # Override explicitly with `make census-verify WALK_JOBS=6'.  (`make -j'
 # does not parallelize the walk -- WALK_JOBS is the knob.)
 #
-# WALK_RSS_GB is the per-unit peak this sizing assumes.  It WAS 7, and
-# that number is what made this a memory problem: 6.8 GB/unit caps a
-# 32 GB box at 4 jobs and 1 h 43 m.  79% of it was the environment each
-# unit Required -- the boarded-machine theorems behind [proven_all] --
-# which the walk half never looks inside.  Census/Run_Compute.v and the
-# lean units removed it: a unit's environment is 0.263 GB (vm) against
-# 2.743 GB before, and the native lean measurement of the same walk was
-# 0.371 GB against 6.758 GB.
-#
-# MEASURED, at last, by a full native walk (2026-08-10, 16 cores /
-# 31 GB, tools/walk_rss_report.py over all 154 units):
-#
-#   peak RSS max / p90 / median / min   6.30 / 2.76 / 0.51 / 0.40 GB
-#   GGH        104 lean units   max 0.60 GB
-#   GG_1LC      16 lean units   max 0.61 GB
-#   G_          24 units        max 2.77 GB  (the 8 assemblers)
-#   Run_Split*   9 units        max 2.76 GB
-#   Census_Theorem              max 6.30 GB, alone
-#
-# So 1 GB, not the provisional 2: the lean units top out at 0.61 GB and
-# this leaves 64% headroom.  The distribution is bimodal and the two
-# modes are sized apart (WALK_ASM_RSS_GB below); a single number would
-# have to cover 0.40 GB and 6.30 GB at once, which is what made the old
-# knob lie.  Raising it is always safe; lowering it below your measured
-# max invites the OOM killer.  Every walk rewrites
-# census_probes/walk-rss.tsv, so re-derive it on your own box rather
-# than trusting this line.
-#
-# At 1 GB/unit the RAM term stops binding at any sane size: a 32 GB box
-# gets its core count, and so does a 16 GB one -- which is the point.
-# The walk was never supposed to need a big desktop.
-#
-# It is NOT what sets the walk's minimum RAM, though, and this knob will
-# happily lie to you about that.  The floor is the single largest file
-# run alone: Census_Theorem, MEASURED at 6.30 GB.  Call the floor ~9 GB
-# with the 2 GB headroom.  Below that no WALK_JOBS setting saves you --
-# the last file in the walk does not fit.  (This was written as ~10 GB
-# from a 7.2 GB projection -- 3.706 GB under vm_compute scaled by the
-# environment's 1.94x vm/native factor.  The walk measured 6.30 GB.  The
-# factor was measured on a unit that EVALUATES; Census_Theorem loads and
-# applies [exact]s, so native does not inflate it the same way.)
-WALK_RSS_GB ?= 1
+# WALK_RSS_GB budgets the lean workers separately from proof assemblers.
+# The old 1 GiB budget used aggressive GC. With the data-only reroot tier,
+# default GC cut a representative unit from 49.4 to 32.5 CPU seconds at
+# 793 MiB peak (2026-10-17). Allow 2 GiB per worker plus the shared reserve.
+# The final Census_Theorem still runs alone; its historical peak was 6.30 GB.
+# Per-unit JSONL timing records allow sizing from measurements on each host.
+WALK_RSS_GB ?= 2
 
 # WALK_CORES: PHYSICAL cores, not `nproc'.
 #
@@ -221,7 +178,7 @@ WALK_RSS_GB ?= 1
 # Override with `make ... WALK_CORES=N'.
 WALK_CORES ?= $(shell python3 tools/proof_resources.py --cores)
 
-WALK_AUTO := $(shell m=$$(awk -v r=$(WALK_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$(WALK_CORES); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+WALK_AUTO := $(shell python3 tools/proof_resources.py --rss-gib $(WALK_RSS_GB) --core-cap $(WALK_CORES))
 WALK_JOBS ?= $(WALK_AUTO)
 
 # ---------------------------------------------------------------------
@@ -232,12 +189,9 @@ WALK_JOBS ?= $(WALK_AUTO)
 # name [decider_WF] without paying for it: the 7 Census/Run_Split_<tag>.v
 # and the 8 Compute/G_* assemblers are irreducibly heavy.
 #
-# WALK_RSS_GB alone is therefore WRONG for them, and dangerously so: at
-# 2 GB/unit a 32 GB box picks 8 jobs, and 8 of these at once is ~43 GB.
-# Sizing the whole walk from the lean measurement would have OOM-killed
-# the Run_Split_<tag> layer at the START of the walk and the G_ layer at
-# the END -- after 120 finished units.  (Introduced when WALK_RSS_GB went
-# 7 -> 2 and caught before any walk ran, 2026-08-10.)
+# WALK_RSS_GB describes lean evaluation, not proof assembly. An early
+# projection put eight assemblers at ~43 GB; measurements below corrected
+# that estimate. Keep a separate assembler budget based on its own peak.
 #
 # MEASURED by the full native walk (2026-08-10): the 8 G_ assemblers
 # peak at 2.77 GB and the 7 Run_Split_<tag> at 2.76 GB.  3.5 gives 26%
@@ -256,7 +210,7 @@ WALK_JOBS ?= $(WALK_AUTO)
 # The cost of that error was parallelism, not safety: at 7 GB a 32 GB
 # box ran these 15 files 4-wide when 8-wide fits.
 WALK_ASM_RSS_GB ?= 3.5
-WALK_ASM_AUTO := $(shell m=$$(awk -v r=$(WALK_ASM_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-1}; c=$(WALK_CORES); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+WALK_ASM_AUTO := $(shell python3 tools/proof_resources.py --rss-gib $(WALK_ASM_RSS_GB) --core-cap $(WALK_CORES))
 WALK_ASM_JOBS ?= $(WALK_ASM_AUTO)
 
 # A file is heavy iff it imports another Census.Compute module -- i.e. it
@@ -267,52 +221,18 @@ WALK_ASM_JOBS ?= $(WALK_ASM_AUTO)
 # out of step with this Makefile.
 ASM_PRED = grep -q '^From BBB4.Census.Compute Require'
 
-# WALK_OCAMLRUNPARAM: OCaml GC tuning for the walk units.  Measured
-# 2026-08-04 on GG_1LC_1LB (32 GB desktop): untuned the unit ratchets to
-# ~11-12 GB peak; 'o=80,O=150' -> 8.19 GB; 'o=40,O=60' -> 6.76 GB, FLAT
-# from minute 3 onward, still 99% CPU.  o = GC space-overhead target (%),
-# O = compaction threshold (%) -- compaction is the only thing that
-# returns major-heap memory to the OS.  Lower peaks => more WALK_JOBS on
-# the same RAM (WALK_RSS_GB above assumes this default).  Override or
-# disable: `make ... WALK_OCAMLRUNPARAM='.
-#
-# The rest of that note used to read "so without it each unit's RSS is
-# the high-water mark of its worst pop's transient garbage".  That was a
-# hypothesis, never measured, and it is wrong by ~20x
-# (tools/probes/gen_rss_probe.py, 2026-08-09).  Measured under
-# vm_compute, GG_1LC_1LB's real computation walked to an EMPTY queue:
-#
-#   Require Run + Run_Split + Run_Split2, evaluate nothing   2.743 GB
-#     -- of which Census/Proven_Data.vo (the board THEOREMS)  2.650 GB
-#   + the whole subtree walked, queue ([],[])                3.667 GB
-#   the same walk on data-only lookup tables (ProbeWalkCommon) 0.307 GB
-#
-# So the decider's transient garbage is ~0.1 GB, `o' multiplies a live
-# set that is 75% environment, and 2.65 GB of that environment is proofs
-# the walk half of a unit never looks inside.  o is a target for slack
-# RELATIVE TO LIVE DATA, so it scales with the environment, not with the
-# decider: same unit, one run each,
-#
-#   untuned 5.474 GB / 137 s   o=80,O=150 4.539 / 136   o=40,O=60 3.667 / 143
-#   o=20,O=30 3.323 GB / 157 s   o=10,O=20 2.959 / 187
-#
-# o=40,O=60 stays the default: tightening further buys 9-19% of RSS for
-# 10-30% of CPU, and WALK_JOBS is integer, so on a 32 GB box it does not
-# cross a job boundary on its own.  docs/CENSUS_RUNTIME.md has the
-# arithmetic and what it would take to cross one.
-WALK_OCAMLRUNPARAM ?= o=40,O=60
+# WALK_OCAMLRUNPARAM overrides the OCaml GC settings for state walk units.
+# Default GC is faster after separating computation from proof libraries:
+# GGH_0RB_1RC_1LC measured 32.5 CPU seconds / 793 MiB versus 49.4 seconds /
+# 453 MiB with the former o=40,O=60 setting. The 2 GiB budget above retains
+# ample headroom. Set WALK_OCAMLRUNPARAM=o=40,O=60 for the smaller heap.
+WALK_OCAMLRUNPARAM ?=
 
-# WALK_RSS: per-unit peak RSS + wall/user seconds, appended to
-# census_probes/walk-rss.tsv (one line per unit, `/usr/bin/time -a').
-# The 6.8 GB above is ONE unit measured by hand in July; nothing has ever
-# recorded the DISTRIBUTION, and WALK_JOBS is derived entirely from that
-# single number.  Recording costs nothing (`/usr/bin/time' wraps the
-# existing coqc), touches no census input -- tools/census_cache.py hashes
-# the census .v only -- and makes every walk report what the next walk
-# should be sized for.  `tools/walk_rss_report.py' summarises it and says
-# what WALK_JOBS the measured peak supports on a given box.  Disable with
-# `make ... WALK_RSS='; degrades to a plain coqc where /usr/bin/time is
-# absent (it lives in the `time' package, not the shell builtin).
+# WALK_RSS: optional legacy TSV recording with GNU time. The portable
+# WALK_UNIT_TIMINGS JSONL recorder below always records wall/CPU time,
+# peak child RSS and exit status, including when GNU time is unavailable.
+# `tools/walk_rss_report.py` reads the legacy TSV. Disable either recorder
+# by assigning its path variable an empty value.
 WALK_RSS ?= census_probes/walk-rss.tsv
 WALK_HAS_TIME := $(shell [ -x /usr/bin/time ] && echo yes)
 ifneq ($(WALK_RSS),)
@@ -320,7 +240,11 @@ ifeq ($(WALK_HAS_TIME),yes)
 WALK_MEASURE = /usr/bin/time -a -o $(WALK_RSS) -f '%M\t%e\t%U\t%C'
 endif
 endif
-WALK_COQC = env OCAMLRUNPARAM='$(WALK_OCAMLRUNPARAM)' $(WALK_MEASURE) \
+WALK_UNIT_TIMINGS ?= census_probes/state-unit-times.jsonl
+ifneq ($(strip $(WALK_UNIT_TIMINGS)),)
+_state_unit_time = python3 tools/time_command.py --log "$(WALK_UNIT_TIMINGS)" --phase state-unit --
+endif
+WALK_COQC = env OCAMLRUNPARAM='$(WALK_OCAMLRUNPARAM)' $(WALK_MEASURE) $(_state_unit_time) \
 	    coqc -Q theories BBB4
 
 # WALK_MEMFREE (opt-in, needs GNU parallel): memory-aware launch gate,
@@ -425,7 +349,7 @@ _census-walk: _census-prepare
 	     printf 'peak_rss_kb\twall_s\tuser_s\tcommand\n' > "$(WALK_RSS)"; \
 	   echo ">>> per-unit peak RSS -> $(WALK_RSS) (python3 tools/walk_rss_report.py)"; \
 	 elif [ -n "$(WALK_RSS)" ]; then \
-	   echo ">>> per-unit peak RSS NOT recorded: /usr/bin/time missing (apt-get install time)"; \
+	   echo ">>> legacy RSS TSV disabled: /usr/bin/time missing; portable JSONL still records peak child RSS"; \
 	 fi
 	[ -f theories/Census/Run_Split.vo ] || $(WALK_COQC) theories/Census/Run_Split.v
 	[ -f theories/Census/Run_Split2.vo ] || $(WALK_COQC) theories/Census/Run_Split2.v
@@ -477,7 +401,8 @@ _census-walk: _census-prepare
 #
 # TWO parallelism knobs, which is why this target sizes itself rather
 # than leaving it to `-j':
-#   * the base build takes make's -j (BUILD_JOBS below, default nproc);
+#   * the base build takes make's -j (BUILD_JOBS below, physical cores
+#     capped by container CPU quotas);
 #   * the WALK ignores -j entirely -- WALK_JOBS is its knob, and it
 #     auto-sizes to physical cores (the walk is memory-bandwidth bound,
 #     so SMT threads do not help it; measured 2026-08-12).
@@ -485,7 +410,7 @@ _census-walk: _census-prepare
 # core-min, i.e. most of a day, for want of a flag.
 #
 # Override either: `make proof-all BUILD_JOBS=8 WALK_JOBS=4'.
-BUILD_JOBS ?= $(shell nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
+BUILD_JOBS ?= $(shell python3 tools/proof_resources.py --cores)
 
 # CENSUS_SWITCH / CENSUS_OCAML / CENSUS_COQ / CENSUS_BOOTSTRAP:
 # tools/census_toolchain.sh ensures a Coq that can do native_compute and
@@ -495,6 +420,8 @@ BUILD_JOBS ?= $(shell nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null |
 # manual step left is installing opam itself, which does need a package
 # manager.  `CENSUS_BOOTSTRAP=0' declines to create anything.
 CENSUS_SWITCH ?= census
+STATE_TIMINGS ?= census_probes/proof-state-times.jsonl
+_state_time = python3 tools/time_command.py --log "$(STATE_TIMINGS)" --phase
 
 proof-all:
 	@# `eval "$$(cmd)"' throws the script's exit status away -- eval of an
@@ -507,42 +434,31 @@ _proof-all-run:
 	@echo "############################################################"
 	@echo "# proof-all: re-deriving the census from source.            "
 	@echo "# Nothing committed is used: census-verify walks the census.  "
-	@echo "# ~83 min total on 8 cores / 32 GB,                         "
-	@echo "# of which the base build below is about half.               "
+	@echo "# Phase timings: $(STATE_TIMINGS)"
+	@echo "# Measured build conditions: docs/CENSUS_RUNTIME.md"
 	@echo "############################################################"
-	@# Makefile.coq bakes in the generating coq_makefile's native
-	@# setting, so a stale one from another toolchain would pass
-	@# -native-compiler no to every coqc even now that the switch is
-	@# active.  Regenerating costs a second.
-	rm -f Makefile.coq
-	@# TOOLCHAIN STAMP.  Regenerating Makefile.coq fixes the FLAGS; it
-	@# does nothing about a TREE built by another toolchain.  .vo are
-	@# OCaml-marshalled, so 4.14.1 output will not load under 4.14.2 --
-	@# and .vo depend on .v files, not on the makefile, so `make' sees
-	@# valid timestamps and skips the lot.  The base build then "passes"
-	@# in seconds and the walk dies loading it, ~40 min later.
-	@#
-	@# Exactly why census_probes/walk-stamp exists for the walk: committed
-	@# .vo of an older tree satisfied a bare existence check.  Same shape,
-	@# one level down.
-	@S=.toolchain-stamp; \
-	 H="$$(coqc --version 2>/dev/null | tr -d '\n')|$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')"; \
-	 if [ -f "$$S" ] && [ "$$(cat $$S)" != "$$H" ]; then \
-	   echo ">>> this tree was built by a DIFFERENT toolchain:"; \
-	   echo ">>>   built with: $$(cat $$S)"; \
-	   echo ">>>   now using : $$H"; \
-	   echo ">>> its .vo cannot be loaded or extended -- running make clean."; \
-	   $(MAKE) clean >/dev/null; \
+	@# Regenerate before cleaning: clean needs the current project file list.
+	@# The old version-only stamp also migrates through this cleanup once.
+	@set -e; S=.toolchain-stamp; \
+	 H="$$(python3 tools/proof_toolchain_stamp.py)"; \
+	 coq_makefile -f _CoqProject -o Makefile.coq; \
+	 if [ ! -f "$$S" ] || [ "$$(cat "$$S")" != "$$H" ]; then \
+	   echo ">>> toolchain stamp missing or changed; cleaning compiled artifacts."; \
+	   python3 tools/proof_toolchain_stamp.py --check-native-cache; \
+	   $(MAKE) clean; \
+	   python3 tools/proof_toolchain_stamp.py --clean-native-cache; \
+	   rm -f theories/CensusTr/Compute/*.vo theories/CloseoutTr/CloseoutFinalTr.vo \
+	     theories/CloseoutTr/BBBT4_Value.vo; \
 	   coq_makefile -f _CoqProject -o Makefile.coq; \
 	 fi; \
-	 echo "$$H" > "$$S"
-	$(MAKE) state-build
-	$(MAKE) census-verify
+	 printf '%s\n' "$$H" > "$$S"
+	$(_state_time) state-build -- $(MAKE) state-build
+	$(_state_time) census-verify -- $(MAKE) census-verify
 	@# FINAL_NATIVE: see its definition (the final files' imports were
 	@# built ondemand, with no native code to link against).
-	coqc -Q theories BBB4 $(FINAL_NATIVE) theories/Closeout/CloseoutFinal.v
-	coqc -Q theories BBB4 $(FINAL_NATIVE) theories/Closeout/BBB4_Theorem.v
-	coqc -Q theories BBB4 $(FINAL_NATIVE) theories/Closeout/BBB4_Value.v
+	$(_state_time) final-closeout -- coqc -Q theories BBB4 $(FINAL_NATIVE) theories/Closeout/CloseoutFinal.v
+	$(_state_time) final-bound -- coqc -Q theories BBB4 $(FINAL_NATIVE) theories/Closeout/BBB4_Theorem.v
+	$(_state_time) final-value -- coqc -Q theories BBB4 $(FINAL_NATIVE) theories/Closeout/BBB4_Value.v
 	@python3 tools/proof_report.py
 	@echo "------------------------------------------------------------"
 	@echo "proof-all COMPLETE.  The 'Trust tier' line in the report above"
@@ -554,7 +470,7 @@ _proof-all-run:
 
 # The census walk, resumable: units already walked from THIS tree (the
 # walk-stamp matches) are kept; anything else is quarantined and walked.
-# Heavy native_compute (385 core-min): STABLE hardware only (real Linux /
+# Heavy native_compute: STABLE hardware only (real Linux /
 # WSL2, >=16 GB RAM, no preemption).
 census: state-build
 	$(MAKE) _census-walk
@@ -894,7 +810,15 @@ CENSUS_TR_PREREQ_JOBS ?= $(WALK_JOBS)
 # copies of thousands of proof-only libraries adds work the walk never uses.
 # Set TR_PROOF_NATIVE=yes to restore eager native compilation of those files.
 TR_PROOF_NATIVE ?= ondemand
+# The proof-tr-all wrapper suppresses coqdoc globalization output to save disk.
+# Standalone targets and the state proof retain their existing behavior.
+TR_GLOB_FLAGS ?=
+# Missing grouped .glob peers would otherwise force unchanged .vo rebuilds.
+# Select Coq 8.18's separate-target rules only for the no-glob proof phases.
+_tr_glob_makeflags = $(if $(filter -noglob,$(TR_GLOB_FLAGS)),'.FEATURES=$(filter-out grouped-target,$(.FEATURES))')
 TR_TIMINGS ?= census_probes/proof-tr-times.jsonl
+TR_UNIT_TIMINGS ?= census_probes/censustr-unit-times.jsonl
+TR_UNIT_COSTS ?= tools/censustr/walk_costs.json
 _tr_time = python3 tools/time_command.py --log "$(TR_TIMINGS)" --phase
 
 census-tr-units:
@@ -908,12 +832,12 @@ census-tr-units:
 census-tr-walk: Makefile.coq
 	@python3 tools/ensure_native.py $(TR_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	$(_tr_time) computation-dependencies -- $(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
-	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler yes' \
+	$(_tr_time) computation-dependencies -- $(MAKE) -f Makefile.coq $(_tr_glob_makeflags) -j$(CENSUS_TR_PREREQ_JOBS) \
+	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) $(TR_GLOB_FLAGS) -native-compiler yes' \
 	  $(TR_COMPUTE_TARGETS)
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	$(_tr_time) proof-prerequisites -- $(MAKE) -f Makefile.coq -j$(CENSUS_TR_PREREQ_JOBS) \
-	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(TR_PROOF_NATIVE)' theories/CensusTr/RunTr_Split.vo
+	$(_tr_time) proof-prerequisites -- $(MAKE) -f Makefile.coq $(_tr_glob_makeflags) -j$(CENSUS_TR_PREREQ_JOBS) \
+	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) $(TR_GLOB_FLAGS) -native-compiler $(TR_PROOF_NATIVE)' theories/CensusTr/RunTr_Split.vo
 	@mkdir -p census_probes
 	@ulimit -s $(STACK_KB) 2>/dev/null \
 	  || echo ">>> WARNING: could not raise stack to $(STACK_KB)"
@@ -922,16 +846,23 @@ census-tr-walk: Makefile.coq
 	@# units from an earlier walk
 	@# (older tables, older prov_tr) are rebuilt, not skipped -- skipping
 	@# them would fail later at the assembly with inconsistent assumptions
+	@# Order only pending units; retain the freshness test and worker limit.
+	@# Capture sorting separately so a sorter failure cannot hide in a pipeline.
 	@ulimit -s $(STACK_KB) 2>/dev/null; \
-	 ls theories/CensusTr/Compute/UnitTr_*.v \
+	 pending=$$(ls theories/CensusTr/Compute/UnitTr_*.v \
 	   | while read f; do \
 	       [ -f "$${f%.v}.vo" ] \
 	         && [ "$${f%.v}.vo" -nt theories/CensusTr/RunTr_WalkCompute.vo ] \
 	         && [ "$${f%.v}.vo" -nt "$$f" ] \
-	         || echo "$$f"; done \
+	         || echo "$$f"; done); \
+	 pending=$$(printf '%s\n' "$$pending" | python3 tools/censustr/order_walk_units.py \
+	   --profile "$(TR_UNIT_COSTS)" --units $(CENSUS_TR_UNITS)) || exit $$?; \
+	 printf '%s\n' "$$pending" \
 	   | $(_tr_time) census-units -- xargs -r -P $(WALK_JOBS) -n1 sh -c \
 	    'f=$$1; s=$$(date +%s); \
-	     coqc -Q theories BBB4 -w -abstract-large-number "$$f" \
+	     python3 tools/time_command.py --log "$(TR_UNIT_TIMINGS)" \
+	       --phase "$$(basename "$$f" .v)" -- \
+	       coqc $(TR_GLOB_FLAGS) -Q theories BBB4 -w -abstract-large-number "$$f" \
 	       > "$$f.log" 2>&1 \
 	       && { t=$$(( $$(date +%s) - s )); \
 	            echo ">>> $$(basename "$$f" .v) done in $$t s"; \
@@ -940,7 +871,7 @@ census-tr-walk: Makefile.coq
 	@n=$$(ls theories/CensusTr/Compute/UnitTr_*.v | wc -l); \
 	 d=$$(ls theories/CensusTr/Compute/UnitTr_*.vo 2>/dev/null | wc -l); \
 	 echo ">>> units done: $$d / $$n"; [ "$$d" = "$$n" ]
-	$(_tr_time) census-assembly -- coqc -Q theories BBB4 -w -abstract-large-number \
+	$(_tr_time) census-assembly -- coqc $(TR_GLOB_FLAGS) -Q theories BBB4 -w -abstract-large-number \
 	  theories/CensusTr/Compute/Census_TheoremTr.v
 	@echo ">>> census_tr : forall tm, QHBoundTr B_tr tm \\/ Deferred D_tr tm -- CHECKED"
 .PHONY: census-tr-walk
@@ -1017,34 +948,37 @@ closeout-tr-final: closeout-tr
 #      the champion (BBBT4_Champion.vo) and the instruction-level tests
 #   5. CloseoutFinalTr.v (bbbt4_bound) and BBBT4_Value.v (BBBT4_value)
 #
-# MEMORY sets the job counts, not -j.  The complete 96-unit lean walk
-# peaked at 2.59 GiB per compiler on macOS arm64 / Coq 8.18; budget 4 GiB
-# per worker, capped at the physical cores. Target-box validation remains
-# pending; see docs/CENSUS_RUNTIME.md. The batches peak under
-# ~2.5 GB (the CI budget), so CLOSEOUT_TR_JOBS uses CLOSEOUT_TR_RSS_GB.
-# PREREQUISITES use 3 GiB per parallel worker: RepWL parts peak at 1.93
+# MEMORY sets the job counts, not -j. Budget 3 GiB per walk worker,
+# capped at physical cores and container CPU quotas. The small dynamic
+# bound avoids retaining the unary published bound in each walk worker.
+# See docs/CENSUS_RUNTIME.md for measurements. CLOSEOUT_TR_RSS_GB is a
+# scheduling estimate: the fresh four-worker build passed on 16 GiB, but
+# individual closeout batches reached 3.91 GiB and incurred memory pressure.
+# PREREQUISITES use 3 GiB per parallel worker: RepWL parts peaked at 2.20
 # GiB; binary bound comparisons cut all 26 LAPQ bundles below 0.9 GiB.
 # The nine 6-8 GB state IRules batches are no longer prerequisites.
-# RunTr's final assembly peaks at 4.23 GiB, but runs after all its proof
-# dependencies; RunTr_Split then follows it. These serial assemblies do
+# RunTr's final assembly peaked at 7.34 GiB in the 2026-10-17 fresh run,
+# after all its proof dependencies; RunTr_Split then follows it. These assemblies do
 # not multiply with the prerequisite job count. See CENSUS_RUNTIME.md.
 # On an eight-core, 32 GiB box (~30 GiB available), that is 8 prerequisite
-# jobs, 7 walk jobs and 8 batch jobs. Override any: `make proof-tr-all
+# jobs, 8 walk jobs and 8 batch jobs. Override any: `make proof-tr-all
 # PREREQ_TR_JOBS=3 WALK_TR_JOBS=4 CLOSEOUT_TR_JOBS=6'.  A rerun keeps finished work (walk
 # units newer than their source and RunTr_WalkCompute.vo, built .vo);
 # to force a full re-walk,
 # delete theories/CensusTr/Compute/*.vo first.
-WALK_TR_RSS_GB ?= 4
+WALK_TR_RSS_GB ?= 3
 CLOSEOUT_TR_RSS_GB ?= 3
 PREREQ_TR_RSS_GB ?= 3
 _mem_jobs = $(shell python3 tools/proof_resources.py --rss-gib $(1) --core-cap $(2))
 WALK_TR_JOBS ?= $(call _mem_jobs,$(WALK_TR_RSS_GB),$(WALK_CORES))
 CLOSEOUT_TR_JOBS ?= $(call _mem_jobs,$(CLOSEOUT_TR_RSS_GB),$(BUILD_JOBS))
 PREREQ_TR_JOBS ?= $(call _mem_jobs,$(PREREQ_TR_RSS_GB),$(BUILD_JOBS))
+# Prepare stored closeout certificate data once, immediately before closeout.
+TR_CLOSEOUT_RW_CERT_TARGETS := $(patsubst %.v,%.vo,$(wildcard theories/CloseoutTr/RWCerts/Data_*.v))
 
 proof-tr-all:
 	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
-	 $(MAKE) _proof-tr-all-run
+	 $(MAKE) _proof-tr-all-run TR_GLOB_FLAGS=-noglob
 
 _proof-tr-all-run:
 	@echo "############################################################"
@@ -1054,47 +988,54 @@ _proof-tr-all-run:
 	@echo "# prerequisite jobs $(PREREQ_TR_JOBS), walk jobs $(WALK_TR_JOBS), batch jobs $(CLOSEOUT_TR_JOBS)"
 	@echo "# proof native mode $(TR_PROOF_NATIVE); computation native mode yes"
 	@echo "############################################################"
-	@# same reasons as _proof-all-run: a stale Makefile.coq bakes in the
-	@# wrong native setting, and a tree built by another toolchain cannot
-	@# be loaded (OCaml-marshalled .vo) but looks up to date to make.
-	rm -f Makefile.coq
-	@S=.toolchain-stamp; \
-	 H="$$(coqc --version 2>/dev/null | tr -d '\n')|$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')"; \
-	 if [ -f "$$S" ] && [ "$$(cat $$S)" != "$$H" ]; then \
-	   echo ">>> this tree was built by a DIFFERENT toolchain:"; \
-	   echo ">>>   built with: $$(cat $$S)"; \
-	   echo ">>>   now using : $$H"; \
-	   echo ">>> its .vo cannot be loaded or extended -- running make clean."; \
-	   $(MAKE) clean >/dev/null; \
+	@# Regenerate before cleaning: clean needs the current project file list.
+	@# The old version-only stamp also migrates through this cleanup once.
+	@set -e; S=.toolchain-stamp; \
+	 H="$$(python3 tools/proof_toolchain_stamp.py)"; \
+	 coq_makefile -f _CoqProject -o Makefile.coq; \
+	 if [ ! -f "$$S" ] || [ "$$(cat "$$S")" != "$$H" ]; then \
+	   echo ">>> toolchain stamp missing or changed; cleaning compiled artifacts."; \
+	   python3 tools/proof_toolchain_stamp.py --check-native-cache; \
+	   $(MAKE) clean; \
+	   python3 tools/proof_toolchain_stamp.py --clean-native-cache; \
 	   rm -f theories/CensusTr/Compute/*.vo theories/CloseoutTr/CloseoutFinalTr.vo \
 	     theories/CloseoutTr/BBBT4_Value.vo; \
+	   coq_makefile -f _CoqProject -o Makefile.coq; \
 	 fi; \
-	 echo "$$H" > "$$S"
+	 printf '%s\n' "$$H" > "$$S"
 	$(MAKE) Makefile.coq
 	@echo ">>> [1/4] generated files current"
 	python3 tools/closeouttr/gen_closeout_tr.py --check
 	python3 tools/censustr/gen_walk_units.py --check --units $(CENSUS_TR_UNITS)
 	python3 tools/censustr/gen_irulestr_parts.py --check
+	python3 tools/censustr/gen_tr_hints.py --check
 	git diff --quiet -- theories/CensusTr/Compute/ \
 	  || { echo ">>> theories/CensusTr/Compute/ differs from the commit"; exit 1; }
 	@echo ">>> [2/4] the census walk: census_tr"
 	$(MAKE) census-tr-walk WALK_JOBS=$(WALK_TR_JOBS) CENSUS_TR_PREREQ_JOBS=$(PREREQ_TR_JOBS)
 	@echo ">>> [3/4] the closeout, the champion, the tests"
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	$(_tr_time) closeout-certificate-native-cache -- python3 tools/ensure_native.py $(TR_CLOSEOUT_RW_CERT_TARGETS)
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	$(_tr_time) closeout-certificate-dependencies -- $(MAKE) -f Makefile.coq $(_tr_glob_makeflags) -j$(CLOSEOUT_TR_JOBS) \
+	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) $(TR_GLOB_FLAGS) -native-compiler yes' $(TR_CLOSEOUT_RW_CERT_TARGETS)
 	@# Keep the raised stack for native computations and for the eager
 	@# TR_PROOF_NATIVE=yes override: the OCaml compiler overflows 8 MB on
 	@# large native batch companions (CBT_AST_134..136, 2026-10-06).
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	$(_tr_time) closeout-champion-tests -- $(MAKE) -f Makefile.coq -j$(CLOSEOUT_TR_JOBS) \
-	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) -native-compiler $(TR_PROOF_NATIVE)' \
+	$(_tr_time) closeout-champion-tests -- $(MAKE) -f Makefile.coq $(_tr_glob_makeflags) -j$(CLOSEOUT_TR_JOBS) \
+	  COQEXTRAFLAGS='$(COQEXTRAFLAGS) $(TR_GLOB_FLAGS) -native-compiler $(TR_PROOF_NATIVE)' \
 	  theories/CloseoutTr/CloseoutTr.vo \
 	  theories/BBBT4_Champion.vo theories/Counters/BlankTailTr.vo \
 	  theories/Tests/ChampionTr_Corruption.vo theories/Tests/ConventionTr_Example.vo \
-	  theories/Tests/ShortCircuitTr_Regression.vo theories/Tests/RepWLSearchTr_Regression.vo
+	  theories/Tests/ShortCircuitTr_Regression.vo theories/Tests/RepWLSearchTr_Regression.vo \
+	  theories/Tests/NGramSeed_Regression.vo theories/Tests/BellmanFord_Regression.vo theories/Tests/ClosureIdxTr_Regression.vo \
+	  theories/Tests/HintedTr_Regression.vo theories/Tests/HintedTr_Data_Regression.vo
 	@echo ">>> [4/4] bbbt4_bound and BBBT4_value"
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	$(_tr_time) final-bound -- coqc -Q theories BBB4 -w -abstract-large-number $(FINAL_NATIVE) theories/CloseoutTr/CloseoutFinalTr.v
+	$(_tr_time) final-bound -- coqc $(TR_GLOB_FLAGS) -Q theories BBB4 -w -abstract-large-number $(FINAL_NATIVE) theories/CloseoutTr/CloseoutFinalTr.v
 	ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	$(_tr_time) final-value -- coqc -Q theories BBB4 -w -abstract-large-number $(FINAL_NATIVE) theories/CloseoutTr/BBBT4_Value.v
+	$(_tr_time) final-value -- coqc $(TR_GLOB_FLAGS) -Q theories BBB4 -w -abstract-large-number $(FINAL_NATIVE) theories/CloseoutTr/BBBT4_Value.v
 	@echo "------------------------------------------------------------"
 	@echo "proof-tr-all COMPLETE at $$(git rev-parse HEAD 2>/dev/null)."
 	@echo "BBBT4_value : BBBT4_statement  (BBBT4_Spec.v: BBB_tr(4) = 32,779,478)"

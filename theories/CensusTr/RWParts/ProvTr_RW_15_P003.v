@@ -20,7 +20,7 @@ Definition tm_rw15_0014 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma nqhtr_rw15_0014 : NeverQuasiHaltsTr tm_rw15_0014.
-Proof. apply (rw_check_stored_tr_sound _ 15 2 0 60 DataTr_RW_15_0014.keys DataTr_RW_15_0014.ranks DataTr_RW_15_0014.cert). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_check_stored_tr_sound _ 15 2 0 60 DataTr_RW_15_0014.keys DataTr_RW_15_0014.ranks DataTr_RW_15_0014.cert). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_15_p003 : list TM :=
   [tm_rw15_0014].

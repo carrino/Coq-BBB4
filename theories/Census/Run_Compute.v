@@ -19,14 +19,14 @@
     [Forall NeverQuasiHaltsSt proven_list_data := proven_all], which
     type-checks only if the data list is convertible to the board list.
     That type-check is the whole gate between the two, and it is the
-    kernel's.  [reroot_qh_list] stays on its real module: its machines
-    are built by [row_to_tm], which is not convertible to a literal
-    transition table, and it costs ~0.08 GB anyway. *)
+    kernel's. [RerootQH_List] preserves the original transparent machine
+    bodies, including [row_to_tm] applications, so the reroot tier uses
+    the same conversion gate without loading its certificate boards. *)
 
 From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement Mirror.
 From BBB4.Census Require Import TNF_QH Decide Deferred_Defs Deferred_Data
-  Proven_List ProvenQH_List RerootQH_Data.
+  Proven_List ProvenQH_List RerootQH_List.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -172,13 +172,13 @@ Definition rw_cut_census : nat := 32.
 Definition pmap : DeferredMap := dmap_of proven_list_data.
 
 (** the proven-QH map, built once from [provenqh_list] EXTENDED with the
-    re-root QH tier ([reroot_qh_list], Census/RerootQH_Data.v): list-B 0RB
+    re-root QH tier ([reroot_qh_list_data], Census/RerootQH_List.v): list-B 0RB
     residue machines boarded R_QH by [qh_reroot] through a tiny never-QH core.
     Both lists carry the same [NonHalt /\ QHBound B_census /\ QuasiHaltsSt]
     certificate ([provenqh_all], [reroot_qh_all]), composed by [Forall_app]
     in [reroot_provenqh_all]; a hit in either is decided R_QH. *)
 Definition qhmap : DeferredMap :=
-  dmap_of (provenqh_list_data ++ reroot_qh_list).
+  dmap_of (provenqh_list_data ++ reroot_qh_list_data).
 
 (** the winning-rung hint map (Decide.v [HintMap]): ADVISORY, empty
     by default -- tools/gen_hints.py can generate a table from a

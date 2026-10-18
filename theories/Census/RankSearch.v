@@ -19,6 +19,7 @@ From Coq Require Import Arith Lia Bool List ZArith PArith.
 From Coq Require Import FSets.FMapPositive.
 From BBB4 Require Import BBB4_Statement CTape PosEnc.
 From BBB4.Checkers Require Import NGram.
+From BBB4.Census Require Import BellmanFord.
 Import ListNotations.
 
 (** ** Graph plumbing (nodes keyed by [cconf_enc]) *)
@@ -258,7 +259,27 @@ Fixpoint bell_iter (fuel : nat) (tm : TM) (m : ngmeas) (Kc : Z)
       if ch then bell_iter f tm m Kc es dist' else Some dist'
   end.
 
-Definition try_rule_b (tm : TM) (g : Adj) (cset : PositiveSet.t)
+Definition ng_bad_self tm m Kc es :=
+  bad_self cconf nkey (fun a b => (Kc * ngm_delta tm m a b + 1)%Z) es.
+Lemma bell_pass_self_spec : forall tm m Kc es st,
+  bell_pass tm m Kc es st =
+  fold_left (self_relax cconf nkey (fun a b => (Kc * ngm_delta tm m a b + 1)%Z)) es st.
+Proof.
+  intros tm m Kc es. induction es as [|[a b] es IH]; intros [dist ch]; [reflexivity|].
+  unfold bell_pass in *. cbn [fold_left].
+  rewrite IH. reflexivity.
+Qed.
+Lemma bell_iter_bad_self : forall fuel tm m Kc es dist,
+  ng_bad_self tm m Kc es = true -> bell_iter fuel tm m Kc es dist = None.
+Proof.
+  induction fuel as [|fuel IH]; intros tm m Kc es dist H; [reflexivity|].
+  assert (E : snd (bell_pass tm m Kc es (dist,false)) = true).
+  { rewrite bell_pass_self_spec. apply self_pass_bad. exact H. }
+  cbn [bell_iter]. destruct (bell_pass tm m Kc es (dist,false)) as [d' ch].
+  cbn in E. subst ch. apply IH. exact H.
+Qed.
+
+Definition try_rule_b_reference (tm : TM) (g : Adj) (cset : PositiveSet.t)
     (c : list cconf) (Kc : nat) (m : ngmeas) : option (ngcomp * Adj) :=
   let es := intra_edges g cset c in
   match bell_iter (S (length c)) tm m (Z.of_nat Kc) es
@@ -271,6 +292,29 @@ Definition try_rule_b (tm : TM) (g : Adj) (cset : PositiveSet.t)
       Some (NgMeas m Kc phi c,
             delete_intra g cset c (fun _ _ => true))
   end.
+
+Definition try_rule_b (tm : TM) (g : Adj) (cset : PositiveSet.t)
+    (c : list cconf) (Kc : nat) (m : ngmeas) : option (ngcomp * Adj) :=
+  let es := intra_edges g cset c in
+  if ng_bad_self tm m (Z.of_nat Kc) es then None else
+  match bell_iter (S (length c)) tm m (Z.of_nat Kc) es
+                  (PositiveMap.empty Z) with
+  | None => None
+  | Some dist =>
+      let vals := map (fun v => bell_get dist v) c in
+      let mn := fold_left Z.min vals 0%Z in
+      let phi := map (fun v => (v, Z.to_nat (bell_get dist v - mn)%Z)) c in
+      Some (NgMeas m Kc phi c,
+            delete_intra g cset c (fun _ _ => true))
+  end.
+
+Lemma try_rule_b_spec : forall tm g cset c Kc m,
+  try_rule_b tm g cset c Kc m = try_rule_b_reference tm g cset c Kc m.
+Proof.
+  intros. unfold try_rule_b, try_rule_b_reference.
+  destruct (ng_bad_self tm m (Z.of_nat Kc) (intra_edges g cset c)) eqn:E; [|reflexivity].
+  rewrite bell_iter_bad_self by exact E. reflexivity.
+Qed.
 
 Definition measures : list ngmeas := [MAll; MLeft; MRight].
 

@@ -88,18 +88,19 @@ The claim is [`theories/BBBT4_Spec.v`](theories/BBBT4_Spec.v), with
 `FiresAt` and `QuietAfterTr`.  One command proves it from a fresh
 clone:
 
-```sh
+```bash
+set -o pipefail
 make proof-tr-all 2>&1 | tee proof-tr-all.log
 ```
 
 It ends with `proof-tr-all COMPLETE` and the `Print Assumptions
 BBBT4_value` block, which should list `functional_extensionality_dep`
-and nothing else.  It was verified end to end on 2026-10-06 and again,
-after the build speedups, on 2026-10-11 and 2026-10-12
-([`docs/BBBT4_REVIEW.md`](docs/BBBT4_REVIEW.md) §8.1–8.3).  It needs
-the same census opam switch as `make proof` and budgets 4 GB of RAM
-per walk job.  It takes about 7 hours on 8 cores / 32 GB, against
-~80–90 min for the state build.  Details are in
+and nothing else. The latest completed fresh build, on 2026-10-18, passed in
+**2 h 15 m 38 s with a four-CPU quota and 16 GiB RAM**. Earlier validations
+are recorded in [`docs/BBBT4_REVIEW.md`](docs/BBBT4_REVIEW.md) §8.1–8.3.
+It uses the same native toolchain as `make proof`. Current measurements and
+their build conditions are in [`docs/CENSUS_RUNTIME.md`](docs/CENSUS_RUNTIME.md).
+Verification instructions are in
 [`docs/VERIFYING.md`](docs/VERIFYING.md), Tier C.
 
 ## The verification ladder
@@ -115,96 +116,86 @@ is one from-source build on your own machine.
    the complete formal statement;
    [`docs/CLAIMS.md`](docs/CLAIMS.md) states in prose exactly what is
    proved — and what is not.  Trust: the authors.
-2. **`make`** (stock Coq 8.18, no opam, ~1–2 h).  Rebuilds every
+2. **`make`** (stock Coq 8.18, no opam). Rebuilds every
    checker, every board theorem, the champion's exact score, and
    `closeout_partial` — the entire boarding argument — **from source**.
    Trust: the Coq kernel.
 3. **`make proof`** (= `make proof-all`) — **the whole claim from
-   source, one command, ~80–90 min.**  The state-level base build, then
+   source, one command.**  The state-level base build, then
    the census walk on your machine, then the closeout chain and
    `Print Assumptions BBB4_value`.  Nothing is precompiled; the `Axioms:`
    block at the end is the entire trust surface.  Trust: the kernel
    alone.
 
-   Measured end to end 2026-08-12 on 8 physical cores / 31 GB, from
-   `git clean -fdx` with nothing pre-configured: **79 m 38 s**
-   (742 core-min) — a ~40 min base build, a **42 m 36 s** census walk,
-   and the closeout chain.  The walk alone is
-   `make census-verify WALK_JOBS=8`.  Nothing to set up and no `-j` to
-   pass: `tools/census_toolchain.sh` finds a native-capable Coq, or
-   activates the `census` opam switch (`opam env` does not survive a
-   new terminal), or creates that switch — the only step needing your
-   package manager is installing `opam` itself.  It sizes the
-   base build from `nproc` (`BUILD_JOBS`) and the walk from *physical*
-   cores (`WALK_JOBS`) — the walk is memory-bandwidth bound, so SMT
-   threads do not help it.  The walk is resumable per-unit, so
-   an interrupted walk picks up where it stopped.  Needs ~10 GB RAM
-   (`Compute/Census_Theorem.v` runs alone at 6.3 GB) and the census
-   opam switch.
+   A fresh build on 2026-10-17 completed in **1 h 48 m 54 s with a
+   four-CPU quota and 16 GiB RAM**. The historical 2026-08-12 run on
+   8 physical cores / 31 GB took 79 m 38 s, including a 42 m 36 s walk;
+   these are different revisions and configurations. The wrapper selects
+   worker counts and the native toolchain automatically. `proof-all` forces
+   the state census to be re-walked; `make census` can resume a matching
+   interrupted walk. Eligible base proof objects may be reused.
 4. **`make proof-tr-all`** — **the instruction-level claim from
    source, one command.**  `BBBT4_value : BBBT4_statement`
    (BBB_tr(4) = 32,779,478): the instruction-level census walk, the
    10,924-row closeout, the champion, and `Print Assumptions
    BBBT4_value`.  Nothing is precompiled.  Trust: the kernel alone.
-   About 7 hours on 8 cores / 32 GB (2026-10-12); same toolchain
-   as rung 3, and 4 GB of RAM per walk job.
+   Same toolchain as rung 3. See the completed fresh-build measurements
+   below; the older seven-hour result predates the current optimizations.
 
 For the extra-careful, `coqchk -o` re-verifies compiled proof terms
 with the standalone checker at any rung.  Full instructions and the
 expected outputs for every rung: [`docs/VERIFYING.md`](docs/VERIFYING.md).
 
-## Building
+## Building and measured runtime
 
-Requires Coq 8.18 and Python 3 (the Python is reporting/generation
-tooling only — it carries no proof weight).
-
-```sh
-make -j8        # the full from-source build: every checker, board and
-                # the closeout, on stock Coq -- no committed binaries
-make proof      # the whole claim from source: base build, census walk,
-                # BBB4_value and its report (~80-90 min, census switch)
-make proof-tr-all  # the instruction-level claim from source:
-                # BBBT4_value, BBB_tr(4) = 32,779,478 (census switch,
-                # 4 GB per walk job; ~7 h on 8 cores / 32 GB)
-```
-
-**Or, to trust nothing but the kernel, one command:**
+Use GNU make, Python 3 and a native-capable Coq toolchain. Select one complete
+target in a fresh source checkout:
 
 ```sh
-make proof-all  # base build + re-walk the census + the closeout chain
-                # 79 m 38 s measured on 8 cores / 31 GB, from a clean
-                # tree (~40 min build, 42 m 36 s walk).
-                # Needs the census opam switch and >= 10 GB RAM.
-                # Out of the box.  It uses a native-capable coqc if you
-                # have one, otherwise activates the census opam switch,
-                # otherwise CREATES it (opam is user-level -- the only
-                # manual step is installing opam itself).  It also
-                # regenerates Makefile.coq for that toolchain and sizes
-                # both fan-outs (build from nproc, walk from physical
-                # cores).  Override:
-                #   make proof-all BUILD_JOBS=16 WALK_JOBS=8
-                #   make proof-all CENSUS_SWITCH=my-switch
+make proof-all     # state-level value theorem; make proof is an alias
+make proof-tr-all  # instruction-level value theorem
 ```
 
-High `-j` is fine on a big machine: the nine memory-heavy
-`IRules_Batch_*` files (~6–8 GB each at peak) are throttled to at most
-three concurrent builds by order-only chains in `Makefile.coq.local`,
-so `make -j16` budgets ~24 GB for them while the rest of the tree fills
-the remaining slots.  On a ~16 GB box use `make -j2`, or tighten the
-chains in `Makefile.coq.local` to a single column.
+No outer `make -j` is needed: the wrappers select workers from CPU and
+available-memory limits. `tools/census_toolchain.sh` finds a native-capable
+Coq, activates the `census` opam switch, or bootstraps that switch. Installation
+instructions are in [`docs/VERIFYING.md`](docs/VERIFYING.md). Plain `make`
+builds a broader set of project files but does not prove either complete value
+theorem.
 
-`make proof` (the same as `make proof-all`) additionally walks the census
-(`theories/Census/Compute/`, a 385-core-minute `native_compute`
-enumeration of the whole (4,2) space) on your machine.  It needs
-`native_compute`, so it runs under the census opam switch (OCaml 4.14.2,
-Coq 8.18.0, `coq-native`), which `tools/census_toolchain.sh` sets up:
+Completed fresh builds used **Coq 8.18.0 with native compilation, OCaml
+4.14.2, a four-CPU container quota and 16 GiB RAM**:
 
-```sh
-make proof-all       # everything from source, 79 m 38 s (recommended)
-make census-verify   # just the walk: 42 m 36 s at WALK_JOBS=8 on 8
-                     # physical cores / 31 GB, measured 2026-08-12.
-                     # 303 core-min; RAM no longer binds above ~10 GB.
-```
+| Target | Wall time | Result |
+| --- | ---: | --- |
+| `make proof-all` | 1 h 48 m 54 s | Passed |
+| `make proof-tr-all` (2026-10-18, v4) | 2 h 15 m 38 s | Passed |
+
+The state result meets the two-hour cloud target; the latest completed TR
+run is still 15 m 38 s over it. A sub-hour desktop run and lower-memory
+configurations have not been measured. These totals include native/data
+preparation, proof prerequisites, census, closeout and final theorem checks.
+The toolchain was already installed; checkout preparation and optional offline
+searches are separate. No compiled project artifacts were present at target
+start, but OS caches were not flushed. Later toolchain-stamp migration is a
+build-correctness change, not a measured speedup. Detailed conditions and
+historical results are in [`docs/CENSUS_RUNTIME.md`](docs/CENSUS_RUNTIME.md).
+
+The checkout supplies advisory hints for all 96 TR census units: **256,390
+rows in 251 Coq data modules of at most 1,024 rows**. Hints select checkers
+and parameters; the checker must accept the actual machine. Missing, invalid
+or unsuccessful hints use the original fallback. Stored RW certificates are
+also untrusted inputs whose closure and ranking conditions are checked in Coq.
+Ordinary builds compile and check the supplied data; they do not rerun the
+offline searches that produced it. Both observed final assumption blocks
+contain only the existing `FunctionalExtensionality.functional_extensionality_dep`.
+
+The 250 state IRules certificates are checked in 34 independent parts of
+at most eight machines. The original batch modules preserve their public
+definitions and theorem names. `Makefile.coq.local` budgets 3 GiB per part
+and caps concurrent parts by available memory and physical cores. A
+four-core / 16 GiB container normally runs four; `IRULES_JOBS=N` overrides
+the limit. Other files can use the remaining build slots.
 
 [`docs/VERIFYING.md`](docs/VERIFYING.md) walks through every
 verification tier, from "check one machine" to "re-walk the census".
@@ -239,7 +230,7 @@ verification tier, from "check one machine" to "re-walk the census".
   certificates.
 * Nothing precompiled is trusted: no `.vo` are committed, and
   **`make proof` re-derives the census and the whole value theorem
-  from source in ~80–90 min** on 8 cores / 32 GB.  The census `.vo`
+  from source**. Timings are in [`docs/CENSUS_RUNTIME.md`](docs/CENSUS_RUNTIME.md). The census `.vo`
   used to be committed and hash-guarded; that cache was removed on
   2026-10-07, so the proof is one from-source build.
 * The partition audit (`tools/closeout/audit.py`) is untrusted Python —
@@ -300,25 +291,24 @@ it:
 * The census theorem `census_tr : forall tm, QHBoundTr B_tr tm \/
   Deferred D_tr tm` is assembled from 96 native-compute walk units
   (`theories/CensusTr/Compute/`, generated; not part of the default
-  build).  Last checked 2026-09-24 against the v10 tables (10,924
-  deferred rows) with the 7,353 + 5,534 proven machines:
-  `make census-tr-units && make census-tr-walk WALK_JOBS=5` (a unit
-  peaks near 5.8 GB, so 5 at once fit a 32 GB box with no swap; the
-  job count is a memory budget, see the Makefile).  `Print Assumptions` on `census_tr` and on the proven
+  build). All 96 units passed in the completed 2026-10-18 fresh build
+  against the v10 tables (10,924 deferred rows). The Makefile chooses
+  worker counts from available resources; its per-job memory allowances
+  are estimates, not process caps. `Print Assumptions` on `census_tr` and on the proven
   tiers' `prov_tr_all` and `provqh_tr_all` reports
   `functional_extensionality_dep` and nothing else -- the same single
   axiom as the state-level proof.
 
 The census is now frozen at v10.  The deferred rows are settled
 outside it by batch files in `theories/CloseoutTr/` (`make closeout-tr`,
-checked by CI in seconds, no re-walk), in parallel workstreams:
+without a census re-walk), in parallel workstreams:
 [`docs/CLOSEOUT_TR.md`](docs/CLOSEOUT_TR.md).  As of 2026-10-05 all
 10,924 rows are boarded (626 batches).  `closeout_tr_complete`
 (`CloseoutTr/CloseoutTr.v`, CI) closes every deferred row.
 `bbbt4_bound : forall tm, QHBoundTr B_tr tm` (`CloseoutFinalTr.v`)
 is the unconditional instruction-level upper bound, after
 `make proof-tr-all` (the instruction-level `make proof-all`; native
-toolchain, about 7 hours; see Tier C of
+toolchain; see Tier C of
 [`docs/VERIFYING.md`](docs/VERIFYING.md)).  The same champion attains it (`BBBT4_Champion.v`), so
 **BBB_tr(4) = 32,779,478**: `BBBT4_value : BBBT4_statement`
 (claim in `theories/BBBT4_Spec.v`, proof in
@@ -328,8 +318,7 @@ toolchain, about 7 hours; see Tier C of
 
 Build: `make proof-tr-all` for the value theorem.  For partial
 builds, `make instr` builds the walk's prerequisites (statement,
-checkers, proven tiers, deferred tables; ~9 CPU-hours beyond the
-BBB(4) build) and `make instr-core` builds the slice CI compiles.
+checkers, proven tiers, deferred tables) and `make instr-core` builds the slice CI compiles.
 `SCOPING_INSTR.md` is the running record
 of the scoping, the measured population, the routes per machine class
 and the open classes (section 7), and `tools/censustr/` holds the

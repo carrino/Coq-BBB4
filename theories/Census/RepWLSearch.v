@@ -22,6 +22,7 @@ From Coq Require Import Arith Lia Bool List ZArith PArith.
 From Coq Require Import FSets.FMapPositive.
 From BBB4 Require Import BBB4_Statement CTape PosEnc Closure.
 From BBB4.Checkers Require Import Cycle RepWL.
+From BBB4.Census Require Import BellmanFord.
 Import ListNotations.
 
 (** ** Graph plumbing (nodes keyed by [rconf_enc]) *)
@@ -608,7 +609,26 @@ Fixpoint ibell_iter (fuel : nat) (dv : PositiveMap.tree Z) (Kc : Z)
       if ch then ibell_iter f dv Kc es dist' else Some dist'
   end.
 
-Definition itry_rule_b (tm : TM) (arr : PositiveMap.tree rconf)
+Definition i_bad_self dv Kc es :=
+  bad_self positive (fun i => i) (fun a _ => (Kc * idvec_get dv a + 1)%Z) es.
+Lemma ibell_pass_self_spec : forall dv Kc es st,
+  ibell_pass dv Kc es st =
+  fold_left (self_relax positive (fun i => i) (fun a _ => (Kc * idvec_get dv a + 1)%Z)) es st.
+Proof.
+  intros dv Kc es. induction es as [|[a b] es IH]; intros [dist ch]; [reflexivity|].
+  unfold ibell_pass in *. cbn [fold_left]. rewrite IH. reflexivity.
+Qed.
+Lemma ibell_iter_bad_self : forall fuel dv Kc es dist,
+  i_bad_self dv Kc es = true -> ibell_iter fuel dv Kc es dist = None.
+Proof.
+  induction fuel as [|fuel IH]; intros dv Kc es dist H; [reflexivity|].
+  assert (E : snd (ibell_pass dv Kc es (dist,false)) = true).
+  { rewrite ibell_pass_self_spec. apply self_pass_bad. exact H. }
+  cbn [ibell_iter]. destruct (ibell_pass dv Kc es (dist,false)) as [d' ch].
+  cbn in E. subst ch. apply IH. exact H.
+Qed.
+
+Definition itry_rule_b_reference (tm : TM) (arr : PositiveMap.tree rconf)
     (g : IAdj) (cset : PositiveSet.t) (c : list positive) (Kc : nat)
     (m : rwmeas) : option (rwcomp * IAdj) :=
   let dv := idvec tm m arr c in
@@ -628,6 +648,36 @@ Definition itry_rule_b (tm : TM) (arr : PositiveMap.tree rconf)
       Some (RwMeasE m Kc phi (map (fun i => rkey (iarr_get arr i)) c),
             idelete_intra g cset c (fun _ _ => true))
   end.
+
+Definition itry_rule_b (tm : TM) (arr : PositiveMap.tree rconf)
+    (g : IAdj) (cset : PositiveSet.t) (c : list positive) (Kc : nat)
+    (m : rwmeas) : option (rwcomp * IAdj) :=
+  let dv := idvec tm m arr c in
+  let es := iintra_edges g cset c in
+  if i_bad_self dv (Z.of_nat Kc) es then None else
+  match ibell_iter (S (length c)) dv (Z.of_nat Kc) es
+                   (PositiveMap.empty Z) with
+  | None => None
+  | Some dist =>
+      let vals := map (fun v => match PositiveMap.find v dist with
+                                | Some x => x | None => 0%Z end) c in
+      let mn := fold_left Z.min vals 0%Z in
+      let phi := map (fun v =>
+                        (rkey (iarr_get arr v),
+                         Z.to_nat ((match PositiveMap.find v dist with
+                                    | Some x => x | None => 0%Z end) - mn)%Z))
+                     c in
+      Some (RwMeasE m Kc phi (map (fun i => rkey (iarr_get arr i)) c),
+            idelete_intra g cset c (fun _ _ => true))
+  end.
+
+Lemma itry_rule_b_spec : forall tm arr g cset c Kc m,
+  itry_rule_b tm arr g cset c Kc m = itry_rule_b_reference tm arr g cset c Kc m.
+Proof.
+  intros. unfold itry_rule_b, itry_rule_b_reference.
+  destruct (i_bad_self (idvec tm m arr c) (Z.of_nat Kc) (iintra_edges g cset c)) eqn:E; [|reflexivity].
+  rewrite ibell_iter_bad_self by exact E. reflexivity.
+Qed.
 
 Definition iprocess_scc (tm : TM) (arr : PositiveMap.tree rconf) (Kc : nat)
     (st : IAdj * list rwcomp * bool) (c : list positive)

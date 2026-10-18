@@ -168,7 +168,7 @@ def emit(records):
         proof += (f'apply(ngram_check_neverqh_fuelexactmixtr_except_sound _ '
                   f'{record["n"]} {record["t"]} {record["fuel"]} {record["rounds"]} '
                   f'(fun _=>false) {name}).\n'
-                  '  - intros q H;discriminate.\n  - vm_compute;reflexivity.')
+                  '  - intros q H;discriminate.\n  - vm_cast_no_check (eq_refl true).')
         entries.append((record['spec'], proof))
     return cbt.write_batch('AST', BATCH,
         ['From BBB4.Checkers Require Import NGram FuelExactMixTr.',

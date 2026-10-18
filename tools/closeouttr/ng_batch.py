@@ -60,6 +60,16 @@ CHECK = {
            'From BBB4.Checkers Require Import NGramTr.'),
 }
 
+# Existing probe results retain their exact Boolean meaning. Only generated
+# NG closeout batches use the equivalence-proved weighted producer; dynamic
+# census/RK modules retain DecideTr's original producer.
+def batch_checker(kind, tag):
+    if kind == 'rk' and tag == 'NG':
+        return ('rank_tier_ng_closeout_tr', 'rank_tier_ng_closeout_tr_sound',
+                'From BBB4.CensusTr Require Import NGramRankCloseoutTr.')
+    return CHECK[kind]
+
+
 PROBE_HDR = ('From Coq Require Import List.\n'
              'From BBB4 Require Import BBB4_Statement BBBT4_Statement.\n'
              'From BBB4.Census Require Import Deferred_Defs.\n'
@@ -173,9 +183,9 @@ def batch(a):
             k, n, t = parse_rung(r)
             entries.append((s, 'apply coversTr_nqh, (%s _ %d %d %d %d). '
                                'vm_cast_no_check (eq_refl true).'
-                            % (CHECK[k][1], n, t, FUEL, ROUNDS)))
+                            % (batch_checker(k, a.tag)[1], n, t, FUEL, ROUNDS)))
         kinds = sorted(set(parse_rung(r)[0] for _, r in rows[i:i + a.chunk]))
-        made.append(write_batch(a.tag, nn, [CHECK[k][2] for k in kinds], entries,
+        made.append(write_batch(a.tag, nn, [batch_checker(k, a.tag)[2] for k in kinds], entries,
                                 'never-QH by the n-gram rank tier (rank_tier_tr) at window 4-6'))
         nn += 1
     print('%d rows -> %d batch file(s): %s' % (len(rows), len(made),

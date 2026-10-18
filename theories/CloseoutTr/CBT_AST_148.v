@@ -2266,14 +2266,14 @@ Definition r_AST_148_0000 : list (option Trans) := [t1RB;t0LD;t0LC;t0RB;t1RA;t1L
 Lemma cv_AST_148_0000 : coversTr (row_to_tm r_AST_148_0000).
 Proof. apply coversTr_nqh. apply(ngram_check_neverqh_fuelparitymixtr_except_sound _ 3 0 8976 20 (fun _=>false) cert_AST_148_0000).
   - intros q H;discriminate.
-  - vm_compute;reflexivity. Qed.
+  - vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LC_0LC0RB_1RD1LA_1RB0LA *)
 Definition r_AST_148_0001 : list (option Trans) := [t1RB;t1LC;t0LC;t0RB;t1RD;t1LA;t1RB;t0LA].
 Lemma cv_AST_148_0001 : coversTr (row_to_tm r_AST_148_0001).
 Proof. apply coversTr_nqh. apply(ngram_check_neverqh_fuelparitymixtr_except_sound _ 3 0 8976 20 (fun _=>false) cert_AST_148_0001).
   - intros q H;discriminate.
-  - vm_compute;reflexivity. Qed.
+  - vm_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_AST_148 : list (list (option Trans)) :=
   [r_AST_148_0000;

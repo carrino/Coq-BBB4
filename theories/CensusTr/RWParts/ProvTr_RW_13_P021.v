@@ -5,6 +5,7 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.CensusTr Require Import RepWLTr.
 Import ListNotations.
 
+From BBB4.CensusTr Require Import RepWLBinaryTr.
 (* 1RB1LC_1LA1LC_0LB1RD_1RB0RD  L=6 T=2 t=0 fuel=34408 M=31 *)
 Definition tm_rw13_0071 : TM := fun q s =>
   match q, s with
@@ -18,7 +19,7 @@ Definition tm_rw13_0071 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma nqhtr_rw13_0071 : NeverQuasiHaltsTr tm_rw13_0071.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 34408 31). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 6 2 0 34408 31). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC0RD_1LA0LB_0LA0RA  L=5 T=2 t=0 fuel=77384 M=28 *)
 Definition tm_rw13_0072 : TM := fun q s =>
@@ -33,7 +34,7 @@ Definition tm_rw13_0072 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma nqhtr_rw13_0072 : NeverQuasiHaltsTr tm_rw13_0072.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 77384 28). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 5 2 0 77384 28). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RC_1LD1RB_0LB0LA  L=6 T=2 t=0 fuel=24992 M=30 *)
 Definition tm_rw13_0073 : TM := fun q s =>
@@ -48,7 +49,7 @@ Definition tm_rw13_0073 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma nqhtr_rw13_0073 : NeverQuasiHaltsTr tm_rw13_0073.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 24992 30). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 6 2 0 24992 30). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC1RD_1LA0LB_0RA0RD  L=8 T=2 t=0 fuel=55464 M=38 *)
 Definition tm_rw13_0074 : TM := fun q s =>
@@ -63,7 +64,7 @@ Definition tm_rw13_0074 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma nqhtr_rw13_0074 : NeverQuasiHaltsTr tm_rw13_0074.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 55464 38). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 8 2 0 55464 38). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_13_p021 : list TM :=
   [tm_rw13_0071;

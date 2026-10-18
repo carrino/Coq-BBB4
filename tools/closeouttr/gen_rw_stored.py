@@ -61,16 +61,20 @@ def rewrite_batch(source, certificates):
             raise ValueError(f'certificate does not match exactly one machine row: {name}')
         original, stored = checker_pair(name, cert)
 
-        def proof(checker):
+        def proof(checker, evaluator='vm_cast_no_check'):
             return ('Proof. apply coversTr_nqh, (' + checker + '). '
-                    'vm_cast_no_check (eq_refl true). Qed.')
+                    + evaluator + ' (eq_refl true). Qed.')
 
-        old, new = prefix + proof(original), prefix + proof(stored)
-        native_old = old.replace('vm_cast_no_check', 'native_cast_no_check')
+        old = prefix + proof(original)
+        new = prefix + proof(stored, 'native_cast_no_check')
+        native_old = prefix + proof(original, 'native_cast_no_check')
+        legacy_stored = prefix + proof(stored)
         if old in source:
             source = source.replace(old, new, 1)
         elif native_old in source:
             source = source.replace(native_old, new, 1)
+        elif legacy_stored in source:
+            source = source.replace(legacy_stored, new, 1)
         elif new not in source:
             raise ValueError(f'unrecognized proof or mismatched parameters: {name}')
         imports.append(f'From BBB4.CloseoutTr.RWCerts Require {module}.')
@@ -89,7 +93,9 @@ def original_batch(source, certificates):
     source = re.sub(re.escape(BEGIN) + r'.*?' + re.escape(END), '', source, flags=re.S)
     for name, cert in certificates.items():
         original, stored = checker_pair(name, cert)
-        source = source.replace(stored, original, 1)
+        source = source.replace(
+            stored + '). native_cast_no_check (eq_refl true). Qed.',
+            original + '). vm_cast_no_check (eq_refl true). Qed.', 1)
     return source
 
 

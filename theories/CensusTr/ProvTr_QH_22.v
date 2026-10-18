@@ -24,7 +24,7 @@ Definition tm_rq22_0000 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_rq22_0000 : NonHalt tm_rq22_0000 /\ QHBoundTr 32779478 tm_rq22_0000 /\ QuasiHaltsTr tm_rq22_0000.
-Proof. apply (rwqh_stage tm_rq22_0000 [((StA, S0), 0)] 3 2 64 2120 19 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0000 [((StA, S0), 0)] 3 2 64 2120 19 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1LC1LB_1RC1RD_1LB1RA  L=3 T=2 t=64 fuel=1728 M=20 nodes=208 *)
 Definition tm_rq22_0001 : TM := fun q s =>
@@ -39,7 +39,7 @@ Definition tm_rq22_0001 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0001 : NonHalt tm_rq22_0001 /\ QHBoundTr 32779478 tm_rq22_0001 /\ QuasiHaltsTr tm_rq22_0001.
-Proof. apply (rwqh_stage tm_rq22_0001 [((StA, S0), 0)] 3 2 64 1728 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0001 [((StA, S0), 0)] 3 2 64 1728 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1LC1RA_1RD1RB_0RB1LD  L=3 T=2 t=64 fuel=688 M=20 nodes=78 *)
 Definition tm_rq22_0002 : TM := fun q s =>
@@ -54,7 +54,7 @@ Definition tm_rq22_0002 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0002 : NonHalt tm_rq22_0002 /\ QHBoundTr 32779478 tm_rq22_0002 /\ QuasiHaltsTr tm_rq22_0002.
-Proof. apply (rwqh_stage tm_rq22_0002 [((StA, S0), 0)] 3 2 64 688 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0002 [((StA, S0), 0)] 3 2 64 688 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC0LC_0RD1RD_1LB1RA  L=3 T=2 t=64 fuel=6392 M=20 nodes=791 *)
 Definition tm_rq22_0003 : TM := fun q s =>
@@ -69,7 +69,7 @@ Definition tm_rq22_0003 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0003 : NonHalt tm_rq22_0003 /\ QHBoundTr 32779478 tm_rq22_0003 /\ QuasiHaltsTr tm_rq22_0003.
-Proof. apply (rwqh_stage tm_rq22_0003 [((StA, S0), 0)] 3 2 64 (6 * 1000 + 392) 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0003 [((StA, S0), 0)] 3 2 64 (6 * 1000 + 392) 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC0LC_1LB1LD_0RA1RD  L=3 T=2 t=64 fuel=3504 M=20 nodes=430 *)
 Definition tm_rq22_0004 : TM := fun q s =>
@@ -84,7 +84,7 @@ Definition tm_rq22_0004 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma qhtr_rq22_0004 : NonHalt tm_rq22_0004 /\ QHBoundTr 32779478 tm_rq22_0004 /\ QuasiHaltsTr tm_rq22_0004.
-Proof. apply (rwqh_stage tm_rq22_0004 [((StA, S0), 0)] 3 2 64 3504 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0004 [((StA, S0), 0)] 3 2 64 3504 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC0RD_0LD1RB_1RA1LD  L=3 T=2 t=64 fuel=4616 M=20 nodes=569 *)
 Definition tm_rq22_0005 : TM := fun q s =>
@@ -99,7 +99,7 @@ Definition tm_rq22_0005 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0005 : NonHalt tm_rq22_0005 /\ QHBoundTr 32779478 tm_rq22_0005 /\ QuasiHaltsTr tm_rq22_0005.
-Proof. apply (rwqh_stage tm_rq22_0005 [((StA, S0), 0)] 3 2 64 4616 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0005 [((StA, S0), 0)] 3 2 64 4616 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC0RD_1LD1RB_1RA1LD  L=3 T=2 t=64 fuel=2040 M=20 nodes=247 *)
 Definition tm_rq22_0006 : TM := fun q s =>
@@ -114,7 +114,7 @@ Definition tm_rq22_0006 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0006 : NonHalt tm_rq22_0006 /\ QHBoundTr 32779478 tm_rq22_0006 /\ QuasiHaltsTr tm_rq22_0006.
-Proof. apply (rwqh_stage tm_rq22_0006 [((StA, S0), 0)] 3 2 64 2040 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0006 [((StA, S0), 0)] 3 2 64 2040 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1LB_0LB1RD_0RC1RA  L=3 T=2 t=64 fuel=4112 M=20 nodes=506 *)
 Definition tm_rq22_0007 : TM := fun q s =>
@@ -129,7 +129,7 @@ Definition tm_rq22_0007 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0007 : NonHalt tm_rq22_0007 /\ QHBoundTr 32779478 tm_rq22_0007 /\ QuasiHaltsTr tm_rq22_0007.
-Proof. apply (rwqh_stage tm_rq22_0007 [((StA, S0), 0)] 3 2 64 4112 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0007 [((StA, S0), 0)] 3 2 64 4112 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1LB_0LB1RD_1LB1RA  L=3 T=2 t=64 fuel=3656 M=20 nodes=449 *)
 Definition tm_rq22_0008 : TM := fun q s =>
@@ -144,7 +144,7 @@ Definition tm_rq22_0008 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0008 : NonHalt tm_rq22_0008 /\ QHBoundTr 32779478 tm_rq22_0008 /\ QuasiHaltsTr tm_rq22_0008.
-Proof. apply (rwqh_stage tm_rq22_0008 [((StA, S0), 0)] 3 2 64 3656 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0008 [((StA, S0), 0)] 3 2 64 3656 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1LB_0LB1RD_1RB1RA  L=3 T=2 t=64 fuel=1976 M=20 nodes=239 *)
 Definition tm_rq22_0009 : TM := fun q s =>
@@ -159,7 +159,7 @@ Definition tm_rq22_0009 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0009 : NonHalt tm_rq22_0009 /\ QHBoundTr 32779478 tm_rq22_0009 /\ QuasiHaltsTr tm_rq22_0009.
-Proof. apply (rwqh_stage tm_rq22_0009 [((StA, S0), 0)] 3 2 64 1976 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0009 [((StA, S0), 0)] 3 2 64 1976 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1LB_0LB1RD_1LD1RA  L=3 T=2 t=64 fuel=4112 M=20 nodes=506 *)
 Definition tm_rq22_0010 : TM := fun q s =>
@@ -174,7 +174,7 @@ Definition tm_rq22_0010 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0010 : NonHalt tm_rq22_0010 /\ QHBoundTr 32779478 tm_rq22_0010 /\ QuasiHaltsTr tm_rq22_0010.
-Proof. apply (rwqh_stage tm_rq22_0010 [((StA, S0), 0)] 3 2 64 4112 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0010 [((StA, S0), 0)] 3 2 64 4112 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1LB_0LB1RD_1RC1RA  L=3 T=2 t=64 fuel=3816 M=20 nodes=469 *)
 Definition tm_rq22_0011 : TM := fun q s =>
@@ -189,7 +189,7 @@ Definition tm_rq22_0011 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0011 : NonHalt tm_rq22_0011 /\ QHBoundTr 32779478 tm_rq22_0011 /\ QuasiHaltsTr tm_rq22_0011.
-Proof. apply (rwqh_stage tm_rq22_0011 [((StA, S0), 0)] 3 2 64 3816 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0011 [((StA, S0), 0)] 3 2 64 3816 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1LB_0RD1RD_1LB1RA  L=3 T=2 t=64 fuel=3256 M=20 nodes=399 *)
 Definition tm_rq22_0012 : TM := fun q s =>
@@ -204,7 +204,7 @@ Definition tm_rq22_0012 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0012 : NonHalt tm_rq22_0012 /\ QHBoundTr 32779478 tm_rq22_0012 /\ QuasiHaltsTr tm_rq22_0012.
-Proof. apply (rwqh_stage tm_rq22_0012 [((StA, S0), 0)] 3 2 64 3256 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0012 [((StA, S0), 0)] 3 2 64 3256 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1LB_1LA1RD_1LB1RA  L=3 T=2 t=64 fuel=1912 M=20 nodes=231 *)
 Definition tm_rq22_0013 : TM := fun q s =>
@@ -219,7 +219,7 @@ Definition tm_rq22_0013 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0013 : NonHalt tm_rq22_0013 /\ QHBoundTr 32779478 tm_rq22_0013 /\ QuasiHaltsTr tm_rq22_0013.
-Proof. apply (rwqh_stage tm_rq22_0013 [((StA, S0), 0)] 3 2 64 1912 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0013 [((StA, S0), 0)] 3 2 64 1912 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1LB_1RD0LA_1LB1RA  L=3 T=2 t=64 fuel=2208 M=20 nodes=268 *)
 Definition tm_rq22_0014 : TM := fun q s =>
@@ -234,7 +234,7 @@ Definition tm_rq22_0014 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0014 : NonHalt tm_rq22_0014 /\ QHBoundTr 32779478 tm_rq22_0014 /\ QuasiHaltsTr tm_rq22_0014.
-Proof. apply (rwqh_stage tm_rq22_0014 [((StA, S0), 0)] 3 2 64 2208 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0014 [((StA, S0), 0)] 3 2 64 2208 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1LB_1RD1RD_1LB1RA  L=3 T=2 t=64 fuel=1576 M=20 nodes=189 *)
 Definition tm_rq22_0015 : TM := fun q s =>
@@ -249,7 +249,7 @@ Definition tm_rq22_0015 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0015 : NonHalt tm_rq22_0015 /\ QHBoundTr 32779478 tm_rq22_0015 /\ QuasiHaltsTr tm_rq22_0015.
-Proof. apply (rwqh_stage tm_rq22_0015 [((StA, S0), 0)] 3 2 64 1576 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0015 [((StA, S0), 0)] 3 2 64 1576 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_0LD1RB_1LB1LD  L=3 T=2 t=64 fuel=1680 M=20 nodes=202 *)
 Definition tm_rq22_0016 : TM := fun q s =>
@@ -264,7 +264,7 @@ Definition tm_rq22_0016 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0016 : NonHalt tm_rq22_0016 /\ QHBoundTr 32779478 tm_rq22_0016 /\ QuasiHaltsTr tm_rq22_0016.
-Proof. apply (rwqh_stage tm_rq22_0016 [((StA, S0), 8)] 3 2 64 1680 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0016 [((StA, S0), 8)] 3 2 64 1680 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_0LD1RB_1RA1LD  L=3 T=2 t=64 fuel=3752 M=20 nodes=461 *)
 Definition tm_rq22_0017 : TM := fun q s =>
@@ -279,7 +279,7 @@ Definition tm_rq22_0017 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0017 : NonHalt tm_rq22_0017 /\ QHBoundTr 32779478 tm_rq22_0017 /\ QuasiHaltsTr tm_rq22_0017.
-Proof. apply (rwqh_stage tm_rq22_0017 [((StA, S0), 0)] 3 2 64 3752 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0017 [((StA, S0), 0)] 3 2 64 3752 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD1RB_0RA1LD  L=3 T=2 t=64 fuel=1512 M=20 nodes=181 *)
 Definition tm_rq22_0018 : TM := fun q s =>
@@ -294,7 +294,7 @@ Definition tm_rq22_0018 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0018 : NonHalt tm_rq22_0018 /\ QHBoundTr 32779478 tm_rq22_0018 /\ QuasiHaltsTr tm_rq22_0018.
-Proof. apply (rwqh_stage tm_rq22_0018 [((StA, S0), 0)] 3 2 64 1512 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0018 [((StA, S0), 0)] 3 2 64 1512 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_0LD1RB_1RC1LD  L=3 T=2 t=64 fuel=3816 M=20 nodes=469 *)
 Definition tm_rq22_0019 : TM := fun q s =>
@@ -309,7 +309,7 @@ Definition tm_rq22_0019 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0019 : NonHalt tm_rq22_0019 /\ QHBoundTr 32779478 tm_rq22_0019 /\ QuasiHaltsTr tm_rq22_0019.
-Proof. apply (rwqh_stage tm_rq22_0019 [((StA, S0), 0)] 3 2 64 3816 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0019 [((StA, S0), 0)] 3 2 64 3816 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD1RB_0RB1LD  L=3 T=2 t=64 fuel=1624 M=20 nodes=195 *)
 Definition tm_rq22_0020 : TM := fun q s =>
@@ -324,7 +324,7 @@ Definition tm_rq22_0020 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0020 : NonHalt tm_rq22_0020 /\ QHBoundTr 32779478 tm_rq22_0020 /\ QuasiHaltsTr tm_rq22_0020.
-Proof. apply (rwqh_stage tm_rq22_0020 [((StA, S0), 0)] 3 2 64 1624 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0020 [((StA, S0), 0)] 3 2 64 1624 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD1RB_1LB1LD  L=3 T=2 t=64 fuel=1712 M=20 nodes=206 *)
 Definition tm_rq22_0021 : TM := fun q s =>
@@ -339,7 +339,7 @@ Definition tm_rq22_0021 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0021 : NonHalt tm_rq22_0021 /\ QHBoundTr 32779478 tm_rq22_0021 /\ QuasiHaltsTr tm_rq22_0021.
-Proof. apply (rwqh_stage tm_rq22_0021 [((StA, S0), 0)] 3 2 64 1712 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0021 [((StA, S0), 0)] 3 2 64 1712 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD1RB_1RA1LD  L=3 T=2 t=64 fuel=1768 M=20 nodes=213 *)
 Definition tm_rq22_0022 : TM := fun q s =>
@@ -354,7 +354,7 @@ Definition tm_rq22_0022 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0022 : NonHalt tm_rq22_0022 /\ QHBoundTr 32779478 tm_rq22_0022 /\ QuasiHaltsTr tm_rq22_0022.
-Proof. apply (rwqh_stage tm_rq22_0022 [((StA, S0), 0)] 3 2 64 1768 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0022 [((StA, S0), 0)] 3 2 64 1768 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RC_1RC1RA_1LD1RB_1RB1LD  L=3 T=2 t=64 fuel=1664 M=20 nodes=200 *)
 Definition tm_rq22_0023 : TM := fun q s =>
@@ -369,7 +369,7 @@ Definition tm_rq22_0023 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0023 : NonHalt tm_rq22_0023 /\ QHBoundTr 32779478 tm_rq22_0023 /\ QuasiHaltsTr tm_rq22_0023.
-Proof. apply (rwqh_stage tm_rq22_0023 [((StA, S0), 16)] 3 2 64 1664 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0023 [((StA, S0), 16)] 3 2 64 1664 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_0RC1LB_1LD1RA_1RB1RC  L=3 T=2 t=64 fuel=688 M=19 nodes=78 *)
 Definition tm_rq22_0024 : TM := fun q s =>
@@ -384,7 +384,7 @@ Definition tm_rq22_0024 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0024 : NonHalt tm_rq22_0024 /\ QHBoundTr 32779478 tm_rq22_0024 /\ QuasiHaltsTr tm_rq22_0024.
-Proof. apply (rwqh_stage tm_rq22_0024 [((StA, S0), 0)] 3 2 64 688 19 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0024 [((StA, S0), 0)] 3 2 64 688 19 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_0RC1LB_1RD1RA_1LB1RC  L=3 T=2 t=64 fuel=1680 M=20 nodes=202 *)
 Definition tm_rq22_0025 : TM := fun q s =>
@@ -399,7 +399,7 @@ Definition tm_rq22_0025 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0025 : NonHalt tm_rq22_0025 /\ QHBoundTr 32779478 tm_rq22_0025 /\ QuasiHaltsTr tm_rq22_0025.
-Proof. apply (rwqh_stage tm_rq22_0025 [((StA, S0), 0)] 3 2 64 1680 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0025 [((StA, S0), 0)] 3 2 64 1680 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0LA_1LD1LC_1RA1RB  L=3 T=2 t=64 fuel=2376 M=20 nodes=289 *)
 Definition tm_rq22_0026 : TM := fun q s =>
@@ -414,7 +414,7 @@ Definition tm_rq22_0026 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0026 : NonHalt tm_rq22_0026 /\ QHBoundTr 32779478 tm_rq22_0026 /\ QuasiHaltsTr tm_rq22_0026.
-Proof. apply (rwqh_stage tm_rq22_0026 [((StA, S0), 0)] 3 2 64 2376 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0026 [((StA, S0), 0)] 3 2 64 2376 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0LD_0RA1RC_1LB1LC  L=3 T=2 t=64 fuel=3272 M=20 nodes=401 *)
 Definition tm_rq22_0027 : TM := fun q s =>
@@ -429,7 +429,7 @@ Definition tm_rq22_0027 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_rq22_0027 : NonHalt tm_rq22_0027 /\ QHBoundTr 32779478 tm_rq22_0027 /\ QuasiHaltsTr tm_rq22_0027.
-Proof. apply (rwqh_stage tm_rq22_0027 [((StA, S0), 0)] 3 2 64 3272 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0027 [((StA, S0), 0)] 3 2 64 3272 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0RA_0LD1LC_1RD1RB  L=3 T=2 t=64 fuel=2552 M=20 nodes=311 *)
 Definition tm_rq22_0028 : TM := fun q s =>
@@ -444,7 +444,7 @@ Definition tm_rq22_0028 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0028 : NonHalt tm_rq22_0028 /\ QHBoundTr 32779478 tm_rq22_0028 /\ QuasiHaltsTr tm_rq22_0028.
-Proof. apply (rwqh_stage tm_rq22_0028 [((StA, S0), 0)] 3 2 64 2552 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0028 [((StA, S0), 0)] 3 2 64 2552 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0RC_1RA1LC_0LC1RB  L=3 T=2 t=64 fuel=4448 M=20 nodes=548 *)
 Definition tm_rq22_0029 : TM := fun q s =>
@@ -459,7 +459,7 @@ Definition tm_rq22_0029 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0029 : NonHalt tm_rq22_0029 /\ QHBoundTr 32779478 tm_rq22_0029 /\ QuasiHaltsTr tm_rq22_0029.
-Proof. apply (rwqh_stage tm_rq22_0029 [((StA, S0), 0)] 3 2 64 4448 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0029 [((StA, S0), 0)] 3 2 64 4448 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0RC_1RA1LC_1LA1RB  L=3 T=2 t=64 fuel=2192 M=20 nodes=266 *)
 Definition tm_rq22_0030 : TM := fun q s =>
@@ -474,7 +474,7 @@ Definition tm_rq22_0030 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0030 : NonHalt tm_rq22_0030 /\ QHBoundTr 32779478 tm_rq22_0030 /\ QuasiHaltsTr tm_rq22_0030.
-Proof. apply (rwqh_stage tm_rq22_0030 [((StA, S0), 0)] 3 2 64 2192 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0030 [((StA, S0), 0)] 3 2 64 2192 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0RC_1RA1LC_1RB0LA  L=3 T=2 t=64 fuel=2840 M=20 nodes=347 *)
 Definition tm_rq22_0031 : TM := fun q s =>
@@ -489,7 +489,7 @@ Definition tm_rq22_0031 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_rq22_0031 : NonHalt tm_rq22_0031 /\ QHBoundTr 32779478 tm_rq22_0031 /\ QuasiHaltsTr tm_rq22_0031.
-Proof. apply (rwqh_stage tm_rq22_0031 [((StA, S0), 0)] 3 2 64 2840 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0031 [((StA, S0), 0)] 3 2 64 2840 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC0RC_1RA1LC_1RB1RB  L=3 T=2 t=64 fuel=2440 M=20 nodes=297 *)
 Definition tm_rq22_0032 : TM := fun q s =>
@@ -504,7 +504,7 @@ Definition tm_rq22_0032 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0032 : NonHalt tm_rq22_0032 /\ QHBoundTr 32779478 tm_rq22_0032 /\ QuasiHaltsTr tm_rq22_0032.
-Proof. apply (rwqh_stage tm_rq22_0032 [((StA, S0), 0)] 3 2 64 2440 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0032 [((StA, S0), 0)] 3 2 64 2440 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LB_0RA0LD_1LB0RD  L=3 T=2 t=64 fuel=3104 M=20 nodes=380 *)
 Definition tm_rq22_0033 : TM := fun q s =>
@@ -519,7 +519,7 @@ Definition tm_rq22_0033 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_rq22_0033 : NonHalt tm_rq22_0033 /\ QHBoundTr 32779478 tm_rq22_0033 /\ QuasiHaltsTr tm_rq22_0033.
-Proof. apply (rwqh_stage tm_rq22_0033 [((StA, S0), 0)] 3 2 64 3104 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0033 [((StA, S0), 0)] 3 2 64 3104 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LB_0RD1RA_0LB1RC  L=3 T=2 t=64 fuel=4576 M=20 nodes=564 *)
 Definition tm_rq22_0034 : TM := fun q s =>
@@ -534,7 +534,7 @@ Definition tm_rq22_0034 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0034 : NonHalt tm_rq22_0034 /\ QHBoundTr 32779478 tm_rq22_0034 /\ QuasiHaltsTr tm_rq22_0034.
-Proof. apply (rwqh_stage tm_rq22_0034 [((StA, S0), 0)] 3 2 64 4576 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0034 [((StA, S0), 0)] 3 2 64 4576 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LB_1RA0LB_0LB0RC  L=3 T=2 t=64 fuel=3728 M=20 nodes=458 *)
 Definition tm_rq22_0035 : TM := fun q s =>
@@ -549,7 +549,7 @@ Definition tm_rq22_0035 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_rq22_0035 : NonHalt tm_rq22_0035 /\ QHBoundTr 32779478 tm_rq22_0035 /\ QuasiHaltsTr tm_rq22_0035.
-Proof. apply (rwqh_stage tm_rq22_0035 [((StA, S0), 0)] 3 2 64 3728 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0035 [((StA, S0), 0)] 3 2 64 3728 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LB_1RA0LB_1LB0RC  L=3 T=2 t=64 fuel=5872 M=21 nodes=726 *)
 Definition tm_rq22_0036 : TM := fun q s =>
@@ -564,7 +564,7 @@ Definition tm_rq22_0036 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_rq22_0036 : NonHalt tm_rq22_0036 /\ QHBoundTr 32779478 tm_rq22_0036 /\ QuasiHaltsTr tm_rq22_0036.
-Proof. apply (rwqh_stage tm_rq22_0036 [((StA, S0), 0)] 3 2 64 (5 * 1000 + 872) 21 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0036 [((StA, S0), 0)] 3 2 64 (5 * 1000 + 872) 21 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LB_1RA0LB_1RB0RC  L=3 T=2 t=64 fuel=5888 M=22 nodes=728 *)
 Definition tm_rq22_0037 : TM := fun q s =>
@@ -579,7 +579,7 @@ Definition tm_rq22_0037 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_rq22_0037 : NonHalt tm_rq22_0037 /\ QHBoundTr 32779478 tm_rq22_0037 /\ QuasiHaltsTr tm_rq22_0037.
-Proof. apply (rwqh_stage tm_rq22_0037 [((StA, S0), 0)] 3 2 64 (5 * 1000 + 888) 22 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0037 [((StA, S0), 0)] 3 2 64 (5 * 1000 + 888) 22 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LB_1RA0LD_1LB1RC  L=3 T=2 t=64 fuel=2080 M=20 nodes=252 *)
 Definition tm_rq22_0038 : TM := fun q s =>
@@ -594,7 +594,7 @@ Definition tm_rq22_0038 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0038 : NonHalt tm_rq22_0038 /\ QHBoundTr 32779478 tm_rq22_0038 /\ QuasiHaltsTr tm_rq22_0038.
-Proof. apply (rwqh_stage tm_rq22_0038 [((StA, S0), 0)] 3 2 64 2080 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0038 [((StA, S0), 0)] 3 2 64 2080 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LB_1RA1RA_1LB1RC  L=3 T=2 t=64 fuel=1728 M=20 nodes=208 *)
 Definition tm_rq22_0039 : TM := fun q s =>
@@ -609,7 +609,7 @@ Definition tm_rq22_0039 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0039 : NonHalt tm_rq22_0039 /\ QHBoundTr 32779478 tm_rq22_0039 /\ QuasiHaltsTr tm_rq22_0039.
-Proof. apply (rwqh_stage tm_rq22_0039 [((StA, S0), 0)] 3 2 64 1728 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0039 [((StA, S0), 0)] 3 2 64 1728 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LB_1RD1RA_0LB1RC  L=3 T=2 t=64 fuel=1768 M=20 nodes=213 *)
 Definition tm_rq22_0040 : TM := fun q s =>
@@ -624,7 +624,7 @@ Definition tm_rq22_0040 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0040 : NonHalt tm_rq22_0040 /\ QHBoundTr 32779478 tm_rq22_0040 /\ QuasiHaltsTr tm_rq22_0040.
-Proof. apply (rwqh_stage tm_rq22_0040 [((StA, S0), 0)] 3 2 64 1768 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0040 [((StA, S0), 0)] 3 2 64 1768 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1LD_1RB0LB_0RC1RA  L=3 T=2 t=64 fuel=4896 M=20 nodes=604 *)
 Definition tm_rq22_0041 : TM := fun q s =>
@@ -639,7 +639,7 @@ Definition tm_rq22_0041 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0041 : NonHalt tm_rq22_0041 /\ QHBoundTr 32779478 tm_rq22_0041 /\ QuasiHaltsTr tm_rq22_0041.
-Proof. apply (rwqh_stage tm_rq22_0041 [((StA, S0), 0)] 3 2 64 4896 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0041 [((StA, S0), 0)] 3 2 64 4896 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_0LD1LC_1RD1RB  L=3 T=2 t=64 fuel=1584 M=20 nodes=190 *)
 Definition tm_rq22_0042 : TM := fun q s =>
@@ -654,7 +654,7 @@ Definition tm_rq22_0042 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0042 : NonHalt tm_rq22_0042 /\ QHBoundTr 32779478 tm_rq22_0042 /\ QuasiHaltsTr tm_rq22_0042.
-Proof. apply (rwqh_stage tm_rq22_0042 [((StA, S0), 0)] 3 2 64 1584 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0042 [((StA, S0), 0)] 3 2 64 1584 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_0RA0LD_1LA1RB  L=3 T=2 t=64 fuel=4568 M=21 nodes=563 *)
 Definition tm_rq22_0043 : TM := fun q s =>
@@ -669,7 +669,7 @@ Definition tm_rq22_0043 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0043 : NonHalt tm_rq22_0043 /\ QHBoundTr 32779478 tm_rq22_0043 /\ QuasiHaltsTr tm_rq22_0043.
-Proof. apply (rwqh_stage tm_rq22_0043 [((StC, S0), 2)] 3 2 64 4568 21 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0043 [((StC, S0), 2)] 3 2 64 4568 21 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_0RC0LD_1LA1RB  L=3 T=2 t=64 fuel=4488 M=21 nodes=553 *)
 Definition tm_rq22_0044 : TM := fun q s =>
@@ -684,7 +684,7 @@ Definition tm_rq22_0044 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0044 : NonHalt tm_rq22_0044 /\ QHBoundTr 32779478 tm_rq22_0044 /\ QuasiHaltsTr tm_rq22_0044.
-Proof. apply (rwqh_stage tm_rq22_0044 [((StC, S0), 9)] 3 2 64 4488 21 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0044 [((StC, S0), 9)] 3 2 64 4488 21 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_0RD0LD_1LA1RB  L=3 T=2 t=64 fuel=4400 M=21 nodes=542 *)
 Definition tm_rq22_0045 : TM := fun q s =>
@@ -699,7 +699,7 @@ Definition tm_rq22_0045 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0045 : NonHalt tm_rq22_0045 /\ QHBoundTr 32779478 tm_rq22_0045 /\ QuasiHaltsTr tm_rq22_0045.
-Proof. apply (rwqh_stage tm_rq22_0045 [((StC, S0), 13)] 3 2 64 4400 21 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0045 [((StC, S0), 13)] 3 2 64 4400 21 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1LA0LD_1LA1RB  L=3 T=2 t=64 fuel=4456 M=21 nodes=549 *)
 Definition tm_rq22_0046 : TM := fun q s =>
@@ -714,7 +714,7 @@ Definition tm_rq22_0046 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0046 : NonHalt tm_rq22_0046 /\ QHBoundTr 32779478 tm_rq22_0046 /\ QuasiHaltsTr tm_rq22_0046.
-Proof. apply (rwqh_stage tm_rq22_0046 [((StC, S0), 2)] 3 2 64 4456 21 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0046 [((StC, S0), 2)] 3 2 64 4456 21 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1LD0LD_1LA1RB  L=3 T=2 t=64 fuel=4584 M=21 nodes=565 *)
 Definition tm_rq22_0047 : TM := fun q s =>
@@ -729,7 +729,7 @@ Definition tm_rq22_0047 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0047 : NonHalt tm_rq22_0047 /\ QHBoundTr 32779478 tm_rq22_0047 /\ QuasiHaltsTr tm_rq22_0047.
-Proof. apply (rwqh_stage tm_rq22_0047 [((StC, S0), 2)] 3 2 64 4584 21 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0047 [((StC, S0), 2)] 3 2 64 4584 21 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1LD1LC_1RA1RB  L=3 T=2 t=64 fuel=1584 M=20 nodes=190 *)
 Definition tm_rq22_0048 : TM := fun q s =>
@@ -744,7 +744,7 @@ Definition tm_rq22_0048 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0048 : NonHalt tm_rq22_0048 /\ QHBoundTr 32779478 tm_rq22_0048 /\ QuasiHaltsTr tm_rq22_0048.
-Proof. apply (rwqh_stage tm_rq22_0048 [((StA, S0), 0)] 3 2 64 1584 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0048 [((StA, S0), 0)] 3 2 64 1584 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1LD1LC_1RB0LA  L=3 T=2 t=64 fuel=2112 M=20 nodes=256 *)
 Definition tm_rq22_0049 : TM := fun q s =>
@@ -759,7 +759,7 @@ Definition tm_rq22_0049 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_rq22_0049 : NonHalt tm_rq22_0049 /\ QHBoundTr 32779478 tm_rq22_0049 /\ QuasiHaltsTr tm_rq22_0049.
-Proof. apply (rwqh_stage tm_rq22_0049 [((StA, S0), 0)] 3 2 64 2112 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0049 [((StA, S0), 0)] 3 2 64 2112 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1LD1LC_1RB1RB  L=3 T=2 t=64 fuel=2160 M=20 nodes=262 *)
 Definition tm_rq22_0050 : TM := fun q s =>
@@ -774,7 +774,7 @@ Definition tm_rq22_0050 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0050 : NonHalt tm_rq22_0050 /\ QHBoundTr 32779478 tm_rq22_0050 /\ QuasiHaltsTr tm_rq22_0050.
-Proof. apply (rwqh_stage tm_rq22_0050 [((StA, S0), 0)] 3 2 64 2160 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0050 [((StA, S0), 0)] 3 2 64 2160 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RA0LD_1LA1RB  L=3 T=2 t=64 fuel=4432 M=21 nodes=546 *)
 Definition tm_rq22_0051 : TM := fun q s =>
@@ -789,7 +789,7 @@ Definition tm_rq22_0051 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0051 : NonHalt tm_rq22_0051 /\ QHBoundTr 32779478 tm_rq22_0051 /\ QuasiHaltsTr tm_rq22_0051.
-Proof. apply (rwqh_stage tm_rq22_0051 [((StC, S0), 2)] 3 2 64 4432 21 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0051 [((StC, S0), 2)] 3 2 64 4432 21 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RA1LC_0LC1RB  L=3 T=2 t=64 fuel=4288 M=20 nodes=528 *)
 Definition tm_rq22_0052 : TM := fun q s =>
@@ -804,7 +804,7 @@ Definition tm_rq22_0052 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0052 : NonHalt tm_rq22_0052 /\ QHBoundTr 32779478 tm_rq22_0052 /\ QuasiHaltsTr tm_rq22_0052.
-Proof. apply (rwqh_stage tm_rq22_0052 [((StA, S0), 0)] 3 2 64 4288 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0052 [((StA, S0), 0)] 3 2 64 4288 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RA1LC_1LA1RB  L=3 T=2 t=64 fuel=1864 M=20 nodes=225 *)
 Definition tm_rq22_0053 : TM := fun q s =>
@@ -819,7 +819,7 @@ Definition tm_rq22_0053 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0053 : NonHalt tm_rq22_0053 /\ QHBoundTr 32779478 tm_rq22_0053 /\ QuasiHaltsTr tm_rq22_0053.
-Proof. apply (rwqh_stage tm_rq22_0053 [((StA, S0), 0)] 3 2 64 1864 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0053 [((StA, S0), 0)] 3 2 64 1864 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RA1LC_1RB0LA  L=3 T=2 t=64 fuel=2456 M=20 nodes=299 *)
 Definition tm_rq22_0054 : TM := fun q s =>
@@ -834,7 +834,7 @@ Definition tm_rq22_0054 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_rq22_0054 : NonHalt tm_rq22_0054 /\ QHBoundTr 32779478 tm_rq22_0054 /\ QuasiHaltsTr tm_rq22_0054.
-Proof. apply (rwqh_stage tm_rq22_0054 [((StA, S0), 0)] 3 2 64 2456 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0054 [((StA, S0), 0)] 3 2 64 2456 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RA1LC_1RB1RB  L=3 T=2 t=64 fuel=1840 M=20 nodes=222 *)
 Definition tm_rq22_0055 : TM := fun q s =>
@@ -849,7 +849,7 @@ Definition tm_rq22_0055 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0055 : NonHalt tm_rq22_0055 /\ QHBoundTr 32779478 tm_rq22_0055 /\ QuasiHaltsTr tm_rq22_0055.
-Proof. apply (rwqh_stage tm_rq22_0055 [((StA, S0), 0)] 3 2 64 1840 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0055 [((StA, S0), 0)] 3 2 64 1840 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RD0LD_0RB1RB  L=3 T=2 t=64 fuel=5992 M=20 nodes=741 *)
 Definition tm_rq22_0056 : TM := fun q s =>
@@ -864,7 +864,7 @@ Definition tm_rq22_0056 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0056 : NonHalt tm_rq22_0056 /\ QHBoundTr 32779478 tm_rq22_0056 /\ QuasiHaltsTr tm_rq22_0056.
-Proof. apply (rwqh_stage tm_rq22_0056 [((StA, S0), 0)] 3 2 64 (5 * 1000 + 992) 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0056 [((StA, S0), 0)] 3 2 64 (5 * 1000 + 992) 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RD0LD_1LA1RB  L=3 T=2 t=64 fuel=4544 M=21 nodes=560 *)
 Definition tm_rq22_0057 : TM := fun q s =>
@@ -879,7 +879,7 @@ Definition tm_rq22_0057 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0057 : NonHalt tm_rq22_0057 /\ QHBoundTr 32779478 tm_rq22_0057 /\ QuasiHaltsTr tm_rq22_0057.
-Proof. apply (rwqh_stage tm_rq22_0057 [((StC, S0), 2)] 3 2 64 4544 21 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0057 [((StC, S0), 2)] 3 2 64 4544 21 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RD1LC_0LC1RB  L=3 T=2 t=64 fuel=3328 M=20 nodes=408 *)
 Definition tm_rq22_0058 : TM := fun q s =>
@@ -894,7 +894,7 @@ Definition tm_rq22_0058 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0058 : NonHalt tm_rq22_0058 /\ QHBoundTr 32779478 tm_rq22_0058 /\ QuasiHaltsTr tm_rq22_0058.
-Proof. apply (rwqh_stage tm_rq22_0058 [((StA, S0), 0)] 3 2 64 3328 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0058 [((StA, S0), 0)] 3 2 64 3328 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RD1LC_0RB1RB  L=3 T=2 t=64 fuel=3336 M=20 nodes=409 *)
 Definition tm_rq22_0059 : TM := fun q s =>
@@ -909,7 +909,7 @@ Definition tm_rq22_0059 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0059 : NonHalt tm_rq22_0059 /\ QHBoundTr 32779478 tm_rq22_0059 /\ QuasiHaltsTr tm_rq22_0059.
-Proof. apply (rwqh_stage tm_rq22_0059 [((StA, S0), 0)] 3 2 64 3336 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0059 [((StA, S0), 0)] 3 2 64 3336 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RD1LC_1LA1RB  L=3 T=2 t=64 fuel=1848 M=20 nodes=223 *)
 Definition tm_rq22_0060 : TM := fun q s =>
@@ -924,7 +924,7 @@ Definition tm_rq22_0060 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0060 : NonHalt tm_rq22_0060 /\ QHBoundTr 32779478 tm_rq22_0060 /\ QuasiHaltsTr tm_rq22_0060.
-Proof. apply (rwqh_stage tm_rq22_0060 [((StA, S0), 0)] 3 2 64 1848 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0060 [((StA, S0), 0)] 3 2 64 1848 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RD1LC_1RB0LA  L=3 T=2 t=64 fuel=2256 M=20 nodes=274 *)
 Definition tm_rq22_0061 : TM := fun q s =>
@@ -939,7 +939,7 @@ Definition tm_rq22_0061 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_rq22_0061 : NonHalt tm_rq22_0061 /\ QHBoundTr 32779478 tm_rq22_0061 /\ QuasiHaltsTr tm_rq22_0061.
-Proof. apply (rwqh_stage tm_rq22_0061 [((StA, S0), 0)] 3 2 64 2256 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0061 [((StA, S0), 0)] 3 2 64 2256 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1LC1RA_1RD1LC_1RB1RB  L=3 T=2 t=64 fuel=1576 M=20 nodes=189 *)
 Definition tm_rq22_0062 : TM := fun q s =>
@@ -954,7 +954,7 @@ Definition tm_rq22_0062 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0062 : NonHalt tm_rq22_0062 /\ QHBoundTr 32779478 tm_rq22_0062 /\ QuasiHaltsTr tm_rq22_0062.
-Proof. apply (rwqh_stage tm_rq22_0062 [((StA, S0), 0)] 3 2 64 1576 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0062 [((StA, S0), 0)] 3 2 64 1576 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC0LC_1LB1LD_0RB1RA  L=3 T=2 t=64 fuel=4752 M=20 nodes=586 *)
 Definition tm_rq22_0063 : TM := fun q s =>
@@ -969,7 +969,7 @@ Definition tm_rq22_0063 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0063 : NonHalt tm_rq22_0063 /\ QHBoundTr 32779478 tm_rq22_0063 /\ QuasiHaltsTr tm_rq22_0063.
-Proof. apply (rwqh_stage tm_rq22_0063 [((StA, S0), 0)] 3 2 64 4752 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0063 [((StA, S0), 0)] 3 2 64 4752 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC0LD_1LD1LB_1RA1LC  L=3 T=2 t=64 fuel=4784 M=21 nodes=590 *)
 Definition tm_rq22_0064 : TM := fun q s =>
@@ -984,7 +984,7 @@ Definition tm_rq22_0064 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_rq22_0064 : NonHalt tm_rq22_0064 /\ QHBoundTr 32779478 tm_rq22_0064 /\ QuasiHaltsTr tm_rq22_0064.
-Proof. apply (rwqh_stage tm_rq22_0064 [((StA, S1), 31)] 3 2 64 4784 21 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0064 [((StA, S1), 31)] 3 2 64 4784 21 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LB1RA_0LB0RB  L=3 T=2 t=64 fuel=2472 M=20 nodes=301 *)
 Definition tm_rq22_0065 : TM := fun q s =>
@@ -999,7 +999,7 @@ Definition tm_rq22_0065 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_rq22_0065 : NonHalt tm_rq22_0065 /\ QHBoundTr 32779478 tm_rq22_0065 /\ QuasiHaltsTr tm_rq22_0065.
-Proof. apply (rwqh_stage tm_rq22_0065 [((StA, S0), 0)] 3 2 64 2472 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0065 [((StA, S0), 0)] 3 2 64 2472 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LB1RA_0LB1RC  L=3 T=2 t=64 fuel=3608 M=20 nodes=443 *)
 Definition tm_rq22_0066 : TM := fun q s =>
@@ -1014,7 +1014,7 @@ Definition tm_rq22_0066 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0066 : NonHalt tm_rq22_0066 /\ QHBoundTr 32779478 tm_rq22_0066 /\ QuasiHaltsTr tm_rq22_0066.
-Proof. apply (rwqh_stage tm_rq22_0066 [((StA, S0), 0)] 3 2 64 3608 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0066 [((StA, S0), 0)] 3 2 64 3608 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LB1RA_1LA1RC  L=3 T=2 t=64 fuel=1832 M=20 nodes=221 *)
 Definition tm_rq22_0067 : TM := fun q s =>
@@ -1029,7 +1029,7 @@ Definition tm_rq22_0067 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0067 : NonHalt tm_rq22_0067 /\ QHBoundTr 32779478 tm_rq22_0067 /\ QuasiHaltsTr tm_rq22_0067.
-Proof. apply (rwqh_stage tm_rq22_0067 [((StA, S0), 0)] 3 2 64 1832 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0067 [((StA, S0), 0)] 3 2 64 1832 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LB1RA_1RB0RB  L=3 T=2 t=64 fuel=2168 M=20 nodes=263 *)
 Definition tm_rq22_0068 : TM := fun q s =>
@@ -1044,7 +1044,7 @@ Definition tm_rq22_0068 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_rq22_0068 : NonHalt tm_rq22_0068 /\ QHBoundTr 32779478 tm_rq22_0068 /\ QuasiHaltsTr tm_rq22_0068.
-Proof. apply (rwqh_stage tm_rq22_0068 [((StA, S0), 0)] 3 2 64 2168 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0068 [((StA, S0), 0)] 3 2 64 2168 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LB1RA_1RB1RC  L=3 T=2 t=64 fuel=3264 M=20 nodes=400 *)
 Definition tm_rq22_0069 : TM := fun q s =>
@@ -1059,7 +1059,7 @@ Definition tm_rq22_0069 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0069 : NonHalt tm_rq22_0069 /\ QHBoundTr 32779478 tm_rq22_0069 /\ QuasiHaltsTr tm_rq22_0069.
-Proof. apply (rwqh_stage tm_rq22_0069 [((StA, S0), 0)] 3 2 64 3264 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0069 [((StA, S0), 0)] 3 2 64 3264 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LB1RA_1RC0LA  L=3 T=2 t=64 fuel=2136 M=20 nodes=259 *)
 Definition tm_rq22_0070 : TM := fun q s =>
@@ -1074,7 +1074,7 @@ Definition tm_rq22_0070 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_rq22_0070 : NonHalt tm_rq22_0070 /\ QHBoundTr 32779478 tm_rq22_0070 /\ QuasiHaltsTr tm_rq22_0070.
-Proof. apply (rwqh_stage tm_rq22_0070 [((StA, S0), 0)] 3 2 64 2136 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0070 [((StA, S0), 0)] 3 2 64 2136 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LB1RA_1RC0RB  L=3 T=2 t=64 fuel=2040 M=20 nodes=247 *)
 Definition tm_rq22_0071 : TM := fun q s =>
@@ -1089,7 +1089,7 @@ Definition tm_rq22_0071 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_rq22_0071 : NonHalt tm_rq22_0071 /\ QHBoundTr 32779478 tm_rq22_0071 /\ QuasiHaltsTr tm_rq22_0071.
-Proof. apply (rwqh_stage tm_rq22_0071 [((StA, S0), 0)] 3 2 64 2040 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0071 [((StA, S0), 0)] 3 2 64 2040 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LB1RA_1RC1RC  L=3 T=2 t=64 fuel=1768 M=20 nodes=213 *)
 Definition tm_rq22_0072 : TM := fun q s =>
@@ -1104,7 +1104,7 @@ Definition tm_rq22_0072 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0072 : NonHalt tm_rq22_0072 /\ QHBoundTr 32779478 tm_rq22_0072 /\ QuasiHaltsTr tm_rq22_0072.
-Proof. apply (rwqh_stage tm_rq22_0072 [((StA, S0), 0)] 3 2 64 1768 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0072 [((StA, S0), 0)] 3 2 64 1768 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LC1RA_0LB0RB  L=3 T=2 t=64 fuel=2696 M=20 nodes=329 *)
 Definition tm_rq22_0073 : TM := fun q s =>
@@ -1119,7 +1119,7 @@ Definition tm_rq22_0073 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_rq22_0073 : NonHalt tm_rq22_0073 /\ QHBoundTr 32779478 tm_rq22_0073 /\ QuasiHaltsTr tm_rq22_0073.
-Proof. apply (rwqh_stage tm_rq22_0073 [((StA, S0), 0)] 3 2 64 2696 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0073 [((StA, S0), 0)] 3 2 64 2696 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LC1RA_0LB1RC  L=3 T=2 t=64 fuel=3576 M=20 nodes=439 *)
 Definition tm_rq22_0074 : TM := fun q s =>
@@ -1134,7 +1134,7 @@ Definition tm_rq22_0074 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0074 : NonHalt tm_rq22_0074 /\ QHBoundTr 32779478 tm_rq22_0074 /\ QuasiHaltsTr tm_rq22_0074.
-Proof. apply (rwqh_stage tm_rq22_0074 [((StA, S0), 0)] 3 2 64 3576 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0074 [((StA, S0), 0)] 3 2 64 3576 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1LC1RA_1LB1RC  L=3 T=2 t=64 fuel=1912 M=20 nodes=231 *)
 Definition tm_rq22_0075 : TM := fun q s =>
@@ -1149,7 +1149,7 @@ Definition tm_rq22_0075 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0075 : NonHalt tm_rq22_0075 /\ QHBoundTr 32779478 tm_rq22_0075 /\ QuasiHaltsTr tm_rq22_0075.
-Proof. apply (rwqh_stage tm_rq22_0075 [((StA, S0), 0)] 3 2 64 1912 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0075 [((StA, S0), 0)] 3 2 64 1912 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1RD1RA_0LB0RB  L=3 T=2 t=64 fuel=2272 M=20 nodes=276 *)
 Definition tm_rq22_0076 : TM := fun q s =>
@@ -1164,7 +1164,7 @@ Definition tm_rq22_0076 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_rq22_0076 : NonHalt tm_rq22_0076 /\ QHBoundTr 32779478 tm_rq22_0076 /\ QuasiHaltsTr tm_rq22_0076.
-Proof. apply (rwqh_stage tm_rq22_0076 [((StA, S0), 0)] 3 2 64 2272 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0076 [((StA, S0), 0)] 3 2 64 2272 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1RD1RA_1LB1RC  L=3 T=2 t=64 fuel=1576 M=20 nodes=189 *)
 Definition tm_rq22_0077 : TM := fun q s =>
@@ -1179,7 +1179,7 @@ Definition tm_rq22_0077 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0077 : NonHalt tm_rq22_0077 /\ QHBoundTr 32779478 tm_rq22_0077 /\ QuasiHaltsTr tm_rq22_0077.
-Proof. apply (rwqh_stage tm_rq22_0077 [((StA, S0), 0)] 3 2 64 1576 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0077 [((StA, S0), 0)] 3 2 64 1576 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0LB0RC_1RD0LD_1LC0RA  L=4 T=2 t=64 fuel=1392 M=23 nodes=166 *)
 Definition tm_rq22_0078 : TM := fun q s =>
@@ -1194,7 +1194,7 @@ Definition tm_rq22_0078 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_rq22_0078 : NonHalt tm_rq22_0078 /\ QHBoundTr 32779478 tm_rq22_0078 /\ QuasiHaltsTr tm_rq22_0078.
-Proof. apply (rwqh_stage tm_rq22_0078 [((StB, S0), 1)] 4 2 64 1392 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0078 [((StB, S0), 1)] 4 2 64 1392 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 0RB1RD_1RC1LB_1RD1RA_0LB1RC  L=3 T=2 t=64 fuel=3864 M=20 nodes=475 *)
 Definition tm_rq22_0079 : TM := fun q s =>
@@ -1209,7 +1209,7 @@ Definition tm_rq22_0079 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_rq22_0079 : NonHalt tm_rq22_0079 /\ QHBoundTr 32779478 tm_rq22_0079 /\ QuasiHaltsTr tm_rq22_0079.
-Proof. apply (rwqh_stage tm_rq22_0079 [((StA, S0), 0)] 3 2 64 3864 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0079 [((StA, S0), 0)] 3 2 64 3864 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0LC0RC_1RD0LD_1LC0RA  L=4 T=2 t=64 fuel=1504 M=23 nodes=180 *)
 Definition tm_rq22_0080 : TM := fun q s =>
@@ -1224,7 +1224,7 @@ Definition tm_rq22_0080 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_rq22_0080 : NonHalt tm_rq22_0080 /\ QHBoundTr 32779478 tm_rq22_0080 /\ QuasiHaltsTr tm_rq22_0080.
-Proof. apply (rwqh_stage tm_rq22_0080 [((StB, S0), 7)] 4 2 64 1504 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0080 [((StB, S0), 7)] 4 2 64 1504 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_0RC0RC_1RD0LD_1LC0RA  L=4 T=2 t=64 fuel=1376 M=23 nodes=164 *)
 Definition tm_rq22_0081 : TM := fun q s =>
@@ -1239,7 +1239,7 @@ Definition tm_rq22_0081 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_rq22_0081 : NonHalt tm_rq22_0081 /\ QHBoundTr 32779478 tm_rq22_0081 /\ QuasiHaltsTr tm_rq22_0081.
-Proof. apply (rwqh_stage tm_rq22_0081 [((StB, S0), 15)] 4 2 64 1376 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0081 [((StB, S0), 15)] 4 2 64 1376 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LB1LC_1RD0LD_1RB0RB  L=3 T=2 t=64 fuel=3904 M=20 nodes=480 *)
 Definition tm_rq22_0082 : TM := fun q s =>
@@ -1254,7 +1254,7 @@ Definition tm_rq22_0082 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_rq22_0082 : NonHalt tm_rq22_0082 /\ QHBoundTr 32779478 tm_rq22_0082 /\ QuasiHaltsTr tm_rq22_0082.
-Proof. apply (rwqh_stage tm_rq22_0082 [((StA, S0), 0)] 3 2 64 3904 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0082 [((StA, S0), 0)] 3 2 64 3904 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LC0RB_0LB1RD_1RC0RD  L=4 T=2 t=64 fuel=3400 M=23 nodes=417 *)
 Definition tm_rq22_0083 : TM := fun q s =>
@@ -1269,7 +1269,7 @@ Definition tm_rq22_0083 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_rq22_0083 : NonHalt tm_rq22_0083 /\ QHBoundTr 32779478 tm_rq22_0083 /\ QuasiHaltsTr tm_rq22_0083.
-Proof. apply (rwqh_stage tm_rq22_0083 [((StA, S0), 0)] 4 2 64 3400 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0083 [((StA, S0), 0)] 4 2 64 3400 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LC0RC_1RD0LB_0LC0RA  L=4 T=2 t=64 fuel=1496 M=23 nodes=179 *)
 Definition tm_rq22_0084 : TM := fun q s =>
@@ -1284,7 +1284,7 @@ Definition tm_rq22_0084 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_rq22_0084 : NonHalt tm_rq22_0084 /\ QHBoundTr 32779478 tm_rq22_0084 /\ QuasiHaltsTr tm_rq22_0084.
-Proof. apply (rwqh_stage tm_rq22_0084 [((StD, S0), 9)] 4 2 64 1496 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0084 [((StD, S0), 9)] 4 2 64 1496 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LC0RC_1RD0LB_0RA0RA  L=4 T=2 t=64 fuel=1568 M=23 nodes=188 *)
 Definition tm_rq22_0085 : TM := fun q s =>
@@ -1299,7 +1299,7 @@ Definition tm_rq22_0085 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_rq22_0085 : NonHalt tm_rq22_0085 /\ QHBoundTr 32779478 tm_rq22_0085 /\ QuasiHaltsTr tm_rq22_0085.
-Proof. apply (rwqh_stage tm_rq22_0085 [((StD, S0), 9)] 4 2 64 1568 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0085 [((StD, S0), 9)] 4 2 64 1568 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LC0RC_1RD0LD_1LC0RA  L=4 T=2 t=64 fuel=1896 M=23 nodes=229 *)
 Definition tm_rq22_0086 : TM := fun q s =>
@@ -1314,7 +1314,7 @@ Definition tm_rq22_0086 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_rq22_0086 : NonHalt tm_rq22_0086 /\ QHBoundTr 32779478 tm_rq22_0086 /\ QuasiHaltsTr tm_rq22_0086.
-Proof. apply (rwqh_stage tm_rq22_0086 [((StB, S0), 1)] 4 2 64 1896 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0086 [((StB, S0), 1)] 4 2 64 1896 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1LC0RD_1RB0LB_1RD0RC  L=4 T=2 t=64 fuel=1896 M=23 nodes=229 *)
 Definition tm_rq22_0087 : TM := fun q s =>
@@ -1329,7 +1329,7 @@ Definition tm_rq22_0087 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_rq22_0087 : NonHalt tm_rq22_0087 /\ QHBoundTr 32779478 tm_rq22_0087 /\ QuasiHaltsTr tm_rq22_0087.
-Proof. apply (rwqh_stage tm_rq22_0087 [((StA, S0), 0)] 4 2 64 1896 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0087 [((StA, S0), 0)] 4 2 64 1896 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB---_1RC0RC_1RD0LD_1LC0RA  L=4 T=2 t=64 fuel=1896 M=23 nodes=229 *)
 Definition tm_rq22_0088 : TM := fun q s =>
@@ -1344,7 +1344,7 @@ Definition tm_rq22_0088 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_rq22_0088 : NonHalt tm_rq22_0088 /\ QHBoundTr 32779478 tm_rq22_0088 /\ QuasiHaltsTr tm_rq22_0088.
-Proof. apply (rwqh_stage tm_rq22_0088 [((StB, S0), 1)] 4 2 64 1896 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0088 [((StB, S0), 1)] 4 2 64 1896 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LA_1LC0RD_1LA1LC_0LB1RB  L=4 T=2 t=64 fuel=3424 M=23 nodes=420 *)
 Definition tm_rq22_0089 : TM := fun q s =>
@@ -1359,7 +1359,7 @@ Definition tm_rq22_0089 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0089 : NonHalt tm_rq22_0089 /\ QHBoundTr 32779478 tm_rq22_0089 /\ QuasiHaltsTr tm_rq22_0089.
-Proof. apply (rwqh_stage tm_rq22_0089 [((StD, S0), 8)] 4 2 64 3424 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0089 [((StD, S0), 8)] 4 2 64 3424 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LA_1LC0RD_1LA1LC_0LD1RB  L=4 T=2 t=64 fuel=3776 M=23 nodes=464 *)
 Definition tm_rq22_0090 : TM := fun q s =>
@@ -1374,7 +1374,7 @@ Definition tm_rq22_0090 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0090 : NonHalt tm_rq22_0090 /\ QHBoundTr 32779478 tm_rq22_0090 /\ QuasiHaltsTr tm_rq22_0090.
-Proof. apply (rwqh_stage tm_rq22_0090 [((StD, S0), 9)] 4 2 64 3776 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0090 [((StD, S0), 9)] 4 2 64 3776 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LA_1LC0RD_1LA1LC_0RB1RB  L=4 T=2 t=64 fuel=3424 M=23 nodes=420 *)
 Definition tm_rq22_0091 : TM := fun q s =>
@@ -1389,7 +1389,7 @@ Definition tm_rq22_0091 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0091 : NonHalt tm_rq22_0091 /\ QHBoundTr 32779478 tm_rq22_0091 /\ QuasiHaltsTr tm_rq22_0091.
-Proof. apply (rwqh_stage tm_rq22_0091 [((StD, S0), 8)] 4 2 64 3424 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0091 [((StD, S0), 8)] 4 2 64 3424 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_0LC0LD_1RC1LD_0LB0LA  L=3 T=2 t=64 fuel=936 M=20 nodes=109 *)
 Definition tm_rq22_0092 : TM := fun q s =>
@@ -1404,7 +1404,7 @@ Definition tm_rq22_0092 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_rq22_0092 : NonHalt tm_rq22_0092 /\ QHBoundTr 32779478 tm_rq22_0092 /\ QuasiHaltsTr tm_rq22_0092.
-Proof. apply (rwqh_stage tm_rq22_0092 [((StA, S0), 0)] 3 2 64 936 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0092 [((StA, S0), 0)] 3 2 64 936 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_0LC0LD_1RC1RD_1LA0LA  L=3 T=2 t=64 fuel=1840 M=20 nodes=222 *)
 Definition tm_rq22_0093 : TM := fun q s =>
@@ -1419,7 +1419,7 @@ Definition tm_rq22_0093 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_rq22_0093 : NonHalt tm_rq22_0093 /\ QHBoundTr 32779478 tm_rq22_0093 /\ QuasiHaltsTr tm_rq22_0093.
-Proof. apply (rwqh_stage tm_rq22_0093 [((StA, S0), 0)] 3 2 64 1840 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0093 [((StA, S0), 0)] 3 2 64 1840 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LA_1LC0RD_1LA1LC_1LC1RB  L=4 T=2 t=64 fuel=3624 M=23 nodes=445 *)
 Definition tm_rq22_0094 : TM := fun q s =>
@@ -1434,7 +1434,7 @@ Definition tm_rq22_0094 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq22_0094 : NonHalt tm_rq22_0094 /\ QHBoundTr 32779478 tm_rq22_0094 /\ QuasiHaltsTr tm_rq22_0094.
-Proof. apply (rwqh_stage tm_rq22_0094 [((StD, S0), 8)] 4 2 64 3624 23 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0094 [((StD, S0), 8)] 4 2 64 3624 23 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_0LC0RD_1LA1LC_0RA1LC  L=3 T=2 t=64 fuel=536 M=19 nodes=59 *)
 Definition tm_rq22_0095 : TM := fun q s =>
@@ -1449,7 +1449,7 @@ Definition tm_rq22_0095 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_rq22_0095 : NonHalt tm_rq22_0095 /\ QHBoundTr 32779478 tm_rq22_0095 /\ QuasiHaltsTr tm_rq22_0095.
-Proof. apply (rwqh_stage tm_rq22_0095 [((StC, S1), 2)] 3 2 64 536 19 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0095 [((StC, S1), 2)] 3 2 64 536 19 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_0LC1LD_1RC1RD_1LA0RB  L=3 T=2 t=64 fuel=2600 M=20 nodes=317 *)
 Definition tm_rq22_0096 : TM := fun q s =>
@@ -1464,7 +1464,7 @@ Definition tm_rq22_0096 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_rq22_0096 : NonHalt tm_rq22_0096 /\ QHBoundTr 32779478 tm_rq22_0096 /\ QuasiHaltsTr tm_rq22_0096.
-Proof. apply (rwqh_stage tm_rq22_0096 [((StA, S0), 0)] 3 2 64 2600 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0096 [((StA, S0), 0)] 3 2 64 2600 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_0LC0RC_0RD1LA_1LC1LD  L=3 T=2 t=64 fuel=4936 M=20 nodes=609 *)
 Definition tm_rq22_0097 : TM := fun q s =>
@@ -1479,7 +1479,7 @@ Definition tm_rq22_0097 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_rq22_0097 : NonHalt tm_rq22_0097 /\ QHBoundTr 32779478 tm_rq22_0097 /\ QuasiHaltsTr tm_rq22_0097.
-Proof. apply (rwqh_stage tm_rq22_0097 [((StB, S0), 1)] 3 2 64 4936 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0097 [((StB, S0), 1)] 3 2 64 4936 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_0LC1RD_1RA1LC_1RB0RC  L=3 T=2 t=64 fuel=5896 M=20 nodes=729 *)
 Definition tm_rq22_0098 : TM := fun q s =>
@@ -1494,7 +1494,7 @@ Definition tm_rq22_0098 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_rq22_0098 : NonHalt tm_rq22_0098 /\ QHBoundTr 32779478 tm_rq22_0098 /\ QuasiHaltsTr tm_rq22_0098.
-Proof. apply (rwqh_stage tm_rq22_0098 [((StA, S0), 0)] 3 2 64 (5 * 1000 + 896) 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0098 [((StA, S0), 0)] 3 2 64 (5 * 1000 + 896) 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 (* 1RB0LB_0LC1RD_1RA1LC_1RB1RA  L=3 T=2 t=64 fuel=5104 M=20 nodes=630 *)
 Definition tm_rq22_0099 : TM := fun q s =>
@@ -1509,7 +1509,7 @@ Definition tm_rq22_0099 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma qhtr_rq22_0099 : NonHalt tm_rq22_0099 /\ QHBoundTr 32779478 tm_rq22_0099 /\ QuasiHaltsTr tm_rq22_0099.
-Proof. apply (rwqh_stage tm_rq22_0099 [((StA, S0), 0)] 3 2 64 (5 * 1000 + 104) 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq22_0099 [((StA, S0), 0)] 3 2 64 (5 * 1000 + 104) 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 Definition pqh_22 : list TM :=
   [tm_rq22_0000;

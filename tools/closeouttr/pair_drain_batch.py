@@ -44,7 +44,7 @@ Definition skip_{suffix}(t:Instr):bool := instr_eqb t {target}.''')
     skip_{suffix} cert_{suffix}).
   - intros[[] []] H N;try discriminate.
     destruct(Hrec N)as(j&Hj&Hf). exists j;split;[exact Hj|apply mirror_fires;exact Hf].
-  - vm_compute;reflexivity.'''
+  - vm_cast_no_check (eq_refl true).'''
         entries.append((r['spec'], proof))
     return cbt.write_batch('AST', 127,
         ['From BBB4 Require Import CTape Mirror.',

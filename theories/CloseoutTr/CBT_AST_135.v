@@ -25036,8 +25036,8 @@ Definition r_AST_135_0000 : list (option Trans) := [t1RB;t0LB;t1LC;t0RB;t0LA;t0L
 Lemma cv_AST_135_0000 : coversTr (row_to_tm r_AST_135_0000).
 Proof. apply coversTr_nqh. apply neverqhtr_mirror. apply (ngram_check_neverqh_fuelmixtr_except_sound _ 3 0 2672 17 fuelphase_AST_135_0000_skip fuelphase_AST_135_0000_partial).
   - intros [[] []] H; try discriminate.
-    apply (ngram_check_recurrent_phase2tr_sound _ 7 149168 fuelphase_AST_135_0000_l0 fuelphase_AST_135_0000_l1 fuelphase_AST_135_0000_r0 fuelphase_AST_135_0000_r1 (StA, S1) (fuelphase_AST_135_0000 (StA, S1))). vm_compute. reflexivity.
-  - vm_compute. reflexivity. Qed.
+    apply (ngram_check_recurrent_phase2tr_sound _ 7 149168 fuelphase_AST_135_0000_l0 fuelphase_AST_135_0000_l1 fuelphase_AST_135_0000_r0 fuelphase_AST_135_0000_r1 (StA, S1) (fuelphase_AST_135_0000 (StA, S1))). vm_cast_no_check (eq_refl true).
+  - vm_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_AST_135 : list (list (option Trans)) :=
   [r_AST_135_0000].

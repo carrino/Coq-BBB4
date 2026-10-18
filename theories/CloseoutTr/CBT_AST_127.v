@@ -2487,7 +2487,7 @@ Proof. assert(Hhit:finite_instr_hit(row_to_tm r_AST_127_0000)(StC,S1)).
     skip_AST_127_0000 cert_AST_127_0000).
   - intros[[] []] H N;try discriminate.
     destruct(Hrec N)as(j&Hj&Hf). exists j;split;[exact Hj|apply mirror_fires;exact Hf].
-  - vm_compute;reflexivity. Qed.
+  - vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LD_1RC0RB_1LD0RA_1LA0LC *)
 Definition r_AST_127_0001 : list (option Trans) := [t1RB;t0LD;t1RC;t0RB;t1LD;t0RA;t1LA;t0LC].
@@ -2506,7 +2506,7 @@ Proof. assert(Hhit:finite_instr_hit(row_to_tm r_AST_127_0001)(StA,S1)).
     skip_AST_127_0001 cert_AST_127_0001).
   - intros[[] []] H N;try discriminate.
     destruct(Hrec N)as(j&Hj&Hf). exists j;split;[exact Hj|apply mirror_fires;exact Hf].
-  - vm_compute;reflexivity. Qed.
+  - vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0RA_1LC0RD_1LD0LB_1RA0LC *)
 Definition r_AST_127_0002 : list (option Trans) := [t1RB;t0RA;t1LC;t0RD;t1LD;t0LB;t1RA;t0LC].
@@ -2525,7 +2525,7 @@ Proof. assert(Hhit:finite_instr_hit(row_to_tm r_AST_127_0002)(StD,S1)).
     skip_AST_127_0002 cert_AST_127_0002).
   - intros[[] []] H N;try discriminate.
     destruct(Hrec N)as(j&Hj&Hf). exists j;split;[exact Hj|apply mirror_fires;exact Hf].
-  - vm_compute;reflexivity. Qed.
+  - vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0RD_1LC0RA_1LD0LC_1RA0LB *)
 Definition r_AST_127_0003 : list (option Trans) := [t1RB;t0RD;t1LC;t0RA;t1LD;t0LC;t1RA;t0LB].
@@ -2544,7 +2544,7 @@ Proof. assert(Hhit:finite_instr_hit(row_to_tm r_AST_127_0003)(StB,S1)).
     skip_AST_127_0003 cert_AST_127_0003).
   - intros[[] []] H N;try discriminate.
     destruct(Hrec N)as(j&Hj&Hf). exists j;split;[exact Hj|apply mirror_fires;exact Hf].
-  - vm_compute;reflexivity. Qed.
+  - vm_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_AST_127 : list (list (option Trans)) :=
   [r_AST_127_0000;

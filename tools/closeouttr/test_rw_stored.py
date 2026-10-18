@@ -18,7 +18,7 @@ class StoredCloseoutTests(unittest.TestCase):
                        'Proof. apply coversTr_nqh, (rw_tier_tr_sound _ 7 2 0 61392 24). '
                        'vm_cast_no_check (eq_refl true). Qed.\n')
 
-    def test_only_imports_and_checker_change(self):
+    def test_only_imports_checker_and_evaluator_change(self):
         certificates = {self.name: self.cert}
         after = gen.rewrite_batch(self.source, certificates)
         self.assertEqual(gen.rewrite_batch(after, certificates), after)
@@ -26,11 +26,20 @@ class StoredCloseoutTests(unittest.TestCase):
         restored = (after[:start] + after[end:]).replace(
             f'rw_check_stored_tr_sound _ 7 2 0 24 Data_{self.name}.keys '
             f'Data_{self.name}.ranks Data_{self.name}.cert',
-            'rw_tier_tr_sound _ 7 2 0 61392 24')
+            'rw_tier_tr_sound _ 7 2 0 61392 24').replace(
+                'native_cast_no_check', 'vm_cast_no_check')
         self.assertEqual(restored, self.source)
         self.assertEqual(gen.original_batch(after, certificates), self.source)
         with self.assertRaisesRegex(ValueError, 'without certificate source'):
             gen.rewrite_batch(after, {})
+
+    def test_legacy_vm_stored_check_is_upgraded(self):
+        certificates = {self.name: self.cert}
+        after = gen.rewrite_batch(self.source, certificates)
+        self.assertIn('native_cast_no_check (eq_refl true)', after)
+        legacy = after.replace('native_cast_no_check', 'vm_cast_no_check')
+        self.assertEqual(gen.rewrite_batch(legacy, certificates), after)
+        self.assertEqual(gen.rewrite_batch(after, certificates), after)
 
     def test_wrong_machine_or_parameters_rejected(self):
         for field, value in [('spec', '0RB0LD_1RC1RD_1LA1LD_1LC0RB'), ('L', 8)]:

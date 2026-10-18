@@ -6,7 +6,9 @@ From Coq Require Import Arith List ZArith.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.Census Require Import Deferred_Defs.
 From BBB4.CloseoutTr Require Import CloseoutKitTr.
-From BBB4.Machines.LadderTr Require LDRT_0RB0LA_1RC1RB_1LA0RD_1LD1LA LDRT_1RB1RA_1LC0RD_0RA0LC_1LD1LC.
+(* LADDER BUNDLE IMPORT: From BBB4.Machines.LadderTr Require LDRT_0RB0LA_1RC1RB_1LA0RD_1LD1LA LDRT_1RB1RA_1LC0RD_0RA0LC_1LD1LC. *)
+From BBB4.Machines.LadderTr.Bundles Require Import BundleLDRT_9976c3f3067d_000.
+(* END LADDER BUNDLE IMPORT *)
 Import ListNotations.
 
 (* spec 0RB0LA_1RC1RB_1LA0RD_1LD1LA *)

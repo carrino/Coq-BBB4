@@ -2347,28 +2347,28 @@ Definition r_AST_147_0000 : list (option Trans) := [t1RB;t0LA;t0RC;t0RD;t1LA;t1L
 Lemma cv_AST_147_0000 : coversTr (row_to_tm r_AST_147_0000).
 Proof. apply coversTr_nqh. apply(ngram_check_neverqh_fuelexactmixtr_except_sound _ 3 0 5440 20 (fun _=>false) cert_AST_147_0000).
   - intros q H;discriminate.
-  - vm_compute;reflexivity. Qed.
+  - vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LA_1LC0RD_0LC1LA_0RB1RD *)
 Definition r_AST_147_0001 : list (option Trans) := [t1RB;t0LA;t1LC;t0RD;t0LC;t1LA;t0RB;t1RD].
 Lemma cv_AST_147_0001 : coversTr (row_to_tm r_AST_147_0001).
 Proof. apply coversTr_nqh. apply(ngram_check_neverqh_fuelexactmixtr_except_sound _ 3 0 6768 20 (fun _=>false) cert_AST_147_0001).
   - intros q H;discriminate.
-  - vm_compute;reflexivity. Qed.
+  - vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LA_1RC1LD_0LD0RB_0RC1LA *)
 Definition r_AST_147_0002 : list (option Trans) := [t1RB;t0LA;t1RC;t1LD;t0LD;t0RB;t0RC;t1LA].
 Lemma cv_AST_147_0002 : coversTr (row_to_tm r_AST_147_0002).
 Proof. apply coversTr_nqh. apply(ngram_check_neverqh_fuelexactmixtr_except_sound _ 3 0 6192 20 (fun _=>false) cert_AST_147_0002).
   - intros q H;discriminate.
-  - vm_compute;reflexivity. Qed.
+  - vm_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LA_1RC1LD_0LD0RC_0RB1LA *)
 Definition r_AST_147_0003 : list (option Trans) := [t1RB;t0LA;t1RC;t1LD;t0LD;t0RC;t0RB;t1LA].
 Lemma cv_AST_147_0003 : coversTr (row_to_tm r_AST_147_0003).
 Proof. apply coversTr_nqh. apply(ngram_check_neverqh_fuelexactmixtr_except_sound _ 3 0 6384 20 (fun _=>false) cert_AST_147_0003).
   - intros q H;discriminate.
-  - vm_compute;reflexivity. Qed.
+  - vm_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_AST_147 : list (list (option Trans)) :=
   [r_AST_147_0000;

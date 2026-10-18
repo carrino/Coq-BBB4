@@ -25,7 +25,7 @@ From Coq Require Import Arith Lia Bool List.
 From Coq Require Import FunctionalExtensionality.
 From BBB4 Require Import BBB4_Statement Mirror.
 From BBB4.Census Require Import TNF_QH Decide Deferred_Defs Deferred_Data
-  Proven_Data ProvenQH_Data RerootQH_Data Proven_List ProvenQH_List.
+  Proven_Data ProvenQH_Data RerootQH_Data Proven_List ProvenQH_List RerootQH_List.
 (** EXPORT, not Import: [B_census], [decider], [q_0], [q_suc] and the
     rest moved to Run_Compute, and every existing client of Run.v --
     Run_Split, Run_Split2, the walk units, Closeout -- names them
@@ -52,18 +52,20 @@ Set Default Goal Selector "!".
 Lemma proven_list_data_all : Forall NeverQuasiHaltsSt proven_list_data.
 Proof. exact proven_all. Qed.
 
-(** its in-Coq certificate: each machine is non-halting, has every quiet
-    state's last visit bounded by [B_census] ([QHBound]), and quasihalts
-    -- exactly the [R_QH] contract, so a lookup hit discharges it.
-    [provenqh_all] is about [provenqh_list] and is accepted about
-    [provenqh_list_data] by the same conversion; [reroot_qh_list] is the
-    real list (its machines are [row_to_tm] applications, which are not
-    convertible to literal transition tables, and it costs ~0.08 GB). *)
+(** The reroot data retain the boards' transparent machine bodies,
+    including row_to_tm applications. This whole-list conversion check
+    rejects any changed machine, representation, omission or reordering. *)
+Lemma reroot_qh_list_data_all :
+  Forall (fun tm => NonHalt tm /\ QHBound B_census tm /\ QuasiHaltsSt tm)
+         reroot_qh_list_data.
+Proof. exact reroot_qh_all. Qed.
+
+(** Compose the two certified state-quasihalting lookup lists. *)
 Lemma reroot_provenqh_all :
   Forall (fun tm => NonHalt tm /\ QHBound B_census tm /\ QuasiHaltsSt tm)
-         (provenqh_list_data ++ reroot_qh_list).
+         (provenqh_list_data ++ reroot_qh_list_data).
 Proof.
-  apply Forall_app; split; [exact provenqh_all | exact reroot_qh_all].
+  apply Forall_app; split; [exact provenqh_all | exact reroot_qh_list_data_all].
 Qed.
 
 Lemma decider_WF : QHDecider_WF B_census D_census decider.
@@ -72,7 +74,7 @@ Proof.
            ng_rungs_census rank_rungs_census qhb_rungs_census
            rw_rungs_census rw_fuel_census rw_cut_census proven_list_data
            proven_list_data_all
-           (provenqh_list_data ++ reroot_qh_list) reroot_provenqh_all
+           (provenqh_list_data ++ reroot_qh_list_data) reroot_provenqh_all
            hmap_census).
 Qed.
 

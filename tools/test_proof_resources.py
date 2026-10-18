@@ -42,12 +42,49 @@ Pages occupied by compressor:            100000.
         }
         with patch.object(r.platform, 'system', return_value='Linux'), \
                 patch.object(r, 'read', side_effect=lambda p: files.get(str(p), '')), \
-                patch.object(r, 'command', return_value='# Core,Socket\n' +
-                             '\n'.join(f'{i},0' for i in range(32))), \
+                patch.object(r, 'command', return_value='# CPU,Core,Socket\n' +
+                             '\n'.join(f'{i},{i % 32},0' for i in range(64))), \
                 patch.object(r.os, 'sched_getaffinity', return_value=set(range(64)), create=True):
             self.assertEqual(r.available_memory(), 13 * r.GIB)
             self.assertEqual(r.cores(), 4)
             self.assertEqual(r.jobs(r.available_memory(), 4, r.cores()), 2)
+
+    def test_linux_affinity_restricted_to_sibling_threads(self):
+        topology = '# CPU,Core,Socket\n0,0,0\n1,1,0\n8,0,0\n9,1,0\n'
+        with patch.object(r.platform, 'system', return_value='Linux'), \
+                patch.object(r, 'command', return_value=topology), \
+                patch.object(r, 'read', return_value=''), \
+                patch.object(r.os, 'sched_getaffinity', return_value={0, 8}, create=True):
+            self.assertEqual(r.cores(), 1)
+
+    def test_linux_core_detection_fallbacks(self):
+        with patch.object(r.platform, 'system', return_value='Linux'), \
+                patch.object(r, 'command', return_value='unavailable topology'), \
+                patch.object(r, 'read', return_value=''), \
+                patch.object(r.os, 'cpu_count', return_value=16), \
+                patch.object(r.os, 'sched_getaffinity', return_value={2, 3}, create=True) as affinity:
+            self.assertEqual(r.cores(), 2)
+            affinity.side_effect = OSError('affinity unavailable')
+            self.assertEqual(r.cores(), 16)
+
+    def test_container_file_cache_is_reclaimable(self):
+        files = {
+            '/proc/self/cgroup': '0::/',
+            '/proc/meminfo': f'MemAvailable: {30 * 1024 ** 2} kB',
+            '/sys/fs/cgroup/memory.max': str(16 * r.GIB),
+            '/sys/fs/cgroup/memory.current': str(8 * r.GIB),
+            '/sys/fs/cgroup/memory.stat': f'inactive_file {6 * r.GIB}\nanon {2 * r.GIB}',
+        }
+        with patch.object(r.platform, 'system', return_value='Linux'), \
+                patch.object(r, 'read', side_effect=lambda p: files.get(str(p), '')):
+            self.assertEqual(r.available_memory(), 14 * r.GIB)
+            self.assertEqual(r.jobs(r.available_memory(), 3, 4), 4)
+            files['/sys/fs/cgroup/memory.stat'] += (
+                f'\nactive_file {r.GIB}\nfile_dirty {r.GIB // 2}')
+            self.assertEqual(r.available_memory(), 14 * r.GIB + r.GIB // 2)
+            # Host-wide pressure still caps the reclaimable container budget.
+            files['/proc/meminfo'] = f'MemAvailable: {2 * 1024 ** 2} kB'
+            self.assertEqual(r.available_memory(), 2 * r.GIB)
 
 
 if __name__ == '__main__':

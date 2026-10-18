@@ -309,17 +309,63 @@ Definition ng_start (n : nat) (cc : cconf) : cconf :=
   let '(q, (l, h, r)) := cc in
   (q, (win (lift_side l) 0 n, h, win (lift_side r) 0 n)).
 
+(** Slide down the list once instead of repeatedly indexing it from
+    the beginning. The equality covers all widths and tapes, including
+    the original blank padding and final offset. *)
+Lemma win_ctl : forall l d n,
+  win (lift_side (ctl l)) d n = win (lift_side l) (S d) n.
+Proof.
+  intros l d n. unfold win.
+  rewrite <- seq_shift, map_map. apply map_ext.
+  intro i. destruct l, i; reflexivity.
+Qed.
+
+Fixpoint seed_windows (n k : nat) (l : list Sym) : list (list Sym) :=
+  match k with
+  | 0 => []
+  | S k' => win (lift_side l) 0 n :: seed_windows n k' (ctl l)
+  end.
+
+Lemma seed_windows_spec : forall n k l,
+  seed_windows n k l = map (fun d => win (lift_side l) d n) (seq 0 k).
+Proof.
+  intros n k. induction k as [|k IH]; intro l; cbn [seed_windows seq map].
+  - reflexivity.
+  - f_equal. rewrite IH, <- seq_shift, map_map.
+    apply map_ext. intro d. apply win_ctl.
+Qed.
+
+Definition ng_seed_side (n : nat) (l : list Sym) :=
+  seed_windows n (length l + 1) (ctl l).
+
+Lemma ng_seed_side_spec : forall n l,
+  ng_seed_side n l = map (fun d => win (lift_side l) d n) (seq 1 (length l + 1)).
+Proof.
+  intros n l. unfold ng_seed_side.
+  rewrite seed_windows_spec, <- seq_shift, map_map.
+  apply map_ext. intro d. apply win_ctl.
+Qed.
+
 Definition seed_ok_side (n : nat) (l : list Sym)
     (set : gset) : bool :=
+  forallb (fun w => gmem w set) (ng_seed_side n l).
+
+Lemma seed_ok_side_spec : forall n l set,
+  seed_ok_side n l set =
   forallb (fun d => gmem (win (lift_side l) d n) set)
           (seq 1 (length l + 1)).
+Proof.
+  intros. unfold seed_ok_side. rewrite ng_seed_side_spec.
+  generalize (seq 1 (length l + 1)). intro ds.
+  induction ds as [|d ds IH]; simpl; [reflexivity|rewrite IH; reflexivity].
+Qed.
 
 Lemma seed_ok_side_sound : forall n l set,
   seed_ok_side n l set = true ->
   forall d, 1 <= d -> gmem (win (lift_side l) d n) set = true.
 Proof.
   intros n l set H d Hd.
-  unfold seed_ok_side in H. rewrite forallb_forall in H.
+  rewrite seed_ok_side_spec, forallb_forall in H.
   destruct (le_lt_dec d (length l)) as [Hle | Hgt].
   - apply H. apply in_seq. lia.
   - rewrite win_blank by lia.
@@ -344,9 +390,6 @@ Proof.
 Qed.
 
 (** ** Untrusted gram-set search (the C prover's two-level fixpoint) *)
-
-Definition ng_seed_side (n : nat) (l : list Sym) : list (list Sym) :=
-  map (fun d => win (lift_side l) d n) (seq 1 (length l + 1)).
 
 Definition gadds (gs : list (list Sym)) (s : gset) : gset :=
   fold_left (fun acc g => gadd g acc) gs s.
