@@ -93,12 +93,31 @@ Qed.
 
 (** ** Tier C: in-place (head-relative) cycles *)
 
-Definition cycle_leaf_check (tm : TM) (n1 p : nat) : bool :=
+Definition cycle_leaf_check_reference (tm : TM) (n1 p : nat) : bool :=
   (0 <? p) &&
   match csteps tm n1 c0, csteps tm (n1 + p) c0 with
   | Some a, Some b => ceqb a b
   | _, _ => false
   end.
+
+(** Reuse the anchor prefix when confirming a cycle. *)
+Definition cycle_leaf_check (tm : TM) (n1 p : nat) : bool :=
+  (0 <? p) &&
+  match csteps tm n1 c0 with
+  | Some a =>
+      match csteps tm p a with
+      | Some b => ceqb a b
+      | None => false
+      end
+  | None => false
+  end.
+
+Lemma cycle_leaf_check_spec : forall tm n1 p,
+  cycle_leaf_check tm n1 p = cycle_leaf_check_reference tm n1 p.
+Proof.
+  intros tm n1 p. unfold cycle_leaf_check, cycle_leaf_check_reference.
+  rewrite csteps_add. destruct (csteps tm n1 c0); reflexivity.
+Qed.
 
 (** visits at or after the cycle start recur forever, so any
     eventually-quiet state was last seen strictly before [n1] *)
@@ -130,7 +149,8 @@ Lemma cycle_leaf_check_sound : forall tm n1 p,
   NonHalt tm /\ QHBound n1 tm.
 Proof.
   intros tm n1 p H.
-  unfold cycle_leaf_check in H.
+  rewrite cycle_leaf_check_spec in H.
+  unfold cycle_leaf_check_reference in H.
   apply andb_prop in H as [Hp H].
   apply Nat.ltb_lt in Hp.
   destruct (csteps tm n1 c0) as [a|] eqn:Ea; [|discriminate].
@@ -370,6 +390,28 @@ Definition tc_measure_W (tm : TM) (n1 P : nat) : nat :=
   | Some c => Z.to_nat (lap_depth0 tm P c 0 0)
   | None => 0
   end.
+
+(** Share the anchor configuration between excursion measurement and checking. *)
+Definition tcycler_measured_check (tm : TM) (n1 P : nat) : bool :=
+  (0 <? P) &&
+  match csteps tm n1 c0 with
+  | Some ((q1, (l1, h1, r1)) as c1) =>
+      let W := Z.to_nat (lap_depth0 tm P c1 0 0) in
+      let g1 : cconf := (q1, (firstn_pad W l1, h1, r1)) in
+      match gsteps tm P g1 with
+      | Some g2 => gmatch g1 g2
+      | None => false
+      end
+  | None => false
+  end.
+
+Lemma tcycler_measured_check_spec : forall tm n1 P,
+  tcycler_measured_check tm n1 P =
+  tcycler_leaf_check tm n1 P (tc_measure_W tm n1 P).
+Proof.
+  intros tm n1 P. unfold tcycler_measured_check, tcycler_leaf_check, tc_measure_W.
+  destruct (csteps tm n1 c0) as [[q [[l h] r]]|]; reflexivity.
+Qed.
 
 (** last visit of [q] among the configurations at offsets
     [k .. k + gas - 1] (untrusted: the QHBound checkers re-verify
@@ -800,6 +842,13 @@ Proof.
   destruct (f x); simpl; [reflexivity | exact IH].
 Qed.
 
+Lemma anyb_app : forall A (f : A -> bool) l r,
+  anyb f (l ++ r) = if anyb f l then true else anyb f r.
+Proof.
+  intros A f l r. induction l; cbn [anyb app]; [reflexivity|].
+  destruct (f a); [reflexivity|exact IHl].
+Qed.
+
 Section Pipeline.
 
 Variable B : nat.              (** global score bound *)
@@ -957,7 +1006,7 @@ Definition scan_ct (tm : TM) (gas : nat) : bool :=
    || try_tc_cands (mirror_tm tm) true (tc_pairs recL)).
 
 (** verified confirmation of a one-pass candidate *)
-Definition lp_check (tm : TM) (cand : lp_cand) : bool :=
+Definition lp_check_reference (tm : TM) (cand : lp_cand) : bool :=
   match cand with
   | LpCycle n1 p => (n1 <=? B) && cycle_leaf_check tm n1 p
   | LpTC DR n1 P =>
@@ -968,13 +1017,49 @@ Definition lp_check (tm : TM) (cand : lp_cand) : bool :=
         (tc_measure_W (mirror_tm tm) n1 P)
   end.
 
+Definition lp_check (tm : TM) (cand : lp_cand) : bool :=
+  match cand with
+  | LpCycle n1 p => (n1 <=? B) && cycle_leaf_check tm n1 p
+  | LpTC DR n1 P => (n1 <=? B) && tcycler_measured_check tm n1 P
+  | LpTC DL n1 P =>
+      (n1 <=? B) && tcycler_measured_check (mirror_tm tm) n1 P
+  end.
+
+Lemma lp_check_spec : forall tm cand,
+  lp_check tm cand = lp_check_reference tm cand.
+Proof.
+  intros tm [n1 p|[] n1 P]; cbn [lp_check lp_check_reference];
+    rewrite ?tcycler_measured_check_spec; reflexivity.
+Qed.
+
 (** [anyb], not [existsb]: every [lp_check] is a full re-simulation of
     [n1] and [n1 + p] steps, and [lp_candidates] emits up to ~14 of
     them, so on a CAUGHT machine -- which is the whole C/T bulk, ~95%
     of the walk's nodes -- every candidate after the winning one was
     pure waste. *)
-Definition scan_loops (tm : TM) (gas : nat) : bool :=
+Definition scan_loops_reference (tm : TM) (gas : nat) : bool :=
   anyb (lp_check tm) (lp_candidates tm gas).
+
+(** Delay record-pair candidates until the backward scan has failed.
+    Native evaluation previously built all three lists before the first check. *)
+Definition scan_loops (tm : TM) (gas : nat) : bool :=
+  match lp_run tm gas 0%N c0 0%Z [] with
+  | [] => false
+  | (h0 :: tl) as hist =>
+      if anyb (lp_check tm) (lp_scan h0 tl tl 6 []) then true
+      else let '(rR, rL) := lp_records tm hist in
+        if anyb (lp_check tm) (lp_tc_pairs DR rR) then true
+        else anyb (lp_check tm) (lp_tc_pairs DL rL)
+  end.
+
+Lemma scan_loops_spec : forall tm gas,
+  scan_loops tm gas = scan_loops_reference tm gas.
+Proof.
+  intros tm gas. unfold scan_loops, scan_loops_reference, lp_candidates.
+  destruct (lp_run tm gas 0%N c0 0%Z []) as [|h0 tl]; [reflexivity|].
+  destruct (lp_records tm (h0 :: tl)) as [rR rL].
+  rewrite !anyb_app. reflexivity.
+Qed.
 
 Definition try_ladder (tm : TM) : QHResult :=
   match try_ngram ng_rungs tm with
@@ -1087,8 +1172,9 @@ Lemma lp_check_sound : forall tm cand,
   lp_check tm cand = true -> NonHalt tm /\ QHBound B tm.
 Proof.
   intros tm cand H.
+  rewrite lp_check_spec in H.
   destruct cand as [n1 p | [|] n1 P];
-    unfold lp_check in H;
+    unfold lp_check_reference in H;
     apply andb_prop in H as [Hb H];
     apply Nat.leb_le in Hb.
   - destruct (cycle_leaf_check_sound tm n1 p H) as [Hnh Hq].
@@ -1103,7 +1189,8 @@ Lemma scan_loops_sound : forall tm gas,
   scan_loops tm gas = true -> NonHalt tm /\ QHBound B tm.
 Proof.
   intros tm gas H.
-  unfold scan_loops in H.
+  rewrite scan_loops_spec in H.
+  unfold scan_loops_reference in H.
   rewrite anyb_existsb in H.
   apply existsb_exists in H.
   destruct H as (cand & _ & Hc).

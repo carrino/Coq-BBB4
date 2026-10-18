@@ -10,7 +10,9 @@ From BBB4 Require Import CTape.
 From BBB4.Counters Require Import CConjugateTr CConjCoverTr.
 From BBB4.Machines.LadderTr Require LDRZ_1RB1RA_0LC1LB_0RD1LD_0RA0LD.
 From BBB4.Machines.LadderTr Require LDRZ_1RB1RA_0LC1LB_0RC1LD_0RA0LD.
-From BBB4.Machines.LadderTr Require LDRT_0RB0LD_1LC1RC_1LD1RA_0RA1LC.
+(* LADDER BUNDLE IMPORT: From BBB4.Machines.LadderTr Require LDRT_0RB0LD_1LC1RC_1LD1RA_0RA1LC. *)
+From BBB4.Machines.LadderTr.Bundles Require Import BundleLDRT_390651989175_000.
+(* END LADDER BUNDLE IMPORT *)
 Import ListNotations.
 
 Local Definition p_LE6_01_0000 (q : St) : St :=

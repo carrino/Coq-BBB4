@@ -5,6 +5,7 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.CensusTr Require Import RepWLTr.
 Import ListNotations.
 
+From BBB4.CensusTr Require Import RepWLBinaryTr.
 (* 1RB0LD_1LC0RD_1LA1RB_1LC0RC  L=5 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw04_0068 : TM := fun q s =>
   match q, s with
@@ -18,7 +19,7 @@ Definition tm_rw04_0068 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma nqhtr_rw04_0068 : NeverQuasiHaltsTr tm_rw04_0068.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 5 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_1LC1LD_1LA0LB_0RA1RD  L=7 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw04_0069 : TM := fun q s =>
@@ -33,7 +34,7 @@ Definition tm_rw04_0069 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma nqhtr_rw04_0069 : NeverQuasiHaltsTr tm_rw04_0069.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 7 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_1LC1RA_0RD0RA_1LB1RC  L=7 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw04_0070 : TM := fun q s =>
@@ -48,7 +49,7 @@ Definition tm_rw04_0070 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma nqhtr_rw04_0070 : NeverQuasiHaltsTr tm_rw04_0070.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 7 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_1LC1RC_0LA0RD_0RB1RD  L=5 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw04_0071 : TM := fun q s =>
@@ -63,7 +64,7 @@ Definition tm_rw04_0071 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma nqhtr_rw04_0071 : NeverQuasiHaltsTr tm_rw04_0071.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 5 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_1LC1RD_0RA1LA_1RC0LC  L=5 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw04_0072 : TM := fun q s =>
@@ -78,7 +79,7 @@ Definition tm_rw04_0072 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma nqhtr_rw04_0072 : NeverQuasiHaltsTr tm_rw04_0072.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 5 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_1LC1RD_1LA0LB_0RA1RA  L=6 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw04_0073 : TM := fun q s =>
@@ -93,7 +94,7 @@ Definition tm_rw04_0073 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 Lemma nqhtr_rw04_0073 : NeverQuasiHaltsTr tm_rw04_0073.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 6 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_1RC0LC_1LA0RA_0LC1LC  L=7 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw04_0074 : TM := fun q s =>
@@ -108,7 +109,7 @@ Definition tm_rw04_0074 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma nqhtr_rw04_0074 : NeverQuasiHaltsTr tm_rw04_0074.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 7 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_1RC0RB_0LA1RA_1LA1RD  L=6 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw04_0075 : TM := fun q s =>
@@ -123,7 +124,7 @@ Definition tm_rw04_0075 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma nqhtr_rw04_0075 : NeverQuasiHaltsTr tm_rw04_0075.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 6 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_1RC0RB_1LA0RA_0LB1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw04_0076 : TM := fun q s =>
@@ -138,7 +139,7 @@ Definition tm_rw04_0076 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma nqhtr_rw04_0076 : NeverQuasiHaltsTr tm_rw04_0076.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 5 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 (* 1RB0LD_1RC0RB_1LD1RA_1LA1RD  L=5 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw04_0077 : TM := fun q s =>
@@ -153,7 +154,7 @@ Definition tm_rw04_0077 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma nqhtr_rw04_0077 : NeverQuasiHaltsTr tm_rw04_0077.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 5 2 0 30000 32). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_04_p014 : list TM :=
   [tm_rw04_0068;

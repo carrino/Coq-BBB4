@@ -31,7 +31,7 @@ Theorem irtr_1RB1RA_1LC0LD_0RB1LC_1RA1LD_never_quasihalts_tr :
   NeverQuasiHaltsTr tm_1RB1RA_1LC0LD_0RB1LC_1RA1LD.
 Proof.
   apply (irules_check_neverqhtr_sound tm_1RB1RA_1LC0LD_0RB1LC_1RA1LD cert_1RB1RA_1LC0LD_0RB1LC_1RA1LD 300000%nat).
-  vm_compute. reflexivity.
+  native_cast_no_check (eq_refl true).
 Qed.
 
 Definition tm_1RB1RC_0RC1RB_0RD0RC_1LD1LA : TM := fun q s =>
@@ -56,7 +56,7 @@ Theorem irtr_1RB1RC_0RC1RB_0RD0RC_1LD1LA_never_quasihalts_tr :
   NeverQuasiHaltsTr tm_1RB1RC_0RC1RB_0RD0RC_1LD1LA.
 Proof.
   apply (irules_check_neverqhtr_sound tm_1RB1RC_0RC1RB_0RD0RC_1LD1LA cert_1RB1RC_0RC1RB_0RD0RC_1LD1LA 300000%nat).
-  vm_compute. reflexivity.
+  native_cast_no_check (eq_refl true).
 Qed.
 
 Definition tm_1RB1RD_0RC0RB_1LC0LA_0RA1LB : TM := fun q s =>
@@ -82,7 +82,7 @@ Theorem irtr_1RB1RD_0RC0RB_1LC0LA_0RA1LB_never_quasihalts_tr :
   NeverQuasiHaltsTr tm_1RB1RD_0RC0RB_1LC0LA_0RA1LB.
 Proof.
   apply (irules_check_neverqhtr_sound tm_1RB1RD_0RC0RB_1LC0LA_0RA1LB cert_1RB1RD_0RC0RB_1LC0LA_0RA1LB 300000%nat).
-  vm_compute. reflexivity.
+  native_cast_no_check (eq_refl true).
 Qed.
 
 Definition tm_1RB1RD_0RC0RB_1LC0LA_1LA0RB : TM := fun q s =>
@@ -108,7 +108,7 @@ Theorem irtr_1RB1RD_0RC0RB_1LC0LA_1LA0RB_never_quasihalts_tr :
   NeverQuasiHaltsTr tm_1RB1RD_0RC0RB_1LC0LA_1LA0RB.
 Proof.
   apply (irules_check_neverqhtr_sound tm_1RB1RD_0RC0RB_1LC0LA_1LA0RB cert_1RB1RD_0RC0RB_1LC0LA_1LA0RB 300000%nat).
-  vm_compute. reflexivity.
+  native_cast_no_check (eq_refl true).
 Qed.
 
 Definition tm_1RB1RD_0RC0RB_1LC0LA_0RBXXX : TM := fun q s =>
@@ -134,7 +134,7 @@ Theorem irtr_1RB1RD_0RC0RB_1LC0LA_0RBXXX_never_quasihalts_tr :
   NeverQuasiHaltsTr tm_1RB1RD_0RC0RB_1LC0LA_0RBXXX.
 Proof.
   apply (irules_check_neverqhtr_sound tm_1RB1RD_0RC0RB_1LC0LA_0RBXXX cert_1RB1RD_0RC0RB_1LC0LA_0RBXXX 300000%nat).
-  vm_compute. reflexivity.
+  native_cast_no_check (eq_refl true).
 Qed.
 
 Definition tm_1RB1RD_0RC0RD_1LC0LA_0RB0RD : TM := fun q s =>
@@ -160,7 +160,7 @@ Theorem irtr_1RB1RD_0RC0RD_1LC0LA_0RB0RD_never_quasihalts_tr :
   NeverQuasiHaltsTr tm_1RB1RD_0RC0RD_1LC0LA_0RB0RD.
 Proof.
   apply (irules_check_neverqhtr_sound tm_1RB1RD_0RC0RD_1LC0LA_0RB0RD cert_1RB1RD_0RC0RD_1LC0LA_0RB0RD 300000%nat).
-  vm_compute. reflexivity.
+  native_cast_no_check (eq_refl true).
 Qed.
 
 Definition tm_1RB1LA_0LA1LC_0LD0LC_1RD1RB : TM := fun q s =>
@@ -185,7 +185,7 @@ Theorem irtr_1RB1LA_0LA1LC_0LD0LC_1RD1RB_never_quasihalts_tr :
   NeverQuasiHaltsTr tm_1RB1LA_0LA1LC_0LD0LC_1RD1RB.
 Proof.
   apply (irules_check_neverqhtr_sound tm_1RB1LA_0LA1LC_0LD0LC_1RD1RB cert_1RB1LA_0LA1LC_0LD0LC_1RD1RB 300000%nat).
-  vm_compute. reflexivity.
+  native_cast_no_check (eq_refl true).
 Qed.
 
 Definition tm_1RB1RD_0RC0RB_1LC0LA_0RD0RB : TM := fun q s =>
@@ -211,5 +211,5 @@ Theorem irtr_1RB1RD_0RC0RB_1LC0LA_0RD0RB_never_quasihalts_tr :
   NeverQuasiHaltsTr tm_1RB1RD_0RC0RB_1LC0LA_0RD0RB.
 Proof.
   apply (irules_check_neverqhtr_sound tm_1RB1RD_0RC0RB_1LC0LA_0RD0RB cert_1RB1RD_0RC0RB_1LC0LA_0RD0RB 300000%nat).
-  vm_compute. reflexivity.
+  native_cast_no_check (eq_refl true).
 Qed.

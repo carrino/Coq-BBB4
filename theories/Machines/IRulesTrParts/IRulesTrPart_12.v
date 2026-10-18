@@ -31,5 +31,5 @@ Theorem irtr_1RB1RD_0LC1RD_1LC1LA_1LB0RD_never_quasihalts_tr :
   NeverQuasiHaltsTr tm_1RB1RD_0LC1RD_1LC1LA_1LB0RD.
 Proof.
   apply (irules_check_neverqhtr_sound tm_1RB1RD_0LC1RD_1LC1LA_1LB0RD cert_1RB1RD_0LC1RD_1LC1LA_1LB0RD 300000%nat).
-  vm_compute. reflexivity.
+  native_cast_no_check (eq_refl true).
 Qed.

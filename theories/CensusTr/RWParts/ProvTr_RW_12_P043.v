@@ -20,7 +20,7 @@ Definition tm_rw12_0088 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma nqhtr_rw12_0088 : NeverQuasiHaltsTr tm_rw12_0088.
-Proof. apply (rw_check_stored_tr_sound _ 10 2 0 42 DataTr_RW_12_0088.keys DataTr_RW_12_0088.ranks DataTr_RW_12_0088.cert). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_check_stored_tr_sound _ 10 2 0 42 DataTr_RW_12_0088.keys DataTr_RW_12_0088.ranks DataTr_RW_12_0088.cert). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_12_p043 : list TM :=
   [tm_rw12_0088].

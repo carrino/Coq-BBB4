@@ -520,13 +520,62 @@ Section WrapGeneric.
     | Some _ =>
         match close_tr A a_enc succs fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
-            closed_tr_b A a_enc succs Sl &&&
-            mem_tr A a_enc a0 Sl &&&
             live_lex_ok_tr A a_enc a_instr succs Sl cert
         | None => false
         end
     | None => false
     end.
+
+  (** A successful closure search already certifies membership of its root
+      and closedness. Rechecking those booleans traverses the same edges.
+      This equality retains the original checker's complete specification. *)
+  Lemma wrap_check_qhboundtr_g_spec : forall fuel a0 cert,
+    wrap_check_qhboundtr_g fuel a0 cert =
+    ((1 <=? length tgs) &&&
+     forallb (wrap_pin_ok tm t) tgs &&&
+     match csteps tm t c0 with
+     | Some _ =>
+         match close_tr A a_enc succs fuel [] PositiveSet.empty [a0] with
+         | Some Sl =>
+             closed_tr_b A a_enc succs Sl &&&
+             mem_tr A a_enc a0 Sl &&&
+             live_lex_ok_tr A a_enc a_instr succs Sl cert
+         | None => false
+         end
+     | None => false
+     end).
+  Proof.
+    intros fuel a0 cert. unfold wrap_check_qhboundtr_g.
+    destruct (1 <=? length tgs); cbn [andb]; [|reflexivity].
+    destruct (forallb (wrap_pin_ok tm t) tgs); cbn [andb]; [|reflexivity].
+    destruct (csteps tm t c0); [|reflexivity].
+    destruct (close_tr A a_enc succs fuel [] PositiveSet.empty [a0])
+      as [Sl|] eqn:Ecl; [|reflexivity].
+    destruct (close_tr_root_spec A a_enc succs a_enc_inj fuel a0 Sl Ecl)
+      as [Hmem Hclosed].
+    now rewrite Hclosed, Hmem.
+  Qed.
+
+  (** As above, the caller must connect this pool to a successful exploration.
+      It permits the search and checker to share the same computed closure. *)
+  Definition wrap_check_qhboundtr_g_closed (Sl : list A)
+      (cert : Instr -> list (lexcomp A)) : bool :=
+    (1 <=? length tgs) &&&
+    forallb (wrap_pin_ok tm t) tgs &&&
+    match csteps tm t c0 with
+    | Some _ => live_lex_ok_tr A a_enc a_instr succs Sl cert
+    | None => false
+    end.
+
+  Lemma wrap_check_qhboundtr_g_closed_spec : forall fuel a0 Sl cert,
+    close_tr A a_enc succs fuel [] PositiveSet.empty [a0] = Some Sl ->
+    wrap_check_qhboundtr_g_closed Sl cert =
+    wrap_check_qhboundtr_g fuel a0 cert.
+  Proof.
+    intros fuel a0 Sl cert Ecl.
+    unfold wrap_check_qhboundtr_g_closed, wrap_check_qhboundtr_g.
+    now rewrite Ecl.
+  Qed.
 
   Theorem wrap_check_qhboundtr_g_sound : forall fuel a0 cert,
     (forall ct, csteps tm t c0 = Some ct -> covers a0 (lift ct)) ->
@@ -539,7 +588,7 @@ Section WrapGeneric.
     /\ QuasiHaltsTr tm.
   Proof.
     intros fuel a0 cert Hcov0A Hexd H.
-    unfold wrap_check_qhboundtr_g in H.
+    rewrite wrap_check_qhboundtr_g_spec in H.
     apply andb_prop in H as [H Hcl].
     apply andb_prop in H as [Hlen Hpins].
     apply Nat.leb_le in Hlen.

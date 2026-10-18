@@ -1,21 +1,21 @@
-# Included by the generated Makefile.coq (coq_makefile's local hook).
-#
-# Memory throttle for the nine IRules batches: each peaks at ~6-8 GB, so a
-# high -j that schedules many of them together OOMs the box.  The order-only
-# prerequisites (the `|') below chain them into THREE columns, so at most
-# three build concurrently -- budget ~24 GB for them -- while every other
-# file is free to use the remaining job slots.  Order-only edges affect
-# scheduling only, never up-to-dateness: touching batch 00 does NOT force a
-# rebuild of 03/06.
-#
-# On a smaller machine, serialize harder by moving more targets into fewer
-# columns (one single chain = one batch at a time).
+# Included by coq_makefile. Independent state IRules parts retain at most
+# eight evaluated anchor constants per compiler. Budget 3 GiB per process,
+# including headroom above the first-eight pilot's 0.99 GiB peak. Other proof
+# files may use the remaining make jobs. Explicit IRULES_JOBS overrides this.
+# Freeze the default once: each conditional/edge must use the same limit.
+ifndef IRULES_JOBS
+IRULES_JOBS := $(shell python3 tools/proof_resources.py --rss-gib 3)
+endif
 
-theories/Machines/IRules_Batch_03.vo: | theories/Machines/IRules_Batch_00.vo
-theories/Machines/IRules_Batch_06.vo: | theories/Machines/IRules_Batch_03.vo
-
-theories/Machines/IRules_Batch_04.vo: | theories/Machines/IRules_Batch_01.vo
-theories/Machines/IRules_Batch_07.vo: | theories/Machines/IRules_Batch_04.vo
-
-theories/Machines/IRules_Batch_05.vo: | theories/Machines/IRules_Batch_02.vo
-theories/Machines/IRules_Batch_08.vo: | theories/Machines/IRules_Batch_05.vo
+# Every edge points to an earlier part, forming IRULES_JOBS disjoint chains.
+# Order-only prerequisites constrain scheduling without forcing rebuilds when
+# another independent part changes. The generator prints target=predecessor.
+# $(shell ...) does not propagate failures to make. Check an explicit sentinel
+# before adding edges, so an invalid limit cannot silently remove the throttle.
+# This works on GNU make versions predating .SHELLSTATUS.
+IRULES_STATE_SCHEDULE := $(shell python3 tools/gen_irules_state_parts.py --schedule $(IRULES_JOBS) \
+  || printf '\n%s\n' __IRULES_STATE_SCHEDULE_FAILED__)
+ifneq ($(filter __IRULES_STATE_SCHEDULE_FAILED__,$(IRULES_STATE_SCHEDULE)),)
+$(error Cannot generate IRules state schedule; check IRULES_JOBS and the generator error above)
+endif
+$(foreach pair,$(IRULES_STATE_SCHEDULE),$(eval $(subst =,: | ,$(pair))))

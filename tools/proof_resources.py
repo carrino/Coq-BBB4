@@ -63,7 +63,16 @@ def available_memory():
     for group in cgroup_paths():
         maximum, current = read(group / 'memory.max'), read(group / 'memory.current')
         if maximum.isdecimal() and current.isdecimal():
-            headroom = max(0, int(maximum) - int(current))
+            # Clean file cache from earlier proof builds can be reclaimed.
+            # Counting it as pinned memory needlessly removes walk workers.
+            stat = dict(re.findall(r'^(\w+)\s+(\d+)$',
+                                   read(group / 'memory.stat'), re.M))
+            reclaimable = max(0, int(stat.get('inactive_file', 0)) +
+                              int(stat.get('active_file', 0)) -
+                              int(stat.get('file_dirty', 0)) -
+                              int(stat.get('file_writeback', 0)))
+            headroom = max(0, min(int(maximum),
+                                 int(maximum) - int(current) + reclaimable))
             available = min(available, headroom) if available is not None else headroom
     return available
 
@@ -72,11 +81,22 @@ def cores():
     if platform.system() == 'Darwin':
         count = command('sysctl', '-n', 'hw.physicalcpu').strip()
         return max(1, int(count)) if count.isdecimal() else 1
-    physical = {line for line in command('lscpu', '-p=Core,Socket').splitlines()
-                if line and not line.startswith('#')}
-    count = len(physical) or os.cpu_count() or 1
-    if hasattr(os, 'sched_getaffinity'):
-        count = min(count, len(os.sched_getaffinity(0)))
+    try:
+        affinity = os.sched_getaffinity(0)
+    except (AttributeError, OSError):
+        affinity = None
+    physical = set()
+    for line in command('lscpu', '-p=CPU,Core,Socket').splitlines():
+        fields = line.strip().split(',')
+        if len(fields) != 3 or not all(field.isdecimal() for field in fields):
+            continue
+        cpu, core, socket = map(int, fields)
+        if affinity is None or cpu in affinity:
+            physical.add((core, socket))
+    # Filter logical CPUs before deduplicating their physical cores: an
+    # affinity mask can contain several threads of the same core.
+    fallback = len(affinity) if affinity is not None else os.cpu_count()
+    count = len(physical) or fallback or 1
     for group in cgroup_paths():
         quota = read(group / 'cpu.max').split()
         if len(quota) == 2 and all(s.isdecimal() for s in quota) and int(quota[1]):

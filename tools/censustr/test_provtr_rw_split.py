@@ -37,6 +37,23 @@ class StageSplitTests(unittest.TestCase):
                 self.assertEqual(text.count('native_cast_no_check'),
                                  len(list(gen.ROW_RE.finditer(text))))
 
+    def test_binary_fresh_and_legacy_parser(self):
+        rendered = gen.render_parts(self.rows)
+        for name, text in rendered.items():
+            if not name.startswith('RWParts/'):
+                continue
+            self.assertIn('Require Import RepWLBinaryTr.', text)
+            binary = list(gen.ROW_RE.finditer(text))
+            legacy = list(gen.ROW_RE.finditer(text.replace(gen.FRESH_SOUND, 'rw_tier_tr_sound')))
+            self.assertEqual([m.groups() for m in binary], [m.groups() for m in legacy])
+
+    def test_stored_only_parts_do_not_import_binary_search(self):
+        certificates = gen.read_stored_certificates(self.rows)
+        for name, text in gen.render_parts(self.rows, certificates=certificates).items():
+            if name.startswith('RWParts/') and gen.FRESH_SOUND not in text:
+                self.assertNotIn('Require Import RepWLBinaryTr.', text)
+                self.assertIn('rw_check_stored_tr_sound', text)
+
     def test_heavy_checks_are_independent(self):
         for n in sorted(set(r['stage'] for r in self.rows)):
             rows = [r for r in self.rows if r['stage'] == n]
@@ -69,9 +86,9 @@ class StageSplitTests(unittest.TestCase):
             # Filesystem iteration can pick a stored-certificate-only part,
             # which has no search application to corrupt.
             part = next(p for p in sorted((Path(tmp)/'RWParts').glob('*.v'))
-                        if 'rw_tier_tr_sound _ ' in p.read_text())
-            part.write_text(part.read_text().replace('rw_tier_tr_sound _ ',
-                                                    'rw_tier_tr_sound _ 999 ', 1))
+                        if gen.FRESH_SOUND + ' _ ' in p.read_text())
+            part.write_text(part.read_text().replace(gen.FRESH_SOUND + ' _ ',
+                                                    gen.FRESH_SOUND + ' _ 999 ', 1))
             with self.assertRaises(ValueError):
                 gen.split_stages(manifest, tmp, 10, 100000, 9, True, None)
 
@@ -88,7 +105,7 @@ class StageSplitTests(unittest.TestCase):
             part = files['RWParts/ProvTr_RW_00_P000.v']
             self.assertIn(gen.tm_lambda('tm_rw00_0000', row['spec']), part)
             self.assertIn('rw_check_stored_tr_sound _ 1 2 0 8 ', part)
-            self.assertIn('vm_cast_no_check (eq_refl true)', part)
+            self.assertIn('native_cast_no_check (eq_refl true)', part)
             self.assertIn('RWCerts/DataTr_RW_00_0000.v', files)
             data['t'] = 1
             path.write_text(json.dumps(data))

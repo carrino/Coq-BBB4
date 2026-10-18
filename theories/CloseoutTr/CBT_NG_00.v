@@ -6,158 +6,158 @@ From Coq Require Import Arith List ZArith.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.Census Require Import Deferred_Defs.
 From BBB4.CloseoutTr Require Import CloseoutKitTr.
-From BBB4.CensusTr Require Import DecideTr.
+From BBB4.CensusTr Require Import NGramRankCloseoutTr.
 Import ListNotations.
 
 (* spec 0RB0LA_1LC0RD_1LA1RD_0LB1RC *)
 Definition r_NG_00_0000 : list (option Trans) := [t0RB;t0LA;t1LC;t0RD;t1LA;t1RD;t0LB;t1RC].
 Lemma cv_NG_00_0000 : coversTr (row_to_tm r_NG_00_0000).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 0RB0LA_1RC1LA_0RD0RD_1LD1LB *)
 Definition r_NG_00_0001 : list (option Trans) := [t0RB;t0LA;t1RC;t1LA;t0RD;t0RD;t1LD;t1LB].
 Lemma cv_NG_00_0001 : coversTr (row_to_tm r_NG_00_0001).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 0RB0LA_1RC1LD_0RD0RD_1LA0LB *)
 Definition r_NG_00_0002 : list (option Trans) := [t0RB;t0LA;t1RC;t1LD;t0RD;t0RD;t1LA;t0LB].
 Lemma cv_NG_00_0002 : coversTr (row_to_tm r_NG_00_0002).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 0RB0LB_1LC0RD_1LA1LC_1LB1RB *)
 Definition r_NG_00_0003 : list (option Trans) := [t0RB;t0LB;t1LC;t0RD;t1LA;t1LC;t1LB;t1RB].
 Lemma cv_NG_00_0003 : coversTr (row_to_tm r_NG_00_0003).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 7 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 7 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 0RB1LB_0RC1LD_1LA1RC_0RA0LB *)
 Definition r_NG_00_0004 : list (option Trans) := [t0RB;t1LB;t0RC;t1LD;t1LA;t1RC;t0RA;t0LB].
 Lemma cv_NG_00_0004 : coversTr (row_to_tm r_NG_00_0004).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 0RB1LC_1LA1RB_0RC0LD_0RB1LA *)
 Definition r_NG_00_0005 : list (option Trans) := [t0RB;t1LC;t1LA;t1RB;t0RC;t0LD;t0RB;t1LA].
 Lemma cv_NG_00_0005 : coversTr (row_to_tm r_NG_00_0005).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 0RB1LC_1LC0RD_1LA1RB_1RC0LC *)
 Definition r_NG_00_0006 : list (option Trans) := [t0RB;t1LC;t1LC;t0RD;t1LA;t1RB;t1RC;t0LC].
 Lemma cv_NG_00_0006 : coversTr (row_to_tm r_NG_00_0006).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 0RB1LD_1LA1RC_1RD0LB_1LC0RC *)
 Definition r_NG_00_0007 : list (option Trans) := [t0RB;t1LD;t1LA;t1RC;t1RD;t0LB;t1LC;t0RC].
 Lemma cv_NG_00_0007 : coversTr (row_to_tm r_NG_00_0007).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 0RB1LD_1LC1RB_0RB1LA_0RD0LA *)
 Definition r_NG_00_0008 : list (option Trans) := [t0RB;t1LD;t1LC;t1RB;t0RB;t1LA;t0RD;t0LA].
 Lemma cv_NG_00_0008 : coversTr (row_to_tm r_NG_00_0008).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 0RB1LD_1RC1RB_1LC1LA_0RB0LD *)
 Definition r_NG_00_0009 : list (option Trans) := [t0RB;t1LD;t1RC;t1RB;t1LC;t1LA;t0RB;t0LD].
 Lemma cv_NG_00_0009 : coversTr (row_to_tm r_NG_00_0009).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 0RB1RC_1LC0LA_0LD0RA_1RC1LD *)
 Definition r_NG_00_0010 : list (option Trans) := [t0RB;t1RC;t1LC;t0LA;t0LD;t0RA;t1RC;t1LD].
 Lemma cv_NG_00_0010 : coversTr (row_to_tm r_NG_00_0010).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LA_0LA---_------_------ *)
 Definition r_NG_00_0011 : list (option Trans) := [t1RB;t0LA;t0LA;tN;tN;tN;tN;tN].
 Lemma cv_NG_00_0011 : coversTr (row_to_tm r_NG_00_0011).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LA_0RC1LC_1LD0LA_1LD1LB *)
 Definition r_NG_00_0012 : list (option Trans) := [t1RB;t0LA;t0RC;t1LC;t1LD;t0LA;t1LD;t1LB].
 Lemma cv_NG_00_0012 : coversTr (row_to_tm r_NG_00_0012).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LA_1LC0RC_1RD1LA_1RB1RB *)
 Definition r_NG_00_0013 : list (option Trans) := [t1RB;t0LA;t1LC;t0RC;t1RD;t1LA;t1RB;t1RB].
 Lemma cv_NG_00_0013 : coversTr (row_to_tm r_NG_00_0013).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LC_0LC1RD_1LA1RC_0RB0RD *)
 Definition r_NG_00_0014 : list (option Trans) := [t1RB;t0LC;t0LC;t1RD;t1LA;t1RC;t0RB;t0RD].
 Lemma cv_NG_00_0014 : coversTr (row_to_tm r_NG_00_0014).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LC_1LA1RA_1RA0LD_0RC1LD *)
 Definition r_NG_00_0015 : list (option Trans) := [t1RB;t0LC;t1LA;t1RA;t1RA;t0LD;t0RC;t1LD].
 Lemma cv_NG_00_0015 : coversTr (row_to_tm r_NG_00_0015).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LC_1LC1RB_0LD1LD_0RD1LA *)
 Definition r_NG_00_0016 : list (option Trans) := [t1RB;t0LC;t1LC;t1RB;t0LD;t1LD;t0RD;t1LA].
 Lemma cv_NG_00_0016 : coversTr (row_to_tm r_NG_00_0016).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LD_1RC0RA_0LA0RC_1LB1LD *)
 Definition r_NG_00_0017 : list (option Trans) := [t1RB;t0LD;t1RC;t0RA;t0LA;t0RC;t1LB;t1LD].
 Lemma cv_NG_00_0017 : coversTr (row_to_tm r_NG_00_0017).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0LD_1RC0RB_1RD1LB_1LA0LD *)
 Definition r_NG_00_0018 : list (option Trans) := [t1RB;t0LD;t1RC;t0RB;t1RD;t1LB;t1LA;t0LD].
 Lemma cv_NG_00_0018 : coversTr (row_to_tm r_NG_00_0018).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0RA_0LC1RA_0LD1LC_1RA1LC *)
 Definition r_NG_00_0019 : list (option Trans) := [t1RB;t0RA;t0LC;t1RA;t0LD;t1LC;t1RA;t1LC].
 Lemma cv_NG_00_0019 : coversTr (row_to_tm r_NG_00_0019).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0RD_0RC1LD_1LD1RC_0LA0LB *)
 Definition r_NG_00_0020 : list (option Trans) := [t1RB;t0RD;t0RC;t1LD;t1LD;t1RC;t0LA;t0LB].
 Lemma cv_NG_00_0020 : coversTr (row_to_tm r_NG_00_0020).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB0RD_1LC1RB_1LD0LC_1RA1RA *)
 Definition r_NG_00_0021 : list (option Trans) := [t1RB;t0RD;t1LC;t1RB;t1LD;t0LC;t1RA;t1RA].
 Lemma cv_NG_00_0021 : coversTr (row_to_tm r_NG_00_0021).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LA_0LA1RC_0LA1RD_0LD0RC *)
 Definition r_NG_00_0022 : list (option Trans) := [t1RB;t1LA;t0LA;t1RC;t0LA;t1RD;t0LD;t0RC].
 Lemma cv_NG_00_0022 : coversTr (row_to_tm r_NG_00_0022).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LC_1LC0RD_1RD0LC_1LA0RA *)
 Definition r_NG_00_0023 : list (option Trans) := [t1RB;t1LC;t1LC;t0RD;t1RD;t0LC;t1LA;t0RA].
 Lemma cv_NG_00_0023 : coversTr (row_to_tm r_NG_00_0023).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 5 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LC_1RC1LB_1LA1RD_0LC0RD *)
 Definition r_NG_00_0024 : list (option Trans) := [t1RB;t1LC;t1RC;t1LB;t1LA;t1RD;t0LC;t0RD].
 Lemma cv_NG_00_0024 : coversTr (row_to_tm r_NG_00_0024).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1LD_1LC1RB_---1LA_1LA0LA *)
 Definition r_NG_00_0025 : list (option Trans) := [t1RB;t1LD;t1LC;t1RB;tN;t1LA;t1LA;t0LA].
 Lemma cv_NG_00_0025 : coversTr (row_to_tm r_NG_00_0025).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1RA_0LC0RA_1LA0LD_0RB1LC *)
 Definition r_NG_00_0026 : list (option Trans) := [t1RB;t1RA;t0LC;t0RA;t1LA;t0LD;t0RB;t1LC].
 Lemma cv_NG_00_0026 : coversTr (row_to_tm r_NG_00_0026).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1RA_1LB1LC_0RD1LD_0RA0LD *)
 Definition r_NG_00_0027 : list (option Trans) := [t1RB;t1RA;t1LB;t1LC;t0RD;t1LD;t0RA;t0LD].
 Lemma cv_NG_00_0027 : coversTr (row_to_tm r_NG_00_0027).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1RA_1LC0RD_1LA0LB_0LA0RC *)
 Definition r_NG_00_0028 : list (option Trans) := [t1RB;t1RA;t1LC;t0RD;t1LA;t0LB;t0LA;t0RC].
 Lemma cv_NG_00_0028 : coversTr (row_to_tm r_NG_00_0028).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 6 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 (* spec 1RB1RA_1RC1RA_1LC1LD_0RA0LD *)
 Definition r_NG_00_0029 : list (option Trans) := [t1RB;t1RA;t1RC;t1RA;t1LC;t1LD;t0RA;t0LD].
 Lemma cv_NG_00_0029 : coversTr (row_to_tm r_NG_00_0029).
-Proof. apply coversTr_nqh, (rank_tier_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
+Proof. apply coversTr_nqh, (rank_tier_ng_closeout_tr_sound _ 4 0 200000 512). native_cast_no_check (eq_refl true). Qed.
 
 Definition cbtrows_NG_00 : list (list (option Trans)) :=
   [r_NG_00_0000;

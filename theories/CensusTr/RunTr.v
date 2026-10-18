@@ -19,6 +19,7 @@ From BBB4.Census Require Import TNF_QH Decide.
 From BBB4.CensusTr Require Import TNF_QHTr DecideTr DeferredTr_Data
   ProvTr_Data ProvQHTr_Data.
 From BBB4.CensusTr Require Export RunTr_Compute.
+From BBB4.CensusTr Require Import BoundCheckTr RunTr_Hinted.
 (* Keep every original proven-tier certificate in the soundness chain.
    Native walk units import RunTr_WalkCompute instead; only the final
    assembly needs these proofs. *)
@@ -293,12 +294,28 @@ Lemma provqh_tr_data_all :
          provqh_tr_data.
 Proof. exact provqh_tr_all. Qed.
 
-Lemma decider_tr_WF : QHDeciderTr_WF B_tr D_tr decider_tr.
+Lemma search_bound_tr_le : B_search_tr <= B_tr.
 Proof.
-  exact (decide_easy_tr_WF B_tr D_tr 130 512 200000 512
+  apply Nat.leb_le. apply bound_tr_leb. vm_compute. reflexivity.
+Qed.
+
+Lemma decider_tr_fallback_WF :
+  QHDeciderTr_WF B_tr D_tr decider_tr_fallback.
+Proof.
+  exact (decide_easy_tr_WF_larger B_search_tr D_tr 130 512 200000 512
            ng_rungs_tr rank_rungs_tr qhb_rungs_tr qhb_lex_rungs_tr
            rw_qhb_rungs_tr rw_rungs_tr rw_fuel_tr rw_cut_tr
-           prov_tr_data prov_tr_data_all provqh_tr_data provqh_tr_data_all).
+           prov_tr_data prov_tr_data_all provqh_tr_data B_tr
+           search_bound_tr_le provqh_tr_data_all).
+Qed.
+
+(** The map needs no correctness premise: each successful hint reruns an
+    existing checker, and every miss/failure uses the complete fallback. *)
+Lemma decider_tr_WF : QHDeciderTr_WF B_tr D_tr decider_tr.
+Proof.
+  unfold decider_tr. apply with_tr_hints_WF_larger.
+  - exact search_bound_tr_le.
+  - exact decider_tr_fallback_WF.
 Qed.
 
 (** ** The ESCALATED (offline) configuration
@@ -368,11 +385,12 @@ Lemma decider_tr_fast_WF : QHDeciderTr_WF B_tr D_tr decider_tr_fast.
 Proof.
   intro tm. unfold decider_tr_fast.
   destruct (find_halt tm 130 0 c0) as [[[n s] i]|] eqn:Eh; [|exact I].
-  destruct (S n <=? B_tr) eqn:EB; [|exact I].
+  destruct (S n <=? B_search_tr) eqn:EB; [|exact I].
   apply Nat.leb_le in EB.
   destruct (find_halt_sound tm 130 0 c0 n s i (eq_refl) Eh)
     as (tp & Hst & Hhd & Hnone).
-  exists n, tp. auto.
+  exists n, tp. repeat split; try assumption.
+  eapply Nat.le_trans; [exact EB|exact search_bound_tr_le].
 Qed.
 
 (** ** Well-formedness of the symmetrized root *)

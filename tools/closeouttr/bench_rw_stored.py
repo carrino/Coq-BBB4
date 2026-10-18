@@ -74,7 +74,7 @@ def main():
         results = []
         for path in files:
             for compiler, suffix in [('coqc', '.v'), ('coqnative', '.vo')]:
-                extra = ['-native-compiler', 'no'] if compiler == 'coqc' else []
+                extra = ['-native-compiler', 'ondemand'] if compiler == 'coqc' else []
                 results.append(measure(f'{phase}_{path.stem}_{compiler}',
                                        [compiler, *extra, *flags, str(path.with_suffix(suffix))]))
         return dict(batch=batch, files=results)

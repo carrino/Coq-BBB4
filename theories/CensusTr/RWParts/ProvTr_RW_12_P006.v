@@ -5,6 +5,7 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 From BBB4.CensusTr Require Import RepWLTr.
 Import ListNotations.
 
+From BBB4.CensusTr Require Import RepWLBinaryTr.
 (* 1RB0LC_1LA1RD_1LA1LC_1RA0RB  L=12 T=2 t=0 fuel=22176 M=48 *)
 Definition tm_rw12_0014 : TM := fun q s =>
   match q, s with
@@ -18,7 +19,7 @@ Definition tm_rw12_0014 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma nqhtr_rw12_0014 : NeverQuasiHaltsTr tm_rw12_0014.
-Proof. apply (rw_tier_tr_sound _ 12 2 0 22176 48). native_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_binary_tier_tr_sound _ 12 2 0 22176 48). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_12_p006 : list TM :=
   [tm_rw12_0014].

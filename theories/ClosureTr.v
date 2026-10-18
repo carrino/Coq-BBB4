@@ -659,6 +659,31 @@ Section ClosureTrEngine.
     | None => false
     end.
 
+  (** Use a closure already produced by [close_tr]. This helper is connected
+      to the original checker only under that equality, not for an arbitrary
+      supplied list. *)
+  Definition closure_check_neverqhtr_lex_closed (t : nat) (Sl : list A)
+      (cert : Instr -> list (lexcomp A)) : bool :=
+    match csteps tm t c0 with
+    | Some _ =>
+        allb_tr (fun tg =>
+          if (if cfires tm c0 t tg then true
+              else existsb (fun a => instr_eqb (a_instr a) tg) Sl)
+          then lex_ok_tr Sl tg (cert tg)
+          else true) all_Instr
+    | None => false
+    end.
+
+  Lemma closure_check_neverqhtr_lex_closed_spec : forall t fuel a0 Sl cert,
+    close_tr fuel [] PositiveSet.empty [a0] = Some Sl ->
+    closure_check_neverqhtr_lex_closed t Sl cert =
+    closure_check_neverqhtr_lex t fuel a0 cert.
+  Proof.
+    intros t fuel a0 Sl cert Ecl.
+    unfold closure_check_neverqhtr_lex_closed, closure_check_neverqhtr_lex.
+    now rewrite Ecl.
+  Qed.
+
   Theorem closure_check_neverqhtr_lex_sound : forall t fuel a0 cert,
     (forall ct, csteps tm t c0 = Some ct -> covers a0 (lift ct)) ->
     (forall tg, Forall (comp_exact tm A succs covers) (cert tg)) ->

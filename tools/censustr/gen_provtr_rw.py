@@ -199,13 +199,17 @@ def stage(rows, probedir, outdir, chunk, start):
                      % (len(keep), n - start, len(groups)))
 
 
+# Fresh split boards use the verified binary-payload tier. Historical stage
+# input and supplied-certificate routes retain their existing formats.
+FRESH_SOUND = 'rw_binary_tier_tr_sound'
+
 FIELDS = ['stage', 'index', 'spec', 'L', 'T', 't', 'fuel', 'M']
 CERTIFICATE_DIR = Path(__file__).resolve().parent / 'rw_certificates'
 ROW_RE = re.compile(
     r'^\(\* (\S+)  L=(\d+) T=(\d+) t=(\d+) fuel=(\d+) M=(\d+) \*\)\n'
     r'(Definition tm_rw(\d+)_(\d+) : TM :=.*?\n  end\.)\n'
     r'Lemma nqhtr_rw\8_\9 : NeverQuasiHaltsTr tm_rw\8_\9\.\n'
-    r'Proof\. apply \(rw_tier_tr_sound _ (\d+) (\d+) (\d+) (\d+) (\d+)\)\. '
+    r'Proof\. apply \(rw_(?:binary_)?tier_tr_sound _ (\d+) (\d+) (\d+) (\d+) (\d+)\)\. '
     r'(?:vm|native)_cast_no_check \(eq_refl true\)\. Qed\.', re.M | re.S)
 
 
@@ -338,6 +342,8 @@ From BBB4.CensusTr Require Import RepWLTr.
 Import ListNotations.
 ''']
             names = []
+            if any((r['stage'], r['index']) not in certificates for r in part):
+                body.append('From BBB4.CensusTr Require Import RepWLBinaryTr.')
             if any((r['stage'], r['index']) in certificates for r in part):
                 body.append('From BBB4.Checkers Require Import RepWLStoredTr.')
             for r in part:
@@ -346,11 +352,10 @@ Import ListNotations.
                 params = ' '.join(str(r[k]) for k in FIELDS[3:])
                 key = (r['stage'], r['index'])
                 # The search is expensive; use the same native evaluator as
-                # the census walk. RepWLTr's native dependencies are prebuilt
-                # by census-tr-walk. Stored certificates retain their VM check.
+                # the census walk. Binary-tier and supplied-certificate native
+                # dependencies are prepared before proof-only boards.
                 cast = 'native_cast_no_check'
                 if key in certificates:
-                    cast = 'vm_cast_no_check'
                     cm = f'DataTr_RW_{nn:02d}_{r["index"]:04d}'
                     files[f'RWCerts/{cm}.v'] = rw_stored.render(certificates[key])
                     body.append(f'From BBB4.CensusTr.RWCerts Require {cm}.')
@@ -358,7 +363,7 @@ Import ListNotations.
                     proof = (f'rw_check_stored_tr_sound _ {args} '
                              f'{cm}.keys {cm}.ranks {cm}.cert')
                 else:
-                    proof = f'rw_tier_tr_sound _ {params}'
+                    proof = f'{FRESH_SOUND} _ {params}'
                 body.extend([
                     '(* ' + r['spec'] + '  ' + ' '.join(f'{k}={r[k]}' for k in FIELDS[3:]) + ' *)',
                     tm_lambda('tm_' + name, r['spec']),

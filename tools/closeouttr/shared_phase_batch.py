@@ -167,6 +167,8 @@ def emit(record):
     target = '(St' + 'ABCD'[record['target'][0]] + ', S' + str(record['target'][1]) + ')'
     preamble += [f'Definition {name}_partial : Instr -> list fmxcomp * list positive :=\n{partial}.',
                  f'Definition {name}_skip (q : Instr) : bool := instr_eqb q {target}.']
+    # Cast the boolean equality directly; vm_compute/reflexivity makes the
+    # kernel repeat the expensive conversion when checking the proof term.
     proof = 'apply coversTr_nqh. '
 
     if record['mirrored']:
@@ -175,8 +177,8 @@ def emit(record):
               f'{record["partial_fuel"]} {record["partial_rounds"]} {name}_skip {name}_partial).\n'
               f'  - intros [[] []] H; try discriminate.\n'
               f'    apply (ngram_check_recurrent_phase2tr_sound _ {record["n"]} {record["fuel"]} '
-              + ' '.join(names) + f' {target} ({name} {target})). vm_compute. reflexivity.\n'
-              '  - vm_compute. reflexivity.')
+              + ' '.join(names) + f' {target} ({name} {target})). vm_cast_no_check (eq_refl true).\n'
+              '  - vm_cast_no_check (eq_refl true).')
     return cbt.write_batch('AST', nn,
         ['From Coq Require Import Hexadecimal.',
          'From BBB4.Checkers Require Import NGram FuelMixTr FuelMixPartialTr FuelPhaseTargetTr HexFuelData.',

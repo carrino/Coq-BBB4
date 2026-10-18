@@ -736,8 +736,8 @@ Qed.
 Lemma seed_ok_side_self : forall n l,
   seed_ok_side n l (gadds (ng_seed_side n l) gempty) = true.
 Proof.
-  intros n l. unfold seed_ok_side. apply forallb_forall. intros d Hd.
-  apply gmem_gadds_intro. left. unfold ng_seed_side.
+  intros n l. rewrite seed_ok_side_spec. apply forallb_forall. intros d Hd.
+  apply gmem_gadds_intro. left. rewrite ng_seed_side_spec.
   apply in_map_iff. exists d. split; [reflexivity | exact Hd].
 Qed.
 

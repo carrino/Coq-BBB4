@@ -8,10 +8,16 @@ From Coq Require Import Arith Bool List.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape.
 From BBB4.Census Require Import TNF_QH Decide.
 From BBB4.CensusTr Require Import TNF_QHTr DecideTr DeferredTr_Data
-  ProvTr_Data ProvQHTr_Data.
+  ProvTr_Data ProvQHTr_Data RunTr_Hinted.
 Import ListNotations.
 
 Definition B_tr : nat := 32779478.
+
+(** Bound-producing rung prefixes are at most 1024; the loop scan uses 512.
+    The dynamic checks therefore use the stronger bound 2000. RunTr proves its
+    well-formedness at B_tr, while lookup proofs keep their original bound.
+    This keeps the 32-million-constructor unary B_tr out of native walks. *)
+Definition B_search_tr : nat := 2000.
 Definition D_tr : list TM := D_censusTr.
 
 (** the same rung ladders as the state census (Run_Compute.v), and the
@@ -52,11 +58,18 @@ Definition rw_rungs_tr : list (nat * nat * nat) :=
 Definition rw_fuel_tr : nat := 5120.
 Definition rw_cut_tr : nat := 32.
 
-Definition decider_tr : QHDecider :=
-  decide_easy_tr B_tr 130 512 200000 512 ng_rungs_tr rank_rungs_tr
+Definition decider_tr_fallback : QHDecider :=
+  decide_easy_tr B_search_tr 130 512 200000 512 ng_rungs_tr rank_rungs_tr
     qhb_rungs_tr qhb_lex_rungs_tr rw_qhb_rungs_tr
     rw_rungs_tr rw_fuel_tr rw_cut_tr
     (dmap_of prov_tr_data) (dmap_of provqh_tr_data) (dmap_of D_tr).
+
+(** Advisory hints are checked on the actual machine before the complete
+    unchanged fallback. No whole-decider equality is assumed. *)
+Definition decider_tr : QHDecider :=
+  with_tr_hints B_search_tr 200000 512 ng_rungs_tr rank_rungs_tr
+    qhb_rungs_tr qhb_lex_rungs_tr rw_qhb_rungs_tr rw_rungs_tr
+    rw_fuel_tr rw_cut_tr decider_tr_fallback.
 
 (** ** The root and its symmetrized first level (Run_Compute.v shapes) *)
 
@@ -99,7 +112,7 @@ Definition q_suc_tr (q : SearchQueue) : SearchQueue :=
 
 Definition decider_tr_fast : QHDecider := fun tm =>
   match find_halt tm 130 0 c0 with
-  | Some (n, s, i) => if S n <=? B_tr then R_Halt s i else R_Unknown
+  | Some (n, s, i) => if S n <=? B_search_tr then R_Halt s i else R_Unknown
   | None => R_Unknown
   end.
 

@@ -24,7 +24,7 @@ Definition tm_rq39_0000 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_rq39_0000 : NonHalt tm_rq39_0000 /\ QHBoundTr 32779478 tm_rq39_0000 /\ QuasiHaltsTr tm_rq39_0000.
-Proof. apply (rwqh_stage tm_rq39_0000 [((StA, S0), 0)] 3 2 64 2352 20 32779478); [vm_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
+Proof. apply (rwqh_stage tm_rq39_0000 [((StA, S0), 0)] 3 2 64 2352 20 32779478); [native_cast_no_check (eq_refl true) | apply bound_tr_leb; vm_cast_no_check (eq_refl true)]. Qed.
 
 Definition pqh_39 : list TM :=
   [tm_rq39_0000].

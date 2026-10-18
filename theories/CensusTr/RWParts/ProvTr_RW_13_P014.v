@@ -20,7 +20,7 @@ Definition tm_rw13_0056 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma nqhtr_rw13_0056 : NeverQuasiHaltsTr tm_rw13_0056.
-Proof. apply (rw_check_stored_tr_sound _ 10 2 0 43 DataTr_RW_13_0056.keys DataTr_RW_13_0056.ranks DataTr_RW_13_0056.cert). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_check_stored_tr_sound _ 10 2 0 43 DataTr_RW_13_0056.keys DataTr_RW_13_0056.ranks DataTr_RW_13_0056.cert). native_cast_no_check (eq_refl true). Qed.
 
 Definition ptw_13_p014 : list TM :=
   [tm_rw13_0056].
