@@ -180,6 +180,8 @@ computation throughout, avoiding native compilation of the large certificate DAG
 The binary run-length replay uses 2,934 accelerated operations with proved exact
 costs; it never expands the enormous tape or simulates every transition. See
 [`four/README.md`](../four/README.md) for the three rules and proof boundary.
+The [four-symbol burndown](../four/BURNDOWN.md) explains the remaining families
+and how to reproduce their machine-level inventory and proof-status ledger.
 
 ## Tier A — everything except the census walk
 

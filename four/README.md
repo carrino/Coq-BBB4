@@ -106,6 +106,10 @@ horizon is eight.
 
 ## Residual-family profiling
 
+[`BURNDOWN.md`](BURNDOWN.md) tracks the 611,360-family search queue, the sampled
+holdouts, and the separate certified remainder. It links a compact machine ledger
+and commands to generate the full inventory locally.
+
 [`research/triage-256.json`](research/triage-256.json) records a deeper,
 untrusted survey at 256 steps and a deterministic sample of 512 surviving
 partial-table families from each initial-write class. The upstream affine-rule

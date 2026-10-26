@@ -1,0 +1,14 @@
+{
+  "proof_source": "theories/AffineExamples.v",
+  "proof_source_sha256": "e4debee169261bad0838ab2ff6b3c92377630dca0eb0204a264cdad30bb305cc",
+  "checked_commit": "97e9193964c0e3a9c86758da190c137f10a8afe8",
+  "validation": "Coq 8.18 build and recursive coqchk; only functional extensionality",
+  "state_bound": 4096,
+  "instruction_bound": 4096,
+  "machines": [
+    "0LB0LA---2RB_3RA1LB1RB1LB",
+    "0LB1LB2RA0RB_3RA3RB1LA2LB",
+    "0LB2RA3RB2LA_1RA2RA3LB2RB",
+    "0LB3RB0LA1RB_3RA3LB0LA2LB"
+  ]
+}

@@ -1,0 +1,1025 @@
+status	reason	machine	root	free_cells	family_weight	root_multiplier	state_bound	instruction_bound	proof	census_linked
+candidate_unchecked		0LB---0RA1RB_1RA3LB0LA2RB	blank	1	17	2				no
+candidate_unchecked		0LB---0RB1RA_3RA2LB---3LB	blank	2	289	2				no
+candidate_unchecked		0LB---1RB2RB_1RA2RA3LB2LA	blank	1	17	2				no
+candidate_unchecked		0LB---2RB0LA_2RA---3LB---	blank	3	4913	2				no
+candidate_unchecked		0LB---3LB1RB_2RA3LA3LB0RA	blank	1	17	2				no
+candidate_unchecked		0LB---3LB3RA_1RA2RA2LB1RB	blank	1	17	2				no
+candidate_unchecked		0LB---3RA2RB_3RA0LA1LA3LB	blank	1	17	2				no
+candidate_unchecked		0LB0LA1RB0LA_2RA3LA2LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB0LA1RB2LB_3RA2RB2LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB0LA1RB2RB_3RA0LA3LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB0LA1RB3LA_2RA3RA3LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB0LA1RB3RA_2RA1LB3RA2LB	blank	0	1	2				no
+candidate_unchecked		0LB0LA2RA1RA_2RA3RB3LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB0LA2RB0RB_3RA0RB1LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB0LA3RA1RA_2RA3RB2LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB0LA3RA1RB_1RA2LB2LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB0LA3RB1RA_2RA2LA3LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB0LA3RB3LA_2RA2LA3LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB0LB---2RB_1RA3LB3LA0RB	blank	1	17	2				no
+candidate_unchecked		0LB0LB0LA1RB_3RA3LA3LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB0LB1RA2RB_3RA3RB2LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB0LB1RB2RA_2RA3LA2LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB0LB1RB3RB_3RA2LA1RA2LB	blank	0	1	2				no
+candidate_unchecked		0LB0LB2RA2LA_3RA1LA1RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB0LB2RA3RA_2RA1LA3LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB0LB2RB2RB_3RA2LB3LA1RA	blank	0	1	2				no
+candidate_unchecked		0LB0LB3RA2LA_2RA0LA3LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB0LB3RB3RB_1RA2LB0RA3LA	blank	0	1	2				no
+candidate_unchecked		0LB0LB3RB3RB_1RA3LB0RB2LA	blank	0	1	2				no
+candidate_unchecked		0LB0RA1LB2RA_3RA2LA1RB3LB	blank	0	1	2				no
+candidate_unchecked		0LB0RA1RA1RB_2RA3LB2LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB0RA1RB2LB_3RA2LA1LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB0RA1RB2RA_3RA1LA1RA2LB	blank	0	1	2				no
+candidate_unchecked		0LB0RA1RB2RB_3RA0RA2LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB0RA1RB2RB_3RA1LA---2LB	blank	1	17	2				no
+candidate_unchecked		0LB0RA2RB2LA_1RA2RA3LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB0RA3LA2RB_1RA3RA3RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB0RA3RA2RB_3RA2RA1LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB0RA3RB1LA_3RA2LA1RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB0RA3RB1RB_1RA3LB0LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB0RA3RB2LA_1RA2LB0LA3LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB---2RA_1RA3LB1LB1RB	blank	1	17	2				no
+candidate_unchecked		0LB0RB0RB1LA_2RA3RB3LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB0RB1RB_2RA2LA3LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB1LA2LA_1RA3LB2RB0LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB1LA2RB_2RA1LA3LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB0RB1LB2RA_3RA2LB1RA3LB	blank	0	1	2				no
+candidate_unchecked		0LB0RB1LB3LA_2RA3RA3LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB0RB1RA2LB_3RA1LA2LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB0RB1RA3LA_2RA2RB3LB2LB	blank	0	1	2				no
+candidate_unchecked		0LB0RB1RB2LA_1RA3LB2RB3LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB1RB2RA_1RA3LB3RB1LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB1RB2RB_1RA3LB1LA2RA	blank	0	1	2				no
+candidate_unchecked		0LB0RB1RB2RB_1RA3LB2LA2RB	blank	0	1	2				no
+candidate_unchecked		0LB0RB1RB3RB_1RA3LB1LA2RB	blank	0	1	2				no
+candidate_unchecked		0LB0RB1RB3RB_2RA3RB2LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB2RA3LB_1RA2LB3LA1RB	blank	0	1	2				no
+candidate_unchecked		0LB0RB3LA0LA_1RA2LB1RB2RA	blank	0	1	2				no
+candidate_unchecked		0LB0RB3RA1RA_1RA2LB3RB2LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB3RA2LA_1RA2LB3RB2LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB3RA2LB_1RA2RA3LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB0RB3RB1LA_2RA0RA3LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB0RB3RB1RB_2RA3LA2LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB3RB2LA_1RA2LB1RA3LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB3RB2RB_2RA0LB3LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB0RB3RB3LA_1RA2LB0LA1LA	blank	0	1	2				no
+candidate_unchecked		0LB1LA0LB0RB_3RA2RB2LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB1LA0RB1RB_2RA2LA3LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB1LA1LB1RB_3RA3RB1LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB1LA1RB0RA_2RA3RB2LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB1LA1RB2RA_3RA3LB1LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB1LA2RB2RB_2RA1RB3LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB1LA2RB3RB_2RA2LB3RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB1LA3LB0RB_2RA3RA3RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB1LA3LB1RB_2RA2RA1LB---	blank	1	17	2				no
+candidate_unchecked		0LB1LA3RA3RB_2RA3RB3RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB1LA3RB1LA_2RA2RB1LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB1LA3RB2RA_2RA0RA2LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB1LA3RB2RA_3RA2RA3RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB1LA3RB2RB_2RA3RA1LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB1LA3RB3LA_2RA3RB3LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB1LA3RB3RB_2RA3LB1LB0RA	blank	0	1	2				no
+candidate_unchecked		0LB1LB1RA1LB_2RA3RB2LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB1LB1RA2RB_2RA3RB2LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB1LB1RB1RA_3RA2RB3LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB1LB3RB0RA_2RA3RA2LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB1RA0RA0RA_3RA2RB2LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA0RB---_3RA2LB1RA1LB	blank	1	17	2				no
+candidate_unchecked		0LB1RA0RB2LA_2RA3RB1LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA0RB3LB_3RA2LB3LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA0RB3RA_2RA3LB1LB2LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA1LA2RA_3RA1LB3RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA1LB1LA_3RA3LB1LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB1RA1LB3RB_3RA2LA3RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA1RA1LB_3RA2LB3LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB1RA1RA1LB_3RA2RA3LB2LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA1RA3RB_2RA3LA2LB0LA	blank	0	1	2				no
+candidate_unchecked		0LB1RA1RA3RB_3RA3LA2LB2LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA2RA1LB_3RA3LA3LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB1RA2RB1LA_3RA2LA0LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA2RB2RB_3RA2RB3LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA2RB3RA_1RA3LB0LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB1RA3RA---_2RA2LB1RA1LB	blank	1	17	2				no
+candidate_unchecked		0LB1RA3RA2LA_2RA2LA3LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB1RA3RB0RB_1RA2LB1LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB1RA3RB0RB_3RA2LA1RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA3RB2LA_1RA3LB0RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA3RB2LA_3RA3LA1RA2LB	blank	0	1	2				no
+candidate_unchecked		0LB1RA3RB2RA_3RA2LA0RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB1RB0RA1LA_2RA0LB3LB---	blank	1	17	2				no
+candidate_unchecked		0LB1RB1LA2RA_3RA0RA2LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB1RB1LA2RB_3RA2RB2RA2LB	blank	0	1	2				no
+candidate_unchecked		0LB1RB1LB2LA_2RA2RA3RA3LB	blank	0	1	2				no
+candidate_unchecked		0LB1RB1LB2LA_3RA0LA1LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB1RB1LB3LA_2RA1LB3LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB1RB1RA1RB_2RA2LA3LB0LA	blank	0	1	2				no
+candidate_unchecked		0LB1RB2LA0LA_2RA3LB1LB0RA	blank	0	1	2				no
+candidate_unchecked		0LB1RB2RA1LA_1RA2LB3LA0RA	blank	0	1	2				no
+candidate_unchecked		0LB1RB2RA3RB_3RA3LA1LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB1RB2RB0LB_2RA3LA1LB3RA	blank	0	1	2				no
+candidate_unchecked		0LB1RB2RB1LB_3RA2LA0RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB1RB3LA2LB_1RA2RA2LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB1RB3RA1LA_2RA3RB3LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB1RB3RA1LB_3RA2LA0RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB1RB3RB2RA_2RA2LA1LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB2LA0LA2RB_3RA3RB1RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA0RB2LB_3RA3RB3RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RA1RB_2RA3LA3LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RA1RB_3RA2RB2LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RA2LA_2RA2RB3LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RA2LB_3RA1LB3LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RA2RB_2RA1RB3LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RA2RB_3RA2RB1LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RB0RB_2RA3LB1LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RB1RB_3RA1LA1RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RB2LB_3RA1LA1RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RB2RA_2RA3LB3RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RB2RB_3RA1LB0LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RB2RB_3RA1RA2LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA1RB2RB_3RA2LB1RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA2RA2LB_3RA0LA1RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA2RA2RA_3RA1LB2LB1RA	blank	0	1	2				no
+candidate_unchecked		0LB2LA2RA2RA_3RA3LB3RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA2RA3RB_3RA2LA1RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA2RB1RA_3RA1LB0LA1RA	blank	0	1	2				no
+candidate_unchecked		0LB2LA2RB1RB_1RA3LB1RB0LA	blank	0	1	2				no
+candidate_unchecked		0LB2LA3LB3RA_2RA2RB1LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB2LA3LB3RB_2RA2RB1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB2LA3RA1RB_2RA3RB1LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA3RB0LA_1RA2LB1LA0RB	blank	0	1	2				no
+candidate_unchecked		0LB2LA3RB1LA_1RA2LB3LB0RB	blank	0	1	2				no
+candidate_unchecked		0LB2LA3RB1RA_1RA2LB1RB2LA	blank	0	1	2				no
+candidate_unchecked		0LB2LA3RB1RB_2RA3LA3LB1RA	blank	0	1	2				no
+candidate_unchecked		0LB2LA3RB2LA_1RA2LB1RA3LA	blank	0	1	2				no
+candidate_unchecked		0LB2LA3RB2RA_3RA3RB0RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA3RB2RA_3RA3RB2RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2LA3RB2RB_1RA3LB0LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB2LB0RA3RB_1RA3LB0RB2LA	blank	0	1	2				no
+candidate_unchecked		0LB2LB0RB2LA_1RA3LB1RB2RA	blank	0	1	2				no
+candidate_unchecked		0LB2LB0RB3LA_1RA3LB1LB2LB	blank	0	1	2				no
+candidate_unchecked		0LB2LB1LA3RB_1RA3RA1LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB2LB1RA1RA_3RA2LA---3LB	blank	1	17	2				no
+candidate_unchecked		0LB2LB1RA1RB_1RA3LB0RA2LA	blank	0	1	2				no
+candidate_unchecked		0LB2LB1RA1RB_3RA3LA3LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB2LB1RA2RB_3RA1RB2LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB2LB1RB1RA_2RA3LA3LB0LA	blank	0	1	2				no
+candidate_unchecked		0LB2LB1RB1RA_3RA3LA0RA2LB	blank	0	1	2				no
+candidate_unchecked		0LB2LB1RB2LB_3RA2LA1RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB2LB1RB2RA_3RA3LA1RA2LB	blank	0	1	2				no
+candidate_unchecked		0LB2LB1RB3LA_2RA3RA3LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB2LB2RB0LA_1RA3LB2RB1RB	blank	0	1	2				no
+candidate_unchecked		0LB2LB2RB2LA_1RA2LB3RB1LA	blank	0	1	2				no
+candidate_unchecked		0LB2LB2RB3LA_1RA3LB0LA0RB	blank	0	1	2				no
+candidate_unchecked		0LB2LB2RB3LA_1RA3LB2LB1RA	blank	0	1	2				no
+candidate_unchecked		0LB2LB2RB3LA_2RA0LA3LB1RA	blank	0	1	2				no
+candidate_unchecked		0LB2LB3LA1RB_2RA3LA3LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB2LB3RA1RA_2RA2LA3LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB2LB3RB2RA_1RA3LB3RB0LA	blank	0	1	2				no
+candidate_unchecked		0LB2RA------_3RA1LB1LB1RA	blank	2	289	2				no
+candidate_unchecked		0LB2RA---0RB_3RA3RA3LB1LB	blank	1	17	2				no
+candidate_unchecked		0LB2RA---3RB_1RA1LB3LA0RA	blank	1	17	2				no
+candidate_unchecked		0LB2RA0LA1RA_3RA2RB2LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA0LB1RB_3RA1LA3RB3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA0RA1LA_3RA2LA1RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA1LA1RA_3RA2LB1LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA1LA2RB_3RA1LB1LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA1LB1LA_3RA3LB1RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA1LB3RB_1RA1LB3LA0LA	blank	0	1	2				no
+candidate_unchecked		0LB2RA1RA1LA_1RA1LB3RB3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA1RB1RB_1RA3LB1LA2LA	blank	0	1	2				no
+candidate_unchecked		0LB2RA1RB2LA_1RA3LB3RB1RB	blank	0	1	2				no
+candidate_unchecked		0LB2RA1RB3LA_3RA1LB3LB1RA	blank	0	1	2				no
+candidate_unchecked		0LB2RA1RB3RB_2RA3RA3LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB2RA1RB3RB_3RA3LB0LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA3LA1RA_3RA2RA1LB2LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA3LA1RB_1RA2LB3RA0LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA3LA1RB_2RA2LA3LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB2RA3LA1RB_3RA3RB3LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA3LA2RA_1RA2LB3RB2RA	blank	0	1	2				no
+candidate_unchecked		0LB2RA3LA2RA_3RA3LA1RB3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA3LA3RA_1RA2LB3RB3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA3LB0RB_3RA3LA2RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA3LB1RB_2RA1LA3LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB2RA3RA2LA_1RA3LB1RB2RA	blank	0	1	2				no
+candidate_unchecked		0LB2RA3RA2LA_3RA3LA1RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA3RA2RA_1RA2LB1LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA3RA3RB_3RA0LA3LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RA3RB0RA_1RA2LB3LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB2RA3RB0RB_1RA2LB2LA3LA	blank	0	1	2				no
+candidate_unchecked		0LB2RA3RB1LA_1RA3LB2LB1RA	blank	0	1	2				no
+candidate_unchecked		0LB2RA3RB2LA_1RA2LB1RB3LA	blank	0	1	2				no
+candidate_unchecked		0LB2RA3RB2RA_1RA2LB1RB1LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB0LA1RB_1RA3LB3LA2LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB0LA2RB_1RA3LB1LA1RB	blank	0	1	2				no
+candidate_unchecked		0LB2RB0LB1RB_2RA3RA1LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB0LB3RB_1RA2RA3LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB0RA3LA_1RA3LB0RA1LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB0RB0LA_1RA1LB3LA3LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB0RB1LA_2RA3RB1LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB0RB2RA_2RA3LA1LB0RB	blank	0	1	2				no
+candidate_unchecked		0LB2RB0RB2RA_3RA0LA1LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB0RB2RA_3RA2LB1LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB1LA2RA_3RA3RB2LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB1LB1LA_2RA3RA3LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB2RB1RA---_3RA1LB0LB2LB	blank	1	17	2				no
+candidate_unchecked		0LB2RB1RA1LA_2RA1RB3LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB2RB1RA1LB_3RA3LB2LA1RA	blank	0	1	2				no
+candidate_unchecked		0LB2RB1RA2RA_1RA1LB3LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB1RB3LA_2RA3RA3LB2LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB2RA---_2RA2LA1LB---	blank	2	289	2				no
+candidate_unchecked		0LB2RB2RA1LA_1RA2RA3LB3RA	blank	0	1	2				no
+candidate_unchecked		0LB2RB2RA1LA_2RA---3LB2RA	blank	1	17	2				no
+candidate_unchecked		0LB2RB2RA1LA_2RA1LA3LB1RA	blank	0	1	2				no
+candidate_unchecked		0LB2RB2RA1RA_2RA1LA3LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB2RA1RA_3RA2RB3LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB2RB0LB_3RA2LB1LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB2RB1LA_3RA3RA0LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB2RB1LB_1RA3RA1LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB2RB1LB_3RA---0LA2LB	blank	1	17	2				no
+candidate_unchecked		0LB2RB2RB2LB_3RA0RA1LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB2RB2RB_3RA0LA3LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB2RB2RB_3RA3RB1LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB3LA1RA_3RA1LB2RA2LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB3LA1RB_3RA1LB3RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB3LA2RA_1RA1LB3LA3LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB3LA2RB_1RA3LB2LA2RA	blank	0	1	2				no
+candidate_unchecked		0LB2RB3LB1RA_3RA2RA1LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RA1LA_3RA3RB1LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RA1RA_3RA2RB3LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RA2LA_2RA3RA1LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RA2LA_2RA3RA3LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RA3LA_1RA3LB3RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RA3LB_2RA1LA1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RB0LB_2RA3RB1LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RB0RB_3RA2RB2LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RB1LA_1RA3LB2LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RB1LA_2RA3RA1LB0LA	blank	0	1	2				no
+candidate_unchecked		0LB2RB3RB2LA_1RA2LB3RA1LA	blank	0	1	2				no
+candidate_unchecked		0LB3LA0LA2RB_1RA3LB3LA1RA	blank	0	1	2				no
+candidate_unchecked		0LB3LA0LB2RA_1RA3LB1RB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3LA0RA2RB_2RA3LB1LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB3LA0RA3RB_2RA3LA1LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB3LA0RA3RB_2RA3LB1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3LA0RB1RB_3RA2LB3LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB3LA0RB1RB_3RA2LB3RB1LB	blank	0	1	2				no
+candidate_unchecked		0LB3LA1LB3RB_1RA3LB0RB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3LA1RA1RB_2RA3LA3LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB3LA1RA2RA_2RA1LB1LB---	blank	1	17	2				no
+candidate_unchecked		0LB3LA1RA3RB_2RA0LA1LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB3LA1RB---_2RA0LB1LB2RB	blank	1	17	2				no
+candidate_unchecked		0LB3LA1RB0RB_2RA0RA1LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB3LA1RB2RA_3RA0RB1LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB3LA2RA1RA_3RA1LA1RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB3LA2RA1RB_2RA0RB3LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3LA2RA2RB_1RA3LB1LA0RB	blank	0	1	2				no
+candidate_unchecked		0LB3LA2RA3RB_2RA2RB1LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB3LA3LA1RA_3RA2RB2LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB3LA3LA2RA_3RA3RB1RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB3LA3LB3RB_2RA2LB1RA0LA	blank	0	1	2				no
+candidate_unchecked		0LB3LA3RA1RA_1RA2LB1LA1RB	blank	0	1	2				no
+candidate_unchecked		0LB3LA3RA1RB_2RA1LA1LB1RA	blank	0	1	2				no
+candidate_unchecked		0LB3LA3RA2LA_2RA2LA2LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB3LA3RA2RA_1RA2LB1LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB3LA3RA2RB_3RA3LA3LB1LB	blank	0	1	2				no
+candidate_unchecked		0LB3LA3RB1RA_3RA2RA1LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB3LA3RB1RB_2RA0RA1LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB3LA3RB2LA_2RA3LA1LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB3LA3RB3RB_2RA0RA1LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB3LB0LA3RB_1RA2LB0LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB3LB0RB3RA_2RA1LB3LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3LB1RB1RB_1RA2LB3LA0RA	blank	0	1	2				no
+candidate_unchecked		0LB3LB1RB1RB_2RA1LA2LB3RA	blank	0	1	2				no
+candidate_unchecked		0LB3LB3RB2LB_2RA3LB1RA0LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA0LA1RB_1RA2LB1LA3RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA0LA2RA_1RA3LB2LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA0LA2RB_1RA2LB1LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA0RA1RB_2RA0LA1LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB3RA0RA3RB_1RA3LB1RB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA0RB0LB_2RA2LA1LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA0RB1RA_2RA3LB1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA1LA0LB_1RA2LB2LA2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA1LA0RB_1RA2LB0LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB3RA1LA1LB_1RA2LB3LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA1LA2LB_1RA1LB1LA2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA1LA2LB_1RA2RA2LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA1LA2RB_1RA1LB1LA2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA1RA0LB_3RA3RB1LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RA1RB0RB_2RA1LA2LB0RA	blank	0	1	2				no
+candidate_unchecked		0LB3RA1RB1RA_2RA1LB1LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA1RB1RB_3RA2LB3LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RA1RB2LA_1RA3LB2LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB3RA1RB2LB_1RA2LB2LA3RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA1RB3RA_2RA1LB1LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA2LA2RB_1RA2LB3LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA2LB2LA_1RA3LB1RA1RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA2RA1LA_1RA3LB3RA2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA2RA2LB_1RA1LB1RB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA2RA2LB_1RA2LB3LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB3RA2RA2RB_2RA2LB1LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA2RB1LA_1RA3LB0LA2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA2RB1LA_3RA1LB1LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RA2RB2RA_2RA3LB1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA2RB3RA_2RA2LA1LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA3LA3LB_1RA2LB1RB3RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA3LA3RB_2RA3LB1RA2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RA3LB1LA_1RA3LB3LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB3RA3LB2RA_1RA3LB2LA1RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA3LB2RB_1RA3LB1LA2RA	blank	0	1	2				no
+candidate_unchecked		0LB3RA3RA1LA_2RA3LA3LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB3RA3RA2LA_2RA2RB3LB1RA	blank	0	1	2				no
+candidate_unchecked		0LB3RA3RB0LB_3RA1LA1RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RA3RB0RB_3RA1LA1RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RA3RB1LA_1RA2LB2LA2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA3RB1LA_2RA1RB3LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA3RB1RB_1RA3LB0LA2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RA3RB2LA_1RA3LB3RB3RA	blank	0	1	2				no
+candidate_unchecked		0LB3RA3RB2RA_1RA3LB3LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB---3LA_1RA3LB3LB2RB	blank	1	17	2				no
+candidate_unchecked		0LB3RB0LA2LA_1RA3LB3RB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB0LA2RA_1RA3LB3LA2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB0LA2RB_3RA2LA1LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB0RA1LA_2RA3LB1RA1RB	blank	0	1	2				no
+candidate_unchecked		0LB3RB0RA2LA_2RA0LA3RA1LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB0RB0RA_3RA2RA2LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB0RB2RB_1RA3LB2LA3LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB0RB2RB_3RA2RB2LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB1LA---_1RA2LB1RA1RB	blank	1	17	2				no
+candidate_unchecked		0LB3RB1LA0LA_2RA1LA1LB3RB	blank	0	1	2				no
+candidate_unchecked		0LB3RB1LA0RB_1RA2RA1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB1LA1RA_3RA1LB3RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB1LA2RA_3RA0RA1RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB1LA2RA_3RA1LA2LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB3RB1LA3RB_2RA2RA1LB0LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB1LB0RA_2RA0LB1LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB1LB1LA_2RA3RA3LB3LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB1LB2RB_3RA2LB0LA1RA	blank	0	1	2				no
+candidate_unchecked		0LB3RB1RA0RA_2RA3LA1LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RB1RA0RA_2RA3LB1LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB1RA1LA_2RA3LB2LB1RB	blank	0	1	2				no
+candidate_unchecked		0LB3RB1RA1RB_2RA2LA3LB2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RB1RA2LA_2RA3LB3LB2RA	blank	0	1	2				no
+candidate_unchecked		0LB3RB1RA2LB_2RA0RA1LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB1RA3LA_2RA2LB3LB2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB1RB1RA_3RA2LA3RB2LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB2LB0LA_1RA2RA1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB2RA0LA_2RA2LA1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB2RB0LB_1RA2LB3RB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB3LA0RA_1RA1LB3LA2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB3LA2RA_3RA2LA2LA1LB	blank	0	1	2				no
+candidate_unchecked		0LB3RB3LA2RB_1RA2LB2RA2RB	blank	0	1	2				no
+candidate_unchecked		0LB3RB3LA2RB_1RA3LB3RB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB3LB0RA_2RA1LA1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB3LB1RB_2RA0LA1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB3RA1LA_2RA2RB3LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB3RA1RB_2RA0RA1LB3LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB3RA1RB_2RA1RB3LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB3RB0RB_2RA2LA1LB2LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB3RB1LA_2RA0RA1LB1LA	blank	0	1	2				no
+candidate_unchecked		0LB3RB3RB2LB_3RA2LA0RA1LB	blank	0	1	2				no
+candidate_unchecked		1LB---0RB2RB_3RB3RA---3LA	nonblank	2	289	6				no
+candidate_unchecked		1LB---2LA0RB_2RB3RA1LB0LA	nonblank	1	17	6				no
+candidate_unchecked		1LB---2RA2RB_2RB2LA3LB2RA	nonblank	1	17	6				no
+candidate_unchecked		1LB0LA0LA2RB_3RA3LA1LB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA0LB0RB_2RB2RA3LA1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA0RB1RB_2RA3RA2LA3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA0RB3RA_2RA1RB3LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA1LA3RB_3RB2LB2RA0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA1LB2RB_3RA1LA0RB3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA1RB0LA_2RA3LB2LB3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA1RB1RA_3RA0LB---2LB	nonblank	1	17	6				no
+candidate_unchecked		1LB0LA1RB2RA_2RB3RA3LA1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA2LB0LB_2RA1RA3RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA2RB0LB_2RA3RB3LA0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA3LB2RB_3RA2RA3LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA3LB3RA_2RA---3RB3LB	nonblank	1	17	6				no
+candidate_unchecked		1LB0LA3RA2LB_3RB2RA0RA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA3RB1LA_2RA1LA0RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA3RB1LB_2RA3LB1LB0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LA3RB2RA_2RA3LA2LB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0LB---3RA_3RB2RA1LA0LB	nonblank	1	17	6				no
+candidate_unchecked		1LB0LB0LA3RA_3RB2RA2LA0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LB0RA3RB_2RA3RA3LB0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0LB2LB2LA_2RB3RA3RB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0LB2RA1LB_2RA1LA3RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LB3LA0RB_2RA2LB3RB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB0LB3LA2RA_2RA2LB3RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0LB3LA2RB_3RA1LA2RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LB3RA2LB_3RA---3LB2RA	nonblank	1	17	6				no
+candidate_unchecked		1LB0LB3RA2RB_1RA2LB1RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LB3RB1RB_2RB2RA3LA0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB0LB3RB1RB_2RB2RA3LA3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0RA3LB3RA_1RB2LB1LA3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0RA3RA2RB_0RB3RA1LA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB---1RB_0RB2RA3LA1LA	nonblank	1	17	6				no
+candidate_unchecked		1LB0RB0LA0LA_2RA3RA1RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB0LB---_3RA2RB0RB2LA	nonblank	1	17	6				no
+candidate_unchecked		1LB0RB1LA3LA_2RB3RA3LA0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB1LA3RB_3RA3RB1LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB1LB1RB_2RA3LB1LA0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB1RA1LB_2RA0LB3LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB2LA1RA_2RB3RA1LB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB2LB3RA_3RA0RA1LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB2RA3RA_3RA0LA0LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB2RA3RA_3RB2LA1LA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB3LB0RA_3RA2LB1RA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB3LB1LA_3RA2RA---3LB	nonblank	1	17	6				no
+candidate_unchecked		1LB0RB3LB2RA_2RA0LA3LA0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB3LB2RA_3RA2LA3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB3RA2LA_3RA1LB0RA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB3RA2LB_1RA3LA2LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB3RB1RA_3RA1RA0LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB3RB1RB_2RB2RA3LA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB0RB3RB2LB_2RA0LA2LB0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA0LB1RB_3RA2RB3LA1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA0LB2RA_3RB2RA3LB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA0RB0LA_2RB3RA3RA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA0RB1LA_3RB3LB1LA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA0RB1LB_2RA3RB1RA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA0RB3LA_2RA3LB3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA1LB2RB_3RA1RB3LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA1RA0RB_3RA2RB1LA3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA2RA2RB_3RA3LA0LA0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA2RB2LB_2RB2LA3LA3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA2RB2RA_3RA2LB3LB0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA2RB2RA_3RA3LB3LB0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA2RB3RB_3RA2RA1LB1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA3LB0LB_1RB2RA1RA0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA3LB2RB_2RA3RA0RA0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LA3RB3RB_2RA2RA3LB0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB---2RB_1RB3RA3LB2RA	nonblank	1	17	6				no
+candidate_unchecked		1LB1LB0RB1RA_3RA2LB3LB1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB1RA2RA_3RB2LB2LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB1RB0LA_3RA2RA3LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB1RB3LB_3RB3RA2LA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB2LA0RB_2RB3RA1RA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB2RA2RB_2RA0RA3LB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB3LA1RB_2RA3RA2RB0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB3LA2RB_3RA2LA0RA3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB3LB2RB_2RB0LB3RA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB3LB3RA_2RB3LA0LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1LB3RA2LA_2RB2LA1RA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA------_2RA1LB3RA1LA	nonblank	2	289	6				no
+candidate_unchecked		1LB1RA0LB0RB_2RA3LA3RA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA0LB2RA_3RA3LA0RB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA0RB0LB_3RA2LB2LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA0RB2RB_3RA2LA1RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA1LB1LA_2RA3LB3RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA1LB3LB_3RA2LA1LB0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA1RA---_3RB2LB1RA0LB	nonblank	1	17	6				no
+candidate_unchecked		1LB1RA1RA2RA_3RA2LB1LB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA1RB1LA_3RB1LB3LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA1RB2RA_0RA3LA0RB1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA1RB2RA_3RA3LA---3LB	nonblank	1	17	6				no
+candidate_unchecked		1LB1RA2LB1RA_2RB0LA3RA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA2RA---_2RA1LB3RB2LB	nonblank	1	17	6				no
+candidate_unchecked		1LB1RA2RA2LA_1RA3LB1RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA2RB0LB_3RA2LA3RB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA2RB2LA_2RA3LA3RB3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA3LA0RB_2RA3LA2RA0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA3LA1RB_0RA2LB3LA0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA3LA1RB_3RA2LA3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA3LA2RA_0RA2LB2RB0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA3LB1RB_3RA2LA1RA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA3RA---_2RA2LB1LB1LB	nonblank	1	17	6				no
+candidate_unchecked		1LB1RA3RA1LB_1RA2LB3LA1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA3RA2LB_3RB3LB2RA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA3RA3RA_2RA3RB0LA0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA3RA3RB_1RA2LB3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RA3RB---_0RB2LB1RA2LB	nonblank	1	17	6				no
+candidate_unchecked		1LB1RA3RB2LB_3RB3LA1RB1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB0LA2RB_1RA3LB0LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB0LB2RA_2RA2RB3LB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB0RA2LB_3RA2LA0LB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB1LB1LA_2RA3LB1LB0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB1RA2RA_2RA3LA2LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB1RB1RA_3RA2LA3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB1RB2RA_3RB3LA0LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB2LA0RA_3RA2LB1RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB2LA2LA_3RA0RB3RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB3LB2RA_2RA1LA2RB3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB1RB3RA2LA_3RA0RB0RA3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA0LB3RA_2RA3LB3RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA0RB0RB_2RA0LB3RA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA0RB1LB_2RA3RB3RA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA0RB2LB_3RA3LA0RB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA0RB3LA_3RB2RA0LB3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1LB1RB_3RA0LA2RB0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1LB2RA_3RA0RA3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RA0LA_2RA1RB3RA3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RA0RA_3RB2LB1RA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RA1RA_1RB3LB2LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RA1RA_2RA3LA------	nonblank	2	289	6				no
+candidate_unchecked		1LB2LA1RA1RA_3RB2LB2LA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RA1RA_3RB3LB3RA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RA1RB_3RB3RA0LB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RA2LB_3RA3RB1RB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RA3RA_3RB1LB2LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RB1RB_3RA2RB0LB0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RB2LA_2RA3RA3RA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA1RB2LB_3RA1LB0RA0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2LA3RB_3RA2LB0LA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2LB2RB_2RA0LB3LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2RA0LA_2RB3RA0RB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2RA0LB_2RA3LB1RB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2RA0LB_2RB2LA3RA1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2RA0RB_3RA2LB2LB1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2RA1RB_2RB3RA2LB3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2RA2RB_3RA3LB3LB1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2RB1RA_3RA2LB3LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2RB1RA_3RA3LB2LB1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA2RB2RA_2RB3RA3LA3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3LA1RB_3RB2RA2LA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3LB0RB_2RA2LB1RB1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3LB1RB_2RA3RA3RA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3LB1RB_3RA1RA1RA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3LB2LA_2RB2LA1RA0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3LB2RB_3RA0LA0LB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3RA0RA_1RB3RA3LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3RA0RB_2RB2RA1LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3RA2RA_2RA---0RA1LB	nonblank	1	17	6				no
+candidate_unchecked		1LB2LA3RA2RA_2RB3LA2RA0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3RA2RB_2RA1RA3LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3RB1RA_2RA1RB3LA0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3RB1RA_3RA1RA3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3RB2LA_2RA1RB3RA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3RB2LB_3RA1LA1RB1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LA3RB2LB_3RA2RA3RA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB0LB1LB_3RA2LA0LB3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB1LA3RB_0RB3RA2LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB1RA---_3RB2LB1RA0RB	nonblank	1	17	6				no
+candidate_unchecked		1LB2LB1RA0RB_2RB2LA3RA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB1RA1RA_1RB3LA3RB3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB1RA1RA_3RB2LB3LB0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB1RA2RA_2RB2RA3LB1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB1RB2LA_3RA2LA1RA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB1RB2RA_3RA2LA3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB2LA1LB_2RA2LA3RB0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB2LA3RB_3RA2LA1RB1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB2LB3RA_1RB3LA1RA0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB2RB3LA_2RA2RB3LB1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB3LA1RA_3RB2RA1RA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB3LA1RB_3RB2RA3LA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB3LA2RA_1RA3RA3RA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB3LA2RB_2RA2LA3RA1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB3LB3LB_2RA3LB3RA1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB3RA---_1RB2LA2RA2LB	nonblank	1	17	6				no
+candidate_unchecked		1LB2LB3RA2LB_3RB1LA2RA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB3RA3LA_2RA3LA0RB1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB3RB0LA_2RA2LB3RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB3RB2LB_1RB3RA3RA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2LB3RB2LB_3RA3LB0RA1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0LA1LA_2RB1RA3LB0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0LA1RA_0RB3RA1LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0LB0RA_2RA2LB3RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0LB0RB_2RA2RB3LA0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0LB1LA_0RB3RA2RB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0RA0RA_2RB3RA3LA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0RA1RA_3RB3RA1LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0RB---_2RA3RB2LB0LA	nonblank	1	17	6				no
+candidate_unchecked		1LB2RA0RB0LB_1RB3RA2LA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0RB0LB_2RA0LA3LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0RB0RA_2RA1RA3LA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0RB1LA_3RA1LA3RB1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0RB1LB_2RA1RB3LA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0RB2LB_2RB3RA2LA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0RB2RB_1RA1LB3LB0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA0RB3LA_3RA3LB1RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA1LA3RA_3RB3LB0LA3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA1LB0RB_3RA1LA3RB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA1LB1LA_3RA2LB0RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA1LB1RB_3RB0LB1LA3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA1RB1RB_2RA3LA3LB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA2LA3RB_3RA2LA2RB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA2LB2LA_2RA3LA3RB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA2RA1LA_3RB3RA3LB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA2RA2RB_3RB3LA2LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA2RB1RB_0RA2RB3LA1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3LA0LB_0RA1LB3RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3LA2RB_1RB1LA3LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3LA3RA_1RB3RA3RB0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3LB0RA_2RA2LA1RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3LB0RB_3RA3LA2RB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3LB2RA_1RB3LA3LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3LB3RA_1RB2RA1LA1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3LB3RA_3RB1LA2LA0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3RA2LA_0RA3RA2RB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3RA2LA_1RB2LA1LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3RA2LA_1RB3RA3LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3RB---_1RB3RA2LB0LB	nonblank	1	17	6				no
+candidate_unchecked		1LB2RA3RB0RB_3RA2RA3LA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3RB1LA_3RA3RB3LA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3RB1RB_2RA1LA3LA3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3RB2LA_1RA3LB3RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3RB2RA_0RB1RA3LA1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3RB3LA_0RA2RB3LB0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RA3RB3LA_0RA3LA1LA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB0LA1LB_3RA2LB1RB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB0LB3RA_2RA0LA3RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB0RA2LA_1RA3LA2RB3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB0RA2LA_2RA3LB1LA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB0RA3LA_2RA1LB3LB0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB0RB2LA_2RA3RA3RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB1LA0LB_2RA2RB3LA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB1LA1LB_3RA2RA2RA0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB1LA2RB_2RA3RB1LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB1RA3LA_2RA---3LB0RA	nonblank	1	17	6				no
+candidate_unchecked		1LB2RB1RA3LB_3RA0LA3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB1RB0RA_3RA0LA0RB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB1RB1LB_3RA1LB3RA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB2LA2LA_3RA2LA3LB3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB2LA2LA_3RA2LB2RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB2LB3LB_3RA0LA3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB2RA2LB_1RA3LA2LB3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB3LA---_1RA0LA1RA0LB	nonblank	1	17	6				no
+candidate_unchecked		1LB2RB3LA0LB_2RA1LA0RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB3LB0RB_2RA2LB3LB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB3LB1RA_2RB0LA3LB0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB3LB1RA_3RA2LB0RA1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB3RA1LA_2RA2RB3LB1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB3RB0LA_2RA0RB2LA0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB3RB0LA_3RA2RA3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB3RB2LB_3RA3LB3RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB2RB3RB2RB_2RA3LB1LA1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA---0RA_3RB2LB1LA0LB	nonblank	1	17	6				no
+candidate_unchecked		1LB3LA0LA1RB_3RA2LB2LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA0LB2RA_2RB3RA3LB1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA0LB2RA_3RB2RA1RA3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA0LB3LB_3RB0LA0RA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA0LB3RB_2RA2LA3LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA0RA1RB_2RA2RA3LA1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA0RB1RA_2RA1LB3LB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA0RB2RA_3RB1LA0RA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA1LB0RB_3RA1RA3LA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA1LB1RB_3RA1RA3LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA1LB2RA_3RB3LA3LB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA1RA0RB_2RA0LA1RA1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA1RA1RA_3RA3RB1LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA1RA3RB_2RA0LB0RA1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA1RB1RA_2RA0RA3RA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA1RB2RB_1RB2RA3LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA1RB2RB_2RA3LB0RA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA2LA1RB_3RB2RA3RA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA2LA2LB_3RB1LA1RB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA2LA2RB_3RA1RA3LB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA2LA3LB_3RA0LA1RB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA2RA0LA_3RB2LB2LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA2RA2RA_2RB3RA3LB1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA2RA3RA_0RB2RA2LA3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA2RA3RA_2RA---3RA0LA	nonblank	1	17	6				no
+candidate_unchecked		1LB3LA2RA3RA_3RB2RA2RA0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA2RA3RB_2RA2RA1LB0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3LA1RA_3RB2RA0LB0RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3LA1RB_3RA3LA0LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3LA3RA_3RB1LA1RA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3LB1RA_2RA3LB3LB---	nonblank	1	17	6				no
+candidate_unchecked		1LB3LA3LB1RB_2RA3LB2RA1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3LB3RA_2RA3LA3RB0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3RA1RA_2RB3LB0LB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3RA1RB_2RA0RB3LA0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3RA1RB_2RB2LA2LB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3RA3RA_1RB2RA2LB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3RA3RB_2RA1LB3RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3RB2LA_0RB3RA3RA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3RB2LA_2RA3LA0RA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3RB2RB_3RA2LB3RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3RB3LA_2RA1RA0RA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LA3RB3LB_3RB3RA2LA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB---2RB_2RA1LB3LB2RB	nonblank	1	17	6				no
+candidate_unchecked		1LB3LB0LB2RA_2RA2LB3RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB0RA1LA_1RB1RA---2LB	nonblank	1	17	6				no
+candidate_unchecked		1LB3LB0RA2RA_2RB3RA1LA1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB0RB1RB_2RA1LA2LB3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB0RB2RA_3RB3LB2LA1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB1LA3LB_3RB3LA2RB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB1RA1RA_3RB2LA0RB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB1RA2LA_0RB1RA2LA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB1RA3LA_2RA2LA1RB2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB2RA0LA_2RB3LA1RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB2RB2LA_3RA3LA0RA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB2RB3RA_0RA3LA0LA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB3LB1RA_3RA1RB2LA2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB3RA0RB_2RA3RA2LB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB3RB2LA_2RA0RB1RA3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB3RB2LB_2RA0LB3RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB3RB2RA_0RA1RA2LA0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3LB3RB3LA_1RB2RA1LB2RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA---1RB_0RA2RA0LA3LB	nonblank	1	17	6				no
+candidate_unchecked		1LB3RA0LA3LA_2RA1RB2LA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA0LB0RB_2RA0LB1LA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA0LB2RA_2RA3LA3LA0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA0LB2RA_3RA0LA3LA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA0RA0LB_2RA2LB2LA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA0RA2LA_2RA3LB1RB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA0RA2RA_0RA3LB2LA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA0RB1LA_2RA3RB2RA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA0RB1LB_2RA3LB3LA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1LA0LA_1RB1RA0RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1LB2RB_3RB3RA2RA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1RA0RA_2RB2LB3RA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1RA0RB_1RB1LA2RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1RA1LA_2RB1LB2RA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1RA1LB_1RB2RA2LB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1RA1LB_2RA2LA3RB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1RA2RA_2RA1LA0LA0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1RA2RA_2RB2LA3RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1RB0LB_3RA1LA1RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA1RB2LA_2RA1RA3RB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2LA1RB_0RA3LA3LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2LA2LB_2RA2LA2RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2LA2RB_3RA---2RB3LA	nonblank	1	17	6				no
+candidate_unchecked		1LB3RA2LB3RB_2RB1LA1RA0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2RA0RA_0RB2LB2RA3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2RA0RB_2RA2LB3LB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2RA1LA_0RB2RA1LB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2RA1LA_2RB3LA1RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2RA1LA_2RB3RA0RA0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2RA1RA_2RA0LA1LB3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2RA1RA_2RA0LA3RA0LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA2RB1RB_1RA2LB3LA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA3LA1RA_0RB3LB3RA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA3LA2RA_0RA1LA2RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA3LA2RB_1RA2LB1RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA3LA3RA_2RA1RA3RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA3LB2LB_3RA3LB3LA2RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA3RA---_1RB1LA3RA2LB	nonblank	1	17	6				no
+candidate_unchecked		1LB3RA3RA2LA_1RA2LB2LA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA3RA3RB_0RA---2LB2LA	nonblank	1	17	6				no
+candidate_unchecked		1LB3RA3RB1LA_2RA3RA1RA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA3RB2RB_0RA0RA3RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RA3RB2RB_2RA1LB3LA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB---0LB_1RA2LA0LB0RB	nonblank	1	17	6				no
+candidate_unchecked		1LB3RB---2RB_1RA3LB1RB1RB	nonblank	1	17	6				no
+candidate_unchecked		1LB3RB---3LB_3RA2RA3LB2RB	nonblank	1	17	6				no
+candidate_unchecked		1LB3RB0LA1LA_2RA0LA0RB3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB0LA3RA_1RB3RA2RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB0LB1LA_2RA3RB3LA3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB0RA1LA_2RA3RA1LA3RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB0RB---_3RA1LB2LB2LB	nonblank	1	17	6				no
+candidate_unchecked		1LB3RB0RB1LA_2RA2RA0LA0RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB1LA0RA_2RA3RA0LA1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB1LB1RA_2RA0LA3RB3RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB1LB2LB_2RB3RA3RA1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB1RA0RA_2RA2LA3RB3LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB2LA2RA_3RA1LB1LA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB2RA0LA_1RB2RA3LB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB2RA0LA_2RA1RA3LA1RB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB2RA1LA_1RA3LB3RB2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB2RA2LA_2RA1LB3RB3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB2RB3LA_2RA2LA1LB0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB2RB3LA_2RA3LB1LB0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3LA3LA_2RA1LA0LA1RA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3LB0LB_2RA1LA2RB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3LB2RB_3RA0LA3RB2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3LB3RB_1RA3LB2RA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3RA0LA_1RA2LB0LA3LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3RA2RA_2RA2RA0LA1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3RA2RA_3RB2LA2LB1LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3RA3RB_2RA2LB3RB1LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3RB0RA_3RA2LB3RA2LA	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3RB2LB_3RA0LA3RA2LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3RB2RA_2RA3RA0LA0LB	nonblank	0	1	6				no
+candidate_unchecked		1LB3RB3RB3LA_1RA0LA0RA2LB	nonblank	0	1	6				no
+coq_checked		0LB0LA---2RB_3RA1LB1RB1LB	blank	1	17	2	4096	4096	BBB24.AffineExamples.completions_0LB0LAXXX2RB_3RA1LB1RB1LB	no
+coq_checked		0LB1LB2RA0RB_3RA3RB1LA2LB	blank	0	1	2	4096	4096	BBB24.AffineExamples.completions_0LB1LB2RA0RB_3RA3RB1LA2LB	no
+coq_checked		0LB2RA3RB2LA_1RA2RA3LB2RB	blank	0	1	2	4096	4096	BBB24.AffineExamples.completions_0LB2RA3RB2LA_1RA2RA3LB2RB	no
+coq_checked		0LB3RB0LA1RB_3RA3LB0LA2LB	blank	0	1	2	4096	4096	BBB24.AffineExamples.completions_0LB3RB0LA1RB_3RA3LB0LA2LB	no
+no_certificate	nofit	0LB0LA0LA1RB_3RA2RB1LB2LB	blank	0	1	2				no
+no_certificate	nofit	0LB0LB3RA1RB_2RA2LA2LB3LB	blank	0	1	2				no
+no_certificate	nofit	0LB0RA2RA1RB_1RA3LB0LA2RB	blank	0	1	2				no
+no_certificate	nofit	0LB0RB1RB3RA_1RA3LB2LB2LA	blank	0	1	2				no
+no_certificate	nofit	0LB0RB3RA1LA_1RA2LB3LB2RB	blank	0	1	2				no
+no_certificate	nofit	0LB1RA1RB2LA_1RA3LB0RB2RA	blank	0	1	2				no
+no_certificate	nofit	0LB1RA3LA2RA_1RA3RA3RB2LB	blank	0	1	2				no
+no_certificate	nofit	0LB2LA1RA1LA_2RA3RB2LB1LB	blank	0	1	2				no
+no_certificate	nofit	0LB2LA2RA1RB_2RA3RB3RA1LB	blank	0	1	2				no
+no_certificate	nofit	0LB2RA1LA1RB_2RA0RB3LB2LA	blank	0	1	2				no
+no_certificate	nofit	0LB2RA1RB3RB_3RA3LA2LB1LB	blank	0	1	2				no
+no_certificate	nofit	0LB2RA2RB1RA_2RA2LA3LB0LB	blank	0	1	2				no
+no_certificate	nofit	0LB2RA2RB2RA_3RA3RB1LA1LB	blank	0	1	2				no
+no_certificate	nofit	0LB2RA3RA1LB_2RA1LA2LB1RA	blank	0	1	2				no
+no_certificate	nofit	0LB2RA3RA3RB_3RA0LB3LA1LB	blank	0	1	2				no
+no_certificate	nofit	0LB2RB0LA1LA_3RA2LA1LB1LB	blank	0	1	2				no
+no_certificate	nofit	0LB2RB0LA2RB_1RA2LB3LB3LA	blank	0	1	2				no
+no_certificate	nofit	0LB2RB1RA0LB_2RA3RB1LB0LA	blank	0	1	2				no
+no_certificate	nofit	0LB2RB3RA3LA_1RA2LB1RB1LA	blank	0	1	2				no
+no_certificate	nofit	0LB3LA1LA1RA_3RA2RB1LB3LB	blank	0	1	2				no
+no_certificate	nofit	0LB3LA1LA1RA_3RA2RB3LB1LB	blank	0	1	2				no
+no_certificate	nofit	0LB3LA1RA3RA_2RA2RB1LB2RB	blank	0	1	2				no
+no_certificate	nofit	0LB3LA3RB0RA_3RA1LA1RB2LB	blank	0	1	2				no
+no_certificate	nofit	0LB3LA3RB1RB_2RA0RB3LB1LA	blank	0	1	2				no
+no_certificate	nofit	0LB3RA0RB1RA_2RA3LB1LB2LB	blank	0	1	2				no
+no_certificate	nofit	0LB3RA1RA2RB_2RA2RB1LB3LA	blank	0	1	2				no
+no_certificate	nofit	0LB3RA3LA2RA_1RA3LB1RB2LB	blank	0	1	2				no
+no_certificate	nofit	0LB3RA3RA1LA_1RA2LB3LB2RB	blank	0	1	2				no
+no_certificate	nofit	0LB3RA3RA2LA_2RA3LB3LB1RB	blank	0	1	2				no
+no_certificate	nofit	0LB3RB1LA1RA_3RA2RA0LA2LB	blank	0	1	2				no
+no_certificate	nofit	0LB3RB2RB2LA_3RA3LA0LA1LB	blank	0	1	2				no
+no_certificate	nofit	1LB0LA2RA3RB_3RA0LB3RB2LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB0LB3LA2RA_3RB2RA2LB2LA	nonblank	0	1	6				no
+no_certificate	nofit	1LB1LA0LB2RB_1RB3RA1LB1RA	nonblank	0	1	6				no
+no_certificate	nofit	1LB1LA3RB1LA_2RA0LB3RA2LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB1LB---2RA_1RA3LB3RB1RB	nonblank	1	17	6				no
+no_certificate	nofit	1LB1RA2RA1RB_3RA2LB3LA1RB	nonblank	0	1	6				no
+no_certificate	nofit	1LB2LA3LA2RB_3RA0LA1RA2LA	nonblank	0	1	6				no
+no_certificate	nofit	1LB2LB1RA3RA_3RA3RB3LB2LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB2LB2RA1RA_0RA1LA3RB0RB	nonblank	0	1	6				no
+no_certificate	nofit	1LB2RA1LA1RA_3RA2LB3LB3LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB2RA1LA2RB_3RB3RA0LA0RA	nonblank	0	1	6				no
+no_certificate	nofit	1LB2RA2RA0LB_2RA3LA3RB2LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB2RA2RA0RA_3RB1RA3LB2LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB2RA3RA1RB_0RA2LB1RB2LA	nonblank	0	1	6				no
+no_certificate	nofit	1LB2RA3RA2LA_1RA3LA0LB3LA	nonblank	0	1	6				no
+no_certificate	nofit	1LB2RB1LA0LA_3RA2LA2RB2RB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3LA0LB2RB_2RA3LB1RB3LA	nonblank	0	1	6				no
+no_certificate	nofit	1LB3LA1RA3RB_2RA3RB2LB2LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3LA2RB1RA_2RA3LA1RB0LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3LA3LA3LB_3RA2LB2RA1RB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RA1LA2RB_1RA3RA3RB2LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RA1RA0RA_2RA3LB0LA3LA	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RA1RA2LA_2RA2LB0LA2RB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RA2LA0RB_1RB2LB1RA1LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RA2RB1LA_2RA0RA0RA3LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RA3LA2RA_1RB2LA2LB0RB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RA3RA0LB_1RB1RA0RA2LA	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RA3RA2LA_2RA0RB1RB3LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RA3RA2LA_2RB2LA1LA3LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RA3RA2RB_1RA2LB1RB1LA	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RB0LB3RA_2RA2RB1LA1LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RB0RB3RA_3RA0RA2LA2LB	nonblank	0	1	6				no
+no_certificate	nofit	1LB3RB1RA2LA_3RA0LA3LB2RB	nonblank	0	1	6				no
+no_certificate	noproof	0LB---0RA---_3RA------2LB	blank	4	83521	2				no
+no_certificate	noproof	0LB0LA1RB1RA_2RA3RA1LB2RB	blank	0	1	2				no
+no_certificate	noproof	0LB0RB1LA2RB_1RA3LB1LA2RB	blank	0	1	2				no
+no_certificate	noproof	0LB0RB2LB2LA_1RA3LB1RB2RA	blank	0	1	2				no
+no_certificate	noproof	0LB1LA2RB2RA_3RA2LA1RB1LB	blank	0	1	2				no
+no_certificate	noproof	0LB1RA2RA1RB_1RA3LB1RA2LA	blank	0	1	2				no
+no_certificate	noproof	0LB1RA2RA2RB_3RA2LA1LB1LB	blank	0	1	2				no
+no_certificate	noproof	0LB1RA3RB2RA_2RA3LA1LB3LA	blank	0	1	2				no
+no_certificate	noproof	0LB1RB---3RB_1RA2RA3LB1LB	blank	1	17	2				no
+no_certificate	noproof	0LB1RB1RA2LB_3RA2LA3RA2LB	blank	0	1	2				no
+no_certificate	noproof	0LB1RB1RA3RA_1RA3LB1RA2LA	blank	0	1	2				no
+no_certificate	noproof	0LB2LA1RA0RB_2RA3RA2LB1LB	blank	0	1	2				no
+no_certificate	noproof	0LB2LA2RA3RA_1RA2LB3RA1LB	blank	0	1	2				no
+no_certificate	noproof	0LB2LA3RB2RA_3RA1LB1RA1LB	blank	0	1	2				no
+no_certificate	noproof	0LB2LB2RA3RA_1RA3RA3LA2LB	blank	0	1	2				no
+no_certificate	noproof	0LB2LB3RA1RA_2RA1LB1RA2LA	blank	0	1	2				no
+no_certificate	noproof	0LB2LB3RA1RB_2RA3LB1RA2LA	blank	0	1	2				no
+no_certificate	noproof	0LB2LB3RB0LA_1RA3LB---1RA	blank	1	17	2				no
+no_certificate	noproof	0LB2RA------_1RA3RA1RA1LB	blank	2	289	2				no
+no_certificate	noproof	0LB2RA1LB2LA_1RA3LB2RB0LA	blank	0	1	2				no
+no_certificate	noproof	0LB2RA1RA2LA_1RA1LB3LA---	blank	1	17	2				no
+no_certificate	noproof	0LB2RA2RB3LA_1RA3LB1RB1RA	blank	0	1	2				no
+no_certificate	noproof	0LB2RA3LB2RB_1RA3LB3LA1RA	blank	0	1	2				no
+no_certificate	noproof	0LB2RA3RA1RB_1RA2LB0RA2LA	blank	0	1	2				no
+no_certificate	noproof	0LB2RA3RA2LA_2RA3LB2LB1RA	blank	0	1	2				no
+no_certificate	noproof	0LB2RB1RB1RB_1RA3LB2RB0LA	blank	0	1	2				no
+no_certificate	noproof	0LB3LB1RB2RA_1RA3LB3LA0RA	blank	0	1	2				no
+no_certificate	noproof	0LB3LB3LA2RB_3RA2LB1RA2RA	blank	0	1	2				no
+no_certificate	noproof	0LB3RA1LB1RA_3RA2RA1LA3LB	blank	0	1	2				no
+no_certificate	noproof	0LB3RA1RB1RA_2RA1LA3RA3LB	blank	0	1	2				no
+no_certificate	noproof	0LB3RA1RB1RB_1RA2LB3RA1LA	blank	0	1	2				no
+no_certificate	noproof	0LB3RA1RB3RB_2RA1LB1LB0LA	blank	0	1	2				no
+no_certificate	noproof	0LB3RA2RA1LB_1RA1LB1LA2LB	blank	0	1	2				no
+no_certificate	noproof	0LB3RA3LA3RB_1RA3LB0RA2LA	blank	0	1	2				no
+no_certificate	noproof	0LB3RB3RB1RA_3RA0LA3LA2LB	blank	0	1	2				no
+no_certificate	noproof	1LB0LA1RA0RB_2RA3RB2LA1LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB0LA1RA2LB_3RB3RA3RA2LB	nonblank	0	1	6				no
+no_certificate	noproof	1LB0LB2RA3RA_2RB3RA3LB2LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB1LA0RB2RB_3RA1LB2LB2RA	nonblank	0	1	6				no
+no_certificate	noproof	1LB1LA1RB2LB_1RB3LB3RA0RA	nonblank	0	1	6				no
+no_certificate	noproof	1LB1LB3RA3RA_3RB3LB2LB2RA	nonblank	0	1	6				no
+no_certificate	noproof	1LB1RA2RA0LA_2RB3LB2RA---	nonblank	1	17	6				no
+no_certificate	noproof	1LB1RA2RB0LA_2RA3RB3LA3RB	nonblank	0	1	6				no
+no_certificate	noproof	1LB1RA3LB2RA_3RA2LB0LB0RA	nonblank	0	1	6				no
+no_certificate	noproof	1LB1RB0LA2RA_3RA3LA2RB2LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB1RB2LA1RB_2RB3RA0LA2LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB2LA3LA2RB_0RB3RA1LA1LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB2LB1LA3RB_2RB3RA2RB1LB	nonblank	0	1	6				no
+no_certificate	noproof	1LB2LB1RA1RA_3RA1LB3LB0RB	nonblank	0	1	6				no
+no_certificate	noproof	1LB2LB2RA2LB_1RA3RA3LB3RA	nonblank	0	1	6				no
+no_certificate	noproof	1LB2LB3LA2LB_0RB3RA1RB2LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB2LB3RA1LB_2RB3LB2RA0LB	nonblank	0	1	6				no
+no_certificate	noproof	1LB2LB3RA2RA_3RB2RA3LA0LB	nonblank	0	1	6				no
+no_certificate	noproof	1LB2RA0LB2RA_0RB1RA3LA2LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB2RA1LB1LA_3RA3LA0RB0RA	nonblank	0	1	6				no
+no_certificate	noproof	1LB2RA1LB1RB_3RA1RA2LB3LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB2RA1RB0LA_2RB3LA0LB2RA	nonblank	0	1	6				no
+no_certificate	noproof	1LB2RA2RB1LA_1RA3LA0LB3RA	nonblank	0	1	6				no
+no_certificate	noproof	1LB2RA3LB2RA_1RA0RA2LB---	nonblank	1	17	6				no
+no_certificate	noproof	1LB2RA3RB3LA_0RA2LB2LA2RB	nonblank	0	1	6				no
+no_certificate	noproof	1LB3LA0LA2RA_3RA2RB3RB1LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB3LA1RA3LB_3RB2RA3RA2LB	nonblank	0	1	6				no
+no_certificate	noproof	1LB3LA2LB3RA_2RB2RA3LB2RA	nonblank	0	1	6				no
+no_certificate	noproof	1LB3LA2RA1RB_2RA1RA1LA1LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB3LA2RB---_2RA3RA1RB2LA	nonblank	1	17	6				no
+no_certificate	noproof	1LB3LB---2RA_0RB1RA1LB---	nonblank	2	289	6				no
+no_certificate	noproof	1LB3LB0LB2RA_0RB2RA3LA1RA	nonblank	0	1	6				no
+no_certificate	noproof	1LB3LB2LA0LB_3RA0LA0RB2RB	nonblank	0	1	6				no
+no_certificate	noproof	1LB3LB2RA1RA_2RB3LA2RB1RB	nonblank	0	1	6				no
+no_certificate	noproof	1LB3RA0LB---_2RA1RA1RB2LB	nonblank	1	17	6				no
+no_certificate	noproof	1LB3RA1LA1LB_2RA2LB0RB0RB	nonblank	0	1	6				no
+no_certificate	noproof	1LB3RA1RA0LB_0RB2RA1LB0LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB3RA3LB1LB_1RB0LA2RA2LB	nonblank	0	1	6				no
+no_certificate	noproof	1LB3RA3RA2LB_3RB3LA2RA3LB	nonblank	0	1	6				no
+no_certificate	noproof	1LB3RB0RA0LB_1RA2LB3LA2LA	nonblank	0	1	6				no
+no_certificate	noproof	1LB3RB1LB1RB_2RA2RB3LA1LA	nonblank	0	1	6				no
+no_certificate	noshape	0LB---2RB2RA_1RA2LB3LB0RA	blank	1	17	2				no
+no_certificate	noshape	0LB---3RA2RA_2RA3LB2LB1RA	blank	1	17	2				no
+no_certificate	noshape	0LB0LA1RA2RB_3RA1LA1LB3LB	blank	0	1	2				no
+no_certificate	noshape	0LB0LA1RB1LB_2RA1LB3RA2LB	blank	0	1	2				no
+no_certificate	noshape	0LB0LA1RB2RB_2RA0LA3LB1RB	blank	0	1	2				no
+no_certificate	noshape	0LB0LB1RA3RB_2RA3RA2LB3LA	blank	0	1	2				no
+no_certificate	noshape	0LB0LB1RA3RB_2RA3RB2LB3LA	blank	0	1	2				no
+no_certificate	noshape	0LB0RA1LA1RA_2RA3RB3LB1LA	blank	0	1	2				no
+no_certificate	noshape	0LB0RA2LA2RB_1RA3LB3LA2RB	blank	0	1	2				no
+no_certificate	noshape	0LB0RA3LA2RB_1RA3LB3LA2RA	blank	0	1	2				no
+no_certificate	noshape	0LB0RA3RA3RB_1RA2LB1RB3LA	blank	0	1	2				no
+no_certificate	noshape	0LB0RB0LA1RB_3RA1LB0RA2LB	blank	0	1	2				no
+no_certificate	noshape	0LB0RB1RA1RB_2RA3LA2LB1RB	blank	0	1	2				no
+no_certificate	noshape	0LB0RB1RA2LA_2RA1LB3LB0LA	blank	0	1	2				no
+no_certificate	noshape	0LB0RB3RA0LA_2RA3LB1RA1LB	blank	0	1	2				no
+no_certificate	noshape	0LB1LA1RB1RA_2RA3RA1LB3LB	blank	0	1	2				no
+no_certificate	noshape	0LB1LA3RA2RB_2RA3LA1LB0LB	blank	0	1	2				no
+no_certificate	noshape	0LB1RA2RA1LB_3RA2LB1LA1RA	blank	0	1	2				no
+no_certificate	noshape	0LB1RA3LB1RA_3RA2RA2LA1LB	blank	0	1	2				no
+no_certificate	noshape	0LB1RB1LA0RB_2RA3LA1LB0RB	blank	0	1	2				no
+no_certificate	noshape	0LB1RB1LB0LA_2RA0RB3LB2RA	blank	0	1	2				no
+no_certificate	noshape	0LB1RB3RA0LB_2RA1LA2LB1RA	blank	0	1	2				no
+no_certificate	noshape	0LB2LA0LA1RA_3RA2RB3LA3LB	blank	0	1	2				no
+no_certificate	noshape	0LB2LA0RA2LB_3RA1LB1RA2RA	blank	0	1	2				no
+no_certificate	noshape	0LB2LA1RA3RB_2RA3LB2LB0LA	blank	0	1	2				no
+no_certificate	noshape	0LB2LA1RB1RB_3RA1LA2RB2LB	blank	0	1	2				no
+no_certificate	noshape	0LB2LB0RA3RA_1RA2RA3LB2LA	blank	0	1	2				no
+no_certificate	noshape	0LB2LB3RA---_2RA1LB1RA2RA	blank	1	17	2				no
+no_certificate	noshape	0LB2RA0RA2LB_3RA3LB1RA1LB	blank	0	1	2				no
+no_certificate	noshape	0LB2RA1LA1RB_3RA1LB1RA2LB	blank	0	1	2				no
+no_certificate	noshape	0LB2RA1RA2LA_3RA3LB1RB1LB	blank	0	1	2				no
+no_certificate	noshape	0LB2RA3RA1LB_1RA1LB2LB3LA	blank	0	1	2				no
+no_certificate	noshape	0LB2RA3RA1RB_2RA1LA2LB3LB	blank	0	1	2				no
+no_certificate	noshape	0LB2RA3RB0RB_1RA1LB1LA3LB	blank	0	1	2				no
+no_certificate	noshape	0LB2RA3RB2LA_1RA3LB0RA1LA	blank	0	1	2				no
+no_certificate	noshape	0LB2RA3RB3RB_1RA3LB0RA2LA	blank	0	1	2				no
+no_certificate	noshape	0LB2RB0LA2RB_3RA2LB1LA3LB	blank	0	1	2				no
+no_certificate	noshape	0LB2RB1LA0RB_3RA2RB1LA1LB	blank	0	1	2				no
+no_certificate	noshape	0LB2RB1RA2LA_1RA3LB3RA2LB	blank	0	1	2				no
+no_certificate	noshape	0LB2RB3LB3LA_1RA1LB3LA0RA	blank	0	1	2				no
+no_certificate	noshape	0LB2RB3RB0LA_2RA0RB3LB1LB	blank	0	1	2				no
+no_certificate	noshape	0LB2RB3RB0RA_2RA3LA2LB1LB	blank	0	1	2				no
+no_certificate	noshape	0LB2RB3RB1LA_1RA3LB1LB0LA	blank	0	1	2				no
+no_certificate	noshape	0LB3LA0RA2RB_1RA3LB3LA0RA	blank	0	1	2				no
+no_certificate	noshape	0LB3LA1RA1RB_1RA3LB2LA2RA	blank	0	1	2				no
+no_certificate	noshape	0LB3LA1RB3LA_2RA1LA1LB2RB	blank	0	1	2				no
+no_certificate	noshape	0LB3LA3LB1RB_3RA2LB3LA1RA	blank	0	1	2				no
+no_certificate	noshape	0LB3LB2LA3RB_1RA2LB0RA1RA	blank	0	1	2				no
+no_certificate	noshape	0LB3RA0LA0RA_1RA1LB2LB2RB	blank	0	1	2				no
+no_certificate	noshape	0LB3RA1LB1RA_2RA0LA3LB0RB	blank	0	1	2				no
+no_certificate	noshape	0LB3RA1RA2LB_2RA1LB2LB1LA	blank	0	1	2				no
+no_certificate	noshape	0LB3RA1RB2RA_1RA1LB3LA3LB	blank	0	1	2				no
+no_certificate	noshape	0LB3RA2LA3RB_1RA2LB0RA1LB	blank	0	1	2				no
+no_certificate	noshape	0LB3RA2RA1LB_1RA1LB3RA2LA	blank	0	1	2				no
+no_certificate	noshape	0LB3RA2RA2LA_2RA3LB1RA2LB	blank	0	1	2				no
+no_certificate	noshape	0LB3RA2RB0RB_1RA1LB2LA2LA	blank	0	1	2				no
+no_certificate	noshape	0LB3RA2RB2LB_1RA1LB1RA1LA	blank	0	1	2				no
+no_certificate	noshape	0LB3RA2RB2RA_1RA3LB1LA2LB	blank	0	1	2				no
+no_certificate	noshape	0LB3RA3LA2RA_1RA3LB1RB0LA	blank	0	1	2				no
+no_certificate	noshape	0LB3RA3LB0RB_2RA1LB1RA2LA	blank	0	1	2				no
+no_certificate	noshape	0LB3RA3RA1LA_2RA1LB3LB1RA	blank	0	1	2				no
+no_certificate	noshape	0LB3RB2LA1RA_1RA2LB0RA3LB	blank	0	1	2				no
+no_certificate	noshape	0LB3RB2LA2RB_3RA2LA1RA1LB	blank	0	1	2				no
+no_certificate	noshape	1LB0LA1RB2LA_3RB3RA0RB2LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB0LB0RA0RA_1RB2RA3RA3LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB0RA1LA2RA_1RB3LB2LA0RA	nonblank	0	1	6				no
+no_certificate	noshape	1LB0RA3LA2RA_3RB3RA2LA0LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB0RB0LA1RA_2RA3LB1LB2LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB0RB2LA1LB_3RA2RB3RA1LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB1LB0RA3RA_3RB2RA0LA2LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB1RA3LB2LB_2RA2LA1RB0RB	nonblank	0	1	6				no
+no_certificate	noshape	1LB1RA3RA0LB_2RA2LB0RA3LB	nonblank	0	1	6				no
+no_certificate	noshape	1LB1RB0RB3LA_1RA2LA3RB0LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB1RB1LA0LA_3RA2LA0RA2LB	nonblank	0	1	6				no
+no_certificate	noshape	1LB2LA1RB0RB_3RA1RA3LB1LB	nonblank	0	1	6				no
+no_certificate	noshape	1LB2LA3RB1RB_2RA1LA3RB---	nonblank	1	17	6				no
+no_certificate	noshape	1LB2LB1RA3RA_2RA3LB0RA1LB	nonblank	0	1	6				no
+no_certificate	noshape	1LB2LB3RA1RA_2RB3LA1RA1LB	nonblank	0	1	6				no
+no_certificate	noshape	1LB2RA0RA2LB_3RA---3LB2LA	nonblank	1	17	6				no
+no_certificate	noshape	1LB2RA1RA0LB_2RB3RA3LB2LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB2RA3RB0LA_1RA3LA0LB1RB	nonblank	0	1	6				no
+no_certificate	noshape	1LB2RB1LA0RB_3RA0RA3LA2LB	nonblank	0	1	6				no
+no_certificate	noshape	1LB2RB1LA3RA_2RA0RA3LB0LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB2RB2LA2RB_3RB3RA1RB3LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB3LA1RA0RB_2RA2LB1LA2RA	nonblank	0	1	6				no
+no_certificate	noshape	1LB3LA3LB1RB_2RA2RB1LA0RB	nonblank	0	1	6				no
+no_certificate	noshape	1LB3LA3RA1RB_2RB2LA3LA0LB	nonblank	0	1	6				no
+no_certificate	noshape	1LB3LA3RB3LB_2RA0LA1LB1RB	nonblank	0	1	6				no
+no_certificate	noshape	1LB3LB2RB2RA_3RA2RA0LB2LB	nonblank	0	1	6				no
+no_certificate	noshape	1LB3LB3RA1LB_1RA2LB---0RA	nonblank	1	17	6				no
+no_certificate	noshape	1LB3LB3RB1LA_2RA0RA1RB2LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB3RA1RA2LB_3RB1LA2RA3LB	nonblank	0	1	6				no
+no_certificate	noshape	1LB3RA2RA0LB_3RB2RA3LA1LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB3RA2RA0RB_1RB2LA1LA3LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB3RB0LB2RB_2RA1LA3LA1RB	nonblank	0	1	6				no
+no_certificate	noshape	1LB3RB0RA1LA_2RA3RA1LB0LA	nonblank	0	1	6				no
+no_certificate	noshape	1LB3RB3LA3LB_2RA0LA2LB0RB	nonblank	0	1	6				no
+no_certificate	noshape	1LB3RB3RB3LA_3RA2RA2LA2RB	nonblank	0	1	6				no
