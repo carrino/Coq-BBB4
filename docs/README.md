@@ -18,6 +18,9 @@ documents, [`CLAIMS.md`](CLAIMS.md) is right.
 * [`TERMINOLOGY.md`](TERMINOLOGY.md) — the vocabulary: the theorem's own
   terms, then census / holdouts / residue / boards / tiers.
 
+* [Four-symbol champion](VERIFYING.md#four-symbol-champion) — build and audit
+  the exact `(2,4)` champion score and both global lower bounds.
+
 ## How the last machines fell
 
 The finished write-ups of the closing campaign — completed records, not

@@ -1,0 +1,12 @@
+-Q theories BBB24
+theories/Statement.v
+theories/StatementTr.v
+theories/Spec.v
+theories/CTape.v
+theories/Gap.v
+theories/Macros.v
+theories/RLE.v
+theories/Replay.v
+theories/Certificate.v
+theories/Champion.v
+theories/Regression.v
