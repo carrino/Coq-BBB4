@@ -125,3 +125,45 @@ selects the lowest SHA-256 machine hashes, and writes raw results under
 its success rate is not an estimate of the fraction of all raw tables that the
 affine checker will solve. The report separates failures to find a repeated
 shape, fit an affine template, and prove the proposed symbolic recurrence.
+
+## Checked affine examples
+
+`IRuleCensus.ir_check_sound` now checks affine block recurrences over the
+two-state, four-symbol carrier and proves non-halting plus **both** score bounds.
+The checker replays the concrete prefix, proves each auxiliary rule for every
+admissible counter value, and checks that the recurring instructions cover the
+entire suffix. Its bound comparison uses binary integers.
+
+Four certificates from the survey are retained in
+[`research/affine/`](research/affine/) and checked in `AffineExamples.v`:
+
+| Machine | Auxiliary rules | Feature exercised |
+| --- | ---: | --- |
+| `0LB2RA3RB2LA_1RA2RA3LB2RB` | 0 | Direct affine recurrence |
+| `0LB1LB2RA0RB_3RA3RB1LA2LB` | 1 | Inductively proved auxiliary rule |
+| `0LB3RB0LA1RB_3RA3LB0LA2LB` | 2 | Block `23` and multiple prefix rules |
+| `0LB0LA---2RB_3RA1LB1RB1LB` | 2 | Partial table: every completion is bounded |
+
+Each theorem proves both bounds at 4,096 and applies to every completion of its
+table. The upstream claimed quasihalting flags and scores are ignored. In
+particular, these examples do not certify the upstream claimed exact score of
+the third machine. They establish that the proof method works on residual
+families; they do not change the bootstrap's recorded pending weight.
+
+```bash
+python3 four/tools/generate_affine.py --check
+make -C four check -j2
+```
+
+The generic engine is adapted from `small/theories/Checkers/IRules/`. The carrier
+changes are the two-state visit mask, four-symbol instruction mask, and four
+reserved singleton block IDs. Rejection checks cover corrupted anchors,
+insufficient bounds, exhausted replay fuel, and the fourth symbol's mask and
+block ID. The checked examples depend only on functional extensionality.
+
+The next census pass should attach accepted affine certificates to residual
+leaves and certify their coverage, with a bounded resource budget and explicit
+leftovers. The 98 sampled `noshape` cases need separate analysis: increasing
+affine fitting effort alone will not address the failure to find a recurring
+template. A global exact value still requires discharging **every** remaining
+family; the sample's candidate acceptance rate cannot establish that.

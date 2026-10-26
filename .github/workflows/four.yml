@@ -2,9 +2,9 @@ name: Four-symbol BBB
 on:
   push:
     branches: [main]
-    paths: ['four/**', 'tools/multisymbol/survey.cpp', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
+    paths: ['four/**', 'tools/multisymbol/survey.cpp', 'tools/gen_irulesblkpfx_certs.py', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
   pull_request:
-    paths: ['four/**', 'tools/multisymbol/survey.cpp', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
+    paths: ['four/**', 'tools/multisymbol/survey.cpp', 'tools/gen_irulesblkpfx_certs.py', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -27,3 +27,5 @@ jobs:
         run: python3 four/tools/generate_champion.py --check
       - name: Check census reproduction
         run: python3 four/tools/generate_census.py --check
+      - name: Check affine examples reproduction
+        run: python3 four/tools/generate_affine.py --check

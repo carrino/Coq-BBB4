@@ -1,0 +1,27 @@
+bbbcert v3
+machine 0LB2RA3RB2LA_1RA2RA3LB2RB
+type irules
+anchor_step 4081
+decided_at_step 4081
+k0 76
+kmin 2
+meta_a 1
+meta_b 3
+tpl_state B
+tpl_hsym 0
+tpl_left 0
+tpl_right 1
+tplrun R 0 3 1 0
+nrules 0
+claim_status irules
+claim_qh F
+claim_score 0
+claim_trans A0 I 103 4005
+claim_trans A1 I 25 3777
+claim_trans A2 I 25 3778
+claim_trans A3 I 25 3776
+claim_trans B0 I 76 4002
+claim_trans B1 I 51 4004
+claim_trans B2 I 1926 4081
+claim_trans B3 I 1850 4001
+end

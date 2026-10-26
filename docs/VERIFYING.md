@@ -147,11 +147,13 @@ eval "$(opam env --switch=census)"
 make -C four check -j2
 python3 four/tools/generate_champion.py --check
 python3 four/tools/generate_census.py --check
+python3 four/tools/generate_affine.py --check
 ```
 
-The build recursively audits `BBB24.Champion`, `BBB24.Bootstrap`, and the
-certificate rejection checks. The Python commands reproduce the champion
-certificate and the census DAG without changing them. Census reproduction
+The build recursively audits `BBB24.Champion`, `BBB24.Bootstrap`,
+`BBB24.AffineExamples`, the affine checkers, and the certificate rejection
+checks. The Python commands reproduce the champion certificate, census DAG,
+and four representative affine examples without changing them. Census reproduction
 requires a C++17 compiler (`g++`). `make -C four` alone
 builds without the independent audit. No other project census is required.
 
@@ -159,17 +161,19 @@ Inspect the final statements and assumptions:
 
 ```bash
 coqtop -quiet -Q four/theories BBB24 <<'COQ'
-From BBB24 Require Import Spec Champion Bootstrap.
+From BBB24 Require Import Spec Champion Bootstrap IRuleCensus.
 Check champion_exact.
 Check BBB24_lower_bounds.
 Check bootstrap_coverage.
+Check ir_check_sound.
 Print Assumptions champion_exact.
 Print Assumptions BBB24_lower_bounds.
 Print Assumptions bootstrap_coverage.
+Print Assumptions ir_check_sound.
 COQ
 ```
 
-All three assumption reports should contain only `functional_extensionality_dep`.
+All four assumption reports should contain only `functional_extensionality_dep`.
 The census covers every table but explicitly defers unresolved partial-table
 families; its coverage theorem is not a global upper bound. The build uses VM
 computation throughout, avoiding native compilation of the large certificate DAG.
