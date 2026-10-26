@@ -1,0 +1,3806 @@
+[
+  {
+    "machine": "0LB0LB_0RC1LA1LB1RC",
+    "name": "0RB0RB_0LC1RA_1RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0RB_0LC1RA_1RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_0RB0RB_0LC1RA_1RB1LC_______.tm_0RB0RB_0LC1RA_1RB1LC_______",
+    "oldthm": "LAPT_0RB0RB_0LC1RA_1RB1LC_______.nqhtr_0RB0RB_0LC1RA_1RB1LC_______",
+    "index": 0,
+    "ident": "known32_000"
+  },
+  {
+    "machine": "0LB0RB_0LC1RB1RA1LC",
+    "name": "0RB0LB_0RC1LB_1LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_00.v",
+    "block": "\nDefinition r_DX1_00_0001 : list (option Trans) := [t0RB;t0LB;t0RC;t1LB;t1LA;t1RC;tN;tN].\nLemma cv_DX1_00_0001 : coversTr (row_to_tm r_DX1_00_0001).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197791%nat (83) (3) (1) (1) StC S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_000",
+    "oldthm": "Counter32.legacy32_000_recur",
+    "index": 1,
+    "ident": "known32_001"
+  },
+  {
+    "machine": "0LB0RC_1RA1LB0LB1RC",
+    "name": "0RB0LC_1LA1RB_0RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_00.v",
+    "block": "\nDefinition r_DX1_00_0010 : list (option Trans) := [t0RB;t0LC;t1LA;t1RB;t0RB;t1LC;tN;tN].\nLemma cv_DX1_00_0010 : coversTr (row_to_tm r_DX1_00_0010).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197624%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_001",
+    "oldthm": "Counter32.legacy32_001_recur",
+    "index": 2,
+    "ident": "known32_002"
+  },
+  {
+    "machine": "0LB0RC_1RC1LB0LB1RA",
+    "name": "0RB0LC_1LC1RB_0RB1LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_0RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_0RB1LA_______.tm_0RB0LC_1LC1RB_0RB1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_0RB1LA_______.nqhtr_0RB0LC_1LC1RB_0RB1LA_______",
+    "index": 3,
+    "ident": "known32_003"
+  },
+  {
+    "machine": "0LB0RC_1RC1LB1LB1RA",
+    "name": "0RB0LC_1LC1RB_1RB1LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1RB1LA_______.tm_0RB0LC_1LC1RB_1RB1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1RB1LA_______.nqhtr_0RB0LC_1LC1RB_1RB1LA_______",
+    "index": 4,
+    "ident": "known32_004"
+  },
+  {
+    "machine": "0LB0RC_1RC1LB1LC1RA",
+    "name": "0RB0LC_1LC1RB_1RC1LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1RC1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1RC1LA_______.tm_0RB0LC_1LC1RB_1RC1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1RC1LA_______.nqhtr_0RB0LC_1LC1RB_1RC1LA_______",
+    "index": 5,
+    "ident": "known32_005"
+  },
+  {
+    "machine": "0LB0RC_1RC1LB1RA1RA",
+    "name": "0RB0LC_1LC1RB_1LA1LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1LA1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1LA1LA_______.tm_0RB0LC_1LC1RB_1LA1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1LA1LA_______.nqhtr_0RB0LC_1LC1RB_1LA1LA_______",
+    "index": 6,
+    "ident": "known32_006"
+  },
+  {
+    "machine": "0LB1RA_1LC0RA1RA1LB",
+    "name": "0RB1LA_1RC0LA_1LA1RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1RC0LA_1LA1RB_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1RC0LA_1LA1RB_______.tm_0RB1LA_1RC0LA_1LA1RB_______",
+    "oldthm": "LAPT_0RB1LA_1RC0LA_1LA1RB_______.nqhtr_0RB1LA_1RC0LA_1LA1RB_______",
+    "index": 7,
+    "ident": "known32_007"
+  },
+  {
+    "machine": "0LB1RA_1LC0RA1RB1LB",
+    "name": "0RB1LA_1RC0LA_1LB1RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1RC0LA_1LB1RB_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1RC0LA_1LB1RB_______.tm_0RB1LA_1RC0LA_1LB1RB_______",
+    "oldthm": "LAPT_0RB1LA_1RC0LA_1LB1RB_______.nqhtr_0RB1LA_1RC0LA_1LB1RB_______",
+    "index": 8,
+    "ident": "known32_008"
+  },
+  {
+    "machine": "0LB1RA_1RA1LC1LB0RA",
+    "name": "0RB1LA_1LA1RC_1RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1LA1RC_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1LA1RC_1RB0LA_______.tm_0RB1LA_1LA1RC_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LA_1LA1RC_1RB0LA_______.nqhtr_0RB1LA_1LA1RC_1RB0LA_______",
+    "index": 9,
+    "ident": "known32_009"
+  },
+  {
+    "machine": "0LB1RA_1RC1LB0LA0RA",
+    "name": "0RB1LA_1LC1RB_0RA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0020 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t0RA;t0LA;tN;tN].\nLemma cv_DX1_01_0020 : coversTr (row_to_tm r_DX1_01_0020).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197790%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_002",
+    "oldthm": "Counter32.legacy32_002_recur",
+    "index": 10,
+    "ident": "known32_010"
+  },
+  {
+    "machine": "0LB1RA_1RC1LB0LB0RA",
+    "name": "0RB1LA_1LC1RB_0RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0030 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t0RB;t0LA;tN;tN].\nLemma cv_DX1_01_0030 : coversTr (row_to_tm r_DX1_01_0030).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197624%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_003",
+    "oldthm": "Counter32.legacy32_003_recur",
+    "index": 11,
+    "ident": "known32_011"
+  },
+  {
+    "machine": "0LB1RA_1RC1LB1LA0RA",
+    "name": "0RB1LA_1LC1RB_1RA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_02.v",
+    "block": "\nDefinition r_DX1_02_0009 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1RA;t0LA;tN;tN].\nLemma cv_DX1_02_0009 : coversTr (row_to_tm r_DX1_02_0009).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190425%nat (104) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_005",
+    "oldthm": "Counter32.legacy32_005_recur",
+    "index": 12,
+    "ident": "known32_012"
+  },
+  {
+    "machine": "0LB1RA_1RC1LB1LB0RA",
+    "name": "0RB1LA_1LC1RB_1RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_02.v",
+    "block": "\nDefinition r_DX1_02_0017 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1RB;t0LA;tN;tN].\nLemma cv_DX1_02_0017 : coversTr (row_to_tm r_DX1_02_0017).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190322%nat (103) (2) (1) (2) StA S0 [] [] [(1%nat, (1), (0)); (0%nat, (0), (1)); (1%nat, (0), (1))] [mkBRuleP StA S0 [] [(1%nat, BV (-1) (2)); (0%nat, BC (1)); (1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_006",
+    "oldthm": "Counter32.legacy32_006_recur",
+    "index": 13,
+    "ident": "known32_013"
+  },
+  {
+    "machine": "0LB1RA_1RC1LB1RA0RA",
+    "name": "0RB1LA_1LC1RB_1LA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0043 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1LA;t0LA;tN;tN].\nLemma cv_DX1_01_0043 : coversTr (row_to_tm r_DX1_01_0043).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190321%nat (104) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_004",
+    "oldthm": "Counter32.legacy32_004_recur",
+    "index": 14,
+    "ident": "known32_014"
+  },
+  {
+    "machine": "0LB1RA_1RC1LC1LB0RA",
+    "name": "0RB1LA_1LC1RC_1RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1LC1RC_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1LC1RC_1RB0LA_______.tm_0RB1LA_1LC1RC_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LA_1LC1RC_1RB0LA_______.nqhtr_0RB1LA_1LC1RC_1RB0LA_______",
+    "index": 15,
+    "ident": "known32_015"
+  },
+  {
+    "machine": "0LB1RC_1RA1LB0LB0RA",
+    "name": "0RB1LC_1LA1RB_0RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0RB0LA_______.tm_0RB1LC_1LA1RB_0RB0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0RB0LA_______.nqhtr_0RB1LC_1LA1RB_0RB0LA_______",
+    "index": 16,
+    "ident": "known32_016"
+  },
+  {
+    "machine": "0LB1RC_1RA1LB0LC0RA",
+    "name": "0RB1LC_1LA1RB_0RC0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0RC0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0RC0LA_______.tm_0RB1LC_1LA1RB_0RC0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0RC0LA_______.nqhtr_0RB1LC_1LA1RB_0RC0LA_______",
+    "index": 17,
+    "ident": "known32_017"
+  },
+  {
+    "machine": "0LB1RC_1RA1LB0RA0RA",
+    "name": "0RB1LC_1LA1RB_0LA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0LA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0LA0LA_______.tm_0RB1LC_1LA1RB_0LA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0LA0LA_______.nqhtr_0RB1LC_1LA1RB_0LA0LA_______",
+    "index": 18,
+    "ident": "known32_018"
+  },
+  {
+    "machine": "0LB1RC_1RA1LB1LA0RA",
+    "name": "0RB1LC_1LA1RB_1RA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1RA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1RA0LA_______.tm_0RB1LC_1LA1RB_1RA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1RA0LA_______.nqhtr_0RB1LC_1LA1RB_1RA0LA_______",
+    "index": 19,
+    "ident": "known32_019"
+  },
+  {
+    "machine": "0LB1RC_1RA1LB1LB0RA",
+    "name": "0RB1LC_1LA1RB_1RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1RB0LA_______.tm_0RB1LC_1LA1RB_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1RB0LA_______.nqhtr_0RB1LC_1LA1RB_1RB0LA_______",
+    "index": 20,
+    "ident": "known32_020"
+  },
+  {
+    "machine": "0LB1RC_1RA1LB1RA0RA",
+    "name": "0RB1LC_1LA1RB_1LA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1LA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1LA0LA_______.tm_0RB1LC_1LA1RB_1LA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1LA0LA_______.nqhtr_0RB1LC_1LA1RB_1LA0LA_______",
+    "index": 21,
+    "ident": "known32_021"
+  },
+  {
+    "machine": "0LC0LC_1LC1RB0RB1LA",
+    "name": "0RB0RB_0LC1RA_1RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0RB_0LC1RA_1RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_0RB0RB_0LC1RA_1RB1LC_______.tm_0RB0RB_0LC1RA_1RB1LC_______",
+    "oldthm": "LAPT_0RB0RB_0LC1RA_1RB1LC_______.nqhtr_0RB0RB_0LC1RA_1RB1LC_______",
+    "index": 22,
+    "ident": "known32_022"
+  },
+  {
+    "machine": "0LC0RB_0LC1RA1RB1LC",
+    "name": "0RB0LC_1LC1RB_0RB1LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_0RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_0RB1LA_______.tm_0RB0LC_1LC1RB_0RB1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_0RB1LA_______.nqhtr_0RB0LC_1LC1RB_0RB1LA_______",
+    "index": 23,
+    "ident": "known32_023"
+  },
+  {
+    "machine": "0LC0RB_0LC1RB1RA1LC",
+    "name": "0RB0LC_1LA1RB_0RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_00.v",
+    "block": "\nDefinition r_DX1_00_0010 : list (option Trans) := [t0RB;t0LC;t1LA;t1RB;t0RB;t1LC;tN;tN].\nLemma cv_DX1_00_0010 : coversTr (row_to_tm r_DX1_00_0010).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197624%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_001",
+    "oldthm": "Counter32.legacy32_001_recur",
+    "index": 24,
+    "ident": "known32_024"
+  },
+  {
+    "machine": "0LC0RB_1LB1RA1RB1LC",
+    "name": "0RB0LC_1LC1RB_1RC1LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1RC1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1RC1LA_______.tm_0RB0LC_1LC1RB_1RC1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1RC1LA_______.nqhtr_0RB0LC_1LC1RB_1RC1LA_______",
+    "index": 25,
+    "ident": "known32_025"
+  },
+  {
+    "machine": "0LC0RB_1LC1RA1RB1LC",
+    "name": "0RB0LC_1LC1RB_1RB1LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1RB1LA_______.tm_0RB0LC_1LC1RB_1RB1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1RB1LA_______.nqhtr_0RB0LC_1LC1RB_1RB1LA_______",
+    "index": 26,
+    "ident": "known32_026"
+  },
+  {
+    "machine": "0LC0RB_1RA1RA1RB1LC",
+    "name": "0RB0LC_1LC1RB_1LA1LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1LA1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1LA1LA_______.tm_0RB0LC_1LC1RB_1LA1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1LA1LA_______.nqhtr_0RB0LC_1LC1RB_1LA1LA_______",
+    "index": 27,
+    "ident": "known32_027"
+  },
+  {
+    "machine": "0LC0RC_1RA1LB0LB1RC",
+    "name": "0RB0LB_0RC1LB_1LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_00.v",
+    "block": "\nDefinition r_DX1_00_0001 : list (option Trans) := [t0RB;t0LB;t0RC;t1LB;t1LA;t1RC;tN;tN].\nLemma cv_DX1_00_0001 : coversTr (row_to_tm r_DX1_00_0001).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197791%nat (83) (3) (1) (1) StC S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_000",
+    "oldthm": "Counter32.legacy32_000_recur",
+    "index": 28,
+    "ident": "known32_028"
+  },
+  {
+    "machine": "0LC1RA_0LA0RA1RB1LC",
+    "name": "0RB1LA_1LC1RB_0RA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0020 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t0RA;t0LA;tN;tN].\nLemma cv_DX1_01_0020 : coversTr (row_to_tm r_DX1_01_0020).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197790%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_002",
+    "oldthm": "Counter32.legacy32_002_recur",
+    "index": 29,
+    "ident": "known32_029"
+  },
+  {
+    "machine": "0LC1RA_0LC0RA1RB1LC",
+    "name": "0RB1LA_1LC1RB_0RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0030 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t0RB;t0LA;tN;tN].\nLemma cv_DX1_01_0030 : coversTr (row_to_tm r_DX1_01_0030).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197624%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_003",
+    "oldthm": "Counter32.legacy32_003_recur",
+    "index": 30,
+    "ident": "known32_030"
+  },
+  {
+    "machine": "0LC1RA_1LA0RA1RB1LC",
+    "name": "0RB1LA_1LC1RB_1RA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_02.v",
+    "block": "\nDefinition r_DX1_02_0009 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1RA;t0LA;tN;tN].\nLemma cv_DX1_02_0009 : coversTr (row_to_tm r_DX1_02_0009).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190425%nat (104) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_005",
+    "oldthm": "Counter32.legacy32_005_recur",
+    "index": 31,
+    "ident": "known32_031"
+  },
+  {
+    "machine": "0LC1RA_1LC0RA1RA1LB",
+    "name": "0RB1LA_1LA1RC_1RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1LA1RC_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1LA1RC_1RB0LA_______.tm_0RB1LA_1LA1RC_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LA_1LA1RC_1RB0LA_______.nqhtr_0RB1LA_1LA1RC_1RB0LA_______",
+    "index": 32,
+    "ident": "known32_032"
+  },
+  {
+    "machine": "0LC1RA_1LC0RA1RB1LB",
+    "name": "0RB1LA_1LC1RC_1RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1LC1RC_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1LC1RC_1RB0LA_______.tm_0RB1LA_1LC1RC_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LA_1LC1RC_1RB0LA_______.nqhtr_0RB1LA_1LC1RC_1RB0LA_______",
+    "index": 33,
+    "ident": "known32_033"
+  },
+  {
+    "machine": "0LC1RA_1LC0RA1RB1LC",
+    "name": "0RB1LA_1LC1RB_1RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_02.v",
+    "block": "\nDefinition r_DX1_02_0017 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1RB;t0LA;tN;tN].\nLemma cv_DX1_02_0017 : coversTr (row_to_tm r_DX1_02_0017).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190322%nat (103) (2) (1) (2) StA S0 [] [] [(1%nat, (1), (0)); (0%nat, (0), (1)); (1%nat, (0), (1))] [mkBRuleP StA S0 [] [(1%nat, BV (-1) (2)); (0%nat, BC (1)); (1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_006",
+    "oldthm": "Counter32.legacy32_006_recur",
+    "index": 34,
+    "ident": "known32_034"
+  },
+  {
+    "machine": "0LC1RA_1RA0RA1RB1LC",
+    "name": "0RB1LA_1LC1RB_1LA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0043 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1LA;t0LA;tN;tN].\nLemma cv_DX1_01_0043 : coversTr (row_to_tm r_DX1_01_0043).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190321%nat (104) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_004",
+    "oldthm": "Counter32.legacy32_004_recur",
+    "index": 35,
+    "ident": "known32_035"
+  },
+  {
+    "machine": "0LC1RA_1RA1LC1LB0RA",
+    "name": "0RB1LA_1RC0LA_1LA1RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1RC0LA_1LA1RB_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1RC0LA_1LA1RB_______.tm_0RB1LA_1RC0LA_1LA1RB_______",
+    "oldthm": "LAPT_0RB1LA_1RC0LA_1LA1RB_______.nqhtr_0RB1LA_1RC0LA_1LA1RB_______",
+    "index": 36,
+    "ident": "known32_036"
+  },
+  {
+    "machine": "0LC1RA_1RC1LC1LB0RA",
+    "name": "0RB1LA_1RC0LA_1LB1RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1RC0LA_1LB1RB_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1RC0LA_1LB1RB_______.tm_0RB1LA_1RC0LA_1LB1RB_______",
+    "oldthm": "LAPT_0RB1LA_1RC0LA_1LB1RB_______.nqhtr_0RB1LA_1RC0LA_1LB1RB_______",
+    "index": 37,
+    "ident": "known32_037"
+  },
+  {
+    "machine": "0LC1RB_0LB0RA1RA1LC",
+    "name": "0RB1LC_1LA1RB_0RC0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0RC0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0RC0LA_______.tm_0RB1LC_1LA1RB_0RC0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0RC0LA_______.nqhtr_0RB1LC_1LA1RB_0RC0LA_______",
+    "index": 38,
+    "ident": "known32_038"
+  },
+  {
+    "machine": "0LC1RB_0LC0RA1RA1LC",
+    "name": "0RB1LC_1LA1RB_0RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0RB0LA_______.tm_0RB1LC_1LA1RB_0RB0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0RB0LA_______.nqhtr_0RB1LC_1LA1RB_0RB0LA_______",
+    "index": 39,
+    "ident": "known32_039"
+  },
+  {
+    "machine": "0LC1RB_0RA0RA1RA1LC",
+    "name": "0RB1LC_1LA1RB_0LA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0LA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0LA0LA_______.tm_0RB1LC_1LA1RB_0LA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0LA0LA_______.nqhtr_0RB1LC_1LA1RB_0LA0LA_______",
+    "index": 40,
+    "ident": "known32_040"
+  },
+  {
+    "machine": "0LC1RB_1LA0RA1RA1LC",
+    "name": "0RB1LC_1LA1RB_1RA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1RA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1RA0LA_______.tm_0RB1LC_1LA1RB_1RA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1RA0LA_______.nqhtr_0RB1LC_1LA1RB_1RA0LA_______",
+    "index": 41,
+    "ident": "known32_041"
+  },
+  {
+    "machine": "0LC1RB_1LC0RA1RA1LC",
+    "name": "0RB1LC_1LA1RB_1RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1RB0LA_______.tm_0RB1LC_1LA1RB_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1RB0LA_______.nqhtr_0RB1LC_1LA1RB_1RB0LA_______",
+    "index": 42,
+    "ident": "known32_042"
+  },
+  {
+    "machine": "0LC1RB_1RA0RA1RA1LC",
+    "name": "0RB1LC_1LA1RB_1LA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1LA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1LA0LA_______.tm_0RB1LC_1LA1RB_1LA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1LA0LA_______.nqhtr_0RB1LC_1LA1RB_1LA0LA_______",
+    "index": 43,
+    "ident": "known32_043"
+  },
+  {
+    "machine": "0RB0LB_0RC1LB1LA1RC",
+    "name": "0RB0LB_0RC1LB_1LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_00.v",
+    "block": "\nDefinition r_DX1_00_0001 : list (option Trans) := [t0RB;t0LB;t0RC;t1LB;t1LA;t1RC;tN;tN].\nLemma cv_DX1_00_0001 : coversTr (row_to_tm r_DX1_00_0001).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197791%nat (83) (3) (1) (1) StC S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_000",
+    "oldthm": "Counter32.legacy32_000_recur",
+    "index": 44,
+    "ident": "known32_044"
+  },
+  {
+    "machine": "0RB0LC_1LA1RB0RB1LC",
+    "name": "0RB0LC_1LA1RB_0RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_00.v",
+    "block": "\nDefinition r_DX1_00_0010 : list (option Trans) := [t0RB;t0LC;t1LA;t1RB;t0RB;t1LC;tN;tN].\nLemma cv_DX1_00_0010 : coversTr (row_to_tm r_DX1_00_0010).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197624%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_001",
+    "oldthm": "Counter32.legacy32_001_recur",
+    "index": 45,
+    "ident": "known32_045"
+  },
+  {
+    "machine": "0RB0LC_1LC1RB0RB1LA",
+    "name": "0RB0LC_1LC1RB_0RB1LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_0RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_0RB1LA_______.tm_0RB0LC_1LC1RB_0RB1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_0RB1LA_______.nqhtr_0RB0LC_1LC1RB_0RB1LA_______",
+    "index": 46,
+    "ident": "known32_046"
+  },
+  {
+    "machine": "0RB0LC_1LC1RB1LA1LA",
+    "name": "0RB0LC_1LC1RB_1LA1LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1LA1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1LA1LA_______.tm_0RB0LC_1LC1RB_1LA1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1LA1LA_______.nqhtr_0RB0LC_1LC1RB_1LA1LA_______",
+    "index": 47,
+    "ident": "known32_047"
+  },
+  {
+    "machine": "0RB0LC_1LC1RB1RB1LA",
+    "name": "0RB0LC_1LC1RB_1RB1LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1RB1LA_______.tm_0RB0LC_1LC1RB_1RB1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1RB1LA_______.nqhtr_0RB0LC_1LC1RB_1RB1LA_______",
+    "index": 48,
+    "ident": "known32_048"
+  },
+  {
+    "machine": "0RB0LC_1LC1RB1RC1LA",
+    "name": "0RB0LC_1LC1RB_1RC1LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1RC1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1RC1LA_______.tm_0RB0LC_1LC1RB_1RC1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1RC1LA_______.nqhtr_0RB0LC_1LC1RB_1RC1LA_______",
+    "index": 49,
+    "ident": "known32_049"
+  },
+  {
+    "machine": "0RB0RB_0LC1RA1RB1LC",
+    "name": "0RB0RB_0LC1RA_1RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0RB_0LC1RA_1RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_0RB0RB_0LC1RA_1RB1LC_______.tm_0RB0RB_0LC1RA_1RB1LC_______",
+    "oldthm": "LAPT_0RB0RB_0LC1RA_1RB1LC_______.nqhtr_0RB0RB_0LC1RA_1RB1LC_______",
+    "index": 50,
+    "ident": "known32_050"
+  },
+  {
+    "machine": "0RB1LA_1LA1RC1RB0LA",
+    "name": "0RB1LA_1LA1RC_1RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1LA1RC_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1LA1RC_1RB0LA_______.tm_0RB1LA_1LA1RC_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LA_1LA1RC_1RB0LA_______.nqhtr_0RB1LA_1LA1RC_1RB0LA_______",
+    "index": 51,
+    "ident": "known32_051"
+  },
+  {
+    "machine": "0RB1LA_1LC1RB0RA0LA",
+    "name": "0RB1LA_1LC1RB_0RA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0020 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t0RA;t0LA;tN;tN].\nLemma cv_DX1_01_0020 : coversTr (row_to_tm r_DX1_01_0020).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197790%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_002",
+    "oldthm": "Counter32.legacy32_002_recur",
+    "index": 52,
+    "ident": "known32_052"
+  },
+  {
+    "machine": "0RB1LA_1LC1RB0RB0LA",
+    "name": "0RB1LA_1LC1RB_0RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0030 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t0RB;t0LA;tN;tN].\nLemma cv_DX1_01_0030 : coversTr (row_to_tm r_DX1_01_0030).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197624%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_003",
+    "oldthm": "Counter32.legacy32_003_recur",
+    "index": 53,
+    "ident": "known32_053"
+  },
+  {
+    "machine": "0RB1LA_1LC1RB1LA0LA",
+    "name": "0RB1LA_1LC1RB_1LA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0043 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1LA;t0LA;tN;tN].\nLemma cv_DX1_01_0043 : coversTr (row_to_tm r_DX1_01_0043).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190321%nat (104) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_004",
+    "oldthm": "Counter32.legacy32_004_recur",
+    "index": 54,
+    "ident": "known32_054"
+  },
+  {
+    "machine": "0RB1LA_1LC1RB1RA0LA",
+    "name": "0RB1LA_1LC1RB_1RA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_02.v",
+    "block": "\nDefinition r_DX1_02_0009 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1RA;t0LA;tN;tN].\nLemma cv_DX1_02_0009 : coversTr (row_to_tm r_DX1_02_0009).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190425%nat (104) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_005",
+    "oldthm": "Counter32.legacy32_005_recur",
+    "index": 55,
+    "ident": "known32_055"
+  },
+  {
+    "machine": "0RB1LA_1LC1RB1RB0LA",
+    "name": "0RB1LA_1LC1RB_1RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_02.v",
+    "block": "\nDefinition r_DX1_02_0017 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1RB;t0LA;tN;tN].\nLemma cv_DX1_02_0017 : coversTr (row_to_tm r_DX1_02_0017).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190322%nat (103) (2) (1) (2) StA S0 [] [] [(1%nat, (1), (0)); (0%nat, (0), (1)); (1%nat, (0), (1))] [mkBRuleP StA S0 [] [(1%nat, BV (-1) (2)); (0%nat, BC (1)); (1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_006",
+    "oldthm": "Counter32.legacy32_006_recur",
+    "index": 56,
+    "ident": "known32_056"
+  },
+  {
+    "machine": "0RB1LA_1LC1RC1RB0LA",
+    "name": "0RB1LA_1LC1RC_1RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1LC1RC_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1LC1RC_1RB0LA_______.tm_0RB1LA_1LC1RC_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LA_1LC1RC_1RB0LA_______.nqhtr_0RB1LA_1LC1RC_1RB0LA_______",
+    "index": 57,
+    "ident": "known32_057"
+  },
+  {
+    "machine": "0RB1LA_1RC0LA1LA1RB",
+    "name": "0RB1LA_1RC0LA_1LA1RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1RC0LA_1LA1RB_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1RC0LA_1LA1RB_______.tm_0RB1LA_1RC0LA_1LA1RB_______",
+    "oldthm": "LAPT_0RB1LA_1RC0LA_1LA1RB_______.nqhtr_0RB1LA_1RC0LA_1LA1RB_______",
+    "index": 58,
+    "ident": "known32_058"
+  },
+  {
+    "machine": "0RB1LA_1RC0LA1LB1RB",
+    "name": "0RB1LA_1RC0LA_1LB1RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1RC0LA_1LB1RB_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1RC0LA_1LB1RB_______.tm_0RB1LA_1RC0LA_1LB1RB_______",
+    "oldthm": "LAPT_0RB1LA_1RC0LA_1LB1RB_______.nqhtr_0RB1LA_1RC0LA_1LB1RB_______",
+    "index": 59,
+    "ident": "known32_059"
+  },
+  {
+    "machine": "0RB1LC_1LA1RB0LA0LA",
+    "name": "0RB1LC_1LA1RB_0LA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0LA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0LA0LA_______.tm_0RB1LC_1LA1RB_0LA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0LA0LA_______.nqhtr_0RB1LC_1LA1RB_0LA0LA_______",
+    "index": 60,
+    "ident": "known32_060"
+  },
+  {
+    "machine": "0RB1LC_1LA1RB0RB0LA",
+    "name": "0RB1LC_1LA1RB_0RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0RB0LA_______.tm_0RB1LC_1LA1RB_0RB0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0RB0LA_______.nqhtr_0RB1LC_1LA1RB_0RB0LA_______",
+    "index": 61,
+    "ident": "known32_061"
+  },
+  {
+    "machine": "0RB1LC_1LA1RB0RC0LA",
+    "name": "0RB1LC_1LA1RB_0RC0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0RC0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0RC0LA_______.tm_0RB1LC_1LA1RB_0RC0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0RC0LA_______.nqhtr_0RB1LC_1LA1RB_0RC0LA_______",
+    "index": 62,
+    "ident": "known32_062"
+  },
+  {
+    "machine": "0RB1LC_1LA1RB1LA0LA",
+    "name": "0RB1LC_1LA1RB_1LA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1LA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1LA0LA_______.tm_0RB1LC_1LA1RB_1LA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1LA0LA_______.nqhtr_0RB1LC_1LA1RB_1LA0LA_______",
+    "index": 63,
+    "ident": "known32_063"
+  },
+  {
+    "machine": "0RB1LC_1LA1RB1RA0LA",
+    "name": "0RB1LC_1LA1RB_1RA0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1RA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1RA0LA_______.tm_0RB1LC_1LA1RB_1RA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1RA0LA_______.nqhtr_0RB1LC_1LA1RB_1RA0LA_______",
+    "index": 64,
+    "ident": "known32_064"
+  },
+  {
+    "machine": "0RB1LC_1LA1RB1RB0LA",
+    "name": "0RB1LC_1LA1RB_1RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1RB0LA_______.tm_0RB1LC_1LA1RB_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1RB0LA_______.nqhtr_0RB1LC_1LA1RB_1RB0LA_______",
+    "index": 65,
+    "ident": "known32_065"
+  },
+  {
+    "machine": "0RC0LB_0RC1LA1LB1RC",
+    "name": "0RB0LC_1LC1RB_0RB1LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_0RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_0RB1LA_______.tm_0RB0LC_1LC1RB_0RB1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_0RB1LA_______.nqhtr_0RB0LC_1LC1RB_0RB1LA_______",
+    "index": 66,
+    "ident": "known32_066"
+  },
+  {
+    "machine": "0RC0LB_0RC1LB1LA1RC",
+    "name": "0RB0LC_1LA1RB_0RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_00.v",
+    "block": "\nDefinition r_DX1_00_0010 : list (option Trans) := [t0RB;t0LC;t1LA;t1RB;t0RB;t1LC;tN;tN].\nLemma cv_DX1_00_0010 : coversTr (row_to_tm r_DX1_00_0010).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197624%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_001",
+    "oldthm": "Counter32.legacy32_001_recur",
+    "index": 67,
+    "ident": "known32_067"
+  },
+  {
+    "machine": "0RC0LB_1LA1LA1LB1RC",
+    "name": "0RB0LC_1LC1RB_1LA1LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1LA1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1LA1LA_______.tm_0RB0LC_1LC1RB_1LA1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1LA1LA_______.nqhtr_0RB0LC_1LC1RB_1LA1LA_______",
+    "index": 68,
+    "ident": "known32_068"
+  },
+  {
+    "machine": "0RC0LB_1RB1LA1LB1RC",
+    "name": "0RB0LC_1LC1RB_1RC1LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1RC1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1RC1LA_______.tm_0RB0LC_1LC1RB_1RC1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1RC1LA_______.nqhtr_0RB0LC_1LC1RB_1RC1LA_______",
+    "index": 69,
+    "ident": "known32_069"
+  },
+  {
+    "machine": "0RC0LB_1RC1LA1LB1RC",
+    "name": "0RB0LC_1LC1RB_1RB1LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB0LC_1LC1RB_1RB1LA_______.tm_0RB0LC_1LC1RB_1RB1LA_______",
+    "oldthm": "LAPT_0RB0LC_1LC1RB_1RB1LA_______.nqhtr_0RB0LC_1LC1RB_1RB1LA_______",
+    "index": 70,
+    "ident": "known32_070"
+  },
+  {
+    "machine": "0RC0LC_1LA1RB0RB1LC",
+    "name": "0RB0LB_0RC1LB_1LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_00.v",
+    "block": "\nDefinition r_DX1_00_0001 : list (option Trans) := [t0RB;t0LB;t0RC;t1LB;t1LA;t1RC;tN;tN].\nLemma cv_DX1_00_0001 : coversTr (row_to_tm r_DX1_00_0001).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197791%nat (83) (3) (1) (1) StC S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_000",
+    "oldthm": "Counter32.legacy32_000_recur",
+    "index": 71,
+    "ident": "known32_071"
+  },
+  {
+    "machine": "0RC0RC_1RC1LB0LB1RA",
+    "name": "0RB0RB_0LC1RA_1RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB0RB_0LC1RA_1RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_0RB0RB_0LC1RA_1RB1LC_______.tm_0RB0RB_0LC1RA_1RB1LC_______",
+    "oldthm": "LAPT_0RB0RB_0LC1RA_1RB1LC_______.nqhtr_0RB0RB_0LC1RA_1RB1LC_______",
+    "index": 72,
+    "ident": "known32_072"
+  },
+  {
+    "machine": "0RC1LA_0RA0LA1LB1RC",
+    "name": "0RB1LA_1LC1RB_0RA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0020 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t0RA;t0LA;tN;tN].\nLemma cv_DX1_01_0020 : coversTr (row_to_tm r_DX1_01_0020).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197790%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_002",
+    "oldthm": "Counter32.legacy32_002_recur",
+    "index": 73,
+    "ident": "known32_073"
+  },
+  {
+    "machine": "0RC1LA_0RC0LA1LB1RC",
+    "name": "0RB1LA_1LC1RB_0RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0030 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t0RB;t0LA;tN;tN].\nLemma cv_DX1_01_0030 : coversTr (row_to_tm r_DX1_01_0030).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197624%nat (83) (3) (1) (1) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_003",
+    "oldthm": "Counter32.legacy32_003_recur",
+    "index": 74,
+    "ident": "known32_074"
+  },
+  {
+    "machine": "0RC1LA_1LA0LA1LB1RC",
+    "name": "0RB1LA_1LC1RB_1LA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_01.v",
+    "block": "\nDefinition r_DX1_01_0043 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1LA;t0LA;tN;tN].\nLemma cv_DX1_01_0043 : coversTr (row_to_tm r_DX1_01_0043).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190321%nat (104) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_004",
+    "oldthm": "Counter32.legacy32_004_recur",
+    "index": 75,
+    "ident": "known32_075"
+  },
+  {
+    "machine": "0RC1LA_1LA1RC1RB0LA",
+    "name": "0RB1LA_1RC0LA_1LA1RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1RC0LA_1LA1RB_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1RC0LA_1LA1RB_______.tm_0RB1LA_1RC0LA_1LA1RB_______",
+    "oldthm": "LAPT_0RB1LA_1RC0LA_1LA1RB_______.nqhtr_0RB1LA_1RC0LA_1LA1RB_______",
+    "index": 76,
+    "ident": "known32_076"
+  },
+  {
+    "machine": "0RC1LA_1LC1RC1RB0LA",
+    "name": "0RB1LA_1RC0LA_1LB1RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1RC0LA_1LB1RB_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1RC0LA_1LB1RB_______.tm_0RB1LA_1RC0LA_1LB1RB_______",
+    "oldthm": "LAPT_0RB1LA_1RC0LA_1LB1RB_______.nqhtr_0RB1LA_1RC0LA_1LB1RB_______",
+    "index": 77,
+    "ident": "known32_077"
+  },
+  {
+    "machine": "0RC1LA_1RA0LA1LB1RC",
+    "name": "0RB1LA_1LC1RB_1RA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_02.v",
+    "block": "\nDefinition r_DX1_02_0009 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1RA;t0LA;tN;tN].\nLemma cv_DX1_02_0009 : coversTr (row_to_tm r_DX1_02_0009).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190425%nat (104) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_005",
+    "oldthm": "Counter32.legacy32_005_recur",
+    "index": 78,
+    "ident": "known32_078"
+  },
+  {
+    "machine": "0RC1LA_1RC0LA1LA1RB",
+    "name": "0RB1LA_1LA1RC_1RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1LA1RC_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1LA1RC_1RB0LA_______.tm_0RB1LA_1LA1RC_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LA_1LA1RC_1RB0LA_______.nqhtr_0RB1LA_1LA1RC_1RB0LA_______",
+    "index": 79,
+    "ident": "known32_079"
+  },
+  {
+    "machine": "0RC1LA_1RC0LA1LB1RB",
+    "name": "0RB1LA_1LC1RC_1RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LA_1LC1RC_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LA_1LC1RC_1RB0LA_______.tm_0RB1LA_1LC1RC_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LA_1LC1RC_1RB0LA_______.nqhtr_0RB1LA_1LC1RC_1RB0LA_______",
+    "index": 80,
+    "ident": "known32_080"
+  },
+  {
+    "machine": "0RC1LA_1RC0LA1LB1RC",
+    "name": "0RB1LA_1LC1RB_1RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_02.v",
+    "block": "\nDefinition r_DX1_02_0017 : list (option Trans) := [t0RB;t1LA;t1LC;t1RB;t1RB;t0LA;tN;tN].\nLemma cv_DX1_02_0017 : coversTr (row_to_tm r_DX1_02_0017).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190322%nat (103) (2) (1) (2) StA S0 [] [] [(1%nat, (1), (0)); (0%nat, (0), (1)); (1%nat, (0), (1))] [mkBRuleP StA S0 [] [(1%nat, BV (-1) (2)); (0%nat, BC (1)); (1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_006",
+    "oldthm": "Counter32.legacy32_006_recur",
+    "index": 81,
+    "ident": "known32_081"
+  },
+  {
+    "machine": "0RC1LB_0LA0LA1LA1RC",
+    "name": "0RB1LC_1LA1RB_0LA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0LA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0LA0LA_______.tm_0RB1LC_1LA1RB_0LA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0LA0LA_______.nqhtr_0RB1LC_1LA1RB_0LA0LA_______",
+    "index": 82,
+    "ident": "known32_082"
+  },
+  {
+    "machine": "0RC1LB_0RB0LA1LA1RC",
+    "name": "0RB1LC_1LA1RB_0RC0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0RC0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0RC0LA_______.tm_0RB1LC_1LA1RB_0RC0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0RC0LA_______.nqhtr_0RB1LC_1LA1RB_0RC0LA_______",
+    "index": 83,
+    "ident": "known32_083"
+  },
+  {
+    "machine": "0RC1LB_0RC0LA1LA1RC",
+    "name": "0RB1LC_1LA1RB_0RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_0RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_0RB0LA_______.tm_0RB1LC_1LA1RB_0RB0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_0RB0LA_______.nqhtr_0RB1LC_1LA1RB_0RB0LA_______",
+    "index": 84,
+    "ident": "known32_084"
+  },
+  {
+    "machine": "0RC1LB_1LA0LA1LA1RC",
+    "name": "0RB1LC_1LA1RB_1LA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1LA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1LA0LA_______.tm_0RB1LC_1LA1RB_1LA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1LA0LA_______.nqhtr_0RB1LC_1LA1RB_1LA0LA_______",
+    "index": 85,
+    "ident": "known32_085"
+  },
+  {
+    "machine": "0RC1LB_1RA0LA1LA1RC",
+    "name": "0RB1LC_1LA1RB_1RA0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1RA0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1RA0LA_______.tm_0RB1LC_1LA1RB_1RA0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1RA0LA_______.nqhtr_0RB1LC_1LA1RB_1RA0LA_______",
+    "index": 86,
+    "ident": "known32_086"
+  },
+  {
+    "machine": "0RC1LB_1RC0LA1LA1RC",
+    "name": "0RB1LC_1LA1RB_1RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_0RB1LC_1LA1RB_1RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_0RB1LC_1LA1RB_1RB0LA_______.tm_0RB1LC_1LA1RB_1RB0LA_______",
+    "oldthm": "LAPT_0RB1LC_1LA1RB_1RB0LA_______.nqhtr_0RB1LC_1LA1RB_1RB0LA_______",
+    "index": 87,
+    "ident": "known32_087"
+  },
+  {
+    "machine": "1LB0LB_0RC1LA1LB1RC",
+    "name": "1RB0RB_0LC1RA_1RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0RB_0LC1RA_1RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0RB_0LC1RA_1RB1LC_______.tm_1RB0RB_0LC1RA_1RB1LC_______",
+    "oldthm": "LAPT_1RB0RB_0LC1RA_1RB1LC_______.nqhtr_1RB0RB_0LC1RA_1RB1LC_______",
+    "index": 88,
+    "ident": "known32_088"
+  },
+  {
+    "machine": "1LB0LB_0RC1LB1LA1RC",
+    "name": "1RB0RB_0LC1RB_1RA1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_06.v",
+    "block": "\nDefinition r_DX1_06_0025 : list (option Trans) := [t1RB;t0RB;t0LC;t1RB;t1RA;t1LC;tN;tN].\nLemma cv_DX1_06_0025 : coversTr (row_to_tm r_DX1_06_0025).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195835%nat (105) (3) (1) (2) StC S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StA S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_011",
+    "oldthm": "Counter32.legacy32_011_recur",
+    "index": 89,
+    "ident": "known32_089"
+  },
+  {
+    "machine": "1LB0RB_0LC1RA1RB1LC",
+    "name": "1RB0LB_0RC1LA_1LB1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LB_0RC1LA_1LB1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LB_0RC1LA_1LB1RC_______.tm_1RB0LB_0RC1LA_1LB1RC_______",
+    "oldthm": "LAPT_1RB0LB_0RC1LA_1LB1RC_______.nqhtr_1RB0LB_0RC1LA_1LB1RC_______",
+    "index": 90,
+    "ident": "known32_090"
+  },
+  {
+    "machine": "1LB0RB_0LC1RB1RA1LC",
+    "name": "1RB0LB_0RC1LB_1LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_04.v",
+    "block": "\nDefinition r_DX1_04_0038 : list (option Trans) := [t1RB;t0LB;t0RC;t1LB;t1LA;t1RC;tN;tN].\nLemma cv_DX1_04_0038 : coversTr (row_to_tm r_DX1_04_0038).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195936%nat (105) (3) (1) (2) StC S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_007",
+    "oldthm": "Counter32.legacy32_007_recur",
+    "index": 91,
+    "ident": "known32_091"
+  },
+  {
+    "machine": "1LB0RC_1LC1LA1RA0LB",
+    "name": "1RB0LC_1RC1RA_1LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_SP_10.v",
+    "block": "\nDefinition r_SP_10_0028 : list (option Trans) := [t1RB;t0LC;t1RC;t1RA;t1LA;t0RB;tN;tN].\nLemma cv_SP_10_0028 : coversTr (row_to_tm r_SP_10_0028).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 194319%nat (382) (6) (2) (2) StC S0 [(2%nat, [S1; S0]);\n   (3%nat, [S0; S1])] [(1%nat, (2), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-2) (3))] [(2%nat, BV (2) (1)); (1%nat, BC (1))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_010",
+    "oldthm": "Counter32.legacy32_010_recur",
+    "index": 92,
+    "ident": "known32_092"
+  },
+  {
+    "machine": "1LB0RC_1RA1LA0LA1RC",
+    "name": "1RB0LC_1LA1RA_0RA1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LA1RA_0RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LA1RA_0RA1LC_______.tm_1RB0LC_1LA1RA_0RA1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LA1RA_0RA1LC_______.nqhtr_1RB0LC_1LA1RA_0RA1LC_______",
+    "index": 93,
+    "ident": "known32_093"
+  },
+  {
+    "machine": "1LB0RC_1RA1LA0LB1RC",
+    "name": "1RB0LC_1LA1RA_0RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LA1RA_0RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LA1RA_0RB1LC_______.tm_1RB0LC_1LA1RA_0RB1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LA1RA_0RB1LC_______.nqhtr_1RB0LC_1LA1RA_0RB1LC_______",
+    "index": 94,
+    "ident": "known32_094"
+  },
+  {
+    "machine": "1LB0RC_1RA1LB0LB1RC",
+    "name": "1RB0LC_1LA1RB_0RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_05.v",
+    "block": "\nDefinition r_DX1_05_0009 : list (option Trans) := [t1RB;t0LC;t1LA;t1RB;t0RB;t1LC;tN;tN].\nLemma cv_DX1_05_0009 : coversTr (row_to_tm r_DX1_05_0009).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195729%nat (105) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_008",
+    "oldthm": "Counter32.legacy32_008_recur",
+    "index": 95,
+    "ident": "known32_095"
+  },
+  {
+    "machine": "1LB0RC_1RC0LA1RA1RB",
+    "name": "1RB0LC_1LC0RA_1LA1LB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_SP_09.v",
+    "block": "\nDefinition r_SP_09_0046 : list (option Trans) := [t1RB;t0LC;t1LC;t0RA;t1LA;t1LB;tN;tN].\nLemma cv_SP_09_0046 : coversTr (row_to_tm r_SP_09_0046).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 85865%nat (253) (5) (2) (3) StA S0 [(2%nat, [S0; S1]);\n   (3%nat, [S1; S0])] [] [(1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (2), (0))] [mkBRuleP StB S1 [(3%nat, BV (2) (1)); (1%nat, BC (1))] [(1%nat, BV (-2) (3))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_009",
+    "oldthm": "Counter32.legacy32_009_recur",
+    "index": 96,
+    "ident": "known32_096"
+  },
+  {
+    "machine": "1LB0RC_1RC1LA0LA1RC",
+    "name": "1RB0LC_1LC1RA_0RA1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RA_0RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RA_0RA1LC_______.tm_1RB0LC_1LC1RA_0RA1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RA_0RA1LC_______.nqhtr_1RB0LC_1LC1RA_0RA1LC_______",
+    "index": 97,
+    "ident": "known32_097"
+  },
+  {
+    "machine": "1LB0RC_1RC1LA0LB1RC",
+    "name": "1RB0LC_1LC1RA_0RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RA_0RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RA_0RB1LC_______.tm_1RB0LC_1LC1RA_0RB1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RA_0RB1LC_______.nqhtr_1RB0LC_1LC1RA_0RB1LC_______",
+    "index": 98,
+    "ident": "known32_098"
+  },
+  {
+    "machine": "1LB0RC_1RC1LB0LB1RA",
+    "name": "1RB0LC_1LC1RB_0RB1LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RB_0RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RB_0RB1LA_______.tm_1RB0LC_1LC1RB_0RB1LA_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RB_0RB1LA_______.nqhtr_1RB0LC_1LC1RB_0RB1LA_______",
+    "index": 99,
+    "ident": "known32_099"
+  },
+  {
+    "machine": "1LB1LA_1RC1LA0LB0RC",
+    "name": "1RB1RA_1LC1RA_0RB0LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1RA_1LC1RA_0RB0LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1RA_1LC1RA_0RB0LC_______.tm_1RB1RA_1LC1RA_0RB0LC_______",
+    "oldthm": "LAPT_1RB1RA_1LC1RA_0RB0LC_______.nqhtr_1RB1RA_1LC1RA_0RB0LC_______",
+    "index": 100,
+    "ident": "known32_100"
+  },
+  {
+    "machine": "1LB1LB_0RC0LA1LA1RC",
+    "name": "1RB1RB_0LC0RA_1RA1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1RB_0LC0RA_1RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1RB_0LC0RA_1RA1LC_______.tm_1RB1RB_0LC0RA_1RA1LC_______",
+    "oldthm": "LAPT_1RB1RB_0LC0RA_1RA1LC_______.nqhtr_1RB1RB_0LC0RA_1RA1LC_______",
+    "index": 101,
+    "ident": "known32_101"
+  },
+  {
+    "machine": "1LB1LC_1RC0LA1LA0RB",
+    "name": "1RB1RC_1LC0RA_1RA0LB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_SP_24.v",
+    "block": "\nDefinition r_SP_24_0049 : list (option Trans) := [t1RB;t1RC;t1LC;t0RA;t1RA;t0LB;tN;tN].\nLemma cv_SP_24_0049 : coversTr (row_to_tm r_SP_24_0049).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 134626%nat (318) (6) (2) (2) StB S0 [(2%nat, [S0; S1]);\n   (3%nat, [S1; S0])] [(1%nat, (2), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-2) (3))] [(3%nat, BV (2) (1)); (1%nat, BC (1))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_017",
+    "oldthm": "Counter32.legacy32_017_recur",
+    "index": 102,
+    "ident": "known32_102"
+  },
+  {
+    "machine": "1LB1RA_0RA0LC0RA1LC",
+    "name": "1RB1LA_0LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_07.v",
+    "block": "\nDefinition r_DX1_07_0031 : list (option Trans) := [t1RB;t1LA;t0LA;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_07_0031 : coversTr (row_to_tm r_DX1_07_0031).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197623%nat (83) (3) (1) (1) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_012",
+    "oldthm": "Counter32.legacy32_012_recur",
+    "index": 103,
+    "ident": "known32_103"
+  },
+  {
+    "machine": "1LB1RA_0RA1LC0LB0LB",
+    "name": "1RB1LA_0LA1RC_0RB0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0RB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0RB0RB_______.tm_1RB1LA_0LA1RC_0RB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0RB0RB_______.nqhtr_1RB1LA_0LA1RC_0RB0RB_______",
+    "index": 104,
+    "ident": "known32_104"
+  },
+  {
+    "machine": "1LB1RA_0RA1LC0RA0LB",
+    "name": "1RB1LA_0LA1RC_0LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0LA0RB_______.tm_1RB1LA_0LA1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0LA0RB_______.nqhtr_1RB1LA_0LA1RC_0LA0RB_______",
+    "index": 105,
+    "ident": "known32_105"
+  },
+  {
+    "machine": "1LB1RA_0RA1LC0RC0LB",
+    "name": "1RB1LA_0LA1RC_0LC0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LC0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0LC0RB_______.tm_1RB1LA_0LA1RC_0LC0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0LC0RB_______.nqhtr_1RB1LA_0LA1RC_0LC0RB_______",
+    "index": 106,
+    "ident": "known32_106"
+  },
+  {
+    "machine": "1LB1RA_0RA1LC1LB0LB",
+    "name": "1RB1LA_0LA1RC_1RB0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1RB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1RB0RB_______.tm_1RB1LA_0LA1RC_1RB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1RB0RB_______.nqhtr_1RB1LA_0LA1RC_1RB0RB_______",
+    "index": 107,
+    "ident": "known32_107"
+  },
+  {
+    "machine": "1LB1RA_0RA1LC1RA0LB",
+    "name": "1RB1LA_0LA1RC_1LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1LA0RB_______.tm_1RB1LA_0LA1RC_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1LA0RB_______.nqhtr_1RB1LA_0LA1RC_1LA0RB_______",
+    "index": 108,
+    "ident": "known32_108"
+  },
+  {
+    "machine": "1LB1RA_0RA1LC1RB0LB",
+    "name": "1RB1LA_0LA1RC_1LB0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1LB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1LB0RB_______.tm_1RB1LA_0LA1RC_1LB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1LB0RB_______.nqhtr_1RB1LA_0LA1RC_1LB0RB_______",
+    "index": 109,
+    "ident": "known32_109"
+  },
+  {
+    "machine": "1LB1RA_0RC0LC0RA1LC",
+    "name": "1RB1LA_0LC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0011 : list (option Trans) := [t1RB;t1LA;t0LC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0011 : coversTr (row_to_tm r_DX1_08_0011).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197789%nat (83) (3) (1) (1) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_013",
+    "oldthm": "Counter32.legacy32_013_recur",
+    "index": 110,
+    "ident": "known32_110"
+  },
+  {
+    "machine": "1LB1RA_1LC0LC0RA1LC",
+    "name": "1RB1LA_1RC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_10.v",
+    "block": "\nDefinition r_DX1_10_0000 : list (option Trans) := [t1RB;t1LA;t1RC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_10_0000 : coversTr (row_to_tm r_DX1_10_0000).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190320%nat (104) (3) (1) (2) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_016",
+    "oldthm": "Counter32.legacy32_016_recur",
+    "index": 111,
+    "ident": "known32_111"
+  },
+  {
+    "machine": "1LB1RA_1LC1LC0RA0LB",
+    "name": "1RB1LA_1RC1RC_0LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1RC1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1RC1RC_0LA0RB_______.tm_1RB1LA_1RC1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1RC1RC_0LA0RB_______.nqhtr_1RB1LA_1RC1RC_0LA0RB_______",
+    "index": 112,
+    "ident": "known32_112"
+  },
+  {
+    "machine": "1LB1RA_1RA0LC0RA1LC",
+    "name": "1RB1LA_1LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0035 : list (option Trans) := [t1RB;t1LA;t1LA;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0035 : coversTr (row_to_tm r_DX1_08_0035).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190321%nat (103) (2) (1) (2) StC S0 [] [(1%nat, (1), (0)); (0%nat, (0), (1)); (1%nat, (0), (1))] [] [mkBRuleP StC S0 [(1%nat, BV (-1) (2)); (0%nat, BC (1)); (1%nat, BV (1) (1))] [] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_014",
+    "oldthm": "Counter32.legacy32_014_recur",
+    "index": 113,
+    "ident": "known32_113"
+  },
+  {
+    "machine": "1LB1RA_1RA1LC0RA0LB",
+    "name": "1RB1LA_1LA1RC_0LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1LA1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1LA1RC_0LA0RB_______.tm_1RB1LA_1LA1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1LA1RC_0LA0RB_______.nqhtr_1RB1LA_1LA1RC_0LA0RB_______",
+    "index": 114,
+    "ident": "known32_114"
+  },
+  {
+    "machine": "1LB1RA_1RB1LC0RA0LB",
+    "name": "1RB1LA_1LB1RC_0LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1LB1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1LB1RC_0LA0RB_______.tm_1RB1LA_1LB1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1LB1RC_0LA0RB_______.nqhtr_1RB1LA_1LB1RC_0LA0RB_______",
+    "index": 115,
+    "ident": "known32_115"
+  },
+  {
+    "machine": "1LB1RA_1RC0LC0RA1LC",
+    "name": "1RB1LA_1LC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0049 : list (option Trans) := [t1RB;t1LA;t1LC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0049 : coversTr (row_to_tm r_DX1_08_0049).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190424%nat (104) (3) (1) (2) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_015",
+    "oldthm": "Counter32.legacy32_015_recur",
+    "index": 116,
+    "ident": "known32_116"
+  },
+  {
+    "machine": "1LB1RB_1RA0LC0RA1LC",
+    "name": "1RB1LB_1LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LA1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LB_1LA0RC_0LA1RC_______.tm_1RB1LB_1LA0RC_0LA1RC_______",
+    "oldthm": "LAPT_1RB1LB_1LA0RC_0LA1RC_______.nqhtr_1RB1LB_1LA0RC_0LA1RC_______",
+    "index": 117,
+    "ident": "known32_117"
+  },
+  {
+    "machine": "1LB1RB_1RA0LC0RB1LC",
+    "name": "1RB1LB_1LA0RC_0LB1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LB1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LB_1LA0RC_0LB1RC_______.tm_1RB1LB_1LA0RC_0LB1RC_______",
+    "oldthm": "LAPT_1RB1LB_1LA0RC_0LB1RC_______.nqhtr_1RB1LB_1LA0RC_0LB1RC_______",
+    "index": 118,
+    "ident": "known32_118"
+  },
+  {
+    "machine": "1LB1RC_0RA1LB1RA0LB",
+    "name": "1RB1LC_0LA1RB_1LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LA1RB_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LA1RB_1LA0RB_______.tm_1RB1LC_0LA1RB_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LC_0LA1RB_1LA0RB_______.nqhtr_1RB1LC_0LA1RB_1LA0RB_______",
+    "index": 119,
+    "ident": "known32_119"
+  },
+  {
+    "machine": "1LB1RC_0RC0LB1RA1RC",
+    "name": "1RB1LC_0LC0RB_1LA1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LC0RB_1LA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LC0RB_1LA1LC_______.tm_1RB1LC_0LC0RB_1LA1LC_______",
+    "oldthm": "LAPT_1RB1LC_0LC0RB_1LA1LC_______.nqhtr_1RB1LC_0LC0RB_1LA1LC_______",
+    "index": 120,
+    "ident": "known32_120"
+  },
+  {
+    "machine": "1LB1RC_0RC1LB1RA0LB",
+    "name": "1RB1LC_0LC1RB_1LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LC1RB_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LC1RB_1LA0RB_______.tm_1RB1LC_0LC1RB_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LC_0LC1RB_1LA0RB_______.nqhtr_1RB1LC_0LC1RB_1LA0RB_______",
+    "index": 121,
+    "ident": "known32_121"
+  },
+  {
+    "machine": "1LB1RC_1RA1LB0LB0RA",
+    "name": "1RB1LC_1LA1RB_0RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_1LA1RB_0RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_1LA1RB_0RB0LA_______.tm_1RB1LC_1LA1RB_0RB0LA_______",
+    "oldthm": "LAPT_1RB1LC_1LA1RB_0RB0LA_______.nqhtr_1RB1LC_1LA1RB_0RB0LA_______",
+    "index": 122,
+    "ident": "known32_122"
+  },
+  {
+    "machine": "1LC0LC_1LA1RB0RB1LC",
+    "name": "1RB0RB_0LC1RB_1RA1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_06.v",
+    "block": "\nDefinition r_DX1_06_0025 : list (option Trans) := [t1RB;t0RB;t0LC;t1RB;t1RA;t1LC;tN;tN].\nLemma cv_DX1_06_0025 : coversTr (row_to_tm r_DX1_06_0025).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195835%nat (105) (3) (1) (2) StC S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StA S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_011",
+    "oldthm": "Counter32.legacy32_011_recur",
+    "index": 123,
+    "ident": "known32_123"
+  },
+  {
+    "machine": "1LC0LC_1LC1RB0RB1LA",
+    "name": "1RB0RB_0LC1RA_1RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0RB_0LC1RA_1RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0RB_0LC1RA_1RB1LC_______.tm_1RB0RB_0LC1RA_1RB1LC_______",
+    "oldthm": "LAPT_1RB0RB_0LC1RA_1RB1LC_______.nqhtr_1RB0RB_0LC1RA_1RB1LC_______",
+    "index": 124,
+    "ident": "known32_124"
+  },
+  {
+    "machine": "1LC0RB_0LA1RB1RA1LA",
+    "name": "1RB0LC_1LA1RA_0RA1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LA1RA_0RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LA1RA_0RA1LC_______.tm_1RB0LC_1LA1RA_0RA1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LA1RA_0RA1LC_______.nqhtr_1RB0LC_1LA1RA_0RA1LC_______",
+    "index": 125,
+    "ident": "known32_125"
+  },
+  {
+    "machine": "1LC0RB_0LA1RB1RB1LA",
+    "name": "1RB0LC_1LC1RA_0RA1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RA_0RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RA_0RA1LC_______.tm_1RB0LC_1LC1RA_0RA1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RA_0RA1LC_______.nqhtr_1RB0LC_1LC1RA_0RA1LC_______",
+    "index": 126,
+    "ident": "known32_126"
+  },
+  {
+    "machine": "1LC0RB_0LC1RA1RB1LC",
+    "name": "1RB0LC_1LC1RB_0RB1LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RB_0RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RB_0RB1LA_______.tm_1RB0LC_1LC1RB_0RB1LA_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RB_0RB1LA_______.nqhtr_1RB0LC_1LC1RB_0RB1LA_______",
+    "index": 127,
+    "ident": "known32_127"
+  },
+  {
+    "machine": "1LC0RB_0LC1RB1RA1LA",
+    "name": "1RB0LC_1LA1RA_0RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LA1RA_0RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LA1RA_0RB1LC_______.tm_1RB0LC_1LA1RA_0RB1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LA1RA_0RB1LC_______.nqhtr_1RB0LC_1LA1RA_0RB1LC_______",
+    "index": 128,
+    "ident": "known32_128"
+  },
+  {
+    "machine": "1LC0RB_0LC1RB1RA1LC",
+    "name": "1RB0LC_1LA1RB_0RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_05.v",
+    "block": "\nDefinition r_DX1_05_0009 : list (option Trans) := [t1RB;t0LC;t1LA;t1RB;t0RB;t1LC;tN;tN].\nLemma cv_DX1_05_0009 : coversTr (row_to_tm r_DX1_05_0009).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195729%nat (105) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_008",
+    "oldthm": "Counter32.legacy32_008_recur",
+    "index": 129,
+    "ident": "known32_129"
+  },
+  {
+    "machine": "1LC0RB_0LC1RB1RB1LA",
+    "name": "1RB0LC_1LC1RA_0RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RA_0RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RA_0RB1LC_______.tm_1RB0LC_1LC1RA_0RB1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RA_0RB1LC_______.nqhtr_1RB0LC_1LC1RA_0RB1LC_______",
+    "index": 130,
+    "ident": "known32_130"
+  },
+  {
+    "machine": "1LC0RB_1RA0LC1LB1LA",
+    "name": "1RB0LC_1RC1RA_1LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_SP_10.v",
+    "block": "\nDefinition r_SP_10_0028 : list (option Trans) := [t1RB;t0LC;t1RC;t1RA;t1LA;t0RB;tN;tN].\nLemma cv_SP_10_0028 : coversTr (row_to_tm r_SP_10_0028).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 194319%nat (382) (6) (2) (2) StC S0 [(2%nat, [S1; S0]);\n   (3%nat, [S0; S1])] [(1%nat, (2), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-2) (3))] [(2%nat, BV (2) (1)); (1%nat, BC (1))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_010",
+    "oldthm": "Counter32.legacy32_010_recur",
+    "index": 131,
+    "ident": "known32_131"
+  },
+  {
+    "machine": "1LC0RB_1RA1RC1RB0LA",
+    "name": "1RB0LC_1LC0RA_1LA1LB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_SP_09.v",
+    "block": "\nDefinition r_SP_09_0046 : list (option Trans) := [t1RB;t0LC;t1LC;t0RA;t1LA;t1LB;tN;tN].\nLemma cv_SP_09_0046 : coversTr (row_to_tm r_SP_09_0046).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 85865%nat (253) (5) (2) (3) StA S0 [(2%nat, [S0; S1]);\n   (3%nat, [S1; S0])] [] [(1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (2), (0))] [mkBRuleP StB S1 [(3%nat, BV (2) (1)); (1%nat, BC (1))] [(1%nat, BV (-2) (3))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_009",
+    "oldthm": "Counter32.legacy32_009_recur",
+    "index": 132,
+    "ident": "known32_132"
+  },
+  {
+    "machine": "1LC0RC_1RA1LB0LB1RC",
+    "name": "1RB0LB_0RC1LB_1LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_04.v",
+    "block": "\nDefinition r_DX1_04_0038 : list (option Trans) := [t1RB;t0LB;t0RC;t1LB;t1LA;t1RC;tN;tN].\nLemma cv_DX1_04_0038 : coversTr (row_to_tm r_DX1_04_0038).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195936%nat (105) (3) (1) (2) StC S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_007",
+    "oldthm": "Counter32.legacy32_007_recur",
+    "index": 133,
+    "ident": "known32_133"
+  },
+  {
+    "machine": "1LC0RC_1RC1LB0LB1RA",
+    "name": "1RB0LB_0RC1LA_1LB1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LB_0RC1LA_1LB1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LB_0RC1LA_1LB1RC_______.tm_1RB0LB_0RC1LA_1LB1RC_______",
+    "oldthm": "LAPT_1RB0LB_0RC1LA_1LB1RC_______.nqhtr_1RB0LB_0RC1LA_1LB1RC_______",
+    "index": 134,
+    "ident": "known32_134"
+  },
+  {
+    "machine": "1LC1LA_0LC0RB1RB1LA",
+    "name": "1RB1RA_1LC1RA_0RB0LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1RA_1LC1RA_0RB0LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1RA_1LC1RA_0RB0LC_______.tm_1RB1RA_1LC1RA_0RB0LC_______",
+    "oldthm": "LAPT_1RB1RA_1LC1RA_0RB0LC_______.nqhtr_1RB1RA_1LC1RA_0RB0LC_______",
+    "index": 135,
+    "ident": "known32_135"
+  },
+  {
+    "machine": "1LC1LB_1LA0RC1RB0LA",
+    "name": "1RB1RC_1LC0RA_1RA0LB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_SP_24.v",
+    "block": "\nDefinition r_SP_24_0049 : list (option Trans) := [t1RB;t1RC;t1LC;t0RA;t1RA;t0LB;tN;tN].\nLemma cv_SP_24_0049 : coversTr (row_to_tm r_SP_24_0049).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 134626%nat (318) (6) (2) (2) StB S0 [(2%nat, [S0; S1]);\n   (3%nat, [S1; S0])] [(1%nat, (2), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-2) (3))] [(3%nat, BV (2) (1)); (1%nat, BC (1))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_017",
+    "oldthm": "Counter32.legacy32_017_recur",
+    "index": 136,
+    "ident": "known32_136"
+  },
+  {
+    "machine": "1LC1LC_1LA1RB0RB0LA",
+    "name": "1RB1RB_0LC0RA_1RA1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1RB_0LC0RA_1RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1RB_0LC0RA_1RA1LC_______.tm_1RB1RB_0LC0RA_1RA1LC_______",
+    "oldthm": "LAPT_1RB1RB_0LC0RA_1RA1LC_______.nqhtr_1RB1RB_0LC0RA_1RA1LC_______",
+    "index": 137,
+    "ident": "known32_137"
+  },
+  {
+    "machine": "1LC1RA_0LC0LC0RA1LB",
+    "name": "1RB1LA_0LA1RC_0RB0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0RB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0RB0RB_______.tm_1RB1LA_0LA1RC_0RB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0RB0RB_______.nqhtr_1RB1LA_0LA1RC_0RB0RB_______",
+    "index": 138,
+    "ident": "known32_138"
+  },
+  {
+    "machine": "1LC1RA_0RA0LC0RA1LB",
+    "name": "1RB1LA_0LA1RC_0LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0LA0RB_______.tm_1RB1LA_0LA1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0LA0RB_______.nqhtr_1RB1LA_0LA1RC_0LA0RB_______",
+    "index": 139,
+    "ident": "known32_139"
+  },
+  {
+    "machine": "1LC1RA_0RA0LC1LB1LB",
+    "name": "1RB1LA_1RC1RC_0LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1RC1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1RC1RC_0LA0RB_______.tm_1RB1LA_1RC1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1RC1RC_0LA0RB_______.nqhtr_1RB1LA_1RC1RC_0LA0RB_______",
+    "index": 140,
+    "ident": "known32_140"
+  },
+  {
+    "machine": "1LC1RA_0RA0LC1RA1LB",
+    "name": "1RB1LA_1LA1RC_0LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1LA1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1LA1RC_0LA0RB_______.tm_1RB1LA_1LA1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1LA1RC_0LA0RB_______.nqhtr_1RB1LA_1LA1RC_0LA0RB_______",
+    "index": 141,
+    "ident": "known32_141"
+  },
+  {
+    "machine": "1LC1RA_0RA0LC1RC1LB",
+    "name": "1RB1LA_1LB1RC_0LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1LB1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1LB1RC_0LA0RB_______.tm_1RB1LA_1LB1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1LB1RC_0LA0RB_______.nqhtr_1RB1LA_1LB1RC_0LA0RB_______",
+    "index": 142,
+    "ident": "known32_142"
+  },
+  {
+    "machine": "1LC1RA_0RA1LB0RA0LB",
+    "name": "1RB1LA_0LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_07.v",
+    "block": "\nDefinition r_DX1_07_0031 : list (option Trans) := [t1RB;t1LA;t0LA;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_07_0031 : coversTr (row_to_tm r_DX1_07_0031).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197623%nat (83) (3) (1) (1) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_012",
+    "oldthm": "Counter32.legacy32_012_recur",
+    "index": 143,
+    "ident": "known32_143"
+  },
+  {
+    "machine": "1LC1RA_0RA1LB0RB0LB",
+    "name": "1RB1LA_0LC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0011 : list (option Trans) := [t1RB;t1LA;t0LC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0011 : coversTr (row_to_tm r_DX1_08_0011).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197789%nat (83) (3) (1) (1) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_013",
+    "oldthm": "Counter32.legacy32_013_recur",
+    "index": 144,
+    "ident": "known32_144"
+  },
+  {
+    "machine": "1LC1RA_0RA1LB1LB0LB",
+    "name": "1RB1LA_1RC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_10.v",
+    "block": "\nDefinition r_DX1_10_0000 : list (option Trans) := [t1RB;t1LA;t1RC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_10_0000 : coversTr (row_to_tm r_DX1_10_0000).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190320%nat (104) (3) (1) (2) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_016",
+    "oldthm": "Counter32.legacy32_016_recur",
+    "index": 145,
+    "ident": "known32_145"
+  },
+  {
+    "machine": "1LC1RA_0RA1LB1RA0LB",
+    "name": "1RB1LA_1LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0035 : list (option Trans) := [t1RB;t1LA;t1LA;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0035 : coversTr (row_to_tm r_DX1_08_0035).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190321%nat (103) (2) (1) (2) StC S0 [] [(1%nat, (1), (0)); (0%nat, (0), (1)); (1%nat, (0), (1))] [] [mkBRuleP StC S0 [(1%nat, BV (-1) (2)); (0%nat, BC (1)); (1%nat, BV (1) (1))] [] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_014",
+    "oldthm": "Counter32.legacy32_014_recur",
+    "index": 146,
+    "ident": "known32_146"
+  },
+  {
+    "machine": "1LC1RA_0RA1LB1RB0LB",
+    "name": "1RB1LA_1LC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0049 : list (option Trans) := [t1RB;t1LA;t1LC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0049 : coversTr (row_to_tm r_DX1_08_0049).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190424%nat (104) (3) (1) (2) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_015",
+    "oldthm": "Counter32.legacy32_015_recur",
+    "index": 147,
+    "ident": "known32_147"
+  },
+  {
+    "machine": "1LC1RA_0RB0LC0RA1LB",
+    "name": "1RB1LA_0LA1RC_0LC0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LC0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0LC0RB_______.tm_1RB1LA_0LA1RC_0LC0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0LC0RB_______.nqhtr_1RB1LA_0LA1RC_0LC0RB_______",
+    "index": 148,
+    "ident": "known32_148"
+  },
+  {
+    "machine": "1LC1RA_1LC0LC0RA1LB",
+    "name": "1RB1LA_0LA1RC_1RB0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1RB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1RB0RB_______.tm_1RB1LA_0LA1RC_1RB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1RB0RB_______.nqhtr_1RB1LA_0LA1RC_1RB0RB_______",
+    "index": 149,
+    "ident": "known32_149"
+  },
+  {
+    "machine": "1LC1RA_1RA0LC0RA1LB",
+    "name": "1RB1LA_0LA1RC_1LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1LA0RB_______.tm_1RB1LA_0LA1RC_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1LA0RB_______.nqhtr_1RB1LA_0LA1RC_1LA0RB_______",
+    "index": 150,
+    "ident": "known32_150"
+  },
+  {
+    "machine": "1LC1RA_1RC0LC0RA1LB",
+    "name": "1RB1LA_0LA1RC_1LB0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1LB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1LB0RB_______.tm_1RB1LA_0LA1RC_1LB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1LB0RB_______.nqhtr_1RB1LA_0LA1RC_1LB0RB_______",
+    "index": 151,
+    "ident": "known32_151"
+  },
+  {
+    "machine": "1LC1RB_0LC0RA1RA1LC",
+    "name": "1RB1LC_1LA1RB_0RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_1LA1RB_0RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_1LA1RB_0RB0LA_______.tm_1RB1LC_1LA1RB_0RB0LA_______",
+    "oldthm": "LAPT_1RB1LC_1LA1RB_0RB0LA_______.nqhtr_1RB1LC_1LA1RB_0RB0LA_______",
+    "index": 152,
+    "ident": "known32_152"
+  },
+  {
+    "machine": "1LC1RB_1RA0LC0RA1LC",
+    "name": "1RB1LC_0LA1RB_1LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LA1RB_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LA1RB_1LA0RB_______.tm_1RB1LC_0LA1RB_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LC_0LA1RB_1LA0RB_______.nqhtr_1RB1LC_0LA1RB_1LA0RB_______",
+    "index": 153,
+    "ident": "known32_153"
+  },
+  {
+    "machine": "1LC1RB_1RA0LC0RB1LC",
+    "name": "1RB1LC_0LC1RB_1LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LC1RB_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LC1RB_1LA0RB_______.tm_1RB1LC_0LC1RB_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LC_0LC1RB_1LA0RB_______.nqhtr_1RB1LC_0LC1RB_1LA0RB_______",
+    "index": 154,
+    "ident": "known32_154"
+  },
+  {
+    "machine": "1LC1RB_1RA1RB0RB0LC",
+    "name": "1RB1LC_0LC0RB_1LA1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LC0RB_1LA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LC0RB_1LA1LC_______.tm_1RB1LC_0LC0RB_1LA1LC_______",
+    "oldthm": "LAPT_1RB1LC_0LC0RB_1LA1LC_______.nqhtr_1RB1LC_0LC0RB_1LA1LC_______",
+    "index": 155,
+    "ident": "known32_155"
+  },
+  {
+    "machine": "1LC1RC_0RA1LB1RA0LB",
+    "name": "1RB1LB_1LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LA1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LB_1LA0RC_0LA1RC_______.tm_1RB1LB_1LA0RC_0LA1RC_______",
+    "oldthm": "LAPT_1RB1LB_1LA0RC_0LA1RC_______.nqhtr_1RB1LB_1LA0RC_0LA1RC_______",
+    "index": 156,
+    "ident": "known32_156"
+  },
+  {
+    "machine": "1LC1RC_0RC1LB1RA0LB",
+    "name": "1RB1LB_1LA0RC_0LB1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": true,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LB1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LB_1LA0RC_0LB1RC_______.tm_1RB1LB_1LA0RC_0LB1RC_______",
+    "oldthm": "LAPT_1RB1LB_1LA0RC_0LB1RC_______.nqhtr_1RB1LB_1LA0RC_0LB1RC_______",
+    "index": 157,
+    "ident": "known32_157"
+  },
+  {
+    "machine": "1RB0LB_0RC1LA1LB1RC",
+    "name": "1RB0LB_0RC1LA_1LB1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LB_0RC1LA_1LB1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LB_0RC1LA_1LB1RC_______.tm_1RB0LB_0RC1LA_1LB1RC_______",
+    "oldthm": "LAPT_1RB0LB_0RC1LA_1LB1RC_______.nqhtr_1RB0LB_0RC1LA_1LB1RC_______",
+    "index": 158,
+    "ident": "known32_158"
+  },
+  {
+    "machine": "1RB0LB_0RC1LB1LA1RC",
+    "name": "1RB0LB_0RC1LB_1LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_04.v",
+    "block": "\nDefinition r_DX1_04_0038 : list (option Trans) := [t1RB;t0LB;t0RC;t1LB;t1LA;t1RC;tN;tN].\nLemma cv_DX1_04_0038 : coversTr (row_to_tm r_DX1_04_0038).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195936%nat (105) (3) (1) (2) StC S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_007",
+    "oldthm": "Counter32.legacy32_007_recur",
+    "index": 159,
+    "ident": "known32_159"
+  },
+  {
+    "machine": "1RB0LC_1LA1RA0RA1LC",
+    "name": "1RB0LC_1LA1RA_0RA1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LA1RA_0RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LA1RA_0RA1LC_______.tm_1RB0LC_1LA1RA_0RA1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LA1RA_0RA1LC_______.nqhtr_1RB0LC_1LA1RA_0RA1LC_______",
+    "index": 160,
+    "ident": "known32_160"
+  },
+  {
+    "machine": "1RB0LC_1LA1RA0RB1LC",
+    "name": "1RB0LC_1LA1RA_0RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LA1RA_0RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LA1RA_0RB1LC_______.tm_1RB0LC_1LA1RA_0RB1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LA1RA_0RB1LC_______.nqhtr_1RB0LC_1LA1RA_0RB1LC_______",
+    "index": 161,
+    "ident": "known32_161"
+  },
+  {
+    "machine": "1RB0LC_1LA1RB0RB1LC",
+    "name": "1RB0LC_1LA1RB_0RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_05.v",
+    "block": "\nDefinition r_DX1_05_0009 : list (option Trans) := [t1RB;t0LC;t1LA;t1RB;t0RB;t1LC;tN;tN].\nLemma cv_DX1_05_0009 : coversTr (row_to_tm r_DX1_05_0009).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195729%nat (105) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_008",
+    "oldthm": "Counter32.legacy32_008_recur",
+    "index": 162,
+    "ident": "known32_162"
+  },
+  {
+    "machine": "1RB0LC_1LC0RA1LA1LB",
+    "name": "1RB0LC_1LC0RA_1LA1LB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_SP_09.v",
+    "block": "\nDefinition r_SP_09_0046 : list (option Trans) := [t1RB;t0LC;t1LC;t0RA;t1LA;t1LB;tN;tN].\nLemma cv_SP_09_0046 : coversTr (row_to_tm r_SP_09_0046).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 85865%nat (253) (5) (2) (3) StA S0 [(2%nat, [S0; S1]);\n   (3%nat, [S1; S0])] [] [(1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (2), (0))] [mkBRuleP StB S1 [(3%nat, BV (2) (1)); (1%nat, BC (1))] [(1%nat, BV (-2) (3))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_009",
+    "oldthm": "Counter32.legacy32_009_recur",
+    "index": 163,
+    "ident": "known32_163"
+  },
+  {
+    "machine": "1RB0LC_1LC1RA0RA1LC",
+    "name": "1RB0LC_1LC1RA_0RA1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RA_0RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RA_0RA1LC_______.tm_1RB0LC_1LC1RA_0RA1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RA_0RA1LC_______.nqhtr_1RB0LC_1LC1RA_0RA1LC_______",
+    "index": 164,
+    "ident": "known32_164"
+  },
+  {
+    "machine": "1RB0LC_1LC1RA0RB1LC",
+    "name": "1RB0LC_1LC1RA_0RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RA_0RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RA_0RB1LC_______.tm_1RB0LC_1LC1RA_0RB1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RA_0RB1LC_______.nqhtr_1RB0LC_1LC1RA_0RB1LC_______",
+    "index": 165,
+    "ident": "known32_165"
+  },
+  {
+    "machine": "1RB0LC_1LC1RB0RB1LA",
+    "name": "1RB0LC_1LC1RB_0RB1LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RB_0RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RB_0RB1LA_______.tm_1RB0LC_1LC1RB_0RB1LA_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RB_0RB1LA_______.nqhtr_1RB0LC_1LC1RB_0RB1LA_______",
+    "index": 166,
+    "ident": "known32_166"
+  },
+  {
+    "machine": "1RB0LC_1RC1RA1LA0RB",
+    "name": "1RB0LC_1RC1RA_1LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_SP_10.v",
+    "block": "\nDefinition r_SP_10_0028 : list (option Trans) := [t1RB;t0LC;t1RC;t1RA;t1LA;t0RB;tN;tN].\nLemma cv_SP_10_0028 : coversTr (row_to_tm r_SP_10_0028).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 194319%nat (382) (6) (2) (2) StC S0 [(2%nat, [S1; S0]);\n   (3%nat, [S0; S1])] [(1%nat, (2), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-2) (3))] [(2%nat, BV (2) (1)); (1%nat, BC (1))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_010",
+    "oldthm": "Counter32.legacy32_010_recur",
+    "index": 167,
+    "ident": "known32_167"
+  },
+  {
+    "machine": "1RB0RB_0LC1RA1RB1LC",
+    "name": "1RB0RB_0LC1RA_1RB1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0RB_0LC1RA_1RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0RB_0LC1RA_1RB1LC_______.tm_1RB0RB_0LC1RA_1RB1LC_______",
+    "oldthm": "LAPT_1RB0RB_0LC1RA_1RB1LC_______.nqhtr_1RB0RB_0LC1RA_1RB1LC_______",
+    "index": 168,
+    "ident": "known32_168"
+  },
+  {
+    "machine": "1RB0RB_0LC1RB1RA1LC",
+    "name": "1RB0RB_0LC1RB_1RA1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_06.v",
+    "block": "\nDefinition r_DX1_06_0025 : list (option Trans) := [t1RB;t0RB;t0LC;t1RB;t1RA;t1LC;tN;tN].\nLemma cv_DX1_06_0025 : coversTr (row_to_tm r_DX1_06_0025).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195835%nat (105) (3) (1) (2) StC S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StA S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_011",
+    "oldthm": "Counter32.legacy32_011_recur",
+    "index": 169,
+    "ident": "known32_169"
+  },
+  {
+    "machine": "1RB1LA_0LA0RC0LA1RC",
+    "name": "1RB1LA_0LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_07.v",
+    "block": "\nDefinition r_DX1_07_0031 : list (option Trans) := [t1RB;t1LA;t0LA;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_07_0031 : coversTr (row_to_tm r_DX1_07_0031).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197623%nat (83) (3) (1) (1) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_012",
+    "oldthm": "Counter32.legacy32_012_recur",
+    "index": 170,
+    "ident": "known32_170"
+  },
+  {
+    "machine": "1RB1LA_0LA1RC0LA0RB",
+    "name": "1RB1LA_0LA1RC_0LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0LA0RB_______.tm_1RB1LA_0LA1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0LA0RB_______.nqhtr_1RB1LA_0LA1RC_0LA0RB_______",
+    "index": 171,
+    "ident": "known32_171"
+  },
+  {
+    "machine": "1RB1LA_0LA1RC0LC0RB",
+    "name": "1RB1LA_0LA1RC_0LC0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LC0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0LC0RB_______.tm_1RB1LA_0LA1RC_0LC0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0LC0RB_______.nqhtr_1RB1LA_0LA1RC_0LC0RB_______",
+    "index": 172,
+    "ident": "known32_172"
+  },
+  {
+    "machine": "1RB1LA_0LA1RC0RB0RB",
+    "name": "1RB1LA_0LA1RC_0RB0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0RB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0RB0RB_______.tm_1RB1LA_0LA1RC_0RB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0RB0RB_______.nqhtr_1RB1LA_0LA1RC_0RB0RB_______",
+    "index": 173,
+    "ident": "known32_173"
+  },
+  {
+    "machine": "1RB1LA_0LA1RC1LA0RB",
+    "name": "1RB1LA_0LA1RC_1LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1LA0RB_______.tm_1RB1LA_0LA1RC_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1LA0RB_______.nqhtr_1RB1LA_0LA1RC_1LA0RB_______",
+    "index": 174,
+    "ident": "known32_174"
+  },
+  {
+    "machine": "1RB1LA_0LA1RC1LB0RB",
+    "name": "1RB1LA_0LA1RC_1LB0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1LB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1LB0RB_______.tm_1RB1LA_0LA1RC_1LB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1LB0RB_______.nqhtr_1RB1LA_0LA1RC_1LB0RB_______",
+    "index": 175,
+    "ident": "known32_175"
+  },
+  {
+    "machine": "1RB1LA_0LA1RC1RB0RB",
+    "name": "1RB1LA_0LA1RC_1RB0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1RB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1RB0RB_______.tm_1RB1LA_0LA1RC_1RB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1RB0RB_______.nqhtr_1RB1LA_0LA1RC_1RB0RB_______",
+    "index": 176,
+    "ident": "known32_176"
+  },
+  {
+    "machine": "1RB1LA_0LC0RC0LA1RC",
+    "name": "1RB1LA_0LC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0011 : list (option Trans) := [t1RB;t1LA;t0LC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0011 : coversTr (row_to_tm r_DX1_08_0011).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197789%nat (83) (3) (1) (1) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_013",
+    "oldthm": "Counter32.legacy32_013_recur",
+    "index": 177,
+    "ident": "known32_177"
+  },
+  {
+    "machine": "1RB1LA_1LA0RC0LA1RC",
+    "name": "1RB1LA_1LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0035 : list (option Trans) := [t1RB;t1LA;t1LA;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0035 : coversTr (row_to_tm r_DX1_08_0035).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190321%nat (103) (2) (1) (2) StC S0 [] [(1%nat, (1), (0)); (0%nat, (0), (1)); (1%nat, (0), (1))] [] [mkBRuleP StC S0 [(1%nat, BV (-1) (2)); (0%nat, BC (1)); (1%nat, BV (1) (1))] [] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_014",
+    "oldthm": "Counter32.legacy32_014_recur",
+    "index": 178,
+    "ident": "known32_178"
+  },
+  {
+    "machine": "1RB1LA_1LA1RC0LA0RB",
+    "name": "1RB1LA_1LA1RC_0LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1LA1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1LA1RC_0LA0RB_______.tm_1RB1LA_1LA1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1LA1RC_0LA0RB_______.nqhtr_1RB1LA_1LA1RC_0LA0RB_______",
+    "index": 179,
+    "ident": "known32_179"
+  },
+  {
+    "machine": "1RB1LA_1LB1RC0LA0RB",
+    "name": "1RB1LA_1LB1RC_0LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1LB1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1LB1RC_0LA0RB_______.tm_1RB1LA_1LB1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1LB1RC_0LA0RB_______.nqhtr_1RB1LA_1LB1RC_0LA0RB_______",
+    "index": 180,
+    "ident": "known32_180"
+  },
+  {
+    "machine": "1RB1LA_1LC0RC0LA1RC",
+    "name": "1RB1LA_1LC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0049 : list (option Trans) := [t1RB;t1LA;t1LC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0049 : coversTr (row_to_tm r_DX1_08_0049).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190424%nat (104) (3) (1) (2) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_015",
+    "oldthm": "Counter32.legacy32_015_recur",
+    "index": 181,
+    "ident": "known32_181"
+  },
+  {
+    "machine": "1RB1LA_1RC0RC0LA1RC",
+    "name": "1RB1LA_1RC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_10.v",
+    "block": "\nDefinition r_DX1_10_0000 : list (option Trans) := [t1RB;t1LA;t1RC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_10_0000 : coversTr (row_to_tm r_DX1_10_0000).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190320%nat (104) (3) (1) (2) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_016",
+    "oldthm": "Counter32.legacy32_016_recur",
+    "index": 182,
+    "ident": "known32_182"
+  },
+  {
+    "machine": "1RB1LA_1RC1RC0LA0RB",
+    "name": "1RB1LA_1RC1RC_0LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1RC1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1RC1RC_0LA0RB_______.tm_1RB1LA_1RC1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1RC1RC_0LA0RB_______.nqhtr_1RB1LA_1RC1RC_0LA0RB_______",
+    "index": 183,
+    "ident": "known32_183"
+  },
+  {
+    "machine": "1RB1LB_1LA0RC0LA1RC",
+    "name": "1RB1LB_1LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LA1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LB_1LA0RC_0LA1RC_______.tm_1RB1LB_1LA0RC_0LA1RC_______",
+    "oldthm": "LAPT_1RB1LB_1LA0RC_0LA1RC_______.nqhtr_1RB1LB_1LA0RC_0LA1RC_______",
+    "index": 184,
+    "ident": "known32_184"
+  },
+  {
+    "machine": "1RB1LB_1LA0RC0LB1RC",
+    "name": "1RB1LB_1LA0RC_0LB1RC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LB1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LB_1LA0RC_0LB1RC_______.tm_1RB1LB_1LA0RC_0LB1RC_______",
+    "oldthm": "LAPT_1RB1LB_1LA0RC_0LB1RC_______.nqhtr_1RB1LB_1LA0RC_0LB1RC_______",
+    "index": 185,
+    "ident": "known32_185"
+  },
+  {
+    "machine": "1RB1LC_0LA1RB1LA0RB",
+    "name": "1RB1LC_0LA1RB_1LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LA1RB_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LA1RB_1LA0RB_______.tm_1RB1LC_0LA1RB_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LC_0LA1RB_1LA0RB_______.nqhtr_1RB1LC_0LA1RB_1LA0RB_______",
+    "index": 186,
+    "ident": "known32_186"
+  },
+  {
+    "machine": "1RB1LC_0LC0RB1LA1LC",
+    "name": "1RB1LC_0LC0RB_1LA1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LC0RB_1LA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LC0RB_1LA1LC_______.tm_1RB1LC_0LC0RB_1LA1LC_______",
+    "oldthm": "LAPT_1RB1LC_0LC0RB_1LA1LC_______.nqhtr_1RB1LC_0LC0RB_1LA1LC_______",
+    "index": 187,
+    "ident": "known32_187"
+  },
+  {
+    "machine": "1RB1LC_0LC1RB1LA0RB",
+    "name": "1RB1LC_0LC1RB_1LA0RB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LC1RB_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LC1RB_1LA0RB_______.tm_1RB1LC_0LC1RB_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LC_0LC1RB_1LA0RB_______.nqhtr_1RB1LC_0LC1RB_1LA0RB_______",
+    "index": 188,
+    "ident": "known32_188"
+  },
+  {
+    "machine": "1RB1LC_1LA1RB0RB0LA",
+    "name": "1RB1LC_1LA1RB_0RB0LA_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_1LA1RB_0RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_1LA1RB_0RB0LA_______.tm_1RB1LC_1LA1RB_0RB0LA_______",
+    "oldthm": "LAPT_1RB1LC_1LA1RB_0RB0LA_______.nqhtr_1RB1LC_1LA1RB_0RB0LA_______",
+    "index": 189,
+    "ident": "known32_189"
+  },
+  {
+    "machine": "1RB1RA_1LC1RA0RB0LC",
+    "name": "1RB1RA_1LC1RA_0RB0LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1RA_1LC1RA_0RB0LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1RA_1LC1RA_0RB0LC_______.tm_1RB1RA_1LC1RA_0RB0LC_______",
+    "oldthm": "LAPT_1RB1RA_1LC1RA_0RB0LC_______.nqhtr_1RB1RA_1LC1RA_0RB0LC_______",
+    "index": 190,
+    "ident": "known32_190"
+  },
+  {
+    "machine": "1RB1RB_0LC0RA1RA1LC",
+    "name": "1RB1RB_0LC0RA_1RA1LC_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1RB_0LC0RA_1RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1RB_0LC0RA_1RA1LC_______.tm_1RB1RB_0LC0RA_1RA1LC_______",
+    "oldthm": "LAPT_1RB1RB_0LC0RA_1RA1LC_______.nqhtr_1RB1RB_0LC0RA_1RA1LC_______",
+    "index": 191,
+    "ident": "known32_191"
+  },
+  {
+    "machine": "1RB1RC_1LC0RA1RA0LB",
+    "name": "1RB1RC_1LC0RA_1RA0LB_------",
+    "perm": [
+      0,
+      1,
+      2
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_SP_24.v",
+    "block": "\nDefinition r_SP_24_0049 : list (option Trans) := [t1RB;t1RC;t1LC;t0RA;t1RA;t0LB;tN;tN].\nLemma cv_SP_24_0049 : coversTr (row_to_tm r_SP_24_0049).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 134626%nat (318) (6) (2) (2) StB S0 [(2%nat, [S0; S1]);\n   (3%nat, [S1; S0])] [(1%nat, (2), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-2) (3))] [(3%nat, BV (2) (1)); (1%nat, BC (1))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_017",
+    "oldthm": "Counter32.legacy32_017_recur",
+    "index": 192,
+    "ident": "known32_192"
+  },
+  {
+    "machine": "1RC0LB_0RA1LB1LA1RA",
+    "name": "1RB0LC_1LA1RA_0RA1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LA1RA_0RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LA1RA_0RA1LC_______.tm_1RB0LC_1LA1RA_0RA1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LA1RA_0RA1LC_______.nqhtr_1RB0LC_1LA1RA_0RA1LC_______",
+    "index": 193,
+    "ident": "known32_193"
+  },
+  {
+    "machine": "1RC0LB_0RA1LB1LB1RA",
+    "name": "1RB0LC_1LC1RA_0RA1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RA_0RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RA_0RA1LC_______.tm_1RB0LC_1LC1RA_0RA1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RA_0RA1LC_______.nqhtr_1RB0LC_1LC1RA_0RA1LC_______",
+    "index": 194,
+    "ident": "known32_194"
+  },
+  {
+    "machine": "1RC0LB_0RC1LA1LB1RC",
+    "name": "1RB0LC_1LC1RB_0RB1LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RB_0RB1LA_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RB_0RB1LA_______.tm_1RB0LC_1LC1RB_0RB1LA_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RB_0RB1LA_______.nqhtr_1RB0LC_1LC1RB_0RB1LA_______",
+    "index": 195,
+    "ident": "known32_195"
+  },
+  {
+    "machine": "1RC0LB_0RC1LB1LA1RA",
+    "name": "1RB0LC_1LA1RA_0RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LA1RA_0RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LA1RA_0RB1LC_______.tm_1RB0LC_1LA1RA_0RB1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LA1RA_0RB1LC_______.nqhtr_1RB0LC_1LA1RA_0RB1LC_______",
+    "index": 196,
+    "ident": "known32_196"
+  },
+  {
+    "machine": "1RC0LB_0RC1LB1LA1RC",
+    "name": "1RB0LC_1LA1RB_0RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_05.v",
+    "block": "\nDefinition r_DX1_05_0009 : list (option Trans) := [t1RB;t0LC;t1LA;t1RB;t0RB;t1LC;tN;tN].\nLemma cv_DX1_05_0009 : coversTr (row_to_tm r_DX1_05_0009).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195729%nat (105) (3) (1) (2) StB S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_008",
+    "oldthm": "Counter32.legacy32_008_recur",
+    "index": 197,
+    "ident": "known32_197"
+  },
+  {
+    "machine": "1RC0LB_0RC1LB1LB1RA",
+    "name": "1RB0LC_1LC1RA_0RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LC_1LC1RA_0RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LC_1LC1RA_0RB1LC_______.tm_1RB0LC_1LC1RA_0RB1LC_______",
+    "oldthm": "LAPT_1RB0LC_1LC1RA_0RB1LC_______.nqhtr_1RB0LC_1LC1RA_0RB1LC_______",
+    "index": 198,
+    "ident": "known32_198"
+  },
+  {
+    "machine": "1RC0LB_1LA0RC1RB1RA",
+    "name": "1RB0LC_1RC1RA_1LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_SP_10.v",
+    "block": "\nDefinition r_SP_10_0028 : list (option Trans) := [t1RB;t0LC;t1RC;t1RA;t1LA;t0RB;tN;tN].\nLemma cv_SP_10_0028 : coversTr (row_to_tm r_SP_10_0028).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 194319%nat (382) (6) (2) (2) StC S0 [(2%nat, [S1; S0]);\n   (3%nat, [S0; S1])] [(1%nat, (2), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-2) (3))] [(2%nat, BV (2) (1)); (1%nat, BC (1))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_010",
+    "oldthm": "Counter32.legacy32_010_recur",
+    "index": 199,
+    "ident": "known32_199"
+  },
+  {
+    "machine": "1RC0LB_1LA1LC1LB0RA",
+    "name": "1RB0LC_1LC0RA_1LA1LB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_SP_09.v",
+    "block": "\nDefinition r_SP_09_0046 : list (option Trans) := [t1RB;t0LC;t1LC;t0RA;t1LA;t1LB;tN;tN].\nLemma cv_SP_09_0046 : coversTr (row_to_tm r_SP_09_0046).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 85865%nat (253) (5) (2) (3) StA S0 [(2%nat, [S0; S1]);\n   (3%nat, [S1; S0])] [] [(1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (2), (0))] [mkBRuleP StB S1 [(3%nat, BV (2) (1)); (1%nat, BC (1))] [(1%nat, BV (-2) (3))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_009",
+    "oldthm": "Counter32.legacy32_009_recur",
+    "index": 200,
+    "ident": "known32_200"
+  },
+  {
+    "machine": "1RC0LC_1LA1RB0RB1LC",
+    "name": "1RB0LB_0RC1LB_1LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_04.v",
+    "block": "\nDefinition r_DX1_04_0038 : list (option Trans) := [t1RB;t0LB;t0RC;t1LB;t1LA;t1RC;tN;tN].\nLemma cv_DX1_04_0038 : coversTr (row_to_tm r_DX1_04_0038).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195936%nat (105) (3) (1) (2) StC S0 [] [(1%nat, (1), (0))] [] [mkBRuleP StA S1 [(1%nat, BV (-1) (2))] [(1%nat, BV (1) (1))] (false, true)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_007",
+    "oldthm": "Counter32.legacy32_007_recur",
+    "index": 201,
+    "ident": "known32_201"
+  },
+  {
+    "machine": "1RC0LC_1LC1RB0RB1LA",
+    "name": "1RB0LB_0RC1LA_1LB1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0LB_0RC1LA_1LB1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0LB_0RC1LA_1LB1RC_______.tm_1RB0LB_0RC1LA_1LB1RC_______",
+    "oldthm": "LAPT_1RB0LB_0RC1LA_1LB1RC_______.nqhtr_1RB0LB_0RC1LA_1LB1RC_______",
+    "index": 202,
+    "ident": "known32_202"
+  },
+  {
+    "machine": "1RC0RC_1RA1LB0LB1RC",
+    "name": "1RB0RB_0LC1RB_1RA1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_06.v",
+    "block": "\nDefinition r_DX1_06_0025 : list (option Trans) := [t1RB;t0RB;t0LC;t1RB;t1RA;t1LC;tN;tN].\nLemma cv_DX1_06_0025 : coversTr (row_to_tm r_DX1_06_0025).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 195835%nat (105) (3) (1) (2) StC S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StA S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_011",
+    "oldthm": "Counter32.legacy32_011_recur",
+    "index": 203,
+    "ident": "known32_203"
+  },
+  {
+    "machine": "1RC0RC_1RC1LB0LB1RA",
+    "name": "1RB0RB_0LC1RA_1RB1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB0RB_0LC1RA_1RB1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB0RB_0LC1RA_1RB1LC_______.tm_1RB0RB_0LC1RA_1RB1LC_______",
+    "oldthm": "LAPT_1RB0RB_0LC1RA_1RB1LC_______.nqhtr_1RB0RB_0LC1RA_1RB1LC_______",
+    "index": 204,
+    "ident": "known32_204"
+  },
+  {
+    "machine": "1RC1LA_0LA0RC0LA1RB",
+    "name": "1RB1LA_0LA1RC_0LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0LA0RB_______.tm_1RB1LA_0LA1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0LA0RB_______.nqhtr_1RB1LA_0LA1RC_0LA0RB_______",
+    "index": 205,
+    "ident": "known32_205"
+  },
+  {
+    "machine": "1RC1LA_0LA0RC1LA1RB",
+    "name": "1RB1LA_1LA1RC_0LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1LA1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1LA1RC_0LA0RB_______.tm_1RB1LA_1LA1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1LA1RC_0LA0RB_______.nqhtr_1RB1LA_1LA1RC_0LA0RB_______",
+    "index": 206,
+    "ident": "known32_206"
+  },
+  {
+    "machine": "1RC1LA_0LA0RC1LC1RB",
+    "name": "1RB1LA_1LB1RC_0LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1LB1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1LB1RC_0LA0RB_______.tm_1RB1LA_1LB1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1LB1RC_0LA0RB_______.nqhtr_1RB1LA_1LB1RC_0LA0RB_______",
+    "index": 207,
+    "ident": "known32_207"
+  },
+  {
+    "machine": "1RC1LA_0LA0RC1RB1RB",
+    "name": "1RB1LA_1RC1RC_0LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_1RC1RC_0LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_1RC1RC_0LA0RB_______.tm_1RB1LA_1RC1RC_0LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_1RC1RC_0LA0RB_______.nqhtr_1RB1LA_1RC1RC_0LA0RB_______",
+    "index": 208,
+    "ident": "known32_208"
+  },
+  {
+    "machine": "1RC1LA_0LA1RB0LA0RB",
+    "name": "1RB1LA_0LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_07.v",
+    "block": "\nDefinition r_DX1_07_0031 : list (option Trans) := [t1RB;t1LA;t0LA;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_07_0031 : coversTr (row_to_tm r_DX1_07_0031).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197623%nat (83) (3) (1) (1) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_012",
+    "oldthm": "Counter32.legacy32_012_recur",
+    "index": 209,
+    "ident": "known32_209"
+  },
+  {
+    "machine": "1RC1LA_0LA1RB0LB0RB",
+    "name": "1RB1LA_0LC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0011 : list (option Trans) := [t1RB;t1LA;t0LC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0011 : coversTr (row_to_tm r_DX1_08_0011).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 197789%nat (83) (3) (1) (1) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_013",
+    "oldthm": "Counter32.legacy32_013_recur",
+    "index": 210,
+    "ident": "known32_210"
+  },
+  {
+    "machine": "1RC1LA_0LA1RB1LA0RB",
+    "name": "1RB1LA_1LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0035 : list (option Trans) := [t1RB;t1LA;t1LA;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0035 : coversTr (row_to_tm r_DX1_08_0035).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190321%nat (103) (2) (1) (2) StC S0 [] [(1%nat, (1), (0)); (0%nat, (0), (1)); (1%nat, (0), (1))] [] [mkBRuleP StC S0 [(1%nat, BV (-1) (2)); (0%nat, BC (1)); (1%nat, BV (1) (1))] [] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_014",
+    "oldthm": "Counter32.legacy32_014_recur",
+    "index": 211,
+    "ident": "known32_211"
+  },
+  {
+    "machine": "1RC1LA_0LA1RB1LB0RB",
+    "name": "1RB1LA_1LC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_08.v",
+    "block": "\nDefinition r_DX1_08_0049 : list (option Trans) := [t1RB;t1LA;t1LC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_08_0049 : coversTr (row_to_tm r_DX1_08_0049).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190424%nat (104) (3) (1) (2) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_015",
+    "oldthm": "Counter32.legacy32_015_recur",
+    "index": 212,
+    "ident": "known32_212"
+  },
+  {
+    "machine": "1RC1LA_0LA1RB1RB0RB",
+    "name": "1RB1LA_1RC0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_DX1_10.v",
+    "block": "\nDefinition r_DX1_10_0000 : list (option Trans) := [t1RB;t1LA;t1RC;t0RC;t0LA;t1RC;tN;tN].\nLemma cv_DX1_10_0000 : coversTr (row_to_tm r_DX1_10_0000).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 190320%nat (104) (3) (1) (2) StA S0 [] [] [(1%nat, (1), (0))] [mkBRuleP StB S1 [(1%nat, BV (1) (1))] [(1%nat, BV (-1) (2))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_016",
+    "oldthm": "Counter32.legacy32_016_recur",
+    "index": 213,
+    "ident": "known32_213"
+  },
+  {
+    "machine": "1RC1LA_0LB0RC0LA1RB",
+    "name": "1RB1LA_0LA1RC_0LC0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LC0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0LC0RB_______.tm_1RB1LA_0LA1RC_0LC0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0LC0RB_______.nqhtr_1RB1LA_0LA1RC_0LC0RB_______",
+    "index": 214,
+    "ident": "known32_214"
+  },
+  {
+    "machine": "1RC1LA_0RC0RC0LA1RB",
+    "name": "1RB1LA_0LA1RC_0RB0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0RB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_0RB0RB_______.tm_1RB1LA_0LA1RC_0RB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_0RB0RB_______.nqhtr_1RB1LA_0LA1RC_0RB0RB_______",
+    "index": 215,
+    "ident": "known32_215"
+  },
+  {
+    "machine": "1RC1LA_1LA0RC0LA1RB",
+    "name": "1RB1LA_0LA1RC_1LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1LA0RB_______.tm_1RB1LA_0LA1RC_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1LA0RB_______.nqhtr_1RB1LA_0LA1RC_1LA0RB_______",
+    "index": 216,
+    "ident": "known32_216"
+  },
+  {
+    "machine": "1RC1LA_1LC0RC0LA1RB",
+    "name": "1RB1LA_0LA1RC_1LB0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1LB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1LB0RB_______.tm_1RB1LA_0LA1RC_1LB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1LB0RB_______.nqhtr_1RB1LA_0LA1RC_1LB0RB_______",
+    "index": 217,
+    "ident": "known32_217"
+  },
+  {
+    "machine": "1RC1LA_1RC0RC0LA1RB",
+    "name": "1RB1LA_0LA1RC_1RB0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1RB0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LA_0LA1RC_1RB0RB_______.tm_1RB1LA_0LA1RC_1RB0RB_______",
+    "oldthm": "LAPT_1RB1LA_0LA1RC_1RB0RB_______.nqhtr_1RB1LA_0LA1RC_1RB0RB_______",
+    "index": 218,
+    "ident": "known32_218"
+  },
+  {
+    "machine": "1RC1LB_0RC0LA1LA1RC",
+    "name": "1RB1LC_1LA1RB_0RB0LA_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_1LA1RB_0RB0LA_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_1LA1RB_0RB0LA_______.tm_1RB1LC_1LA1RB_0RB0LA_______",
+    "oldthm": "LAPT_1RB1LC_1LA1RB_0RB0LA_______.nqhtr_1RB1LC_1LA1RB_0RB0LA_______",
+    "index": 219,
+    "ident": "known32_219"
+  },
+  {
+    "machine": "1RC1LB_1LA0RC0LA1RC",
+    "name": "1RB1LC_0LA1RB_1LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LA1RB_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LA1RB_1LA0RB_______.tm_1RB1LC_0LA1RB_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LC_0LA1RB_1LA0RB_______.nqhtr_1RB1LC_0LA1RB_1LA0RB_______",
+    "index": 220,
+    "ident": "known32_220"
+  },
+  {
+    "machine": "1RC1LB_1LA0RC0LB1RC",
+    "name": "1RB1LC_0LC1RB_1LA0RB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LC1RB_1LA0RB_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LC1RB_1LA0RB_______.tm_1RB1LC_0LC1RB_1LA0RB_______",
+    "oldthm": "LAPT_1RB1LC_0LC1RB_1LA0RB_______.nqhtr_1RB1LC_0LC1RB_1LA0RB_______",
+    "index": 221,
+    "ident": "known32_221"
+  },
+  {
+    "machine": "1RC1LB_1LA1LB0LB0RC",
+    "name": "1RB1LC_0LC0RB_1LA1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LC_0LC0RB_1LA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LC_0LC0RB_1LA1LC_______.tm_1RB1LC_0LC0RB_1LA1LC_______",
+    "oldthm": "LAPT_1RB1LC_0LC0RB_1LA1LC_______.nqhtr_1RB1LC_0LC0RB_1LA1LC_______",
+    "index": 222,
+    "ident": "known32_222"
+  },
+  {
+    "machine": "1RC1LC_0LA1RB1LA0RB",
+    "name": "1RB1LB_1LA0RC_0LA1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LA1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LB_1LA0RC_0LA1RC_______.tm_1RB1LB_1LA0RC_0LA1RC_______",
+    "oldthm": "LAPT_1RB1LB_1LA0RC_0LA1RC_______.nqhtr_1RB1LB_1LA0RC_0LA1RC_______",
+    "index": 223,
+    "ident": "known32_223"
+  },
+  {
+    "machine": "1RC1LC_0LC1RB1LA0RB",
+    "name": "1RB1LB_1LA0RC_0LB1RC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LB1RC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1LB_1LA0RC_0LB1RC_______.tm_1RB1LB_1LA0RC_0LB1RC_______",
+    "oldthm": "LAPT_1RB1LB_1LA0RC_0LB1RC_______.nqhtr_1RB1LB_1LA0RC_0LB1RC_______",
+    "index": 224,
+    "ident": "known32_224"
+  },
+  {
+    "machine": "1RC1RA_0RC0LB1LB1RA",
+    "name": "1RB1RA_1LC1RA_0RB0LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1RA_1LC1RA_0RB0LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1RA_1LC1RA_0RB0LC_______.tm_1RB1RA_1LC1RA_0RB0LC_______",
+    "oldthm": "LAPT_1RB1RA_1LC1RA_0RB0LC_______.nqhtr_1RB1RA_1LC1RA_0RB0LC_______",
+    "index": 225,
+    "ident": "known32_225"
+  },
+  {
+    "machine": "1RC1RB_1RA0LC1LB0RA",
+    "name": "1RB1RC_1LC0RA_1RA0LB_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "file": "theories/CloseoutTr/CBT_SP_24.v",
+    "block": "\nDefinition r_SP_24_0049 : list (option Trans) := [t1RB;t1RC;t1LC;t0RA;t1RA;t0LB;tN;tN].\nLemma cv_SP_24_0049 : coversTr (row_to_tm r_SP_24_0049).\nProof. apply coversTr_nqh, (irulesblkpfx_check_neverqhtr_sound _ (mkBIRCertP 134626%nat (318) (6) (2) (2) StB S0 [(2%nat, [S0; S1]);\n   (3%nat, [S1; S0])] [(1%nat, (2), (0))] [] [mkBRuleP StC S1 [(1%nat, BV (-2) (3))] [(3%nat, BV (2) (1)); (1%nat, BC (1))] (true, false)])%Z 200000 300000). vm_cast_no_check (eq_refl true). Qed.",
+    "oldtm": "Counter32.legacy32_017",
+    "oldthm": "Counter32.legacy32_017_recur",
+    "index": 226,
+    "ident": "known32_226"
+  },
+  {
+    "machine": "1RC1RC_1RA1LB0LB0RA",
+    "name": "1RB1RB_0LC0RA_1RA1LC_------",
+    "perm": [
+      0,
+      2,
+      1
+    ],
+    "mirror": false,
+    "files": [
+      "theories/Machines/CountersTr/LAPT_1RB1RB_0LC0RA_1RA1LC_______.v"
+    ],
+    "oldtm": "LAPT_1RB1RB_0LC0RA_1RA1LC_______.tm_1RB1RB_0LC0RA_1RA1LC_______",
+    "oldthm": "LAPT_1RB1RB_0LC0RA_1RA1LC_______.nqhtr_1RB1RB_0LC0RA_1RA1LC_______",
+    "index": 227,
+    "ident": "known32_227"
+  }
+]

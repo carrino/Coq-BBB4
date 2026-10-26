@@ -12,6 +12,9 @@ documents, [`CLAIMS.md`](CLAIMS.md) is right.
   is NOT.**
 * [`VERIFYING.md`](VERIFYING.md) — how to check any of it yourself, tier
   by tier, with expected outputs and the traps.
+* [`Small-machine proofs`](VERIFYING.md#small-machine-proofs) — build and
+  independently check the exact state and instruction values for `(1,2)`,
+  `(2,2)`, `(3,2)` and `(2,3)`.
 * [`TERMINOLOGY.md`](TERMINOLOGY.md) — the vocabulary: the theorem's own
   terms, then census / holdouts / residue / boards / tiers.
 

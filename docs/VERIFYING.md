@@ -3,12 +3,16 @@
 _What to run, what to expect, and where you are being asked to trust
 something.  The claim itself is in [`docs/CLAIMS.md`](CLAIMS.md)._
 
-There are three tiers.  **Tier A needs no opam**; it verifies every board and
+The `(4,2)` development has three tiers. **Tier A needs no opam**; it verifies every board and
 the whole boarding argument.  Tier B adds the census walk and the value
 theorem: `make proof`, the whole claim from source in one command.  Tier C is
 the instruction-level value, BBB_tr(4) = 32,779,478: `make proof-tr-all`, also
 one command. No `.vo` are committed (since 2026-10-07); a fresh source
 checkout starts without compiled project artifacts.
+
+For the exact `(1,2)`, `(2,2)`, `(3,2)` and `(2,3)` values, use the separate
+[small-machine build](#small-machine-proofs) below. It proves both state and
+instruction values without running the `(4,2)` exhaustive census.
 
 ## Reproduce the complete targets
 
@@ -63,6 +67,70 @@ allowing eligible base proof objects to be reused. Either run is incremental
 if it starts with compiled artifacts. A missing, legacy or changed toolchain
 stamp causes both proof wrappers to clean compiled proof/native artifacts
 before rebuilding; this migration/setup work belongs in the next build's cost.
+
+## Small-machine proofs
+
+Use the native toolchain installed above: **Coq 8.18.0, OCaml 4.14.2 and
+`coq-native`**. From the repository root:
+
+```bash
+eval "$(opam env --switch=census)"
+make -C small -j2             # compile all small value proofs
+make -C small check -j2       # build if needed, then recursively run coqchk
+```
+
+`make -C small check -j2` also works as the single build-and-audit command
+from a fresh checkout. The small Makefile uses the active toolchain; activate
+the switch first, since it does not invoke the `(4,2)` toolchain bootstrap
+wrappers. The root `make proof-all` and `make proof-tr-all` targets still
+build the `(4,2)` results; they do not build these separate small modules.
+
+Expected exact results:
+
+| States, symbols | State | Instruction | Final theorem |
+| --- | ---: | ---: | --- |
+| `(1,2)` | 1 | 1 | [`BBB12_value`](../small/theories/Value12.v) |
+| `(2,2)` | 6 | 8 | [`BBB22_value`](../small/theories/Value22.v) |
+| `(3,2)` | 55 | 55 | [`BBB32_value`](../small/theories/Value32.v) |
+| `(2,3)` | 59 | 67 | [`BBB23_value`](../small/theories/Value23.v) |
+
+The build compiles the required existing binary certificates from
+[`small/legacy/targets.txt`](../small/legacy/targets.txt), then the small
+censuses and final value modules. All four final theorems are unconditional;
+the `Conditional` modules in the `(2,3)` development are intermediate lemmas
+whose premises are discharged by `Value23.v`. No certificate search is needed
+to build the proofs.
+
+The `check` target re-verifies the final modules and their dependencies with
+`coqchk -silent -bytecode-compiler yes`, including the normalized `(2,2)`
+result and regressions. Success is exit status 0. The audit can run quietly
+for several minutes; Coq's native-to-VM fallback warnings are expected here.
+The final `Print Assumptions` blocks report only
+`FunctionalExtensionality.functional_extensionality_dep`. Incremental builds
+may skip already compiled modules and therefore not reprint those blocks.
+
+To inspect the `(2,3)` theorem and its assumptions after building:
+
+```bash
+coqtop -quiet -Q theories BBB4 -Q small/legacy SmallLegacy \
+  -Q small/theories SmallBB <<'COQ'
+From SmallBB Require Import Spec Value23.
+Check BBB23_value.
+Print BBB23_statement.
+Print Assumptions BBB23_value.
+COQ
+```
+
+This shows `BBB23_value : BBB23_statement`, with the statement expanding to
+`BBBSt_is 2 3 59 /\ BBBTr_is 2 3 67`. The instruction values allow an
+unrestricted first transition. [`Normalized22.v`](../small/theories/Normalized22.v)
+separately proves the restricted value 7 when `A0=1RB`; the unrestricted
+`(2,2)` value is 8.
+
+See [`small/README.md`](../small/README.md) for the model, champions, and
+optional search reproduction. The
+[`Small BBB proofs` workflow](../.github/workflows/small.yml) runs the same
+build-and-audit command, followed by the extraction regression.
 
 ## Tier A — everything except the census walk
 
