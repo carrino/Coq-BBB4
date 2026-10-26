@@ -1,0 +1,3118 @@
+[
+  {
+    "machine": "0LB---1RA_1RA2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 6,
+    "index": 0
+  },
+  {
+    "machine": "0LB---1RA_2RA2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 13,
+    "index": 1
+  },
+  {
+    "machine": "0LB---2RA_1RA2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 4,
+    "index": 2
+  },
+  {
+    "machine": "0LB---2RA_2RA2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 11,
+    "index": 3
+  },
+  {
+    "machine": "0LB0RA1RA_2RA1LB2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 12,
+    "index": 4
+  },
+  {
+    "machine": "0LB0RA2RA_1RA2LB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 3,
+    "index": 5
+  },
+  {
+    "machine": "0LB1RA---_1RA2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 5,
+    "index": 6
+  },
+  {
+    "machine": "0LB1RA---_2RA2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 9,
+    "index": 7
+  },
+  {
+    "machine": "0LB1RA0RA_2RA2LB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 8,
+    "index": 8
+  },
+  {
+    "machine": "0LB1RA2RA_1RA2LB1LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 2,
+    "index": 9
+  },
+  {
+    "machine": "0LB1RA2RA_2RA2LA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 7,
+    "index": 10
+  },
+  {
+    "machine": "0LB2RA---_1RA1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 0,
+    "index": 11
+  },
+  {
+    "machine": "0LB2RA---_2RA1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 10,
+    "index": 12
+  },
+  {
+    "machine": "0LB2RA0RA_1RA1LB2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 1,
+    "index": 13
+  },
+  {
+    "machine": "0RB---1LA_1LA2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 17,
+    "index": 14
+  },
+  {
+    "machine": "0RB---1LA_2LA2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 27,
+    "index": 15
+  },
+  {
+    "machine": "0RB---2LA_1LA2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 18,
+    "index": 16
+  },
+  {
+    "machine": "0RB---2LA_2LA2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 22,
+    "index": 17
+  },
+  {
+    "machine": "0RB0LA1LA_2LA1RB2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 26,
+    "index": 18
+  },
+  {
+    "machine": "0RB0LA2LA_1LA2RB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 20,
+    "index": 19
+  },
+  {
+    "machine": "0RB1LA---_1LA2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 16,
+    "index": 20
+  },
+  {
+    "machine": "0RB1LA---_2LA2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 23,
+    "index": 21
+  },
+  {
+    "machine": "0RB1LA0LA_2LA2RB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 25,
+    "index": 22
+  },
+  {
+    "machine": "0RB1LA2LA_1LA2RB1RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 19,
+    "index": 23
+  },
+  {
+    "machine": "0RB1LA2LA_2LA2RA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 24,
+    "index": 24
+  },
+  {
+    "machine": "0RB2LA---_1LA1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 14,
+    "index": 25
+  },
+  {
+    "machine": "0RB2LA---_2LA1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 21,
+    "index": 26
+  },
+  {
+    "machine": "0RB2LA0LA_1LA1RB2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 15,
+    "index": 27
+  },
+  {
+    "machine": "1LB0LA2RA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 61,
+    "index": 28
+  },
+  {
+    "machine": "1LB0LB1RA_1RA2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 41,
+    "index": 29
+  },
+  {
+    "machine": "1LB0LB1RA_1RB2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 59,
+    "index": 30
+  },
+  {
+    "machine": "1LB0LB1RA_2RA2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 64,
+    "index": 31
+  },
+  {
+    "machine": "1LB0LB2RA_1RA2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 40,
+    "index": 32
+  },
+  {
+    "machine": "1LB0LB2RA_1RB2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 57,
+    "index": 33
+  },
+  {
+    "machine": "1LB0LB2RA_2RA2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 62,
+    "index": 34
+  },
+  {
+    "machine": "1LB0LB2RA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 63,
+    "index": 35
+  },
+  {
+    "machine": "1LB0LB2RA_2RB2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 93,
+    "index": 36
+  },
+  {
+    "machine": "1LB0RB1RA_2RB2RA0LA",
+    "kind": "ir",
+    "proof_index": 0,
+    "index": 37
+  },
+  {
+    "machine": "1LB0RB2RA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 65,
+    "index": 38
+  },
+  {
+    "machine": "1LB1LA1RB_2RA2RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 66,
+    "index": 39
+  },
+  {
+    "machine": "1LB1LA2RB_2RA2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 67,
+    "index": 40
+  },
+  {
+    "machine": "1LB1LB1RA_1RA2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 43,
+    "index": 41
+  },
+  {
+    "machine": "1LB1LB1RA_1RB2LB0RA",
+    "kind": "ir",
+    "proof_index": 1,
+    "index": 42
+  },
+  {
+    "machine": "1LB1LB1RA_1RB2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 60,
+    "index": 43
+  },
+  {
+    "machine": "1LB1LB1RA_2RA2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 70,
+    "index": 44
+  },
+  {
+    "machine": "1LB1LB1RB_1RA2LB0RA",
+    "kind": "nqh",
+    "mirror": false,
+    "module": "LAPT_1LB1LB1RB_1RA2LB0RA",
+    "ident": "1LB1LB1RB_1RA2LB0RA",
+    "index": 45
+  },
+  {
+    "machine": "1LB1LB2RA_1RA2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 42,
+    "index": 46
+  },
+  {
+    "machine": "1LB1LB2RA_1RB2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 58,
+    "index": 47
+  },
+  {
+    "machine": "1LB1LB2RA_2RA2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 68,
+    "index": 48
+  },
+  {
+    "machine": "1LB1LB2RA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 69,
+    "index": 49
+  },
+  {
+    "machine": "1LB1LB2RA_2RB2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 94,
+    "index": 50
+  },
+  {
+    "machine": "1LB1RA0RA_2RA1LB2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 72,
+    "index": 51
+  },
+  {
+    "machine": "1LB1RA1LB_0RA2LB---",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 28,
+    "index": 52
+  },
+  {
+    "machine": "1LB1RA1LB_0RB2LB1RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 37,
+    "index": 53
+  },
+  {
+    "machine": "1LB1RA1LB_0RB2LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 38,
+    "index": 54
+  },
+  {
+    "machine": "1LB1RA1LB_1RB2LB2RA",
+    "kind": "deep",
+    "mirror": 0,
+    "n": 3,
+    "t": 128,
+    "proof_index": 0,
+    "index": 55
+  },
+  {
+    "machine": "1LB1RA1LB_2RA2LB0RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 73,
+    "index": 56
+  },
+  {
+    "machine": "1LB1RA1LB_2RA2LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 75,
+    "index": 57
+  },
+  {
+    "machine": "1LB1RA1LB_2RB2LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 95,
+    "index": 58
+  },
+  {
+    "machine": "1LB1RA2RA_0RA2LB0LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 29,
+    "index": 59
+  },
+  {
+    "machine": "1LB1RA2RA_2RA0LB2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 71,
+    "index": 60
+  },
+  {
+    "machine": "1LB1RA2RA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 74,
+    "index": 61
+  },
+  {
+    "machine": "1LB1RB1LA_1RA2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 44,
+    "index": 62
+  },
+  {
+    "machine": "1LB1RB1LA_2RA2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 78,
+    "index": 63
+  },
+  {
+    "machine": "1LB1RB2LA_2RA2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 76,
+    "index": 64
+  },
+  {
+    "machine": "1LB1RB2RA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 77,
+    "index": 65
+  },
+  {
+    "machine": "1LB2LA1RA_2RA1LB---",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 79,
+    "index": 66
+  },
+  {
+    "machine": "1LB2LA1RA_2RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 80,
+    "index": 67
+  },
+  {
+    "machine": "1LB2LA1RB_2RA1LA2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 81,
+    "index": 68
+  },
+  {
+    "machine": "1LB2LA2RA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 82,
+    "index": 69
+  },
+  {
+    "machine": "1LB2LA2RB_1RB2RA0LA",
+    "kind": "nqh",
+    "mirror": true,
+    "module": "LAPT_1RB2RA2LB_1LB2LA0RA",
+    "ident": "1RB2RA2LB_1LB2LA0RA",
+    "index": 70
+  },
+  {
+    "machine": "1LB2LA2RB_2RA1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 83,
+    "index": 71
+  },
+  {
+    "machine": "1LB2LB1RA_0RA1LB---",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 30,
+    "index": 72
+  },
+  {
+    "machine": "1LB2LB1RA_2RA1LB0RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 84,
+    "index": 73
+  },
+  {
+    "machine": "1LB2LB1RA_2RA1LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 86,
+    "index": 74
+  },
+  {
+    "machine": "1LB2LB1RA_2RB1LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 92,
+    "index": 75
+  },
+  {
+    "machine": "1LB2LB2RA_0RA---1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 31,
+    "index": 76
+  },
+  {
+    "machine": "1LB2LB2RA_0RB1RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 35,
+    "index": 77
+  },
+  {
+    "machine": "1LB2LB2RA_0RB2RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 39,
+    "index": 78
+  },
+  {
+    "machine": "1LB2LB2RA_1RA0RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 45,
+    "index": 79
+  },
+  {
+    "machine": "1LB2LB2RA_1RA1RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 46,
+    "index": 80
+  },
+  {
+    "machine": "1LB2LB2RA_1RA2LB1RB",
+    "kind": "remaining",
+    "proof_index": 0,
+    "index": 81
+  },
+  {
+    "machine": "1LB2LB2RA_1RB1RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 54,
+    "index": 82
+  },
+  {
+    "machine": "1LB2LB2RA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 85,
+    "index": 83
+  },
+  {
+    "machine": "1LB2LB2RA_2RB1RA1LB",
+    "kind": "deep",
+    "mirror": 0,
+    "n": 3,
+    "t": 128,
+    "proof_index": 1,
+    "index": 84
+  },
+  {
+    "machine": "1LB2RA0LB_1RA1RA1LA",
+    "kind": "nqh",
+    "mirror": true,
+    "module": "LAPT_1RB2LA0RB_1LA1LA1RA",
+    "ident": "1RB2LA0RB_1LA1LA1RA",
+    "index": 85
+  },
+  {
+    "machine": "1LB2RA0LB_1RB1RA1LA",
+    "kind": "remaining",
+    "proof_index": 1,
+    "index": 86
+  },
+  {
+    "machine": "1LB2RA0LB_2RB1RA1LA",
+    "kind": "remaining",
+    "proof_index": 2,
+    "index": 87
+  },
+  {
+    "machine": "1LB2RA0RA_1RA2LA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 48,
+    "index": 88
+  },
+  {
+    "machine": "1LB2RA0RA_1RA2LB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 49,
+    "index": 89
+  },
+  {
+    "machine": "1LB2RA1LA_1RA2LA2LB",
+    "kind": "remaining",
+    "proof_index": 3,
+    "index": 90
+  },
+  {
+    "machine": "1LB2RA1LA_1RA2RA2LB",
+    "kind": "remaining",
+    "proof_index": 4,
+    "index": 91
+  },
+  {
+    "machine": "1LB2RA1LA_1RB1RA2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 55,
+    "index": 92
+  },
+  {
+    "machine": "1LB2RA1LA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 87,
+    "index": 93
+  },
+  {
+    "machine": "1LB2RA1LB_0RA---2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 32,
+    "index": 94
+  },
+  {
+    "machine": "1LB2RA1LB_0RB1RA2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 36,
+    "index": 95
+  },
+  {
+    "machine": "1LB2RA1LB_1RA0RA2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 50,
+    "index": 96
+  },
+  {
+    "machine": "1LB2RA1LB_1RA1RA2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 51,
+    "index": 97
+  },
+  {
+    "machine": "1LB2RA1LB_1RB1RA2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 56,
+    "index": 98
+  },
+  {
+    "machine": "1LB2RA1LB_2RB1RA2LB",
+    "kind": "qh",
+    "mirror": true,
+    "module": "LAPQ_1RB2LA1RB_2LB1LA2RB",
+    "ident": "1RB2LA1RB_2LB1LA2RB",
+    "index": 99
+  },
+  {
+    "machine": "1LB2RA1RA_0RA0LB2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 33,
+    "index": 100
+  },
+  {
+    "machine": "1LB2RA1RA_1RA2LB0LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 47,
+    "index": 101
+  },
+  {
+    "machine": "1LB2RA1RB_0RA1LB2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 34,
+    "index": 102
+  },
+  {
+    "machine": "1LB2RA2RA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 88,
+    "index": 103
+  },
+  {
+    "machine": "1LB2RB0RB_1RA2LA0RB",
+    "kind": "remaining",
+    "proof_index": 5,
+    "index": 104
+  },
+  {
+    "machine": "1LB2RB1LA_2RA1RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 91,
+    "index": 105
+  },
+  {
+    "machine": "1LB2RB1RA_1RA2LB0LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 53,
+    "index": 106
+  },
+  {
+    "machine": "1LB2RB2LA_1RA1LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 52,
+    "index": 107
+  },
+  {
+    "machine": "1LB2RB2LA_2RA1LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 89,
+    "index": 108
+  },
+  {
+    "machine": "1LB2RB2RA_1RA2LB1RB",
+    "kind": "remaining",
+    "proof_index": 6,
+    "index": 109
+  },
+  {
+    "machine": "1LB2RB2RA_2RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 90,
+    "index": 110
+  },
+  {
+    "machine": "1RB0LB1LA_2LB2LA0RA",
+    "kind": "ir",
+    "proof_index": 3,
+    "index": 111
+  },
+  {
+    "machine": "1RB0LB2LA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 129,
+    "index": 112
+  },
+  {
+    "machine": "1RB0RA2LA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 130,
+    "index": 113
+  },
+  {
+    "machine": "1RB0RB1LA_1LA2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 108,
+    "index": 114
+  },
+  {
+    "machine": "1RB0RB1LA_1LB2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 125,
+    "index": 115
+  },
+  {
+    "machine": "1RB0RB1LA_2LA2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 133,
+    "index": 116
+  },
+  {
+    "machine": "1RB0RB2LA_1LA2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 109,
+    "index": 117
+  },
+  {
+    "machine": "1RB0RB2LA_1LB2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 127,
+    "index": 118
+  },
+  {
+    "machine": "1RB0RB2LA_2LA2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 131,
+    "index": 119
+  },
+  {
+    "machine": "1RB0RB2LA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 132,
+    "index": 120
+  },
+  {
+    "machine": "1RB0RB2LA_2LB2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 161,
+    "index": 121
+  },
+  {
+    "machine": "1RB1LA0LA_2LA1RB2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 135,
+    "index": 122
+  },
+  {
+    "machine": "1RB1LA1RB_0LA2RB---",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 96,
+    "index": 123
+  },
+  {
+    "machine": "1RB1LA1RB_0LB2RB1LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 106,
+    "index": 124
+  },
+  {
+    "machine": "1RB1LA1RB_0LB2RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 107,
+    "index": 125
+  },
+  {
+    "machine": "1RB1LA1RB_1LB2RB2LA",
+    "kind": "deep",
+    "mirror": 1,
+    "n": 3,
+    "t": 128,
+    "proof_index": 2,
+    "index": 126
+  },
+  {
+    "machine": "1RB1LA1RB_2LA2RB0LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 136,
+    "index": 127
+  },
+  {
+    "machine": "1RB1LA1RB_2LA2RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 138,
+    "index": 128
+  },
+  {
+    "machine": "1RB1LA1RB_2LB2RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 163,
+    "index": 129
+  },
+  {
+    "machine": "1RB1LA2LA_0LA2RB0RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 97,
+    "index": 130
+  },
+  {
+    "machine": "1RB1LA2LA_2LA0RB2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 134,
+    "index": 131
+  },
+  {
+    "machine": "1RB1LA2LA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 137,
+    "index": 132
+  },
+  {
+    "machine": "1RB1LB1RA_1LA2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 110,
+    "index": 133
+  },
+  {
+    "machine": "1RB1LB1RA_2LA2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 141,
+    "index": 134
+  },
+  {
+    "machine": "1RB1LB2LA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 139,
+    "index": 135
+  },
+  {
+    "machine": "1RB1LB2RA_2LA2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 140,
+    "index": 136
+  },
+  {
+    "machine": "1RB1RA1LB_2LA2LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 142,
+    "index": 137
+  },
+  {
+    "machine": "1RB1RA2LB_2LA2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 143,
+    "index": 138
+  },
+  {
+    "machine": "1RB1RB1LA_1LA2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 111,
+    "index": 139
+  },
+  {
+    "machine": "1RB1RB1LA_1LB2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 126,
+    "index": 140
+  },
+  {
+    "machine": "1RB1RB1LA_1LB2RB0LA",
+    "kind": "ir",
+    "proof_index": 5,
+    "index": 141
+  },
+  {
+    "machine": "1RB1RB1LA_2LA2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 146,
+    "index": 142
+  },
+  {
+    "machine": "1RB1RB1LB_1LA2RB0LA",
+    "kind": "nqh",
+    "mirror": true,
+    "module": "LAPT_1LB1LB1RB_1RA2LB0RA",
+    "ident": "1LB1LB1RB_1RA2LB0RA",
+    "index": 143
+  },
+  {
+    "machine": "1RB1RB2LA_1LA2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 112,
+    "index": 144
+  },
+  {
+    "machine": "1RB1RB2LA_1LB2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 128,
+    "index": 145
+  },
+  {
+    "machine": "1RB1RB2LA_2LA2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 144,
+    "index": 146
+  },
+  {
+    "machine": "1RB1RB2LA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 145,
+    "index": 147
+  },
+  {
+    "machine": "1RB1RB2LA_2LB2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 162,
+    "index": 148
+  },
+  {
+    "machine": "1RB2LA0LA_1LA2RA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 114,
+    "index": 149
+  },
+  {
+    "machine": "1RB2LA0LA_1LA2RB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 115,
+    "index": 150
+  },
+  {
+    "machine": "1RB2LA0RB_1LA1LA1RA",
+    "kind": "nqh",
+    "mirror": false,
+    "module": "LAPT_1RB2LA0RB_1LA1LA1RA",
+    "ident": "1RB2LA0RB_1LA1LA1RA",
+    "index": 151
+  },
+  {
+    "machine": "1RB2LA0RB_1LB1LA1RA",
+    "kind": "remaining",
+    "proof_index": 7,
+    "index": 152
+  },
+  {
+    "machine": "1RB2LA0RB_2LB1LA1RA",
+    "kind": "remaining",
+    "proof_index": 8,
+    "index": 153
+  },
+  {
+    "machine": "1RB2LA1LA_0LA0RB2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 98,
+    "index": 154
+  },
+  {
+    "machine": "1RB2LA1LA_1LA2RB0RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 113,
+    "index": 155
+  },
+  {
+    "machine": "1RB2LA1LB_0LA1RB2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 99,
+    "index": 156
+  },
+  {
+    "machine": "1RB2LA1RA_1LA2LA2RB",
+    "kind": "remaining",
+    "proof_index": 9,
+    "index": 157
+  },
+  {
+    "machine": "1RB2LA1RA_1LA2RA2RB",
+    "kind": "remaining",
+    "proof_index": 10,
+    "index": 158
+  },
+  {
+    "machine": "1RB2LA1RA_1LB1LA2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 122,
+    "index": 159
+  },
+  {
+    "machine": "1RB2LA1RA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 147,
+    "index": 160
+  },
+  {
+    "machine": "1RB2LA1RB_0LA---2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 100,
+    "index": 161
+  },
+  {
+    "machine": "1RB2LA1RB_0LB1LA2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 103,
+    "index": 162
+  },
+  {
+    "machine": "1RB2LA1RB_1LA0LA2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 116,
+    "index": 163
+  },
+  {
+    "machine": "1RB2LA1RB_1LA1LA2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 117,
+    "index": 164
+  },
+  {
+    "machine": "1RB2LA1RB_1LB1LA2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 123,
+    "index": 165
+  },
+  {
+    "machine": "1RB2LA1RB_2LB1LA2RB",
+    "kind": "qh",
+    "mirror": false,
+    "module": "LAPQ_1RB2LA1RB_2LB1LA2RB",
+    "ident": "1RB2LA1RB_2LB1LA2RB",
+    "index": 166
+  },
+  {
+    "machine": "1RB2LA2LA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 148,
+    "index": 167
+  },
+  {
+    "machine": "1RB2LB0LB_1LA2RA0LB",
+    "kind": "remaining",
+    "proof_index": 11,
+    "index": 168
+  },
+  {
+    "machine": "1RB2LB1LA_1LA2RB0RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 119,
+    "index": 169
+  },
+  {
+    "machine": "1RB2LB1RA_2LA1LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 151,
+    "index": 170
+  },
+  {
+    "machine": "1RB2LB2LA_1LA2RB1LB",
+    "kind": "remaining",
+    "proof_index": 12,
+    "index": 171
+  },
+  {
+    "machine": "1RB2LB2LA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 150,
+    "index": 172
+  },
+  {
+    "machine": "1RB2LB2RA_1LA1RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 118,
+    "index": 173
+  },
+  {
+    "machine": "1RB2LB2RA_2LA1RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 149,
+    "index": 174
+  },
+  {
+    "machine": "1RB2RA1LA_2LA1RB---",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 152,
+    "index": 175
+  },
+  {
+    "machine": "1RB2RA1LA_2LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 153,
+    "index": 176
+  },
+  {
+    "machine": "1RB2RA1LB_2LA1RA2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 154,
+    "index": 177
+  },
+  {
+    "machine": "1RB2RA2LA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 155,
+    "index": 178
+  },
+  {
+    "machine": "1RB2RA2LB_1LB2LA0RA",
+    "kind": "nqh",
+    "mirror": false,
+    "module": "LAPT_1RB2RA2LB_1LB2LA0RA",
+    "ident": "1RB2RA2LB_1LB2LA0RA",
+    "index": 179
+  },
+  {
+    "machine": "1RB2RA2LB_2LA1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 156,
+    "index": 180
+  },
+  {
+    "machine": "1RB2RB1LA_0LA1RB---",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 101,
+    "index": 181
+  },
+  {
+    "machine": "1RB2RB1LA_2LA1RB0LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 157,
+    "index": 182
+  },
+  {
+    "machine": "1RB2RB1LA_2LA1RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 159,
+    "index": 183
+  },
+  {
+    "machine": "1RB2RB1LA_2LB1RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 160,
+    "index": 184
+  },
+  {
+    "machine": "1RB2RB2LA_0LA---1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 102,
+    "index": 185
+  },
+  {
+    "machine": "1RB2RB2LA_0LB1LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 104,
+    "index": 186
+  },
+  {
+    "machine": "1RB2RB2LA_0LB2LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 105,
+    "index": 187
+  },
+  {
+    "machine": "1RB2RB2LA_1LA0LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 120,
+    "index": 188
+  },
+  {
+    "machine": "1RB2RB2LA_1LA1LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 121,
+    "index": 189
+  },
+  {
+    "machine": "1RB2RB2LA_1LA2RB1LB",
+    "kind": "remaining",
+    "proof_index": 13,
+    "index": 190
+  },
+  {
+    "machine": "1RB2RB2LA_1LB1LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 124,
+    "index": 191
+  },
+  {
+    "machine": "1RB2RB2LA_2LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 158,
+    "index": 192
+  },
+  {
+    "machine": "1RB2RB2LA_2LB1LA1RB",
+    "kind": "deep",
+    "mirror": 1,
+    "n": 3,
+    "t": 128,
+    "proof_index": 3,
+    "index": 193
+  },
+  {
+    "machine": "2LB0LB1RA_1RB2LA2RA",
+    "kind": "remaining",
+    "proof_index": 14,
+    "index": 194
+  },
+  {
+    "machine": "2LB0LB1RA_2RA2LA2RA",
+    "kind": "nqh",
+    "mirror": true,
+    "module": "LAPT_2RB0RB1LA_2LA2RA2LA",
+    "ident": "2RB0RB1LA_2LA2RA2LA",
+    "index": 195
+  },
+  {
+    "machine": "2LB0LB1RA_2RB2LA2RA",
+    "kind": "remaining",
+    "proof_index": 15,
+    "index": 196
+  },
+  {
+    "machine": "2LB0RA1RA_2RA2LB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 218,
+    "index": 197
+  },
+  {
+    "machine": "2LB0RA1RA_2RA2LB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 219,
+    "index": 198
+  },
+  {
+    "machine": "2LB0RA2RA_1RA1LB2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 203,
+    "index": 199
+  },
+  {
+    "machine": "2LB0RB1RB_2RA0RB1LA",
+    "kind": "remaining",
+    "proof_index": 16,
+    "index": 200
+  },
+  {
+    "machine": "2LB1LA1RB_1RA2RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 193,
+    "index": 201
+  },
+  {
+    "machine": "2LB1LA1RB_2RA2RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 221,
+    "index": 202
+  },
+  {
+    "machine": "2LB1LA2RB_1RA2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 205,
+    "index": 203
+  },
+  {
+    "machine": "2LB1RA0LA_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 176,
+    "index": 204
+  },
+  {
+    "machine": "2LB1RA0LB_1RA2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 178,
+    "index": 205
+  },
+  {
+    "machine": "2LB1RA0LB_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 179,
+    "index": 206
+  },
+  {
+    "machine": "2LB1RA0LB_1RB2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 208,
+    "index": 207
+  },
+  {
+    "machine": "2LB1RA0LB_2RA2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 211,
+    "index": 208
+  },
+  {
+    "machine": "2LB1RA0LB_2RB2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 225,
+    "index": 209
+  },
+  {
+    "machine": "2LB1RA0RB_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 180,
+    "index": 210
+  },
+  {
+    "machine": "2LB1RA1LA_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 181,
+    "index": 211
+  },
+  {
+    "machine": "2LB1RA1LB_0RA2LB---",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 164,
+    "index": 212
+  },
+  {
+    "machine": "2LB1RA1LB_0RB2LB1RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 173,
+    "index": 213
+  },
+  {
+    "machine": "2LB1RA1LB_0RB2LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 174,
+    "index": 214
+  },
+  {
+    "machine": "2LB1RA1LB_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 188,
+    "index": 215
+  },
+  {
+    "machine": "2LB1RA1LB_1RB2LB2RA",
+    "kind": "deep",
+    "mirror": 0,
+    "n": 3,
+    "t": 128,
+    "proof_index": 4,
+    "index": 216
+  },
+  {
+    "machine": "2LB1RA1LB_2RA2LB0RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 213,
+    "index": 217
+  },
+  {
+    "machine": "2LB1RA1LB_2RA2LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 214,
+    "index": 218
+  },
+  {
+    "machine": "2LB1RA1LB_2RA2RB1LB",
+    "kind": "remaining",
+    "proof_index": 17,
+    "index": 219
+  },
+  {
+    "machine": "2LB1RA1LB_2RB2LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 229,
+    "index": 220
+  },
+  {
+    "machine": "2LB1RA1RA_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 189,
+    "index": 221
+  },
+  {
+    "machine": "2LB1RA1RB_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 192,
+    "index": 222
+  },
+  {
+    "machine": "2LB1RA1RB_2RA2RB1LB",
+    "kind": "remaining",
+    "proof_index": 18,
+    "index": 223
+  },
+  {
+    "machine": "2LB1RA2LB_1RA2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 197,
+    "index": 224
+  },
+  {
+    "machine": "2LB1RA2LB_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 198,
+    "index": 225
+  },
+  {
+    "machine": "2LB1RA2LB_1RB2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 209,
+    "index": 226
+  },
+  {
+    "machine": "2LB1RA2LB_2RA2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 222,
+    "index": 227
+  },
+  {
+    "machine": "2LB1RA2LB_2RB2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 226,
+    "index": 228
+  },
+  {
+    "machine": "2LB1RA2RA_0RA0LB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 169,
+    "index": 229
+  },
+  {
+    "machine": "2LB1RA2RA_1RA1LB0LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 199,
+    "index": 230
+  },
+  {
+    "machine": "2LB1RA2RA_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 202,
+    "index": 231
+  },
+  {
+    "machine": "2LB1RA2RB_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 206,
+    "index": 232
+  },
+  {
+    "machine": "2LB1RB1LA_1RA2LA2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 182,
+    "index": 233
+  },
+  {
+    "machine": "2LB1RB1LA_2RB0LA1RA",
+    "kind": "nqh",
+    "mirror": true,
+    "module": "LAPT_2RB1LB1RA_2LB0RA1LA",
+    "ident": "2RB1LB1RA_2LB0RA1LA",
+    "index": 234
+  },
+  {
+    "machine": "2LB1RB2LA_1RA2RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 194,
+    "index": 235
+  },
+  {
+    "machine": "2LB2LA1RA_1RA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 190,
+    "index": 236
+  },
+  {
+    "machine": "2LB2LA1RA_2RA1LB1LA",
+    "kind": "remaining",
+    "proof_index": 19,
+    "index": 237
+  },
+  {
+    "machine": "2LB2LA1RA_2RA1LB1RA",
+    "kind": "remaining",
+    "proof_index": 20,
+    "index": 238
+  },
+  {
+    "machine": "2LB2LA1RA_2RB1LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 230,
+    "index": 239
+  },
+  {
+    "machine": "2LB2LA1RB_1RA1LA2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 191,
+    "index": 240
+  },
+  {
+    "machine": "2LB2LA2RB_1RA1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 204,
+    "index": 241
+  },
+  {
+    "machine": "2LB2LA2RB_2RA1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 224,
+    "index": 242
+  },
+  {
+    "machine": "2LB2LB1RA_0RA1LB---",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 166,
+    "index": 243
+  },
+  {
+    "machine": "2LB2LB1RA_0RB1LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 175,
+    "index": 244
+  },
+  {
+    "machine": "2LB2LB1RA_1RB1LB2RA",
+    "kind": "qh",
+    "mirror": true,
+    "module": "LAPQ_2RB2RB1LA_1LB1RB2LA",
+    "ident": "2RB2RB1LA_1LB1RB2LA",
+    "index": 245
+  },
+  {
+    "machine": "2LB2LB1RA_2RA1LB0RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 216,
+    "index": 246
+  },
+  {
+    "machine": "2LB2LB1RA_2RA1LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 217,
+    "index": 247
+  },
+  {
+    "machine": "2LB2LB1RA_2RB1LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 231,
+    "index": 248
+  },
+  {
+    "machine": "2LB2LB2RA_0RA---1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 170,
+    "index": 249
+  },
+  {
+    "machine": "2LB2LB2RA_0RB1RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 171,
+    "index": 250
+  },
+  {
+    "machine": "2LB2LB2RA_0RB2RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 172,
+    "index": 251
+  },
+  {
+    "machine": "2LB2LB2RA_1RA0RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 200,
+    "index": 252
+  },
+  {
+    "machine": "2LB2LB2RA_1RA1RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 201,
+    "index": 253
+  },
+  {
+    "machine": "2LB2LB2RA_1RB1RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 207,
+    "index": 254
+  },
+  {
+    "machine": "2LB2LB2RA_2RB1RA1LB",
+    "kind": "deep",
+    "mirror": 0,
+    "n": 3,
+    "t": 128,
+    "proof_index": 5,
+    "index": 255
+  },
+  {
+    "machine": "2LB2RA0LB_1RA1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 177,
+    "index": 256
+  },
+  {
+    "machine": "2LB2RA0LB_2RA1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 212,
+    "index": 257
+  },
+  {
+    "machine": "2LB2RA0LB_2RB1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 227,
+    "index": 258
+  },
+  {
+    "machine": "2LB2RA0RB_1RB0LA1RA",
+    "kind": "ir",
+    "proof_index": 7,
+    "index": 259
+  },
+  {
+    "machine": "2LB2RA1LA_1RA---2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 184,
+    "index": 260
+  },
+  {
+    "machine": "2LB2RA1LA_1RA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 183,
+    "index": 261
+  },
+  {
+    "machine": "2LB2RA1LB_0RA---2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 165,
+    "index": 262
+  },
+  {
+    "machine": "2LB2RA1LB_1RA0RA2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 186,
+    "index": 263
+  },
+  {
+    "machine": "2LB2RA1LB_1RA1RA2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 187,
+    "index": 264
+  },
+  {
+    "machine": "2LB2RA1LB_1RB1RA2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 210,
+    "index": 265
+  },
+  {
+    "machine": "2LB2RA1RA_0RA1LB0LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 167,
+    "index": 266
+  },
+  {
+    "machine": "2LB2RA1RA_2RA0LB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 215,
+    "index": 267
+  },
+  {
+    "machine": "2LB2RA1RB_2RA0LB1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 220,
+    "index": 268
+  },
+  {
+    "machine": "2LB2RA2LB_1RA1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 196,
+    "index": 269
+  },
+  {
+    "machine": "2LB2RA2LB_2RA1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 223,
+    "index": 270
+  },
+  {
+    "machine": "2LB2RA2LB_2RB0RA1LB",
+    "kind": "ir",
+    "proof_index": 8,
+    "index": 271
+  },
+  {
+    "machine": "2LB2RA2LB_2RB1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 228,
+    "index": 272
+  },
+  {
+    "machine": "2LB2RB1LA_1RA1RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 185,
+    "index": 273
+  },
+  {
+    "machine": "2LB2RB1RA_0RA1LB2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 168,
+    "index": 274
+  },
+  {
+    "machine": "2LB2RB2LA_1RA1LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 195,
+    "index": 275
+  },
+  {
+    "machine": "2LB2RB2LB_2RA0RA1LB",
+    "kind": "nqh",
+    "mirror": false,
+    "module": "LAPT_2LB2RB2LB_2RA0RA1LB",
+    "ident": "2LB2RB2LB_2RA0RA1LB",
+    "index": 276
+  },
+  {
+    "machine": "2RB0LA1LA_2LA2RB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 284,
+    "index": 277
+  },
+  {
+    "machine": "2RB0LA1LA_2LA2RB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 285,
+    "index": 278
+  },
+  {
+    "machine": "2RB0LA2LA_1LA1RB2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 266,
+    "index": 279
+  },
+  {
+    "machine": "2RB0LB1LB_2LA0LB1RA",
+    "kind": "remaining",
+    "proof_index": 21,
+    "index": 280
+  },
+  {
+    "machine": "2RB0RB1LA_1LB2RA2LA",
+    "kind": "remaining",
+    "proof_index": 22,
+    "index": 281
+  },
+  {
+    "machine": "2RB0RB1LA_2LA2RA2LA",
+    "kind": "nqh",
+    "mirror": false,
+    "module": "LAPT_2RB0RB1LA_2LA2RA2LA",
+    "ident": "2RB0RB1LA_2LA2RA2LA",
+    "index": 282
+  },
+  {
+    "machine": "2RB0RB1LA_2LB2RA2LA",
+    "kind": "remaining",
+    "proof_index": 23,
+    "index": 283
+  },
+  {
+    "machine": "2RB1LA0LB_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 244,
+    "index": 284
+  },
+  {
+    "machine": "2RB1LA0RA_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 245,
+    "index": 285
+  },
+  {
+    "machine": "2RB1LA0RB_1LA2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 247,
+    "index": 286
+  },
+  {
+    "machine": "2RB1LA0RB_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 248,
+    "index": 287
+  },
+  {
+    "machine": "2RB1LA0RB_1LB2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 276,
+    "index": 288
+  },
+  {
+    "machine": "2RB1LA0RB_2LA2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 280,
+    "index": 289
+  },
+  {
+    "machine": "2RB1LA0RB_2LB2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 295,
+    "index": 290
+  },
+  {
+    "machine": "2RB1LA1LA_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 249,
+    "index": 291
+  },
+  {
+    "machine": "2RB1LA1LB_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 252,
+    "index": 292
+  },
+  {
+    "machine": "2RB1LA1LB_2LA2LB1RB",
+    "kind": "remaining",
+    "proof_index": 24,
+    "index": 293
+  },
+  {
+    "machine": "2RB1LA1RA_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 254,
+    "index": 294
+  },
+  {
+    "machine": "2RB1LA1RB_0LA2RB---",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 235,
+    "index": 295
+  },
+  {
+    "machine": "2RB1LA1RB_0LB2RB1LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 239,
+    "index": 296
+  },
+  {
+    "machine": "2RB1LA1RB_0LB2RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 243,
+    "index": 297
+  },
+  {
+    "machine": "2RB1LA1RB_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 261,
+    "index": 298
+  },
+  {
+    "machine": "2RB1LA1RB_1LB2RB2LA",
+    "kind": "deep",
+    "mirror": 1,
+    "n": 3,
+    "t": 128,
+    "proof_index": 6,
+    "index": 299
+  },
+  {
+    "machine": "2RB1LA1RB_2LA2LB1RB",
+    "kind": "remaining",
+    "proof_index": 25,
+    "index": 300
+  },
+  {
+    "machine": "2RB1LA1RB_2LA2RB0LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 288,
+    "index": 301
+  },
+  {
+    "machine": "2RB1LA1RB_2LA2RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 289,
+    "index": 302
+  },
+  {
+    "machine": "2RB1LA1RB_2LB2RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 299,
+    "index": 303
+  },
+  {
+    "machine": "2RB1LA2LA_0LA0RB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 237,
+    "index": 304
+  },
+  {
+    "machine": "2RB1LA2LA_1LA1RB0RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 262,
+    "index": 305
+  },
+  {
+    "machine": "2RB1LA2LA_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 265,
+    "index": 306
+  },
+  {
+    "machine": "2RB1LA2LB_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 268,
+    "index": 307
+  },
+  {
+    "machine": "2RB1LA2RB_1LA2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 273,
+    "index": 308
+  },
+  {
+    "machine": "2RB1LA2RB_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 274,
+    "index": 309
+  },
+  {
+    "machine": "2RB1LA2RB_1LB2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 277,
+    "index": 310
+  },
+  {
+    "machine": "2RB1LA2RB_2LA2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 292,
+    "index": 311
+  },
+  {
+    "machine": "2RB1LA2RB_2LB2LA1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 296,
+    "index": 312
+  },
+  {
+    "machine": "2RB1LB1RA_1LA2RA2LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 255,
+    "index": 313
+  },
+  {
+    "machine": "2RB1LB1RA_2LB0RA1LA",
+    "kind": "nqh",
+    "mirror": false,
+    "module": "LAPT_2RB1LB1RA_2LB0RA1LA",
+    "ident": "2RB1LB1RA_2LB0RA1LA",
+    "index": 314
+  },
+  {
+    "machine": "2RB1LB2RA_1LA2LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 270,
+    "index": 315
+  },
+  {
+    "machine": "2RB1RA1LB_1LA2LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 253,
+    "index": 316
+  },
+  {
+    "machine": "2RB1RA1LB_2LA2LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 287,
+    "index": 317
+  },
+  {
+    "machine": "2RB1RA2LB_1LA2RA1LB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 269,
+    "index": 318
+  },
+  {
+    "machine": "2RB2LA0LB_1LB0RA1LA",
+    "kind": "ir",
+    "proof_index": 10,
+    "index": 319
+  },
+  {
+    "machine": "2RB2LA0RB_1LA1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 246,
+    "index": 320
+  },
+  {
+    "machine": "2RB2LA0RB_2LA1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 279,
+    "index": 321
+  },
+  {
+    "machine": "2RB2LA0RB_2LB1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 293,
+    "index": 322
+  },
+  {
+    "machine": "2RB2LA1LA_0LA1RB0RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 232,
+    "index": 323
+  },
+  {
+    "machine": "2RB2LA1LA_2LA0RB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 281,
+    "index": 324
+  },
+  {
+    "machine": "2RB2LA1LB_2LA0RB1RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 286,
+    "index": 325
+  },
+  {
+    "machine": "2RB2LA1RA_1LA---2RB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 257,
+    "index": 326
+  },
+  {
+    "machine": "2RB2LA1RA_1LA2RB1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 256,
+    "index": 327
+  },
+  {
+    "machine": "2RB2LA1RB_0LA---2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 236,
+    "index": 328
+  },
+  {
+    "machine": "2RB2LA1RB_1LA0LA2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 259,
+    "index": 329
+  },
+  {
+    "machine": "2RB2LA1RB_1LA1LA2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 260,
+    "index": 330
+  },
+  {
+    "machine": "2RB2LA1RB_1LB1LA2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 278,
+    "index": 331
+  },
+  {
+    "machine": "2RB2LA2RB_1LA1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 272,
+    "index": 332
+  },
+  {
+    "machine": "2RB2LA2RB_2LA1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 291,
+    "index": 333
+  },
+  {
+    "machine": "2RB2LA2RB_2LB0LA1RB",
+    "kind": "ir",
+    "proof_index": 11,
+    "index": 334
+  },
+  {
+    "machine": "2RB2LA2RB_2LB1RB1LA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 294,
+    "index": 335
+  },
+  {
+    "machine": "2RB2LB1LA_0LA1RB2RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 233,
+    "index": 336
+  },
+  {
+    "machine": "2RB2LB1RA_1LA1LB2RA",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 258,
+    "index": 337
+  },
+  {
+    "machine": "2RB2LB2RA_1LA1RA1LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 271,
+    "index": 338
+  },
+  {
+    "machine": "2RB2LB2RB_2LA0LA1RB",
+    "kind": "nqh",
+    "mirror": true,
+    "module": "LAPT_2LB2RB2LB_2RA0RA1LB",
+    "ident": "2LB2RB2LB_2RA0RA1LB",
+    "index": 339
+  },
+  {
+    "machine": "2RB2RA1LA_1LA2LB1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 250,
+    "index": 340
+  },
+  {
+    "machine": "2RB2RA1LA_2LA1RB1LA",
+    "kind": "remaining",
+    "proof_index": 26,
+    "index": 341
+  },
+  {
+    "machine": "2RB2RA1LA_2LA1RB1RA",
+    "kind": "remaining",
+    "proof_index": 27,
+    "index": 342
+  },
+  {
+    "machine": "2RB2RA1LA_2LB1RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 297,
+    "index": 343
+  },
+  {
+    "machine": "2RB2RA1LB_1LA1RA2LB",
+    "kind": "weighted",
+    "mirror": 0,
+    "n": 2,
+    "t": 128,
+    "proof_index": 251,
+    "index": 344
+  },
+  {
+    "machine": "2RB2RA2LB_1LA1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 267,
+    "index": 345
+  },
+  {
+    "machine": "2RB2RA2LB_2LA1LB1RA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 290,
+    "index": 346
+  },
+  {
+    "machine": "2RB2RB1LA_0LA1RB---",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 234,
+    "index": 347
+  },
+  {
+    "machine": "2RB2RB1LA_0LB1RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 242,
+    "index": 348
+  },
+  {
+    "machine": "2RB2RB1LA_1LB1RB2LA",
+    "kind": "qh",
+    "mirror": false,
+    "module": "LAPQ_2RB2RB1LA_1LB1RB2LA",
+    "ident": "2RB2RB1LA_1LB1RB2LA",
+    "index": 349
+  },
+  {
+    "machine": "2RB2RB1LA_2LA1RB0LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 282,
+    "index": 350
+  },
+  {
+    "machine": "2RB2RB1LA_2LA1RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 283,
+    "index": 351
+  },
+  {
+    "machine": "2RB2RB1LA_2LB1RB2LA",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 298,
+    "index": 352
+  },
+  {
+    "machine": "2RB2RB2LA_0LA---1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 238,
+    "index": 353
+  },
+  {
+    "machine": "2RB2RB2LA_0LB1LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 240,
+    "index": 354
+  },
+  {
+    "machine": "2RB2RB2LA_0LB2LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 241,
+    "index": 355
+  },
+  {
+    "machine": "2RB2RB2LA_1LA0LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 263,
+    "index": 356
+  },
+  {
+    "machine": "2RB2RB2LA_1LA1LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 264,
+    "index": 357
+  },
+  {
+    "machine": "2RB2RB2LA_1LB1LA1RB",
+    "kind": "weighted",
+    "mirror": 1,
+    "n": 2,
+    "t": 128,
+    "proof_index": 275,
+    "index": 358
+  },
+  {
+    "machine": "2RB2RB2LA_2LB1LA1RB",
+    "kind": "deep",
+    "mirror": 1,
+    "n": 3,
+    "t": 128,
+    "proof_index": 7,
+    "index": 359
+  }
+]

@@ -9,6 +9,11 @@ theorem **BBB(4) = 32,779,478** — built from the certificates of the
 [Coq-BB5](https://github.com/carrino/Coq-BB5) and
 [busycoq](https://github.com/carrino/busycoq).
 
+The isolated [small-machine development](small/README.md) proves both
+quasihalting values for `(2,2)` and `(3,2)`, and the state value for `(2,3)`.
+The `(2,3)` instruction upper bound is explicitly conditional on seven
+remaining machine proofs.
+
 ## The result
 
 **BBB(4) = 32,779,478.**
