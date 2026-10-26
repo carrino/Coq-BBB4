@@ -2,9 +2,9 @@ name: Four-symbol BBB
 on:
   push:
     branches: [main]
-    paths: ['four/**', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
+    paths: ['four/**', 'tools/multisymbol/survey.cpp', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
   pull_request:
-    paths: ['four/**', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
+    paths: ['four/**', 'tools/multisymbol/survey.cpp', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -25,3 +25,5 @@ jobs:
         run: make -C four check -j2
       - name: Check certificate reproduction
         run: python3 four/tools/generate_champion.py --check
+      - name: Check census reproduction
+        run: python3 four/tools/generate_census.py --check
