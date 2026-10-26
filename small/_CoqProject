@@ -116,3 +116,13 @@ theories/Census23Conditional.v
 theories/SwapSymbols.v
 theories/Remaining23Symmetry.v
 theories/Value23Conditional.v
+theories/RepA.v
+theories/RepB.v
+theories/Binary23Counter.v
+theories/RepA_Binary.v
+theories/Symbolic23Replay.v
+theories/Symbolic23Case.v
+theories/Remaining23Solved.v
+theories/Value23.v
+theories/Value12.v
+theories/Normalized22.v

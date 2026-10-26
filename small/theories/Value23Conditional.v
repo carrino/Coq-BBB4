@@ -1,5 +1,5 @@
-(** The state value is unconditional.  The instruction value still needs
-    the seven explicit hypotheses listed in Remaining23Symmetry. *)
+(** Intermediate census theorem. Its seven premises are discharged by
+    Remaining23Solved; Value23 exports the unconditional value theorem. *)
 From Coq Require Import Arith Lia List.
 From SmallBB Require Import Statement StatementTr Size Bounds Spec Champions
  Value23State Census23Conditional Remaining23Symmetry.

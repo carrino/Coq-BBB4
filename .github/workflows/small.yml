@@ -1,0 +1,47 @@
+name: Small BBB proofs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'small/**'
+      - 'tools/multisymbol/**'
+      - 'theories/**'
+      - '_CoqProject'
+      - 'Makefile'
+      - '.github/actions/setup-native-coq/**'
+      - '.github/workflows/small.yml'
+  pull_request:
+    paths:
+      - 'small/**'
+      - 'tools/multisymbol/**'
+      - 'theories/**'
+      - '_CoqProject'
+      - 'Makefile'
+      - '.github/actions/setup-native-coq/**'
+      - '.github/workflows/small.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: small-bbb-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  small-values:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Build and recursively check all small value theorems
+        run: make -C small check -j2
+      - name: Check exact-key extraction
+        run: |
+          make -C small search -j2
+          python3 tools/multisymbol/smoke.py

@@ -5,49 +5,40 @@ and instructions. It is isolated from the existing `(4,2)` proof.
 
 | States, symbols | State value | Instruction value |
 | --- | --- | --- |
+| `(1,2)` | **1**, proved | **1**, proved |
 | `(2,2)` | **6**, proved | **8**, proved |
 | `(3,2)` | **55**, proved | **55**, proved |
-| `(2,3)` | **59**, proved | **67 is attained; the upper bound remains conditional** |
+| `(2,3)` | **59**, proved | **67**, proved |
 
-The unconditional value theorems are [`BBB22_value`](theories/Value22.v),
+The unconditional value theorems are [`BBB12_value`](theories/Value12.v),
+[`BBB22_value`](theories/Value22.v),
 [`BBB32_value`](theories/Value32.v), and
-[`BBB23_state_value`](theories/Value23State.v). Their statements are in
+[`BBB23_value`](theories/Value23.v). Their statements are in
 [`Spec.v`](theories/Spec.v). All six lower-bound witnesses are checked in
 [`Champions.v`](theories/Champions.v).
 
-## The remaining gap
+## Completing the (2,3) instruction proof
 
-[`BBB23_value_if_remaining`](theories/Value23Conditional.v) explicitly assumes
-instruction bounds for **seven concrete machines**. The exhaustive census and
-all other cases are checked. This is a conditional theorem, **not a proof that
-the instruction value is 67**.
+The exhaustive census leaves 28 difficult instruction-recurrence cases.
+[`Remaining23Symmetry.v`](theories/Remaining23Symmetry.v) reduces them to seven
+representatives using tape reflection and exchange of symbols 1 and 2.
+All seven now have unconditional proofs:
 
-[`Remaining23Symmetry.v`](theories/Remaining23Symmetry.v) proves that these seven
-obligations imply the bounds for the 28 remaining census leaves, using reflection
-of the tape and exchange of symbols 1 and 2. The leaf list is in
-[`remaining23.txt`](certificates/remaining23.txt); the seven representatives are
-in [`representatives23.txt`](certificates/representatives23.txt).
+- [`RepA.v`](theories/RepA.v) and [`RepB.v`](theories/RepB.v) provide four checked
+  affine symbolic loops, preserving the necessary run-length parity.
+- [`Binary23Counter.v`](theories/Binary23Counter.v) and
+  [`RepA_Binary.v`](theories/RepA_Binary.v) prove two binary-counter recurrences,
+  including overflow jumps and instruction visits in each phase.
+- [`Symbolic23Case.v`](theories/Symbolic23Case.v) closes the polynomial loop
+  using a proved word-rotation identity and the sound replay library in
+  [`Symbolic23Replay.v`](theories/Symbolic23Replay.v).
 
-All 28 machines already have checked nonhalting and state-bound proofs in
-[`Remaining23.v`](theories/Remaining23.v). What remains is proving
-`QHBoundTr 67` for each representative: an instruction that eventually goes
-quiet must have its last visit before configuration index 67. Proving every
-instruction that appears after that point recurs would suffice.
-
-Search found the following possible approaches; these are **not proved facts**:
-
-- Four representative families admit place-value ranking candidates, but the
-  current finite left-barrier checker cannot justify the necessary boundary
-  condition. Larger windows and later anchors have not closed these cases.
-- Two have inferred binary-counter families starting above counter value 1;
-  the existing nested-counter search does not prove their overflow branches.
-- One has a candidate symbolic block loop from the C searcher. The existing
-  checker rejects its rule representation. An experimental replay comparing
-  expanded tape streams accepts the local rules, but still fails to establish
-  the full loop, even after merging adjacent runs and varying block order.
-
-These obligations are the next work before treating `(2,3)` as finished or
-starting a larger `(2,4)` proof campaign.
+[`remaining23_all`](theories/Remaining23Solved.v) assembles these bounds.
+[`BBB23_value`](theories/Value23.v) discharges the intermediate census's
+premises and proves both values **59 and 67 without remaining hypotheses**.
+`Census23Conditional.v` and `Value23Conditional.v` remain intermediate lemmas;
+they are not the final exported claim. The case lists under `certificates/`
+record the census decomposition, not unresolved cases.
 
 ## Model and counting convention
 
@@ -74,8 +65,11 @@ has value **8**, whereas the related
 records **7** with the normalization `A0=1RB`. Our champion
 `0LB1RB_1RA1LB` first makes a blank-writing move. Deleting that move and
 exchanging A and B gives the harness's `1RB1LA_0LA1RA`, shifting the last
-relevant visit from configuration index 7 to index 6. Fixing the first write
-to a nonblank symbol therefore changes this instruction maximum.
+relevant visit from configuration index 7 to index 6.
+[`BBB22_normalized_instruction_value`](theories/Normalized22.v) separately
+proves that **7 is the exact restricted maximum when `A0=1RB`**. Thus this
+normalization changes the instruction maximum; it cannot be imposed when
+proving the unrestricted value.
 
 ## Build and audit
 
@@ -95,8 +89,8 @@ dependencies. Its bytecode conversion option keeps the computed census checks
 practical; it may still take several minutes.
 
 The proof footprint is the existing `functional_extensionality_dep` assumption.
-There are no admitted proofs or new axioms. The seven unresolved instruction
-bounds are explicit theorem parameters, not axioms. Native computation checks
+There are no admitted proofs or new axioms. The intermediate census
+parameters are discharged by the seven checked representative proofs. Native computation checks
 certificate data; Python, C++, OCaml, SciPy, and certificate generators are not
 assumed correct by the theorems.
 
@@ -115,7 +109,8 @@ python tools/multisymbol/campaign.py 23-conditional
 Run Python commands from the repository root. Campaigns write candidate
 certificates under ignored `small/build/`; compile those candidates with Coq to
 validate them. Search completion alone is not a proof. The `(2,3)` instruction
-campaign uses the explicitly conditional registry. Campaigns retain machines
+campaign regenerates the intermediate conditional census; `Value23.v` closes
+its premises with the separate recurrence proofs. Campaigns retain machines
 from a proved registry as census leaves and skip redundant searches for them;
 Coq still checks every registry reference and the exhaustive tree.
 
@@ -156,6 +151,11 @@ search; the latter needs SciPy. The checked counter and symbolic certificates
 are self-contained Coq sources.
 
 The larger next plan should distinguish obtaining an exact champion time by
-proved recurrences from proving an exhaustive upper bound. Completing the
-seven instruction obligations here would test the former proof machinery;
-it would not establish that the `(2,4)` census is tractable.
+proved recurrences from proving an exhaustive upper bound. The completed
+small proofs demonstrate the recurrence machinery, but do not establish that
+the `(2,4)` census is tractable.
+
+A pasteable MediaWiki table of the exact transition values is in
+[`transition-table.wiki`](transition-table.wiki). The `Small BBB proofs`
+workflow builds these sources and runs the recursive audit and extraction
+regression on GitHub Actions.

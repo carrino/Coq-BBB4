@@ -1,0 +1,29 @@
+=== Transition-based beeping busy beavers ===
+
+Write <math>\mathrm{BBB}_{\mathrm{tr}}(n,m)</math> for the variant in which a beep designates a state–symbol pair (an instruction slot). As above, <math>m=2</math> is implicit when omitted. The score is one plus the configuration index of the last visit to a slot that is visited at least once and only finitely often; the halting slot counts as a visit. The initial transition is unrestricted, including writes of the blank symbol.
+
+{| class="wikitable"
+! Domain !! Max steps !! Champions
+|-
+| <math>\mathrm{BBB}_{\mathrm{tr}}(1)</math>
+| <math>=1</math><ref name="Coq-small-transition">[https://github.com/carrino/Coq-BBB4/pull/256 Coq formalization of small state- and instruction-based beeping busy beaver values]. The unconditional theorems are in small/theories/Value12.v, Value22.v, Value32.v and Value23.v; witnesses are in Value12.v and Champions.v.</ref>
+| <code>1RZ---</code> ([https://bbchallenge.org/1RZ---&status=halt bbch])
+|-
+| <math>\mathrm{BBB}_{\mathrm{tr}}(2)</math>
+| <math>=8</math><ref name="Coq-small-transition" />
+| <code>0LB1RB_1RA1LB</code> ([https://bbchallenge.org/0LB1RB_1RA1LB&status=non_halt bbch])
+|-
+| <math>\mathrm{BBB}_{\mathrm{tr}}(3)</math>
+| <math>=55</math><ref name="Coq-small-transition" />
+| <code>1RB0LB_1LA0RC_1LC1LA</code> ([https://bbchallenge.org/1RB0LB_1LA0RC_1LC1LA&status=non_halt bbch])
+|-
+| <math>\mathrm{BBB}_{\mathrm{tr}}(4)</math>
+| <math>=32{,}779{,}478</math><ref name="Coq-BBB4-transition">[https://github.com/carrino/Coq-BBB4/blob/main/theories/CloseoutTr/BBBT4_Value.v Coq theorem BBBT4_value] and [https://github.com/carrino/Coq-BBB4/blob/main/theories/BBBT4_Champion.v its champion proof].</ref>
+| <code>1RB1LD_1RC1RB_1LC1LA_0RC0RD</code> ([https://bbchallenge.org/1RB1LD_1RC1RB_1LC1LA_0RC0RD&status=non_halt bbch])
+|-
+| <math>\mathrm{BBB}_{\mathrm{tr}}(2,3)</math>
+| <math>=67</math><ref name="Coq-small-transition" />
+| <code>1LB2RA0LB_1RA0RB1LA</code> ([https://bbchallenge.org/1LB2RA0LB_1RA0RB1LA&status=non_halt bbch])
+|}
+
+The value 8 for <math>(2,2)</math> includes a blank-writing first move. Fixing <code>A0=1RB</code> instead gives an exact maximum of 7, also formally proved in <code>small/theories/Normalized22.v</code>.<ref name="Coq-small-transition" /> Deleting the initial move of <code>0LB1RB_1RA1LB</code> and exchanging A and B gives the restricted champion <code>1RB1LA_0LA1RA</code>, shifting its last relevant visit from configuration index 7 to index 6.

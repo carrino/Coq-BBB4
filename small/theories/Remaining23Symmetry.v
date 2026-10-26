@@ -1,4 +1,5 @@
-(** Seven concrete instruction-recurrence obligations remain. *)
+(** Symmetry reduction to seven concrete instruction-recurrence obligations,
+    all discharged in Remaining23Solved. *)
 From Coq Require Import List.
 From SmallBB Require Import Statement StatementTr Size Bounds KnownCensus Mirror SwapSymbols Remaining23.
 Import ListNotations.

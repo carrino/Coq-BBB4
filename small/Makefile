@@ -12,7 +12,7 @@ Makefile.coq: _CoqProject
 	coq_makefile -f _CoqProject -o $@
 
 check: all
-	coqchk -silent -bytecode-compiler yes -Q ../theories BBB4 -Q legacy SmallLegacy -Q theories SmallBB SmallBB.Value22 SmallBB.Value23State SmallBB.Value32 SmallBB.Value23Conditional SmallBB.Regression
+	coqchk -silent -bytecode-compiler yes -Q ../theories BBB4 -Q legacy SmallLegacy -Q theories SmallBB SmallBB.Value12 SmallBB.Value22 SmallBB.Value23 SmallBB.Value32 SmallBB.Normalized22 SmallBB.Regression
 
 search: all
 	mkdir -p build
