@@ -132,6 +132,44 @@ optional search reproduction. The
 [`Small BBB proofs` workflow](../.github/workflows/small.yml) runs the same
 build-and-audit command, followed by the extraction regression.
 
+## Four-symbol champion
+
+The isolated `four/` development proves the exact score of
+`1RB2LA1RA1LB_0LB2RB3RB1LA` for both state and instruction quasihalting:
+**205,770,076,433,044,242,247,860**. This establishes two global lower bounds;
+the global BBB(2,4) maxima remain unresolved. The last `A` / `A3` configuration
+index is one less, matching this repository's existing score convention.
+
+With the Coq 8.18.0 / OCaml 4.14.2 switch installed above, run from the root:
+
+```bash
+eval "$(opam env --switch=census)"
+make -C four check -j2
+python3 four/tools/generate_champion.py --check
+```
+
+The first command builds and recursively audits `BBB24.Champion` and the
+certificate rejection checks. The second checks that the untrusted Python
+generator exactly reproduces the committed certificate. `make -C four` alone
+builds without the independent audit. No other project census is required.
+
+Inspect the final statements and assumptions:
+
+```bash
+coqtop -quiet -Q four/theories BBB24 <<'COQ'
+From BBB24 Require Import Spec Champion.
+Check champion_exact.
+Check BBB24_lower_bounds.
+Print Assumptions champion_exact.
+Print Assumptions BBB24_lower_bounds.
+COQ
+```
+
+Both assumption reports should contain only `functional_extensionality_dep`.
+The binary run-length replay uses 2,934 accelerated operations with proved exact
+costs; it never expands the enormous tape or simulates every transition. See
+[`four/README.md`](../four/README.md) for the three rules and proof boundary.
+
 ## Tier A — everything except the census walk
 
 `theories/Closeout/Closeout.v`'s dependency closure contains **no census walk

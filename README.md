@@ -13,6 +13,10 @@ The isolated [small-machine development](small/README.md) proves both state
 and instruction quasihalting values for `(2,2)`, `(3,2)`, and `(2,3)`:
 respectively **6 / 8**, **55 / 55**, and **59 / 67**.
 
+The separate [four-symbol development](four/README.md) proves an exact score of
+**205,770,076,433,044,242,247,860** for the known `(2,4)` champion at both levels,
+establishing lower bounds on the global values.
+
 ## The result
 
 **BBB(4) = 32,779,478.**

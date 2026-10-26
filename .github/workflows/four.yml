@@ -1,0 +1,27 @@
+name: Four-symbol BBB
+on:
+  push:
+    branches: [main]
+    paths: ['four/**', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
+  pull_request:
+    paths: ['four/**', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: four-bbb-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  champion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Build and recursively audit the four-symbol proof
+        run: make -C four check -j2
+      - name: Check certificate reproduction
+        run: python3 four/tools/generate_champion.py --check
