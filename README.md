@@ -152,8 +152,21 @@ expected outputs for every rung: [`docs/VERIFYING.md`](docs/VERIFYING.md).
 
 ## Building and measured runtime
 
+For the exact small state and instruction values, activate the native toolchain
+and run these commands from the repository root:
+
+```sh
+eval "$(opam env --switch=census)"
+make -C small -j2
+make -C small check -j2
+```
+
+The `check` target also builds any missing dependencies. Toolchain installation,
+the final theorem names, and expected output are in
+[`docs/VERIFYING.md`, Small-machine proofs](docs/VERIFYING.md#small-machine-proofs).
+
 Use GNU make, Python 3 and a native-capable Coq toolchain. Select one complete
-target in a fresh source checkout:
+`(4,2)` target in a fresh source checkout:
 
 ```sh
 make proof-all     # state-level value theorem; make proof is an alias
