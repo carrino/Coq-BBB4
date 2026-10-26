@@ -23,6 +23,7 @@ With the repository's Coq 8.18.0 / OCaml 4.14.2 toolchain active, from the root:
 eval "$(opam env --switch=census)"
 make -C four check -j2
 python3 four/tools/generate_champion.py --check
+python3 four/tools/generate_census.py --check
 ```
 
 This builds the isolated `BBB24` namespace and recursively audits it with
@@ -61,3 +62,66 @@ global lower bounds. Their sole axiom is `functional_extensionality_dep`.
 The published last-visit index and the repository score differ by one. This
 proof states and checks both numbers explicitly; it does not change the score
 convention used by the previously completed developments.
+
+## Certified census coverage
+
+`Bootstrap.bootstrap_coverage` proves that every two-state, four-symbol table
+satisfies both candidate bounds **or belongs to an explicitly deferred family**.
+All 17 choices at each of the eight cells are covered: 16 defined transitions
+and one undefined transition. Initial blank writes and tables with no halting
+transitions are included.
+
+The current eight-step bootstrap has these kernel-checked structural weights:
+
+| Classification | Table weight |
+| --- | ---: |
+| Bounded | 6,759,679,093 |
+| Pending | 216,078,348 |
+| Total | 6,975,757,441 = 17^8 |
+
+The pending set consists of 1,756,620 partial-table leaves; each represents all
+completions of its remaining undefined cells. It is not a list of proven
+non-quasihalting machines. `census_upper_if_residue` states precisely what
+remains necessary for an exhaustive upper bound.
+
+The C++ survey and Python transcription are untrusted. Coq checks each cycle,
+each undefined-cell branch, and its complete set of children. The 2,150,929-node
+tree shares identical subtrees in 18,468 definitions. Only this certificate DAG
+is committed; survey transcripts stay in the ignored `four/build/` directory.
+`bootstrap_counts` checks the weights computed from that tree, and
+`bootstrap_total` checks their sum. The coverage theorem is the semantic claim;
+no population percentage is used as a proof premise.
+
+The checker compares a small cycle anchor against binary candidate bounds. It
+never simulates to the bound. This first checker requires the whole recurrent
+suffix to start before both bounds; later-anchor certificates may need a more
+precise prefix check. The four-symbol build uses Coq's VM and disables native
+compilation to avoid the native compiler's stack limit on the large shared DAG.
+
+Regenerate the current certificate with
+`python3 four/tools/generate_census.py`, then run `make -C four check -j2`.
+`--check` reproduces without changing the committed certificate. A smaller
+`--fuel 4` certificate can be generated for quick experiments; the checked-in
+horizon is eight.
+
+## Residual-family profiling
+
+[`research/triage-256.json`](research/triage-256.json) records a deeper,
+untrusted survey at 256 steps and a deterministic sample of 512 surviving
+partial-table families from each initial-write class. The upstream affine-rule
+search reports candidate certificates for 786/1,024 sampled families; a
+three-sample fitting variant reports 790. These candidates do not remove any
+family from the certified pending set until Coq accepts a certificate.
+
+Reproduce the baseline with a compiled `carrino/BBB` affine-rule search binary:
+
+```bash
+python3 four/tools/triage.py --irules /path/to/BBB/bin/irules
+```
+
+The script records a node budget, rejects incomplete fixed-root surveys,
+selects the lowest SHA-256 machine hashes, and writes raw results under
+`four/build/triage/`. The sample is unweighted and stratified by initial write;
+its success rate is not an estimate of the fraction of all raw tables that the
+affine checker will solve. The report separates failures to find a repeated
+shape, fit an affine template, and prove the proposed symbolic recurrence.
