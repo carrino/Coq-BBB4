@@ -149,14 +149,16 @@ python3 four/tools/generate_champion.py --check
 python3 four/tools/generate_census.py --check
 python3 four/tools/generate_affine.py --check
 python3 four/tools/generate_pipeline_examples.py --check
+python3 four/tools/generate_advanced_examples.py --check
 ```
 
 The build recursively audits `BBB24.Champion`, `BBB24.Bootstrap`,
 `BBB24.AffineExamples`, the closure and affine checkers, symmetry/shadow
 transport, census closeout, and the certificate rejection checks.
 `BBB24.PipelineExamples` replays all 76 closure-pilot successes and attaches
-their completion proofs to census coverage. The Python commands reproduce the
-champion certificate, census DAG, affine examples, and closure pilot without
+their completion proofs to census coverage. `BBB24.AdvancedExamples` checks the
+33 finite/history/repeated-word pilot successes. The Python commands reproduce the
+champion certificate, census DAG, affine examples, and both closure pilots without
 changing them. Census reproduction
 requires a C++17 compiler (`g++`). `make -C four` alone
 builds without the independent audit. No other project census is required.
@@ -213,6 +215,20 @@ COQ
 
 The affine batch reconstructs its proof shards under the ignored build directory
 and audits them. It does not require rerunning the external affine search.
+
+For the larger census closeout, including the 4,096-family closure replay,
+all conditional shadow links, and the combined transported-family board:
+
+```bash
+make -C four check-wave -j2
+```
+
+This target reconstructs and recursively audits every required generated shard
+from tracked compact inputs; ignored survey logs are not required. The
+[second-wave guide](../four/WAVE2.md) lists the constituent targets and loadpaths
+for `BBB24Wave.WaveCloseout.wave_coverage` and its explicit remaining obligation.
+The original census weights are preserved; the new theorem excludes proved
+families and their completions from a refined residual.
 
 ## Tier A — everything except the census walk
 

@@ -9,6 +9,8 @@ a state-only mode; the recorded closure sweep uses both-bound checkers.
 This is still a staged investigation. A failure at one width, anchor, or fuel
 budget is not evidence of a difficult machine. The complete BBB(4)-style
 escalation ladder has not yet been run on this inventory.
+The [second wave](WAVE2.md) continues this playbook with finite/history checks,
+stronger repeated-word search, larger kernel replay, and checked shadow closeout.
 
 ## First complete core sweep
 
@@ -29,9 +31,9 @@ Full candidate and remaining-family lists live in ignored
 `four/build/pipeline/low-budget/` and are reproducible with the commands below.
 
 These are **extracted-checker search results**, not 93,792 kernel-checked
-discharges. The 180,177 survivors have not received the full escalation ladder:
-finite/history n-grams, stronger repeated-word budgets, and broader affine
-search remain to be swept. Both numbers concern core family representatives,
+discharges. The [second wave](WAVE2.md) applies finite/history n-grams and a
+stronger repeated-word budget to those 180,177 survivors; broader escalation
+and affine search remain. These numbers concern core family representatives,
 not raw machine tables or the census's structural pending weight.
 
 ## Checked pilot and census integration

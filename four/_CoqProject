@@ -73,3 +73,9 @@ theories/Shadow.v
 theories/StateBounds.v
 theories/Symmetry.v
 theories/SymmetryRegression.v
+theories/CertifiedBoard.v
+theories/ClosureBatch.v
+theories/FamilyTransport.v
+theories/AdvancedPipeline.v
+theories/AdvancedExamples.v
+theories/CensusUnion.v

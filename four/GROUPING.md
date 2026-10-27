@@ -8,6 +8,10 @@ Its survivors are still budget-limited results, not a final hard residue.
 The first complete cheap closure sweep reduced the 273,969 core work list to
 180,177 unaccepted representatives, with 93,792 candidate certificates awaiting
 broader replay. The separate checked sample ledger records actual proofs.
+The [second wave](WAVE2.md) reduces that search queue to 133,185 and checks all
+10,572 conditional shadow links. Core proofs and checked transfers to their
+survey siblings and shadows now attach 11,336 distinct families to census
+coverage.
 
 The old pipeline is described in
 [`Census/Decide.v`](../theories/Census/Decide.v): after halt/cycle checks it
@@ -44,16 +48,18 @@ These are **candidate proof dependencies**, not new discharged machines.
 checked prefix and its one-step offset. A bound
 `B` for the core generally gives `B+1` for its shadow; it does not automatically
 give the same global bound. Likewise, the formal census still needs the symbol
-quotient coverage and concrete family links. One inventory shadow relation is
-checked as a regression; the complete shadow inventory has not been replayed.
-No certified pending count changes merely from these grouping transports.
+quotient coverage and concrete family links. The full 10,572-link inventory is
+now replayed by `check-shadow-links`; each relation remains conditional on its
+core proof. `check-transport` separately applies available core proofs and checks
+pending membership before families enter closeout. No certified pending count
+changes merely from a conditional grouping relation.
 
 ## Techniques already used in the repo
 
 | Technique | Existing implementation / evidence | Application to (2,4) |
 | --- | --- | --- |
 | Tree normal form and unused-transition completion | [`TNF_QH.v`](../theories/Census/TNF_QH.v), [`tnf_canon.py`](../tools/nghist/tnf_canon.py) | Assign labels in discovery order and prove whole partial-table families. Our census already branches only at reached undefined cells; its `TM_le`/`extend_bounds` lemmas already cover completions. |
-| Blank-prefix shadows and re-rooting | [`shadowlib.py`](../tools/closeout/shadowlib.py), [`Reroot.v`](../theories/Census/Reroot.v), [`ShadowBoard.v`](../theories/Census/ShadowBoard.v) | Reuse a core proof after a short blank-only prefix. The 10,572 links above are candidates for this route. |
+| Blank-prefix shadows and re-rooting | [`shadowlib.py`](../tools/closeout/shadowlib.py), [`Reroot.v`](../theories/Census/Reroot.v), [`ShadowBoard.v`](../theories/Census/ShadowBoard.v) | Reuse a core proof after a short blank-only prefix. All 10,572 relations are checked; available core proofs currently yield 786 additional shadow families. |
 | Conjugate runs after different prefixes | [`CConjCoverTr.v`](../theories/Counters/CConjCoverTr.v), [`conj_find.py`](../tools/closeouttr/le6/conj_find.py) | Relate runs once configurations coincide under a table transformation; the existing instruction-level proof checks prefix timing and recurrence. Swapping the start state without such a bridge is not sound. |
 | Shared state-avoiding submachines | [`cluster.py`](../tools/reachst/cluster.py), [`REACHST_TIER.md`](../docs/REACHST_TIER.md) | Group by the machine remaining while a target state is avoided. The old burndown proved four patterns covering 127 rows. Shared templates can save many proofs without making the whole machines equivalent. |
 | Shared recurrent core / counter encoding | [`CORE_3STATE.md`](../docs/CORE_3STATE.md), [`RESIDUE_MAP.md`](../docs/RESIDUE_MAP.md) | Reuse a parameterized lap or counter lemma with a separately checked startup. Previously, 23 of a 24-row population shared nine submachines. |
@@ -85,9 +91,11 @@ python3 four/tools/group_families.py --check
 ```
 
 The compact report is [`research/grouping-256.json`](research/grouping-256.json).
-The full representative lists and 10,572 shadow links live under ignored
-`four/build/grouping/`. Every relabeling orbit is checked for membership and
-size against the original inventory; the report pins the input hashes.
+The full representative lists live under ignored `four/build/grouping/`.
+Every relabeling orbit is checked for membership and size against the original
+inventory; the report pins the input hashes. The compact
+[`shadow-links.tsv`](research/shadow-links.tsv) now preserves all 10,572 links
+for independent proof replay without those ignored search files.
 
 Next: escalate the representative cores through the broader checker ladder, record
 the survivors at each budget, and transfer accepted certificates to siblings

@@ -14,7 +14,7 @@ concurrency:
 jobs:
   champion:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     defaults:
       run:
         shell: opam exec -- bash -euo pipefail {0}
@@ -31,7 +31,9 @@ jobs:
         run: python3 four/tools/generate_affine.py --check
       - name: Check closure pilot reproduction
         run: python3 four/tools/generate_pipeline_examples.py --check
-      - name: Replay and audit the frozen affine sample
-        run: make -C four check-affine-batch
+      - name: Check advanced pilot reproduction
+        run: python3 four/tools/generate_advanced_examples.py --check
+      - name: Replay and audit the combined census closeout
+        run: make -C four check-wave -j2
       - name: Check combined sample progress
         run: python3 four/tools/progress.py --check

@@ -13,12 +13,21 @@ found **93,792 candidates**, leaving **180,177** for stronger filtering. These
 are search outcomes, not kernel-checked discharges or final hard holdouts.
 See [the full stage table](PIPELINE.md#first-complete-core-sweep).
 
-## Current checked sample
+The [second full wave](WAVE2.md) adds 46,992 candidates. Across both sweeps,
+**140,784 core representatives have search candidates** and **133,185 remain**
+for stronger methods, including 13 timeouts. Separately, **11,336 distinct
+families have checked bounds and census links**, including **649 of the
+original 1,024-family sample**. Current checked closeout is tracked in
+[`wave2-families.tsv`](research/wave2-families.tsv), with the
+deduplicated counts in [`wave2-summary.json`](research/wave2-summary.json).
+The current original-sample ledger is [`wave2-sample.tsv`](research/wave2-sample.tsv).
 
-The [current sample ledger](research/progress-sample.tsv) combines audited
+## First checked sample snapshot
+
+The [first checked sample ledger](research/progress-sample.tsv) combines audited
 affine replay and closure-pilot proofs without double-counting their overlap:
 
-| Current status in the 1,024-family sample | Families |
+| Status at the first checkpoint in the 1,024-family sample | Families |
 | --- | ---: |
 | Both bounds checked | **637** |
 | Affine checker rejected; no other checked proof yet | 151 |
@@ -29,8 +38,9 @@ The affine replay proves 628 families; the closure pilot proves 76, with 67
 in common. The pilot therefore adds nine distinct proofs, including seven
 rejected affine certificates and two affine search failures. The 80 linked
 families are the four original affine examples and the 76 pilot families.
-The other 557 checked families still need census links. These are sample
-counts, not the size of the full queue or a population-rate estimate.
+At that checkpoint, 557 checked families still needed census links; the second
+wave has attached all of them. These are sample counts, not the size of the
+full queue or a population-rate estimate.
 
 [`research/progress-summary.json`](research/progress-summary.json) records the
 counts and evidence hashes. Reproduce with `python3 four/tools/progress.py

@@ -116,6 +116,12 @@ submachine patterns, and the relation to the BBB(4) pipeline.
 and checked closeout. The 76-family closure pilot and four original affine
 families are now linked through `bootstrap_pipeline_coverage`; the original
 bootstrap's structural counts have not been recomputed.
+The [second wave](WAVE2.md) adds finite/history and stronger repeated-word
+sweeps, a 4,096-family kernel replay, and checked symmetry/shadow closeout.
+The combined audit attaches 11,336 distinct families to census coverage;
+133,185 core representatives remain unresolved by the search sweeps.
+`make -C four check-wave -j2` reconstructs the larger proof boards and audits
+their combined coverage theorem from compact tracked inputs.
 
 [`research/triage-256.json`](research/triage-256.json) records a deeper,
 untrusted survey at 256 steps and a deterministic sample of 512 surviving
