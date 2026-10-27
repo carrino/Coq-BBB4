@@ -2,9 +2,9 @@ name: Four-symbol BBB
 on:
   push:
     branches: [main]
-    paths: ['four/**', 'tools/multisymbol/survey.cpp', 'tools/gen_irulesblkpfx_certs.py', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
+    paths: ['four/**', 'small/**', 'tools/multisymbol/survey.cpp', 'tools/gen_irulesblkpfx_certs.py', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
   pull_request:
-    paths: ['four/**', 'tools/multisymbol/survey.cpp', 'tools/gen_irulesblkpfx_certs.py', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
+    paths: ['four/**', 'small/**', 'tools/multisymbol/survey.cpp', 'tools/gen_irulesblkpfx_certs.py', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -14,7 +14,7 @@ concurrency:
 jobs:
   champion:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     defaults:
       run:
         shell: opam exec -- bash -euo pipefail {0}
@@ -37,3 +37,26 @@ jobs:
         run: make -C four check-wave -j2
       - name: Check combined sample progress
         run: python3 four/tools/progress.py --check
+  campaign-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        step: [affine-pilot, weighted-closeout, weighted-state-pilot, state-reach, state-closure, state-rw-pilot, alphabet23]
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Replay and audit the recorded checker inventory
+        run: python3 four/tools/rebuild_campaign.py --only "${{ matrix.step }}"
+      - name: Preserve replay logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: four-campaign-${{ matrix.step }}
+          path: four/build/campaign-rebuild/*.log
+          retention-days: 7

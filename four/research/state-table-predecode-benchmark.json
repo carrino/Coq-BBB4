@@ -1,0 +1,70 @@
+{
+  "scope": "Performance experiment only; no new proof or machine-family claim.",
+  "decision": "Do not adopt: all three paired CPU improvements are below the 2x threshold.",
+  "method": "Independent coqc processes; identical imports, family set and certificate within each pair. First two pairs use 64 rows, the old RW queue uses 32. CPU is child user+system time; wall time is load-sensitive. Helpers prove exact machine and Boolean equality.",
+  "cases": [
+    {
+      "certificate": "history2, n2, anchor128",
+      "normal": {
+        "mode": "Slow",
+        "rows": 64,
+        "cpu_user": 11.355729,
+        "cpu_system": 0.36338299999999996,
+        "wall": 58.040038392995484
+      },
+      "predecoded": {
+        "mode": "Fast",
+        "rows": 64,
+        "cpu_user": 10.703523999999998,
+        "cpu_system": 0.23294200000000004,
+        "wall": 54.6995239099997
+      },
+      "cpu_speedup": 1.0715629710731056
+    },
+    {
+      "certificate": "finite n4, anchor4096",
+      "normal": {
+        "mode": "SlowLate",
+        "rows": 64,
+        "cpu_user": 8.122193,
+        "cpu_system": 0.180117,
+        "wall": 37.66318656600197
+      },
+      "predecoded": {
+        "mode": "FastLate",
+        "rows": 64,
+        "cpu_user": 6.219799,
+        "cpu_system": 0.174088,
+        "wall": 21.94506283100054
+      },
+      "cpu_speedup": 1.2984761851437159
+    },
+    {
+      "certificate": "RepeatedWord 2 2 128 256; both bounds 4096",
+      "normal": {
+        "mode": "SlowRW",
+        "rows": 32,
+        "cpu_user": 22.266249,
+        "cpu_system": 0.179827,
+        "wall": 99.27036919200327
+      },
+      "predecoded": {
+        "mode": "FastRW",
+        "rows": 32,
+        "cpu_user": 20.732249,
+        "cpu_system": 0.218579,
+        "wall": 86.79854810600227
+      },
+      "cpu_speedup": 1.07136939886099,
+      "input": "research/closure-wave3-input.json",
+      "input_sha256": "13785511c540083f79b3fc53a87aaaa9dd7c09832d1133ae402d1a87f5ddb7d5",
+      "uncompressed_input_sha256": "afb9642fc8cbb24babb1633d0b2b3713e19534839c8e12209e012b96f6a5ca77"
+    }
+  ],
+  "input_sha256": "c9c54a37d9210b5dd576564ecb9e7b1cb973c499ca540e57ceea5e69a1b68a61",
+  "archived_experiment_sources_sha256": {
+    "four/build/state-fast-benchmark/helpers/FastMachine.v": "16d49d4a5b50988e58c12b846166bd2b64feb45b83ff577638a76b2c0ac3f610",
+    "four/build/state-fast-benchmark/helpers/FastStatePipeline.v": "bd7ac27bc8e34646e1e745be5eeed6ab7de340ba3a2ad9eca27bfff2208b3f36"
+  },
+  "artifacts": "Ignored build/state-fast-benchmark contains source snapshots, input proofs, compiler logs and timing scripts."
+}

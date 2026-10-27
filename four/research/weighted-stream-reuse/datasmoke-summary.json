@@ -1,0 +1,84 @@
+{
+  "canonical_cores": 8,
+  "source_weighted_templates": 394,
+  "descriptor": {
+    "module": "BBB24WeightedStreamDatasmoke.WeightedStreamAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 4096,
+    "proof_source": "build/weighted-stream/datasmoke/WeightedStreamAll.v",
+    "load_paths": [
+      {
+        "path": "build/weighted-stream/datasmoke",
+        "namespace": "BBB24WeightedStreamDatasmoke"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/weighted-stream-reuse/datasmoke-input.json",
+        "format": "json_columns"
+      }
+    ],
+    "audited_report": "research/weighted-stream-reuse/datasmoke-summary.json"
+  },
+  "selection": {
+    "candidate_pairs": 150,
+    "candidate_cores": 30,
+    "selected_cores": 30,
+    "source_templates": 394,
+    "source_masks": 49,
+    "pattern_keys": 1514,
+    "max_boot": 4096,
+    "context_cache_limit": 128,
+    "context_cache_hits": 675,
+    "context_cache_misses": 5,
+    "used_templates": 1,
+    "probe_candidates": 8,
+    "native_probe": {
+      "kind": "untrusted extracted OCaml with data reader; all successes subsequently replayed in Coq",
+      "parts": 1,
+      "wall_seconds": 9.862356354999065,
+      "child_cpu_seconds": 1.5749079999999998,
+      "extracted_sha256": {
+        "ml": "428f00f47dec1bfd89caa05bafba6b7b9a9e6db12c9b710f834df8f9d765fce1",
+        "mli": "20b1b7c3ad425c3bf10deb0cd2f616224320ecbf114e8ede21766f947be6ed81"
+      },
+      "selector_sha256": "c2cf2e320d1aeb3bd7bdaa09661a746ac5ec94bf39b804878ed5e7c5b4a172ab"
+    },
+    "checker_selected_cores": 8
+  },
+  "validation": "coqc plus incremental coqchk",
+  "inputs": {
+    "research/weighted-full-snapshots/batch000/registry.json": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58",
+    "research/weighted-full-snapshots/batch000/certificates-0000.json": "7ba8d622890ee1a340c5ec10cb97127dd3e418179add573a6ee89194c71659d0",
+    "research/weighted-full-snapshots/batch000/certificates-0001.json": "dba95e8bb80b3c395fe0541e180f6f12e8f2a4850301627e7f4a9a07bfabce94",
+    "tools/check_weighted_stream_reuse.py": "869bb432de31dc16d12678a165ede15dc4ea793ba2d60b950f2b648341ca8626",
+    "tools/weighted_render_v3.py": "5988c284b17a5e653dfbe6d15f1c3083fd94a32fa0daa3b8745c215d6afbcc98",
+    "tools/weighted_render_v4.py": "8cce618311b0d70bb67074cfdffaa939a517d88fe7c54cf1e275441b6a3e5d9f",
+    "theories/WeightedTail.v": "b8d2690fdbe9d32205281c9e8af69d4f1b443b3c6c6d686a85f5e42c52846a48",
+    "tools/check_weighted_stream_reuse_v5.py": "fbf535042670a93f31d4a8de86eba56324f12a6f509232a32d2b65df57a158ab",
+    "tools/weighted_tail_native.py": "388f9c25be33d51da20ee86fcecac0a9782de8b6fd1d0c51db162038543204e5",
+    "tools/ExtractWeightedTail.v": "11ab4b79b91d59ecbe482930ccf75d354a04788ee79b8192cbfe54ad99ebed23",
+    "tools/check_weighted_stream_reuse_v6.py": "2031115ae2b9c7d9d4945fcd01a24772568c4858be89db73ab3e048c21d6344b",
+    "tools/weighted_tail_data.py": "defbca7c1c770e5962c02685d941dab3150297df4448fc07e05b0e920a80fb15",
+    "tools/weighted_tail_selector.ml": "3f7e3d1e36e88977efdfb3602af953574710943e2a587f1973d17d8b31daa0f8",
+    "research/weighted-stream-reuse/datasmoke-input.json": "87501df4b4e17852541d520a00d97c3c3a7bc68c49c490bdc1cf3ba857683b8c",
+    "tools/check_weighted_stream_reuse_v7.py": "412e8c44f8ce56bff625f5d172669458b8bc019a86ff4b289a202707ae7fdf50",
+    "tools/weighted_template_index.py": "60bc914354bd9610e6ff99fb242ad3fd328b3680545bff307122c2710eb4778e",
+    "tools/weighted_reuse_search.py": "2ee6f34ed9f9ebb2df7d001ae81bf2af8cb1b66c875eb3aec053023d3149f23b",
+    "tools/weighted_render.py": "e203d1d2964cece3f053f7cf9b2184931ad5cc3bb525d2f2a52699cc716d166f",
+    "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e"
+  },
+  "audit_receipt": "build/weighted-stream/datasmoke/audit.json",
+  "audit_receipt_sha256": "f44516ad999c302a7616e87b27177f7be84536426767a7aa90b3c0134d28c88d",
+  "ledger_sha256": "2111c02ba0caaec537093f0c038bc166969fc45a779c74cb4928d9846835cde1",
+  "proof_source_sha256": {
+    "Part0000.v": "20ada2a7f01a9fffffeefcfee39a35d6cccbfd1d42db069b88930f3b73113a36",
+    "WeightedStreamAll.v": "7100a0b34351b1db7ef3d29e6d168fece4906b35316e4a816bbe9a77eee6f27a"
+  },
+  "publication_note": "Include this exact board in the final recursive combined audit before publishing an updated census total."
+}

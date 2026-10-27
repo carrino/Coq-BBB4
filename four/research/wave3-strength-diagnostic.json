@@ -1,0 +1,134 @@
+{
+  "diagnostic_binary_sha256": "0e4e217d694b3df336afab54a16c649b9ed1460de81e535300d7860ca31260fb",
+  "diagnostic_source_sha256": "81a13ceb52bcb8311f46aed9881069f88faaac9877745f1910340b12f940626c",
+  "extracted_checkers_sha256": "7a4632bde4da4bc99da61981970d4a42650e059e46fec310e170bc5ea7a099ac",
+  "reproduction": "build/wave3/diagnostic/probe 4096 WIDTH ANCHOR FUEL ROUNDS 1 INPUT",
+  "selected_rows": 64,
+  "selected_sha256": "03deccddf6474d0fa4b34e79c0e7325580bb1d7270baeca3d60aca1d4e23e488",
+  "selection": "First64 machines in SHA256-ordered ngram-full remainder.",
+  "source_input_sha256": "f641eb7aed4c68cb8471cd3fdc57f560a75cae3226022e64cfc7173677630d87",
+  "source_report_sha256": "4736e28f9b14279a025e523c720735e28f964a1a1cca84972b625497551dca44",
+  "stages": [
+    {
+      "anchor": 256,
+      "closed_graph_rank_failures": 10,
+      "closure_frontier_cases": 3,
+      "closure_halt_context_cases": 0,
+      "closure_missing_gram_cases": 53,
+      "fuel": 512,
+      "max_nodes": 360,
+      "results_sha256": "b957b2fe018589f8c4d9f1d511210eb044aa09f63fc754f16bac14042f906712",
+      "rounds": 8,
+      "rows": 64,
+      "size": 4,
+      "statuses": {
+        "closure_failure": 54,
+        "ranking_failure": 10
+      },
+      "sum_row_seconds": 0.998179,
+      "tag": "cheap4",
+      "timeout": 1,
+      "timeout_phases": {}
+    },
+    {
+      "anchor": 100,
+      "closed_graph_rank_failures": 54,
+      "closure_frontier_cases": 0,
+      "closure_halt_context_cases": 0,
+      "closure_missing_gram_cases": 0,
+      "fuel": 200000,
+      "max_nodes": 925,
+      "results_sha256": "367478522092546d86e48ef5f997fc8539b84d890b2b26a062c29610f6eeca28",
+      "rounds": 512,
+      "rows": 64,
+      "size": 2,
+      "statuses": {
+        "candidate": 9,
+        "ranking_failure": 54,
+        "timeout": 1
+      },
+      "sum_row_seconds": 2.742922,
+      "tag": "bbb4-n2",
+      "timeout": 1,
+      "timeout_phases": {
+        "liveness": 1
+      }
+    },
+    {
+      "anchor": 200,
+      "closed_graph_rank_failures": 46,
+      "closure_frontier_cases": 0,
+      "closure_halt_context_cases": 0,
+      "closure_missing_gram_cases": 0,
+      "fuel": 200000,
+      "max_nodes": 5643,
+      "results_sha256": "1a711a7eda737c448784daa8c31631c109208594da3082151a8bb621d2c38afb",
+      "rounds": 512,
+      "rows": 64,
+      "size": 3,
+      "statuses": {
+        "candidate": 17,
+        "ranking_failure": 46,
+        "timeout": 1
+      },
+      "sum_row_seconds": 7.820456,
+      "tag": "bbb4-n3",
+      "timeout": 1,
+      "timeout_phases": {
+        "liveness": 1
+      }
+    },
+    {
+      "anchor": 400,
+      "closed_graph_rank_failures": 37,
+      "closure_frontier_cases": 0,
+      "closure_halt_context_cases": 0,
+      "closure_missing_gram_cases": 0,
+      "fuel": 200000,
+      "max_nodes": 20054,
+      "results_sha256": "6d3d64c91daa7945a68d138eb7dde2b3437049f0ec64115cb7b3bce7e4bc0acf",
+      "rounds": 512,
+      "rows": 64,
+      "size": 4,
+      "statuses": {
+        "candidate": 14,
+        "ranking_failure": 37,
+        "timeout": 13
+      },
+      "sum_row_seconds": 21.711886,
+      "tag": "bbb4-n4",
+      "timeout": 1,
+      "timeout_phases": {
+        "grow": 1,
+        "liveness": 12
+      }
+    },
+    {
+      "anchor": 256,
+      "closed_graph_rank_failures": 35,
+      "closure_frontier_cases": 0,
+      "closure_halt_context_cases": 0,
+      "closure_missing_gram_cases": 0,
+      "fuel": 200000,
+      "max_nodes": 20054,
+      "results_sha256": "1e00f90ad7b2de8aeeb159aa4b24cd7d8593de6c5f12c327609bf1e539438f32",
+      "rounds": 512,
+      "rows": 64,
+      "size": 4,
+      "statuses": {
+        "candidate": 14,
+        "ranking_failure": 35,
+        "timeout": 15
+      },
+      "sum_row_seconds": 22.512301,
+      "tag": "same-anchor4",
+      "timeout": 1,
+      "timeout_phases": {
+        "grow": 1,
+        "liveness": 14
+      }
+    }
+  ],
+  "status": "Untrusted diagnostic of extracted n-gram search; no additional proof or census-discharge claims.",
+  "validation": "Diagnostic candidate/false distinction compared with ng_check on16 sampled rows and4 known cases; all agreed. This is not a proof of the diagnostic implementation."
+}

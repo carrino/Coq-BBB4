@@ -1,0 +1,23 @@
+{
+  "families": 12548,
+  "concrete": 12400,
+  "partial": 148,
+  "excluded_branch_families": [
+    "1LB2LA3LB1RA_3RA2RA1LA---"
+  ],
+  "state_bound": 65537,
+  "instruction_bound": 65537,
+  "board": "BBB24LateCycles.full65536.NonHalt.cycle_source_board",
+  "nonhalt": "BBB24LateCycles.full65536.NonHalt.cycle_source_board_nonhalt",
+  "small_sound": "BBB24LateCycles.full65536.NonHalt.cycle_source_board_small_sound",
+  "sound": "BBB24LateCycles.full65536.NonHalt.cycle_source_board_sound",
+  "member_order": "Audited input order, retaining root-C certificates only; this is the exact board index order.",
+  "member_ids_sha256": "c3bc5eac1a0bc6e22cd5af969d671caf608f62396976750bc857fa736efdc11b",
+  "base_report_sha256": "60e8d5a8fb2ba134f2a4b8b9f7b02bd85c75bca2e775c22edab0259fadfffb9c",
+  "generated_source_sha256": "3332e14440be42f5245a13faa04f1d8efe083d6f6fd38a1ac918f3fff2e6293d",
+  "source_sha256": {
+    "theories/CycleNonHalt.v": "8338ca3c19aa796a3c3d754ea12c9d9f72558f2efdb1be525aaa1a11b0183b23",
+    "tools/check_late_cycle_sources.py": "d674e7f47c51b016f4a20aaa23d9ec2a3c9b6fa2b04a282890b26e3ae5361e8c"
+  },
+  "validation": "Compiled source-board projection and recursive coqchk; no NonHalt claim for excluded branching families."
+}

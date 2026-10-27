@@ -1,0 +1,34 @@
+{
+  "parent_input": "four/build/advanced/full/not-accepted.txt",
+  "parent_input_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+  "parent_families": 133185,
+  "excluded_sources": {
+    "four/research/late-cycles-full65536.json": {
+      "sha256": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab",
+      "certified_ids": 12549,
+      "parent_intersection": 12549
+    },
+    "four/research/wave2-families.tsv": {
+      "sha256": "03804f62ef1b4d182eda0d7547bd15dd2b18ed1f3155d4ff2bcbeef15d1f0985",
+      "certified_ids": 11336,
+      "parent_intersection": 106
+    },
+    "four/research/wave3-affine-pilot.tsv": {
+      "sha256": "96c635031b69871f4d46f937d68d89dc0ceec7bcbb00377d2be89bd539533835",
+      "certified_ids": 400,
+      "parent_intersection": 400
+    },
+    "four/research/weighted-pilot-check.json": {
+      "sha256": "0cbd5e56c785293296bbdfdb45f8567878c01ba375ad4556244f48b39711ba39",
+      "certified_ids": 110,
+      "parent_intersection": 110
+    }
+  },
+  "excluded_parent_union": 13036,
+  "families": 120149,
+  "concrete": 111535,
+  "partial": 8614,
+  "input": "four/build/late-cycles/cohort-after-65536.txt",
+  "input_sha256": "5e63b1d4600829d742c8b62ba8ea6857e4ecba92df151ff50fee8c773563af0e",
+  "semantics": "Search cohort subtraction uses only checked bounds; this is not a cardinality theorem or a census coverage proof."
+}

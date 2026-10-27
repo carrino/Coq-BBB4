@@ -1,0 +1,50 @@
+{
+  "input_inventory": "four/build/advanced/full/not-accepted.txt",
+  "input_rows": 133185,
+  "input_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+  "note": "Search budget failures and affine successes are exploratory; proof claims rely only on the weighted kernel audit. Search timeouts can make reruns differ.",
+  "overlap_snapshot": {
+    "affine_rows_observed": 26800,
+    "wave3_ngram_survivor_count": 118377,
+    "weighted_affine_candidates": 68,
+    "weighted_affine_rows_observed": 110,
+    "weighted_still_ngram_survivors": 102,
+    "weighted_surviving_both_searches": 42,
+    "weighted_without_affine_candidate": 42
+  },
+  "proof": {
+    "board": "weighted_board",
+    "board_module": "BBB24Weighted.WeightedBoard",
+    "bounds_theorem": "weighted_board_sound",
+    "bundle": "four/research/weighted-pilot-certificates.jsonl",
+    "bundle_sha256": "3f2a8fd2c03b61df97bf63e2beec40da59d721ca77360ddf36ec4a522683a3be",
+    "census_linked": 0,
+    "checked_families": 110,
+    "instruction_bound": 4096,
+    "load_path": "four/build/weighted/pilot-kernel",
+    "nonhalt_theorem": "weighted_board_nonhalt",
+    "report": "four/research/weighted-pilot-check.json",
+    "state_bound": 4096
+  },
+  "sample": {
+    "rows": 512,
+    "selection": "lowest SHA256(machine) values",
+    "sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649"
+  },
+  "search": {
+    "already_ranked_orientations": 96,
+    "anchor": 256,
+    "candidate_machines": 110,
+    "fuel": 1024,
+    "graph_rows": 818,
+    "graph_sha256": "9f72992b6dc42407c04960ce7db371e773ee536eddde4bd8b9fcdba0fa2a6160",
+    "lp_seconds_per_graph_cap": 3,
+    "node_limit_for_lp": 512,
+    "rounds": 16,
+    "seconds_per_orientation_cap": 0.2,
+    "timeout_orientations": 48,
+    "wall_width_max": 4,
+    "width": 2
+  },
+  "status": "All 110 pilot candidates have kernel-checked non-halting and both bounds at 4096; census linking remains separate."
+}

@@ -13,14 +13,21 @@ found **93,792 candidates**, leaving **180,177** for stronger filtering. These
 are search outcomes, not kernel-checked discharges or final hard holdouts.
 See [the full stage table](PIPELINE.md#first-complete-core-sweep).
 
-The [second full wave](WAVE2.md) adds 46,992 candidates. Across both sweeps,
+The [second full wave](WAVE2.md) added 46,992 candidates. Across those two sweeps,
 **140,784 core representatives have search candidates** and **133,185 remain**
-for stronger methods, including 13 timeouts. Separately, **11,336 distinct
-families have checked bounds and census links**, including **649 of the
-original 1,024-family sample**. Current checked closeout is tracked in
+for stronger methods, including 13 timeouts. At that checkpoint, **11,336 distinct
+families had checked bounds and census links**, including **649 of the
+original 1,024-family sample**. That checked closeout is tracked in
 [`wave2-families.tsv`](research/wave2-families.tsv), with the
 deduplicated counts in [`wave2-summary.json`](research/wave2-summary.json).
-The current original-sample ledger is [`wave2-sample.tsv`](research/wave2-sample.tsv).
+The original-sample ledger is [`wave2-sample.tsv`](research/wave2-sample.tsv).
+
+The [stronger census campaign](WAVE3.md) continues from that frozen 133,185-row
+cohort. It adds weighted n-grams, deeper affine and closure checks, reuse of
+proved recurring behavior, and separate state-only solvers. The combined
+checked inventories and their intersection with the starting cohort are
+recorded in [`campaign-summary.json`](research/campaign-summary.json).
+Search candidates and completed Coq discharges remain separate counts.
 
 ## First checked sample snapshot
 

@@ -1,0 +1,52 @@
+{
+  "validation": "coqc plus exact-artifact incremental coqchk",
+  "theorems": [
+    "BBB24.WeightedTail.wt_use_sound",
+    "BBB24.WeightedTail.wt_hybrid_batch_sound"
+  ],
+  "regression": "BBB24.WeightedTailRegression",
+  "source_sha256": {
+    "theories/WeightedTail.v": "b8d2690fdbe9d32205281c9e8af69d4f1b443b3c6c6d686a85f5e42c52846a48",
+    "theories/WeightedTailRegression.v": "e435ff3006cc0190cafb55399ede17fef67dbcfbe1e27f6f58d1ecb94dd4696f",
+    "tools/check_weighted_stream_reuse_v5.py": "fbf535042670a93f31d4a8de86eba56324f12a6f509232a32d2b65df57a158ab"
+  },
+  "audit_receipt": "build/weighted-tail-benchmark/audit.json",
+  "audit_receipt_sha256": "fc26b3767115b42bd9f4cf589a86d11738a5fec024562a866f880e36bc831057",
+  "benchmarks": [
+    {
+      "targets": 30,
+      "measurements": [
+        {
+          "producer": "V4",
+          "exit": 0,
+          "wall_seconds": 4.9618266859979485,
+          "cpu_seconds": 2.046565
+        },
+        {
+          "producer": "V5",
+          "exit": 0,
+          "wall_seconds": 10.296304710995173,
+          "cpu_seconds": 1.357897
+        }
+      ]
+    },
+    {
+      "targets": 24,
+      "measurements": [
+        {
+          "producer": "LargeV4",
+          "exit": 0,
+          "wall_seconds": 9.997969633004686,
+          "cpu_seconds": 2.544937
+        },
+        {
+          "producer": "LargeV5",
+          "exit": 0,
+          "wall_seconds": 9.395920413997374,
+          "cpu_seconds": 1.4253859999999994
+        }
+      ]
+    }
+  ],
+  "publication_note": "Generic theorem audit; these regressions do not add canonical census cores. Final campaign total requires the combined recursive audit."
+}

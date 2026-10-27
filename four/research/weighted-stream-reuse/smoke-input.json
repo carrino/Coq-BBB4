@@ -1,0 +1,18 @@
+{
+  "description": "Targets entering separate-table weighted closures; compact references select untrusted certificates, and every target is kernel checked.",
+  "registry_sha256": "2485fd638d2dc02783a767625ca477e347bd138e82a652f5f640caabe70b5cc3",
+  "baseline_survivor_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+  "exclusion_inputs_sha256": {"research/weighted-reuse-input.json": "b3eb5d852c28609d4786d8778c56ec83fc9d8d343d3ba0528186d780f888a42a", "research/weighted-suffix-pilot-input.json": "b5a6ed2e3ac6beac4811fa94f0bbd0b64a4655555a3dbec602070c0d5ae45ea8"},
+  "selection": {"candidate_cores": 586, "candidate_pairs": 657, "checker_selected_cores": 8, "context_cache_hits": 6401, "context_cache_limit": 128, "context_cache_misses": 95, "max_boot": 4096, "pattern_keys": 638, "probe_candidates": 8, "selected_cores": 268, "source_masks": 39, "source_templates": 150, "used_templates": 99},
+  "columns": ["machine", "source_certificate", "permutation", "state_swap", "mirrored", "boot"],
+  "rows": [
+    ["1LB0LA1RA3RA_2RA3LB0RA1RB",61,"132",false,false,4],
+    ["1LB0LA1RB3RA_2RA3LB0RA1RB",61,"132",false,false,8],
+    ["1LB0LA0RB1LA_2RA2RB3LB1LB",67,"123",false,false,8],
+    ["1LB0LA---2RA_3RA3LB1RB1RB",77,"123",false,false,8],
+    ["1LB0LA1RB3RA_2RA2LB3LB2RA",99,"231",true,true,16],
+    ["1LB0LA1RB3RA_2RA3RB1LB1LA",106,"213",true,false,0],
+    ["1LB0LA0LB1RA_3RA2RB3LB0LA",107,"321",true,false,0],
+    ["1LB0LA0LB2RB_3RA3RA3LA1LB",144,"312",true,false,8]
+  ]
+}

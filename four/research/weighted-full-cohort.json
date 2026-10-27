@@ -1,0 +1,189 @@
+{
+  "affine_native_survivors": 70625,
+  "baseline_rows": 133185,
+  "before_checked_board_exclusion": 62670,
+  "checked_inventory_exclusion": 3043,
+  "excluded_boards": [
+    {
+      "board": "transport_board",
+      "id": "Wave2",
+      "instruction_bound": 4097,
+      "inventories": [
+        {
+          "format": "transport",
+          "order": "input",
+          "path": "research/family-transport-input.json"
+        }
+      ],
+      "module": "BBB24Transport.FamilyTransportCloseout",
+      "scope": "both",
+      "state_bound": 4097
+    },
+    {
+      "board": "affine_wave_board",
+      "id": "AffinePilot",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "affine",
+          "order": "sha256",
+          "path": "research/wave3-affine-pilot-certs.json"
+        }
+      ],
+      "module": "BBB24AffineWave.Pilot.All",
+      "scope": "both",
+      "state_bound": 4096
+    },
+    {
+      "board": "affine_wave_board",
+      "id": "AffineBulkA",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "affine",
+          "order": "sha256",
+          "path": "research/wave3-affine-bulk4096a-certs.json"
+        }
+      ],
+      "module": "BBB24AffineWave.Bulk4096A.All",
+      "scope": "both",
+      "state_bound": 4096
+    },
+    {
+      "board": "late_cycle_board",
+      "id": "LateCycles",
+      "instruction_bound": 65537,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/late-cycles-full65536.json"
+        }
+      ],
+      "module": "BBB24LateCycles.full65536.All",
+      "scope": "both",
+      "state_bound": 65537
+    },
+    {
+      "board": "late_cycle_board",
+      "id": "ExtraCycles",
+      "instruction_bound": 262145,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/late-cycles-extra262144.json"
+        }
+      ],
+      "module": "BBB24LateCycles.extra262144.All",
+      "scope": "both",
+      "state_bound": 262145
+    },
+    {
+      "board": "weighted_board",
+      "id": "WeightedPilot",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/weighted-pilot-machines.json"
+        }
+      ],
+      "module": "BBB24Weighted.WeightedCloseout",
+      "scope": "both",
+      "state_bound": 4096
+    },
+    {
+      "board": "board",
+      "id": "Conjugate",
+      "instruction_bound": 131072,
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/conjugate-input-r000.json"
+        }
+      ],
+      "module": "BBB24ConjugateR000.ConjugateAll",
+      "scope": "both",
+      "state_bound": 131072
+    },
+    {
+      "board": "board",
+      "id": "WeightedReuse",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/weighted-reuse-input.json"
+        }
+      ],
+      "module": "BBB24WeightedReuse.WeightedReuseAll",
+      "scope": "both",
+      "state_bound": 4096
+    },
+    {
+      "board": "closed_alphabet_board",
+      "id": "Alphabet23",
+      "instruction_bound": 67,
+      "inventories": [
+        {
+          "format": "rows",
+          "order": "input",
+          "path": "research/alphabet23-families.json"
+        }
+      ],
+      "module": "BBB24Alphabet.AlphabetBoard",
+      "scope": "both",
+      "state_bound": 59
+    },
+    {
+      "board": "weighted_board",
+      "id": "WeightedV2Pilot",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/weighted-v2-pilot-machines.json"
+        }
+      ],
+      "module": "BBB24WeightedV2Pilot.WeightedAll",
+      "scope": "both",
+      "state_bound": 4096
+    },
+    {
+      "board": "board",
+      "id": "WeightedSuffixPilot",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/weighted-suffix-pilot-input.json"
+        }
+      ],
+      "module": "BBB24WeightedSuffixPilot.WeightedSuffixAll",
+      "scope": "both",
+      "state_bound": 4096
+    }
+  ],
+  "machine_text_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+  "ng4_rw512_survivors": 106221,
+  "rows": 59627,
+  "scope": "Complete frozen search cohort after affine native preselection, ng4/RW512, and checked BOTH-bound inventories. State-only proofs do not exclude rows. Search candidates are not kernel discharge counts.",
+  "sources_sha256": {
+    "build/affine-wave/replay4096/not-accepted.txt": "0b78a48133381ccd729112c9f0dbdb32ed48f26b79b7e05fc0b61abab2d5c379",
+    "build/wave3/rw512-checkpoint/not-accepted.txt": "4ae40d8ae7fbf34bee74bcdc2264c8ab73ce5e03a248d014bd1d8577110f5a11",
+    "research/alphabet23-families.json": "f7f53c4edf6ed72266364310a2a3421d098f1eec05d6ed83004b9f193fd06f7a",
+    "research/conjugate-input-r000.json": "460dc14b801a82d6e03bcee9d158d6cb75c42a703b137256d418c34b03700e5f",
+    "research/family-transport-input.json": "86a68d4b07844e830f2bb27684002d67311ecec297da5d81fa67b58189e544a6",
+    "research/late-cycles-extra262144.json": "bc697fa40061c2bfd08cd26e9381776f7ba396e43fa50f504e6c33ed376a909e",
+    "research/late-cycles-full65536.json": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab",
+    "research/wave3-affine-bulk4096a-certs.json": "63b8e9b7527d6be4074a00eeca6986a3982bd99cb993e4ce6914286614b44cdf",
+    "research/wave3-affine-pilot-certs.json": "86a1d89c65e00f42adc08f6f01c9d2ea3ff2411cb10c660f4c1683b040d1aece",
+    "research/wave3-affine-replay4096.json": "5f61cf763357363c0b76a1921d13784f84e786f290e730fcd1549d5662b6fc50",
+    "research/wave3-rw512-full.json": "a652aec90b1f846100c40ccc71f277cc2938fe63597259ea50dee0cc9490f772",
+    "research/weighted-pilot-machines.json": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333",
+    "research/weighted-reuse-input.json": "b3eb5d852c28609d4786d8778c56ec83fc9d8d343d3ba0528186d780f888a42a",
+    "research/weighted-suffix-pilot-input.json": "b5a6ed2e3ac6beac4811fa94f0bbd0b64a4655555a3dbec602070c0d5ae45ea8",
+    "research/weighted-v2-pilot-machines.json": "72d1277351f3118bd48d0493de59edf7c15f690b327cb01916a3c9eeddf95496"
+  }
+}

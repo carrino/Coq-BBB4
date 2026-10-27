@@ -1,0 +1,10 @@
+[
+  {"mode":"finite","size":4,"anchor":128,"fuel":512,"extra":8,"history":0},
+  {"mode":"finite","size":5,"anchor":128,"fuel":1024,"extra":8,"history":0},
+  {"mode":"hist","size":2,"anchor":128,"fuel":1024,"extra":8,"history":2},
+  {"mode":"hist","size":3,"anchor":128,"fuel":2048,"extra":8,"history":2},
+  {"mode":"finite","size":3,"anchor":512,"fuel":512,"extra":8,"history":0},
+  {"mode":"hist","size":3,"anchor":512,"fuel":1024,"extra":8,"history":1},
+  {"mode":"finite","size":4,"anchor":4096,"fuel":1024,"extra":16,"history":0},
+  {"mode":"hist","size":3,"anchor":4096,"fuel":4096,"extra":16,"history":2}
+]

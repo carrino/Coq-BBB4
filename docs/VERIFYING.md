@@ -161,7 +161,9 @@ their completion proofs to census coverage. `BBB24.AdvancedExamples` checks the
 champion certificate, census DAG, affine examples, and both closure pilots without
 changing them. Census reproduction
 requires a C++17 compiler (`g++`). `make -C four` alone
-builds without the independent audit. No other project census is required.
+builds without the independent audit. Alphabet reduction automatically builds
+the completed `SmallBB.Value23` theorem; it does not require the BBB(4) census
+or the unrelated (3,2) legacy dependencies.
 
 Inspect the final statements and assumptions:
 
@@ -229,6 +231,20 @@ from tracked compact inputs; ignored survey logs are not required. The
 for `BBB24Wave.WaveCloseout.wave_coverage` and its explicit remaining obligation.
 The original census weights are preserved; the new theorem excludes proved
 families and their completions from a refined residual.
+
+For the stronger campaign, including separate state-only boards, weighted
+certificates, longer cycles, alphabet reduction, and recurring-suffix reuse:
+
+```bash
+make -C four list-campaign
+make -C four check-campaign
+# Optional on a 16 GiB host:
+make -C four check-campaign CAMPAIGN_JOBS=2
+```
+
+The [third-wave guide](../four/WAVE3.md) explains the distinct search and proof
+counts, the dependency-aware replay targets, and the generated per-machine
+burndown lists. The original large generated Coq files are not tracked.
 
 ## Tier A — everything except the census walk
 

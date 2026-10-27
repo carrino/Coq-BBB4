@@ -1,5 +1,6 @@
 -arg -native-compiler -arg no
 -Q theories BBB24
+-Q ../small/theories SmallBB
 theories/Statement.v
 theories/StatementTr.v
 theories/Spec.v
@@ -79,3 +80,42 @@ theories/FamilyTransport.v
 theories/AdvancedPipeline.v
 theories/AdvancedExamples.v
 theories/CensusUnion.v
+theories/AffineWave.v
+theories/CycleBatch.v
+theories/CycleBatchRegression.v
+theories/CycleNonHalt.v
+theories/Checkers/WeightedLex.v
+theories/Checkers/WeightedStack.v
+theories/Checkers/FiniteWall.v
+theories/WeightedNGram.v
+theories/WeightedCensus.v
+theories/WeightedRegression.v
+theories/WeightedReuse.v
+theories/StateOnlyCloseout.v
+theories/OneStateReach.v
+theories/OneStateReachRegression.v
+theories/OneStateBatch.v
+theories/StatePipeline.v
+theories/StatePipelineRegression.v
+theories/StateRepWL.v
+theories/StateRepWLBatch.v
+theories/StateRepWLRegression.v
+theories/OneStateConditional.v
+theories/OneStateConditionalRegression.v
+theories/ConjugateTransport.v
+theories/FamilyIndex.v
+theories/IndexedConjugate.v
+theories/TransportIndexRegression.v
+theories/AlphabetReduction.v
+theories/Alphabet23.v
+theories/DualCloseout.v
+theories/OrbitCloseout.v
+theories/BoardManifest.v
+theories/BranchCloseout.v
+theories/WeightedSuffix.v
+theories/AlphabetMask.v
+theories/AlphabetQuotientState.v
+theories/WeightedTail.v
+theories/WeightedTailRegression.v
+theories/WeightedState.v
+theories/WeightedStateRegression.v

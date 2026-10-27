@@ -27,8 +27,9 @@ python3 four/tools/generate_census.py --check
 python3 four/tools/generate_pipeline_examples.py --check
 ```
 
-This builds the isolated `BBB24` namespace and recursively audits it with
-`coqchk`. It does not build the existing binary or small-machine censuses.
+This builds the `BBB24` namespace and recursively audits it with `coqchk`.
+Alphabet reduction also builds the completed `SmallBB.Value23` theorem;
+the existing BBB(4) census and the unrelated (3,2) legacy dependencies are not needed.
 See the [usage guide](../docs/VERIFYING.md#four-symbol-champion) for installation
 and theorem inspection.
 
@@ -118,10 +119,16 @@ families are now linked through `bootstrap_pipeline_coverage`; the original
 bootstrap's structural counts have not been recomputed.
 The [second wave](WAVE2.md) adds finite/history and stronger repeated-word
 sweeps, a 4,096-family kernel replay, and checked symmetry/shadow closeout.
-The combined audit attaches 11,336 distinct families to census coverage;
-133,185 core representatives remain unresolved by the search sweeps.
+That checkpoint attached 11,336 distinct families to census coverage and left
+133,185 core representatives unresolved by its search sweeps.
 `make -C four check-wave -j2` reconstructs the larger proof boards and audits
 their combined coverage theorem from compact tracked inputs.
+
+The [stronger campaign](WAVE3.md) adds weighted recurrence, state-only tiers,
+deeper affine/closure passes, and reusable recurring suffixes. Its first combined
+audit covers 34,290 distinct families for both bounds and 111,345 for the state
+bound. `make -C four check-campaign` rebuilds those recorded boards; the guide
+separates completed proofs from later search candidates.
 
 [`research/triage-256.json`](research/triage-256.json) records a deeper,
 untrusted survey at 256 steps and a deterministic sample of 512 surviving

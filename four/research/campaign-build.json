@@ -1,0 +1,251 @@
+{
+  "description": "Rebuild the currently recorded campaign-input.json boards. No discovery searches.",
+  "steps": [
+    {
+      "id": "core",
+      "depends": [],
+      "command": [
+        "make",
+        "-C",
+        "four",
+        "all",
+        "-j2"
+      ]
+    },
+    {
+      "id": "wave2",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "make",
+        "-C",
+        "four",
+        "check-wave",
+        "-j2"
+      ]
+    },
+    {
+      "id": "affine-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-pilot-certs.json",
+        "--name",
+        "Pilot",
+        "--report-prefix",
+        "four/research/wave3-affine-pilot",
+        "--resume"
+      ]
+    },
+    {
+      "id": "affine-bulk4096a",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-bulk4096a-certs.json",
+        "--name",
+        "Bulk4096A",
+        "--report-prefix",
+        "four/research/wave3-affine-bulk4096a",
+        "--resume"
+      ]
+    },
+    {
+      "id": "cycles-full65536",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_late_cycles.py",
+        "--stage",
+        "full65536"
+      ]
+    },
+    {
+      "id": "cycles-extra262144",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_late_cycles.py",
+        "--stage",
+        "extra262144"
+      ]
+    },
+    {
+      "id": "cycles-nonhalt",
+      "depends": [
+        "cycles-full65536"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_late_cycle_sources.py",
+        "--stage",
+        "full65536"
+      ]
+    },
+    {
+      "id": "weighted-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_recorded_weighted.py",
+        "--report",
+        "four/research/weighted-pilot-check.json",
+        "--output-dir",
+        "four/build/weighted/pilot-kernel",
+        "--certificates",
+        "four/research/weighted-pilot-certificates.jsonl"
+      ]
+    },
+    {
+      "id": "weighted-closeout",
+      "depends": [
+        "weighted-pilot"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_closeout.py",
+        "--weighted-report",
+        "four/research/weighted-pilot-check.json",
+        "--proof-dir",
+        "four/build/weighted/pilot-kernel",
+        "--report",
+        "four/research/weighted-pilot-closeout.json",
+        "--inventory",
+        "four/research/weighted-pilot-machines.json"
+      ]
+    },
+    {
+      "id": "conjugate-r000",
+      "depends": [
+        "wave2",
+        "cycles-nonhalt",
+        "weighted-closeout"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_conjugate_batch.py"
+      ]
+    },
+    {
+      "id": "weighted-reuse",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_reuse.py"
+      ]
+    },
+    {
+      "id": "alphabet23",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_alphabet23.py"
+      ]
+    },
+    {
+      "id": "state-reach",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_one_state_reach.py",
+        "--resume"
+      ]
+    },
+    {
+      "id": "state-closure",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_pipeline_batch.py",
+        "--resume"
+      ]
+    },
+    {
+      "id": "state-rw-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_repwl_batch.py",
+        "--input",
+        "four/research/state-repwl-pilot-input.json",
+        "--report",
+        "four/research/state-repwl-pilot-summary.json",
+        "--output-dir",
+        "four/build/state-repwl-pilot",
+        "--namespace",
+        "BBB24StateRWPilot",
+        "--resume"
+      ]
+    },
+    {
+      "id": "weighted-state-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_state.py",
+        "--input",
+        "four/research/weighted-state-pilot-input.json",
+        "--report",
+        "four/research/weighted-state-pilot-checked.json",
+        "--inventory",
+        "four/research/weighted-state-pilot-machines.json",
+        "--output-dir",
+        "four/build/weighted-state-pilot",
+        "--namespace",
+        "BBB24WeightedStatePilot",
+        "--resume"
+      ]
+    },
+    {
+      "id": "campaign",
+      "depends": [
+        "wave2",
+        "affine-pilot",
+        "affine-bulk4096a",
+        "cycles-full65536",
+        "cycles-extra262144",
+        "cycles-nonhalt",
+        "weighted-pilot",
+        "weighted-closeout",
+        "conjugate-r000",
+        "weighted-reuse",
+        "alphabet23",
+        "state-reach",
+        "state-closure",
+        "state-rw-pilot"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_campaign.py",
+        "--resume"
+      ]
+    }
+  ]
+}

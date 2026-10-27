@@ -1,0 +1,503 @@
+{
+  "checked_snapshot_sha256": "e87ebb0148efe78b3834d6683452f2ac7f54f3c4e64e53c23f0f2cfdc010536a",
+  "inventories": [
+    {
+      "candidate_overlap": 0,
+      "id": "Wave2",
+      "inventories": [
+        {
+          "format": "transport",
+          "order": "input",
+          "path": "research/family-transport-input.json",
+          "sha256": "86a68d4b07844e830f2bb27684002d67311ecec297da5d81fa67b58189e544a6"
+        }
+      ],
+      "rows": 11336,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "AffinePilot",
+      "inventories": [
+        {
+          "format": "affine",
+          "order": "sha256",
+          "path": "research/wave3-affine-pilot-certs.json",
+          "sha256": "86a1d89c65e00f42adc08f6f01c9d2ea3ff2411cb10c660f4c1683b040d1aece"
+        }
+      ],
+      "rows": 400,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "AffineBulkA",
+      "inventories": [
+        {
+          "format": "affine",
+          "order": "sha256",
+          "path": "research/wave3-affine-bulk4096a-certs.json",
+          "sha256": "63b8e9b7527d6be4074a00eeca6986a3982bd99cb993e4ce6914286614b44cdf"
+        }
+      ],
+      "rows": 8192,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "LateCycles",
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/late-cycles-full65536.json",
+          "sha256": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab"
+        }
+      ],
+      "rows": 12549,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "ExtraCycles",
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/late-cycles-extra262144.json",
+          "sha256": "bc697fa40061c2bfd08cd26e9381776f7ba396e43fa50f504e6c33ed376a909e"
+        }
+      ],
+      "rows": 54,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "WeightedPilot",
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/weighted-pilot-machines.json",
+          "sha256": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333"
+        }
+      ],
+      "rows": 110,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "Conjugate",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/conjugate-input-r000.json",
+          "sha256": "460dc14b801a82d6e03bcee9d158d6cb75c42a703b137256d418c34b03700e5f"
+        }
+      ],
+      "rows": 1227,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "WeightedReuse",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/weighted-reuse-input.json",
+          "sha256": "b3eb5d852c28609d4786d8778c56ec83fc9d8d343d3ba0528186d780f888a42a"
+        }
+      ],
+      "rows": 421,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "Alphabet23",
+      "inventories": [
+        {
+          "format": "rows",
+          "order": "input",
+          "path": "research/alphabet23-families.json",
+          "sha256": "f7f53c4edf6ed72266364310a2a3421d098f1eec05d6ed83004b9f193fd06f7a"
+        }
+      ],
+      "rows": 221,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "WeightedV2Pilot",
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/weighted-v2-pilot-machines.json",
+          "sha256": "72d1277351f3118bd48d0493de59edf7c15f690b327cb01916a3c9eeddf95496"
+        }
+      ],
+      "rows": 205,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "WeightedSuffixPilot",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/weighted-suffix-pilot-input.json",
+          "sha256": "b5a6ed2e3ac6beac4811fa94f0bbd0b64a4655555a3dbec602070c0d5ae45ea8"
+        }
+      ],
+      "rows": 106,
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "AffineBulkB",
+      "inventories": [
+        {
+          "format": "affine",
+          "path": "research/wave3-affine-bulk4096b-certs.json",
+          "sha256": "8e514092b0666adc66eedbeb6babc0c0078e3e17e0338b1c728cd505b94414d6"
+        }
+      ],
+      "rows": 26970,
+      "status": "queued-or-checked-both; conservatively retained as an assigned obligation"
+    },
+    {
+      "candidate_overlap": 2,
+      "id": "AffineBulkC",
+      "inventories": [
+        {
+          "format": "affine",
+          "path": "research/wave3-affine-bulk4096c-certs.json",
+          "sha256": "ed9411960268e2382c43090a37b4d3eba5365eab5b249c44dd1e423b65a76b65"
+        }
+      ],
+      "rows": 16716,
+      "status": "queued-or-checked-both; conservatively retained as an assigned obligation"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "OldClosureAuditedPrefix",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/closure-wave3-prefix-input.json",
+          "sha256": "ab3604a51b860b62853bc83e1c4484b6467fdf60a9e2510c288528f77e8fbd76"
+        }
+      ],
+      "rows": 10880,
+      "status": "queued-or-checked-both; conservatively retained as an assigned obligation"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "NewClosureFrontier",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/wave3-closure-proof-input.json",
+          "sha256": "1cd57305f701b8728085d0fea080260583ec4cdd5bc21c6d7ede1261f06fdac2"
+        }
+      ],
+      "rows": 11496,
+      "status": "queued-or-checked-both; conservatively retained as an assigned obligation"
+    },
+    {
+      "candidate_overlap": 14,
+      "id": "AffineTemplate427",
+      "inventories": [
+        {
+          "format": "affine",
+          "path": "research/affine-template427-input.json",
+          "sha256": "e6e30a575e1ae0bb59e68f3ad027d5a87975de4eb57c600fd939c2680a745d94"
+        }
+      ],
+      "rows": 427,
+      "status": "queued-or-checked-both; conservatively retained as an assigned obligation"
+    },
+    {
+      "candidate_overlap": 4,
+      "id": "AffineTemplate181",
+      "inventories": [
+        {
+          "format": "affine",
+          "path": "research/affine-template181-input.json",
+          "sha256": "3725924076ed67e91c4bf8210ae582280ddfc48e98e00d144bfe866c2546419f"
+        }
+      ],
+      "rows": 181,
+      "status": "queued-or-checked-both; conservatively retained as an assigned obligation"
+    },
+    {
+      "candidate_overlap": 42,
+      "id": "AffineTemplate245",
+      "inventories": [
+        {
+          "format": "affine",
+          "path": "research/affine-template245-input.json",
+          "sha256": "a6a38f6ffdcc46b927544fae0725cd6eb12cf96bb595470e2a8bece34a2e0b12"
+        }
+      ],
+      "rows": 245,
+      "status": "queued-or-checked-both; conservatively retained as an assigned obligation"
+    },
+    {
+      "candidate_overlap": 2,
+      "id": "ConjugateR001",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/conjugate-input-r001.json",
+          "sha256": "3b6f8b94828df4a14e63a7d4780df36904026ae99a2728b9c7ab814bd348fe7c"
+        }
+      ],
+      "rows": 735,
+      "status": "queued-or-checked-both; conservatively retained as an assigned obligation"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "WeightedSuffixV2",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/weighted-suffix-v2-input.json",
+          "sha256": "5b9c6dde4768659ae4849d26ba5e10d3a921729934c79849f6f4752f64833b16"
+        }
+      ],
+      "rows": 248,
+      "status": "queued-or-checked-both; conservatively retained as an assigned obligation"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "AlphabetMask",
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/alphabet-mask-families.json",
+          "sha256": "d79507ff81da8c7a441eb1d1fee77fbe3b044ee174091f673695e5073d8c91dd"
+        }
+      ],
+      "rows": 13,
+      "status": "queued-or-checked-both; conservatively retained as an assigned obligation"
+    },
+    {
+      "candidate_overlap": 12,
+      "id": "WeightedStream000",
+      "input_range": [
+        0,
+        2048
+      ],
+      "registry": "four/research/weighted-full-snapshots/batch000/registry.json",
+      "registry_sha256": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58",
+      "rows": 555,
+      "status": "assigned weighted replay queue, not an audited exclusion"
+    },
+    {
+      "candidate_overlap": 19,
+      "id": "WeightedStream001",
+      "input_range": [
+        2048,
+        4096
+      ],
+      "registry": "four/research/weighted-full-snapshots/batch001/registry.json",
+      "registry_sha256": "b9827823268e3cb7f998236fc54751fc422d9a1c13d5fc50b90f1943710d61b0",
+      "rows": 701,
+      "status": "assigned weighted replay queue, not an audited exclusion"
+    },
+    {
+      "candidate_overlap": 23,
+      "id": "WeightedStream002",
+      "input_range": [
+        4096,
+        6144
+      ],
+      "registry": "four/research/weighted-full-snapshots/batch002/registry.json",
+      "registry_sha256": "cdd63241fae57dd1a04976eece09c1693baafc466e2572363171c8fdd92cd18c",
+      "rows": 690,
+      "status": "assigned weighted replay queue, not an audited exclusion"
+    },
+    {
+      "candidate_overlap": 17,
+      "id": "WeightedStream003",
+      "input_range": [
+        6144,
+        8192
+      ],
+      "registry": "four/research/weighted-full-snapshots/batch003/registry.json",
+      "registry_sha256": "335b0dc9e826b4cfab93b0f6b92e4bc76cb8a9714ef1622f00b08f5853b1ae9b",
+      "rows": 683,
+      "status": "assigned weighted replay queue, not an audited exclusion"
+    },
+    {
+      "candidate_overlap": 19,
+      "id": "WeightedStream004",
+      "input_range": [
+        8192,
+        10240
+      ],
+      "registry": "four/research/weighted-full-snapshots/batch004/registry.json",
+      "registry_sha256": "b930c41fd2f02610a1752c70f9e48b03ca48d10752a5f4e61b0de5dad14424d3",
+      "rows": 665,
+      "status": "assigned weighted replay queue, not an audited exclusion"
+    },
+    {
+      "candidate_overlap": 20,
+      "id": "WeightedStream005",
+      "input_range": [
+        10240,
+        12288
+      ],
+      "registry": "four/research/weighted-full-snapshots/batch005/registry.json",
+      "registry_sha256": "48af4db801bce17832829fd34758130dce69fca86545c46aef2998228b88bebe",
+      "rows": 690,
+      "status": "assigned weighted replay queue, not an audited exclusion"
+    },
+    {
+      "candidate_overlap": 13,
+      "id": "WeightedStream006",
+      "input_range": [
+        12288,
+        14336
+      ],
+      "registry": "four/research/weighted-full-snapshots/batch006/registry.json",
+      "registry_sha256": "e6abd1a8d9b7551ebb85ebe317458a59605e33a4f86bba31691e33e2ecc83a81",
+      "rows": 679,
+      "status": "assigned weighted replay queue, not an audited exclusion"
+    },
+    {
+      "candidate_overlap": 18,
+      "id": "WeightedStream007",
+      "input_range": [
+        14336,
+        16384
+      ],
+      "registry": "four/research/weighted-full-snapshots/batch007/registry.json",
+      "registry_sha256": "4746b5273010a09dfbcaa752be1a77767a9001620fe993d978529bcd8c9ddcda",
+      "rows": 730,
+      "status": "assigned weighted replay queue, not an audited exclusion"
+    }
+  ],
+  "status": "Frozen proof-assignment snapshot for avoiding duplicate replay. Queued rows remain obligations until independently audited; rejected or timed-out replay obligations must be reinserted. State-only inventories are excluded from this snapshot.",
+  "weighted_index_snapshot": {
+    "campaign_manifest_sha256": "daf0939c36a29229f9a754688a4a1af09e19e1480b57e4823642a949b8354bfe",
+    "exported_input_rows": 16384,
+    "input_rows": 59627,
+    "snapshot_rows": 5393,
+    "snapshots": [
+      {
+        "batch": 0,
+        "candidate_rows": 555,
+        "input_range": [
+          0,
+          2048
+        ],
+        "kinds": {
+          "ordinary": 161,
+          "weighted": 394
+        },
+        "registry": "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch000/registry.json",
+        "registry_sha256": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58"
+      },
+      {
+        "batch": 1,
+        "candidate_rows": 701,
+        "input_range": [
+          2048,
+          4096
+        ],
+        "kinds": {
+          "ordinary": 185,
+          "weighted": 516
+        },
+        "registry": "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch001/registry.json",
+        "registry_sha256": "b9827823268e3cb7f998236fc54751fc422d9a1c13d5fc50b90f1943710d61b0"
+      },
+      {
+        "batch": 2,
+        "candidate_rows": 690,
+        "input_range": [
+          4096,
+          6144
+        ],
+        "kinds": {
+          "ordinary": 206,
+          "weighted": 484
+        },
+        "registry": "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch002/registry.json",
+        "registry_sha256": "cdd63241fae57dd1a04976eece09c1693baafc466e2572363171c8fdd92cd18c"
+      },
+      {
+        "batch": 3,
+        "candidate_rows": 683,
+        "input_range": [
+          6144,
+          8192
+        ],
+        "kinds": {
+          "ordinary": 196,
+          "weighted": 487
+        },
+        "registry": "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch003/registry.json",
+        "registry_sha256": "335b0dc9e826b4cfab93b0f6b92e4bc76cb8a9714ef1622f00b08f5853b1ae9b"
+      },
+      {
+        "batch": 4,
+        "candidate_rows": 665,
+        "input_range": [
+          8192,
+          10240
+        ],
+        "kinds": {
+          "ordinary": 186,
+          "weighted": 479
+        },
+        "registry": "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch004/registry.json",
+        "registry_sha256": "b930c41fd2f02610a1752c70f9e48b03ca48d10752a5f4e61b0de5dad14424d3"
+      },
+      {
+        "batch": 5,
+        "candidate_rows": 690,
+        "input_range": [
+          10240,
+          12288
+        ],
+        "kinds": {
+          "ordinary": 179,
+          "weighted": 511
+        },
+        "registry": "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch005/registry.json",
+        "registry_sha256": "48af4db801bce17832829fd34758130dce69fca86545c46aef2998228b88bebe"
+      },
+      {
+        "batch": 6,
+        "candidate_rows": 679,
+        "input_range": [
+          12288,
+          14336
+        ],
+        "kinds": {
+          "ordinary": 166,
+          "weighted": 513
+        },
+        "registry": "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch006/registry.json",
+        "registry_sha256": "e6abd1a8d9b7551ebb85ebe317458a59605e33a4f86bba31691e33e2ecc83a81"
+      },
+      {
+        "batch": 7,
+        "candidate_rows": 730,
+        "input_range": [
+          14336,
+          16384
+        ],
+        "kinds": {
+          "ordinary": 180,
+          "weighted": 550
+        },
+        "registry": "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch007/registry.json",
+        "registry_sha256": "4746b5273010a09dfbcaa752be1a77767a9001620fe993d978529bcd8c9ddcda"
+      }
+    ],
+    "status": "Immutable untrusted candidate pools; each needs independent Coq replay."
+  },
+  "weighted_index_snapshot_sha256": "d4fbf4f015c357a331a72fe1c930a887f479f8b1f4f1565028740affe469fdfe"
+}

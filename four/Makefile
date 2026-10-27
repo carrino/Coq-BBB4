@@ -1,16 +1,30 @@
-.PHONY: all check check-affine-batch check-affine-closeout check-closure-batch check-shadow-links check-transport check-wave clean
-all: Makefile.coq
+.PHONY: all small23-deps check check-affine-batch check-affine-closeout check-closure-batch check-shadow-links check-transport check-wave check-campaign list-campaign clean
+CAMPAIGN_JOBS ?= 1
+all: small23-deps Makefile.coq
 	$(MAKE) -f Makefile.coq
+# Alphabet reduction reuses the completed (2,3) theorem. Build only that
+# dependency, without the unrelated (3,2) legacy or full (4,2) census targets.
+small23-deps:
+	$(MAKE) -C ../small Makefile.coq
+	$(MAKE) -C ../small -f Makefile.coq theories/Value23.vo
 Makefile.coq: _CoqProject
 	coq_makefile -f _CoqProject -o $@
 check: all
-	coqchk -silent -bytecode-compiler yes -Q theories BBB24 \
+	coqchk -silent -bytecode-compiler yes -Q theories BBB24 -Q ../small/theories SmallBB \
 	  BBB24.Champion BBB24.Regression BBB24.Bootstrap BBB24.CensusRegression \
 	  BBB24.AffineExamples BBB24.AffineRegression BBB24.Checkers.IRules.MetaBlkPfxTr \
 	  BBB24.TotalCompletion BBB24.NGramRegression BBB24.RepWLRegression \
 	  BBB24.FiniteHistoryRegression BBB24.SymmetryRegression \
 	  BBB24.AffineCloseout BBB24.PipelineExamples BBB24.AdvancedExamples \
-	  BBB24.CertifiedBoard BBB24.ClosureBatch BBB24.FamilyTransport BBB24.CensusUnion
+	  BBB24.CertifiedBoard BBB24.ClosureBatch BBB24.FamilyTransport BBB24.CensusUnion \
+	  BBB24.AffineWave BBB24.CycleBatchRegression BBB24.CycleNonHalt \
+	  BBB24.WeightedRegression BBB24.WeightedReuse BBB24.OneStateReachRegression \
+	  BBB24.OneStateBatch BBB24.StatePipelineRegression BBB24.StateRepWLBatch \
+	  BBB24.StateRepWLRegression BBB24.OneStateConditionalRegression \
+	  BBB24.TransportIndexRegression BBB24.Alphabet23 BBB24.DualCloseout \
+	  BBB24.OrbitCloseout BBB24.BoardManifest BBB24.BranchCloseout \
+	  BBB24.WeightedSuffix BBB24.AlphabetMask BBB24.AlphabetQuotientState \
+	  BBB24.WeightedTailRegression BBB24.WeightedStateRegression
 check-affine-batch: all
 	python3 tools/check_affine_batch.py
 check-affine-closeout: check-affine-batch
@@ -23,5 +37,9 @@ check-transport: check-affine-closeout check-closure-batch
 	python3 tools/check_family_transport.py
 check-wave: check-transport check-shadow-links
 	python3 tools/check_wave_closeout.py
+check-campaign:
+	python3 tools/rebuild_campaign.py --jobs $(CAMPAIGN_JOBS)
+list-campaign:
+	python3 tools/rebuild_campaign.py --list
 clean: Makefile.coq
 	$(MAKE) -f Makefile.coq clean

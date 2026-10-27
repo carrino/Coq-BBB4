@@ -1,0 +1,11 @@
+{
+  "scope": "Untrusted state-only weighted certificates; replay required.",
+  "rows": 9,
+  "bundles": [
+    {
+      "path": "research/weighted-state-pilot-certificates.json",
+      "rows": 9,
+      "sha256": "ee8186707313b4a4792be53aeb4a42f08d7d1bd38509600b18ec05d27adb001e"
+    }
+  ]
+}
