@@ -1,0 +1,48 @@
+{
+  "excluded_inventories": [
+    {
+      "inventory": "research/burn2-state-pilot-machines.json",
+      "inventory_sha256": "d580529e59ae333d1d5dc62beb8bcd2582fdb0dcd7a1e79a6c4f60f03fd0b80a",
+      "report": "research/burn2-state-pilot-checked.json",
+      "report_sha256": "74094876d69c1e1dd0d47c771a195b96f2c42be74393a20ac50722b3b22b2838",
+      "rows": 119
+    },
+    {
+      "inventory": "research/burn2-state-full-machines.json",
+      "inventory_sha256": "53c72228cfc3e592f737f5b77ee503958ea0e5d79c847aded36d1fd40df7f595",
+      "report": "research/burn2-state-full-checked.json",
+      "report_sha256": "2bb1caff9002e2dbd8dbb69ef2de751763cdd4a14205b5f45157cb6fde142b2e",
+      "rows": 754
+    },
+    {
+      "inventory": "research/burn2-state-ordinary-pilot-machines.json",
+      "inventory_sha256": "eadc7be741fe0e81be7ed93a88cf42f0d4011478764cf1fb592cda340c335106",
+      "report": "research/burn2-state-ordinary-pilot-checked.json",
+      "report_sha256": "2be6923d24a9e67365af80aec64f896e079e11c73c1ecb651ccb4c2ac6f8e1f3",
+      "rows": 14
+    },
+    {
+      "inventory": "research/burn2-state-full-ordinary-machines.json",
+      "inventory_sha256": "c0503b4188c230a212d81725c86e862b978c77c715f3f430d977a0d1b9164b66",
+      "report": "research/burn2-state-full-ordinary-checked.json",
+      "report_sha256": "8bee939809ea6221bbf260c7fb67f1e4632231b49581f445273e85d7ee276cf2",
+      "rows": 121
+    },
+    {
+      "inventory": "research/burn2-diagnostic-short-machines.json",
+      "inventory_sha256": "85577daebd48c39c3a8bb236dc9dbd337b855debe3aa3c76056d1edff70ceb94",
+      "report": "research/burn2-diagnostic-short-checked.json",
+      "report_sha256": "4d2ba138a3097483aeb04defbc7ce1faff9777a10ff4c8876c690f47d4eccea8",
+      "rows": 9
+    }
+  ],
+  "excluded_rows": 1017,
+  "remaining_rows": 1072,
+  "remaining_sha256": "679b709b2fcce53a6ddee4b536f5836d9d4ba2c9981fec2ca25f48648f0d434d",
+  "scope": "Untrusted search scheduling only; no new proof claims.",
+  "selection": "All remaining rows ordered by SHA256(machine UTF-8)",
+  "source": "research/burn2-state-input.txt",
+  "source_manifest_sha256": "a234d6295130ecbe8809359f70f76d76fcf5e194bc3c82d56087d4a31e3704fc",
+  "source_rows": 2089,
+  "source_sha256": "05a2237284b53d9c1ff3a6bc493f5ed4a3ca4c1fbb538827f976202ff9c8d37c"
+}

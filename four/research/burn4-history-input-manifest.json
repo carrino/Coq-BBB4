@@ -1,0 +1,28 @@
+{
+  "base_rows": 1072,
+  "history_proved": 378,
+  "input_order": "SHA256(machine UTF-8)",
+  "marker_proved": 27,
+  "producer_sha256": "bc5912f8b43fd76562d6704ebeee40b82f388df01ff62b248af43330e45b2945",
+  "remaining_rows": 667,
+  "remaining_sha256": "68cb79c438fe81efecb8823338dc06d6dd106b3da3beed5432e9b243e2971de8",
+  "scope": "Untrusted search selection; no new proof claim.",
+  "source_sha256": {
+    "build/burn3-history/stage-00.tsv": "9635c7e9edef4a473f6a2ded9c05cb833aa025d595222902554cb4dea3a1e37a",
+    "build/burn3-history/stage-01.tsv": "5e6d02e2b7cdc3e14daad57031425f8768f431e61596c5bdfe46efd08b82c393",
+    "research/burn3-history-checked.json": "f3f7bce207570bfc3cd2a85aacf3ff947e87dd6a1add4882c86cd91f8a02830c",
+    "research/burn3-history-input.txt": "679b709b2fcce53a6ddee4b536f5836d9d4ba2c9981fec2ca25f48648f0d434d",
+    "research/burn3-history-machines.json": "6be4e8ded7e06edcf2398592e7cdf013658d184f2f1beb41604b811c16cbb71b",
+    "research/burn3-history-search.json": "384c9f6fa534ff9bc7859418c36006b233230d9eada99b65feb6eff1bcc1559f",
+    "research/burn3-relaxed-marker-batch-checked.json": "0699ebd2d6d9d517b677d558fbcc7f930d9924c6bdfb9b727fd69fcc5900bdc5",
+    "research/burn3-relaxed-marker-batch-machines.json": "504604ab69915811123bb835987fcd47d0e21281c9b86509237143e799fbeb9b",
+    "research/burn3-relaxed-marker-checked.json": "66d78b84ffa82e4ec0bec79f074794b88152368ae018242de96d5806d37a6b57",
+    "research/burn3-relaxed-marker-machines.json": "d60ffb4c6f669d23d9d482d02e01ed8cf27cdd731776feb1dc07d4185fdcdebf"
+  },
+  "whole_residual_partition": {
+    "both_rejected": 599,
+    "both_timeout": 26,
+    "stage0_timeout": 23,
+    "stage1_timeout": 19
+  }
+}

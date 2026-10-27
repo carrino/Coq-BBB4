@@ -273,6 +273,19 @@ expanded dependency graph, or `make -C four list-burn2-campaign` to inspect the
 commands. This includes the first supplement; the frozen 113-board checkpoint
 is still needed to reproduce the full combined burndown lists.
 
+The [third burndown round](../four/BURN3.md) adds deeper history proofs,
+instruction upgrades, and three small invariant developments. Run
+`make -C four check-burn3-campaign` to replay all 28 supplementary boards;
+`make -C four list-burn3-campaign` prints the 27-step dependency plan. This
+includes both earlier supplements. Generated Coq remains under ignored build
+directories; handwritten proof sources and compact certificates are tracked.
+
+The [fourth checkpoint](../four/BURN4.md) adds 121 state proofs from a marker
+invariant established on entry into B, plus one deeper-history proof. Run
+`make -C four check-burn4-campaign` for the latest 30-board supplement, or
+`make -C four list-burn4-campaign` to inspect its 29-step build plan. The guide
+includes the exact command for regenerating the latest remaining-family lists.
+
 The default campaign target produces separate lists of families still lacking
 a checked state bound or instruction bound. Candidate-search counts are
 reported separately from these proof obligations.

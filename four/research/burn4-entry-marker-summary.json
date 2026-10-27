@@ -1,0 +1,51 @@
+{
+  "checked_instruction_families": 0,
+  "checked_modules": 275,
+  "checked_state_families": 121,
+  "descriptor": {
+    "board": "board",
+    "exact_inventory_theorem": "BBB24Burn4EntryMarker.Inventory.inventory_exact",
+    "id": "burn4_entry_marker",
+    "instruction_bound": null,
+    "inventories": [
+      {
+        "format": "rows",
+        "path": "research/burn4-entry-marker-machines.json"
+      }
+    ],
+    "load_paths": [
+      {
+        "namespace": "BBB24Burn4EntryMarker",
+        "path": "build/burn4-entry-marker/proof"
+      }
+    ],
+    "module": "BBB24Burn4EntryMarker.Inventory",
+    "proof_source": "build/burn4-entry-marker/proof/Inventory.v",
+    "rows": 121,
+    "scope": "state",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "state_bound": 0,
+    "was_pending": "was_pending"
+  },
+  "discovery_recheck": "python3 four/tools/search_burn4_entry_marker.py --check",
+  "kernel_receipt": "build/burn4-entry-marker/proof/kernel-audit.json",
+  "kernel_receipt_sha256": "541241120851f0cb1d3b1fd4a48a7c6e578d3ed9529d706a8b26d51079a8c253",
+  "prior_history_overlap": 0,
+  "prior_relaxed_marker_overlap": 0,
+  "replay": "python3 four/tools/check_burn4_entry_marker.py --timeout 300 --audit-timeout 1200",
+  "reused_modules": 0,
+  "scope": "Kernel-audited exact state-only batch, all completions, bound 0. Integration must deduplicate concurrent batches.",
+  "source_sha256": {
+    "proof-sources/burn4-entry-marker/EntryMarker.v": "6b819687ec14be712026f99e9a95c1f85a3ca848516c25cb40642267880a5bd2",
+    "proof-sources/burn4-entry-marker/EntryRegression.v": "2adcc6519f969b421f07cb24948de07355be53de37b29064c089236af7eb9de2",
+    "research/burn4-entry-marker-checked.json": "f69dde15a0a37b32646fc9bb5d550ba62a4f1176df97ee7dfb216ea6a46768aa",
+    "research/burn4-entry-marker-input.json": "4ff929b9405c21a13621ae3824b66368e39c7675bc7aefd47e163d7301e31dc2",
+    "research/burn4-entry-marker-machines.json": "32e52a5aae9a7c3835a560e58cd1a3daef53ed6dd4454a91cbc16d319839d6be",
+    "research/burn4-entry-marker-search.json": "6c8d29466cef77761939d8fdca788495d7e031d7bc3cd348c2cd24d2188b216f",
+    "research/burn4-entry-marker-selection.json": "623e407334feeb6c323c4e78cd3af21c49fcdfec49720dcdcadf1b9b42d92344",
+    "research/burn4-entry-marker.md": "93b011456238c7fafcbf0dbac27864ba612db2637a5f8f214c18ad7dd3748207",
+    "tools/check_burn4_entry_marker.py": "18749a0b9e9395df158193d7fcfabf73078700680f0aa0fb3afafb2d5ac77a4c",
+    "tools/search_burn4_entry_marker.py": "e17ecea3520fb369f517c65c3a64e1c5b7a581042dcbd4aebfd04a5208612985"
+  }
+}

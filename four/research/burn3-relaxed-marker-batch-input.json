@@ -1,0 +1,294 @@
+{
+  "scope": "26 additional relaxed-marker state candidates, disjoint from the audited example.",
+  "source_report": "research/burn3-relaxed-marker-search.json",
+  "source_report_sha256": "e5eac2f52522ed9029929a51c260165ad50748d5b1dddee0fcafd07fc0126c2c",
+  "state_bound": 0,
+  "rows": [
+    {
+      "machine": "1LB2LA3RA0RB_3RB2LB1RA0LB",
+      "code": 569214541,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "machine": "1LB0RA0LB2RA_3RB3LA0LA1LB",
+      "code": 2070033922,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2RA2RA3RA_2RB3LA0LB1LB",
+      "code": 2093859796,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2LA0RA3LB_3RB2LB1RA0LB",
+      "code": 569260203,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2LA0RA2RA_3RB2LB2LA0LB",
+      "code": 617520602,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2LA0RA3RB_3RB2LB1RA0LB",
+      "code": 569270029,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "machine": "1LB0RA2RA3RA_2RB3LA0LB1LB",
+      "code": 2093859660,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2LA3RA0LB_3RB2LB1RA0LB",
+      "code": 569204715,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2LA0RA3RB_3RB1RA1LB0LB",
+      "code": 540872889,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "machine": "1LB0RA0LB2RA_3RB3LB0LA2RA",
+      "code": 4123147144,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "machine": "1LB2RA1RB1RA_2RB3LB0LB3LA",
+      "code": 4967610193,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "machine": "1LB2LA0RA0LB_3RB1RA1LB0LA",
+      "code": 130465434,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "machine": "1LB2LA3RA0LB_3RB1RA1LB0LB",
+      "code": 540807575,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2LA0RA0RB_3RB2LB1RA0LB",
+      "code": 569211073,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2RA0LB0RA_1RB3LB2LA2RA",
+      "code": 4315540360,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "machine": "1LB0RA0LB2RA_1RB3LB0LA3RA",
+      "code": 5763833668,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "machine": "1LB2LA3RA2LA_2RB2LB3RA0LB",
+      "code": 762005574,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2LA0RA0LB_3RB2LB1RA0LB",
+      "code": 569201247,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2RA3LB1RA_1RB3LA0LB2RA",
+      "code": 4145180640,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "machine": "1LB2LA3RA3RB_3RB2LB1RA0LB",
+      "code": 569273497,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2LA3RA0LB_3RB1RA1LB0LA",
+      "code": 130468902,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "machine": "1LB1LA1RB2RA_2RB3LB0LB3RA",
+      "code": 5788307089,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "machine": "1LB1RA2RA2RA_2RB3LB0LB1LA",
+      "code": 1684921260,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "machine": "1LB2LA0RA0LB_3RB1RA1LB0LB",
+      "code": 540804107,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "machine": "1LB2LA3RA0RB_2RB1RA1LB0LB",
+      "code": 540483317,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "machine": "1LB1RA0RA3RA_3RB2LB1LA0LB",
+      "code": 520989944,
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    }
+  ]
+}
