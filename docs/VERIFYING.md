@@ -148,12 +148,16 @@ make -C four check -j2
 python3 four/tools/generate_champion.py --check
 python3 four/tools/generate_census.py --check
 python3 four/tools/generate_affine.py --check
+python3 four/tools/generate_pipeline_examples.py --check
 ```
 
 The build recursively audits `BBB24.Champion`, `BBB24.Bootstrap`,
-`BBB24.AffineExamples`, the affine checkers, and the certificate rejection
-checks. The Python commands reproduce the champion certificate, census DAG,
-and four representative affine examples without changing them. Census reproduction
+`BBB24.AffineExamples`, the closure and affine checkers, symmetry/shadow
+transport, census closeout, and the certificate rejection checks.
+`BBB24.PipelineExamples` replays all 76 closure-pilot successes and attaches
+their completion proofs to census coverage. The Python commands reproduce the
+champion certificate, census DAG, affine examples, and closure pilot without
+changing them. Census reproduction
 requires a C++17 compiler (`g++`). `make -C four` alone
 builds without the independent audit. No other project census is required.
 
@@ -192,6 +196,23 @@ and how to reproduce their machine-level inventory and proof-status ledger.
 non-halting machines and states the separate halting-time obligation. The
 [grouping report](../four/GROUPING.md) distinguishes exploratory reductions
 from checked coverage and compares the current survey to the BBB(4) pipeline.
+The [pipeline guide](../four/PIPELINE.md) documents the new checker tiers,
+resumable sweeps, proof-status boundaries, and the optional full affine replay:
+
+```bash
+make -C four check-affine-batch
+coqtop -quiet -Q four/theories BBB24 <<'COQ'
+From BBB24 Require Import PipelineExamples Symmetry Shadow.
+Check bootstrap_pipeline_coverage.
+Check pipeline_families_discharged.
+Check perm_bounds.
+Check shadow_check_sound.
+Print Assumptions bootstrap_pipeline_coverage.
+COQ
+```
+
+The affine batch reconstructs its proof shards under the ignored build directory
+and audits them. It does not require rerunning the external affine search.
 
 ## Tier A — everything except the census walk
 

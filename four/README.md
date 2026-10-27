@@ -24,6 +24,7 @@ eval "$(opam env --switch=census)"
 make -C four check -j2
 python3 four/tools/generate_champion.py --check
 python3 four/tools/generate_census.py --check
+python3 four/tools/generate_pipeline_examples.py --check
 ```
 
 This builds the isolated `BBB24` namespace and recursively audits it with
@@ -110,7 +111,11 @@ horizon is eight.
 holdouts, and the separate certified remainder. It links a compact machine ledger
 and commands to generate the full inventory locally.
 [`GROUPING.md`](GROUPING.md) records the symmetry and shadow reductions, shared
-submachine patterns, and the BBB(4) pipeline stages still missing from this survey.
+submachine patterns, and the relation to the BBB(4) pipeline.
+[`PIPELINE.md`](PIPELINE.md) records the new closure checker ports, sweep budgets,
+and checked closeout. The 76-family closure pilot and four original affine
+families are now linked through `bootstrap_pipeline_coverage`; the original
+bootstrap's structural counts have not been recomputed.
 
 [`research/triage-256.json`](research/triage-256.json) records a deeper,
 untrusted survey at 256 steps and a deterministic sample of 512 surviving
@@ -151,7 +156,9 @@ Four certificates from the survey are retained in
 | `0LB0LA---2RB_3RA1LB1RB1LB` | 2 | Partial table: every completion is bounded |
 
 Each theorem proves both bounds at 4,096 and applies to every completion of its
-table. The upstream claimed quasihalting flags and scores are ignored. In
+table. `AffineCloseout.v` now proves these families were pending and excludes
+their completions from a refined residual with exhaustive coverage.
+The upstream claimed quasihalting flags and scores are ignored. In
 particular, these examples do not certify the upstream claimed exact score of
 the third machine. They establish that the proof method works on residual
 families; they do not change the bootstrap's recorded pending weight.
@@ -167,9 +174,8 @@ reserved singleton block IDs. Rejection checks cover corrupted anchors,
 insufficient bounds, exhausted replay fuel, and the fourth symbol's mask and
 block ID. The checked examples depend only on functional extensionality.
 
-The next census pass should attach accepted affine certificates to residual
-leaves and certify their coverage, with a bounded resource budget and explicit
-leftovers. The 98 sampled `noshape` cases need separate analysis: increasing
-affine fitting effort alone will not address the failure to find a recurring
-template. A global exact value still requires discharging **every** remaining
-family; the sample's candidate acceptance rate cannot establish that.
+The [pipeline guide](PIPELINE.md) describes replay of the full 786-candidate
+affine sample, n-gram/repeated-word sweeps, and the new symmetry and shadow
+proofs. Search failures need alternative invariants as well as larger budgets.
+A global exact value still requires discharging **every** remaining family;
+sample acceptance rates cannot establish that.

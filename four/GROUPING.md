@@ -1,16 +1,18 @@
 # Grouping the early BBB(2,4) search queue
 
-**The full BBB(4) census pipeline has not run on (2,4).** The current checked
-bootstrap stops at eight steps; the deeper exploratory survey runs 256 steps
-with exact and translated-cycle checks. The affine search has run on 1,024
-sampled families. None of these is a measurement of the final hard residue.
+**The full BBB(4) escalation ladder has not run on (2,4).** The frozen checked
+bootstrap stops at eight steps; the exploratory baseline runs 256 steps with
+exact and translated-cycle checks. The [pipeline update](PIPELINE.md) adds
+stronger checker ports, bounded sweeps, and checked closeout over that baseline.
+Its survivors are still budget-limited results, not a final hard residue.
 
 The old pipeline is described in
 [`Census/Decide.v`](../theories/Census/Decide.v): after halt/cycle checks it
 uses n-gram closures, ranking rules, wrapped quasihalting bounds, repeated-word
 closures, and proven-machine lookup. The wider closeout also used history
-n-grams, affine rules, and specialised families. These stages still need a
-four-symbol sweep, with sound certificate checks and explicit budgets.
+n-grams, affine rules, and specialised families. The n-gram, finite/history,
+repeated-word, and affine sound checkers are now ported. The wider sweep and
+escalation remain separate tasks with explicit budgets.
 
 ## Measured grouping, before those stronger sweeps
 
@@ -35,10 +37,13 @@ table extending a nonblank-start representative in the existing queue. All
 10,572 such links were found and checked as table inclusions.
 
 These are **candidate proof dependencies**, not new discharged machines.
-Transport needs a checked prefix and must retain its one-step offset. A bound
+`Symmetry.v` and `Shadow.v` now prove the generic transports, including a
+checked prefix and its one-step offset. A bound
 `B` for the core generally gives `B+1` for its shadow; it does not automatically
 give the same global bound. Likewise, the formal census still needs the symbol
-relabeling transport and coverage links. No certified pending count changes.
+quotient coverage and concrete family links. One inventory shadow relation is
+checked as a regression; the complete shadow inventory has not been replayed.
+No certified pending count changes merely from these grouping transports.
 
 ## Techniques already used in the repo
 
@@ -81,7 +86,7 @@ The full representative lists and 10,572 shadow links live under ignored
 `four/build/grouping/`. Every relabeling orbit is checked for membership and
 size against the original inventory; the report pins the input hashes.
 
-Next: sweep the representative cores with the broader checker ladder, record
+Next: escalate the representative cores through the broader checker ladder, record
 the survivors at each budget, and transfer accepted certificates to siblings
 and shadows with checked bridges. Use the avoid-table and recurrent-core
 groupings to choose shared lemmas for the remainder. Only then does it make

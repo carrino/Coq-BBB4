@@ -1,0 +1,28 @@
+{
+  "scope": "Current proof outcomes for the frozen 1,024-family sample only; not a full-queue remainder.",
+  "families": 1024,
+  "status_counts": {
+    "checker_rejected": 151,
+    "coq_checked": 637,
+    "no_certificate": 236
+  },
+  "affine_checked": 628,
+  "pipeline_checked": 76,
+  "checked_by_both": 67,
+  "additional_pipeline_checked": 9,
+  "census_linked": 80,
+  "census_residual_predicate": "BBB24.PipelineExamples.bootstrap_pipeline_pending",
+  "census_coverage_theorem": "BBB24.PipelineExamples.bootstrap_pipeline_coverage",
+  "census_accounting": "Counts listed families, not removed whole census leaves or raw tables; original structural counts unchanged.",
+  "rejection_meaning": "checker_rejected means this affine certificate invocation failed, not that the machine violates a bound.",
+  "evidence_registry_sha256": "e3fac87690ab4becdc0622ec738a70aa6a4ade02f7ac15e23098b244e8b40931",
+  "input_sha256": {
+    "research/burndown-sample.tsv": "a1e2357d941cbb649ada6b0eb18d089bf7ac9a13a1edd2cb9149f1b78ef8fef5",
+    "research/burndown-summary.json": "b9f47de949132844ba2e00eb10ff56f8fd1cc07b17ffd2f84b180e5e36ab28fa",
+    "research/burndown-verified.json": "bfed5f8e1a6bf21f7585adae49627444dbf22e2f74e6bc58785496743ad8a59c",
+    "research/affine-batch.tsv": "3ec82576a468833b205b6d4b800020c00556d1baba17804c31cb1329d83cc6d3",
+    "research/affine-batch-summary.json": "61cac431de36f6e5bc8e6a141c0a93f3c6b8abd343fa37a1b347cddb8e18df46",
+    "research/pipeline-examples.json": "3ac67ee2238f46513028f17488d5ec730ddfed81984c8a8fa8c71ea9438583e9",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

@@ -29,6 +29,38 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def validate_registry(verified):
+    require(digest(ROOT/verified['proof_source']) == verified['proof_source_sha256'],
+            'Proof source changed: audit it before updating the verified registry')
+    source = (ROOT/verified['proof_source']).read_text()
+    for machine in verified['machines']:
+        require('Theorem completions_' + machine.replace('-', 'X') + ' :' in source,
+                f'Missing completion theorem for {machine}')
+    closeout = verified.get('census_closeout')
+    if closeout is None:
+        return
+    require(len(closeout['machines']) == len(set(closeout['machines'])),
+            'Duplicate census-linked machine')
+    require(set(closeout['machines']) <= set(verified['machines']),
+            'Census-linked machine lacks a checked completion theorem')
+    sources = {}
+    for path, expected in closeout['source_sha256'].items():
+        require(digest(ROOT/path) == expected,
+                f'Closeout source changed: audit {path} before updating the registry')
+        sources[path] = (ROOT/path).read_text()
+    for key in ('coverage_theorem', 'discharge_theorem', 'residual_predicate'):
+        namespace, module, name = closeout[key].split('.')
+        require(namespace == 'BBB24', 'Unexpected closeout namespace')
+        path = f'theories/{module}.v'
+        require(path in sources, f'Unpinned closeout source: {path}')
+        require(re.search(r'\b(?:Theorem|Definition)\s+' + re.escape(name) + r'\b',
+                          sources[path]), f'Missing closeout declaration: {closeout[key]}')
+    board_source = sources['theories/AffineCloseout.v']
+    for machine in closeout['machines']:
+        require('tm_' + machine.replace('-', 'X') in board_source,
+                f'Missing closeout family: {machine}')
+
+
 def ledger_row(machine, result, verified):
     require(re.fullmatch(r'(?:---|[0-3][LR][AB]){4}_(?:---|[0-3][LR][AB]){4}', machine),
             f'Invalid two-state, four-symbol table: {machine}')
@@ -51,6 +83,9 @@ def ledger_row(machine, result, verified):
         row.update(status='coq_checked', state_bound=verified['state_bound'],
                    instruction_bound=verified['instruction_bound'],
                    proof='BBB24.AffineExamples.completions_' + machine.replace('-', 'X'))
+        closeout = verified.get('census_closeout', {})
+        if machine in closeout.get('machines', []):
+            row.update(census_linked='yes')
     return row
 
 
@@ -70,12 +105,7 @@ def main():
     args = parser.parse_args()
     report = json.loads((ROOT/'research/triage-256.json').read_text())
     verified = json.loads((ROOT/'research/burndown-verified.json').read_text())
-    require(digest(ROOT/verified['proof_source']) == verified['proof_source_sha256'],
-            'Proof source changed: audit it before updating the verified registry')
-    source = (ROOT/verified['proof_source']).read_text()
-    for machine in verified['machines']:
-        require('Theorem completions_' + machine.replace('-', 'X') + ' :' in source,
-                f'Missing completion theorem for {machine}')
+    validate_registry(verified)
 
     sample_path = args.survey_dir/'sample.txt'
     require(digest(sample_path) == report['sample_sha256'], 'Sample does not match baseline')
@@ -119,14 +149,18 @@ def main():
     require(sum(r['raw_table_weight'] for r in roots.values()) == report['raw_unresolved_weight'],
             'Total unresolved weight changed')
     summary = dict(
-        baseline='256-step exploratory survey; four separately checked affine families',
+        baseline='256-step exploratory survey; four checked affine families linked by frozen-census closeout',
         families=len(seen), raw_table_weight=report['raw_unresolved_weight'], roots=roots,
         raw_total_table_weight=sum(r['raw_total_table_weight'] for r in roots.values()),
         status_counts=dict(sorted(all_statuses.items())),
         sample_size=len(sample), sample_status_counts=dict(sorted(Counter(r['status'] for r in sampled).items())),
         sample_no_certificate_reasons=report['baseline']['unresolved_reasons'],
         state_checked=len(verified['machines']), instruction_checked=len(verified['machines']),
-        census_linked=0, sample_sha256=report['sample_sha256'],
+        census_linked=sum(r['census_linked'] == 'yes' for r in sampled),
+        census_residual_predicate=verified.get('census_closeout', {}).get('residual_predicate'),
+        census_coverage_theorem=verified.get('census_closeout', {}).get('coverage_theorem'),
+        census_accounting='Family completion sets excluded from the refined residual predicate; original census structural counts unchanged.',
+        sample_sha256=report['sample_sha256'],
         search_csv_sha256=digest(args.survey_dir/'irules.csv'),
         verified_registry_sha256=digest(ROOT/'research/burndown-verified.json'))
     sampled.sort(key=lambda r: (r['status'], r['reason'], r['machine']))

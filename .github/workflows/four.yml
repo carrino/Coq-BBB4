@@ -29,3 +29,9 @@ jobs:
         run: python3 four/tools/generate_census.py --check
       - name: Check affine examples reproduction
         run: python3 four/tools/generate_affine.py --check
+      - name: Check closure pilot reproduction
+        run: python3 four/tools/generate_pipeline_examples.py --check
+      - name: Replay and audit the frozen affine sample
+        run: make -C four check-affine-batch
+      - name: Check combined sample progress
+        run: python3 four/tools/progress.py --check
