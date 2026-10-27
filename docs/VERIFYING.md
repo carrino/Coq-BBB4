@@ -238,7 +238,7 @@ certificates, longer cycles, alphabet reduction, and recurring-suffix reuse:
 ```bash
 make -C four list-campaign
 make -C four check-campaign
-# Optional on a 16 GiB host:
+# Optional on a host with at least 32 GiB:
 make -C four check-campaign CAMPAIGN_JOBS=2
 ```
 
@@ -249,6 +249,9 @@ The full replay reconstructs recorded certificates; it does not rerun heuristic
 search or require a third-party affine executable. Local audit receipts are
 usable only when the proof objects, sources, dependencies and Coq runtime match;
 a clean checkout checks the complete dependency closure again.
+Weighted replay requires the recorded source, certificate, and inventory bytes,
+then freshly compiles and audits them. It records new object hashes locally
+because compiled `.vo` bytes can differ across Coq installations.
 
 To inspect or replay one method and its prerequisites:
 

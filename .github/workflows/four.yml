@@ -44,7 +44,7 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        step: [affine-pilot, weighted-closeout, weighted-state-pilot, state-reach, state-closure, state-rw-pilot, alphabet23]
+        step: [affine-pilot, weighted-closeout, weighted-state-pilot, weighted-capacity-pilot, weighted-portfolio-pilot, state-reach, state-closure, state-rw-pilot, alphabet23]
     defaults:
       run:
         shell: opam exec -- bash -euo pipefail {0}

@@ -11,18 +11,30 @@ from these partial closeouts.
 
 ## What the counts mean
 
-[`campaign-summary.json`](research/campaign-summary.json) records the combined
-audited boards. Its `both_census_linked_families` counts distinct family IDs with
-both bounds, and `state_census_linked_families` includes additional state-only
-proofs. Each theorem covers every completion of the corresponding partial table.
-Duplicate IDs across methods are counted once.
+[`campaign-final-summary.json`](research/campaign-final-summary.json) records
+the final combined audited boards: **122,895 distinct families with both
+bounds**, and **153,629 with a state bound**. Each theorem covers every
+completion of its partial table. Overlap between methods is counted once.
 
-The first combined campaign checkpoint has **34,290 both-bound families** and
-**111,345 state-bound families**. Within the original 133,185-row search cohort,
-21,985 have both checked bounds and 99,040 have a checked state bound; its
-remaining checked-proof obligations are therefore 111,200 and 34,145,
-respectively. Later search successes are not included until their replay and
-census closeout pass.
+Within the original **133,185-row** search cohort:
+
+| Obligation | Families in this checked closeout | Still outside this closeout |
+| --- | ---: | ---: |
+| Instruction bound (also state) | **99,693** | **33,492** |
+| State bound | **130,427** | **2,758** |
+
+The canonical champion remains a control in these comparison lists. Its exact
+score is already proved separately in `Champion.v`; this small-bound closeout
+does not yet register a champion board. A residual ID therefore means it has
+not been discharged by these selected census boards.
+
+The separate search ledger has **32,629** remaining candidates. It includes
+successes whose proof replay is still pending, and does not incorporate every
+later checked inventory. It is not interchangeable with either proof residual.
+
+The earlier [`campaign-summary.json`](research/campaign-summary.json) remains
+frozen as the first checkpoint: 34,290 both-bound and 111,345 state-bound
+families. Scheduling manifests that reference it remain reproducible.
 
 The report also intersects each checked inventory with the frozen 133,185-row
 search cohort. Those counts describe that cohort, not the whole formal pending
@@ -117,12 +129,20 @@ make -C four check-campaign
 
 The last target replays the exact dependency graph in
 [`campaign-build.json`](research/campaign-build.json), then recursively audits
-the combined coverage theorem. It uses tracked compact inputs and requires no
+the complete dependency closure of the combined coverage theorem. The bootstrap,
+smaller-alphabet dependencies, closure aggregates, and largest inventories are
+audited in separate phases to limit peak memory; their verified objects are
+then reused for the combined proof.
+It uses tracked compact inputs and requires no
 discovery search logs or external affine search executable. The three-symbol
 stages build `SmallBB.Value23` automatically; the BBB(4) census is not needed.
 
-Bulk replay takes substantially longer than the core library build. The default
-is one replay process. On a 16 GiB machine, two processes can be requested:
+The full campaign is a multi-hour replay, substantially longer than the core
+library build. The default is one replay process. The final combiner keeps
+large board definitions opaque locally and uses a conservative OCaml GC policy
+when none is supplied; certificate contents and kernel checking are unchanged.
+Keep replay serial on a 16 GiB machine. On a host with at least 32 GiB,
+two processes can be requested:
 
 ```bash
 make -C four check-campaign CAMPAIGN_JOBS=2
@@ -130,8 +150,9 @@ python3 four/tools/rebuild_campaign.py --only state-reach
 python3 four/tools/rebuild_campaign.py --only affine-bulk4096a
 ```
 
-Pull-request CI separately replays the affine and weighted pilots, one-state
-ranking, state closure, state repeated-word pilot, and alphabet reduction.
+Pull-request CI separately replays the affine and weighted pilots, capacity
+and instruction-portfolio pilots, one-state ranking, state closure, state
+repeated-word pilot, and alphabet reduction.
 The full combined campaign remains available through `check-campaign`; the
 pilot matrix does not substitute for that larger replay.
 
@@ -142,14 +163,17 @@ step prevents its dependents from starting.
 
 Generated Coq shards and large deterministic ledgers are ignored by Git.
 `replay_affine_wave.py` reconstructs a missing affine ledger from its frozen
-bundle and report, then runs the original full audit. The weighted recorded
-replayer preserves the published report while rebuilding its exact proof
-objects; historical timing receipts are local cache metadata.
+bundle and report, then runs the original full audit. The portable weighted
+replayers require exact frozen source, certificate, and inventory bytes, then
+freshly compile and recursively audit the proofs. They preserve the published
+reports and record current object hashes separately: compiled `.vo` bytes can
+differ between Coq installations. Historical object hashes and timing receipts
+are local cache metadata.
 
 After the final combined audit, the readable per-machine lists are:
 
-- `four/build/campaign/both-families.tsv` and `state-families.tsv`;
-- `four/build/campaign/both-unproved-initial-cohort.txt` and
+- `four/build/campaign-final/both-families.tsv` and `state-families.tsv`;
+- `four/build/campaign-final/both-unproved-initial-cohort.txt` and
   `state-unproved-initial-cohort.txt`.
 
 The latter two contain families still lacking the corresponding checked proof
@@ -159,10 +183,17 @@ the remaining global census obligation distinct.
 
 ## Next burndown
 
-1. **Finish replaying the existing candidates.** Compare each queued inventory
-   against the final checked ledger before assigning work. The 4,176 stronger
-   repeated-word candidates, timeout-recovery queue and state-weighted search
-   already have compact inputs; replay failures remain explicit obligations.
+1. **Finish replaying the existing candidates.** The deduplicated next-work
+   list contains **4,352 instruction-bound candidates** (2,833 repeated-word
+   and 1,519 timeout recoveries) and **661 state-bound candidates**. There are
+   **4,592 distinct IDs**, with 421 shared by the two queues. The state queue
+   includes 240 new state-weighted candidates; all 19,950 full weighted-search
+   candidates already have both bounds in the final inventory. These queued
+   certificates still require replay, and failures remain obligations. For
+   expensive batches, prefer supplied graph/rank witnesses where the current
+   checker repeats discovery work inside Coq; the state-history certificate
+   tier already provides this approach. See
+   [`campaign-next-summary.json`](research/campaign-next-summary.json).
 2. **Expand the new certificate tiers.** Capacity and per-instruction portfolio
    checks produced 27 additional audited witnesses across their initial runs.
    Run them over the deduplicated residual with resumable batches and bounded
@@ -174,9 +205,20 @@ the remaining global census obligation distinct.
    reusable tails and new marker invariants.
 4. **Close the exhaustive census gap.** Transport proved families through the
    symmetry and shadow machinery and connect the deeper survey to a checked
-   census walk, as in BBB(4). The 32,629-row queue is a search workload, not the
+   census walk, as in BBB(4), and attach the separately proved champion.
+   The 32,629-row queue is a search workload, not the
    complete formal residual. The global upper bound still requires covering
    every remaining formal family, including halting completions.
+
+After the campaign replay, reconstruct the next-work list with:
+
+```bash
+python3 four/tools/summarize_campaign_queue.py
+```
+
+It verifies the audited inventories and candidate sources, then writes
+`four/build/campaign-next/queued.tsv` with the source certificates for each ID.
+This scheduling report does not remove any proof obligation.
 
 Each new batch should retain its input inventory, resource failures and exact
 proof scope. The two final per-machine ledgers are the starting point for

@@ -2681,6 +2681,341 @@
           "path": "build/weighted-state-pilot"
         }
       ]
+    },
+    {
+      "id": "MarkerState",
+      "module": "BBB24MarkerState.MarkerBoard",
+      "board": "marker_board",
+      "sound": "marker_board_sound",
+      "small_sound": "marker_board_zero_sound",
+      "was_pending": "marker_board_was_pending",
+      "state_bound": 0,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 568,
+      "inventories": [
+        {
+          "path": "research/structural-final/MarkerState.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/marker-state",
+          "namespace": "BBB24MarkerState"
+        }
+      ]
+    },
+    {
+      "id": "MarkerPotential",
+      "module": "BBB24MarkerPotential.PotentialBoard",
+      "board": "marker_board",
+      "sound": "marker_board_sound",
+      "small_sound": "marker_board_zero_sound",
+      "was_pending": "marker_board_was_pending",
+      "state_bound": 0,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 276,
+      "inventories": [
+        {
+          "path": "research/structural-final/MarkerPotential.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/marker-potential",
+          "namespace": "BBB24MarkerPotential"
+        }
+      ]
+    },
+    {
+      "id": "MarkerTrail",
+      "module": "BBB24MarkerTrail.TrailBoard",
+      "board": "marker_board",
+      "sound": "marker_board_sound",
+      "small_sound": "marker_board_zero_sound",
+      "was_pending": "marker_board_was_pending",
+      "state_bound": 0,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 95,
+      "inventories": [
+        {
+          "path": "research/structural-final/MarkerTrail.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/marker-trail",
+          "namespace": "BBB24MarkerTrail"
+        }
+      ]
+    },
+    {
+      "id": "MarkerWalls",
+      "module": "BBB24MarkerWalls.WallsBoard",
+      "board": "marker_board",
+      "sound": "marker_board_sound",
+      "small_sound": "marker_board_zero_sound",
+      "was_pending": "marker_board_was_pending",
+      "state_bound": 0,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 9,
+      "inventories": [
+        {
+          "path": "research/structural-final/MarkerWalls.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/marker-walls",
+          "namespace": "BBB24MarkerWalls"
+        }
+      ]
+    },
+    {
+      "id": "StateBranches",
+      "module": "BBB24StateBranches.StateBranches",
+      "board": "branch_state_board",
+      "sound": "branch_state_board_sound",
+      "small_sound": "branch_state_board_small_sound",
+      "was_pending": "branch_state_board_was_pending",
+      "state_bound": 8192,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 5,
+      "inventories": [
+        {
+          "path": "research/structural-final/StateBranches.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/state-branches",
+          "namespace": "BBB24StateBranches"
+        }
+      ]
+    },
+    {
+      "id": "StateBranchCycles",
+      "module": "BBB24StateBranchCycles.StateBranchCycles",
+      "board": "branch_state_board",
+      "sound": "branch_state_board_sound",
+      "small_sound": "branch_state_board_small_sound",
+      "was_pending": "branch_state_board_was_pending",
+      "state_bound": 8192,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 9,
+      "inventories": [
+        {
+          "path": "research/structural-final/StateBranchCycles.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/state-branch-cycles",
+          "namespace": "BBB24StateBranchCycles"
+        }
+      ]
+    },
+    {
+      "id": "StateMarkerBranch",
+      "module": "BBB24StateMarkerBranch.MarkerParent",
+      "board": "branch_state_board",
+      "sound": "branch_state_board_sound",
+      "small_sound": "branch_state_board_small_sound",
+      "was_pending": "branch_state_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 1,
+      "inventories": [
+        {
+          "path": "research/structural-final/StateMarkerBranch.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/affine-children",
+          "namespace": "BBB24AffineChildren"
+        },
+        {
+          "path": "build/state-marker-branch",
+          "namespace": "BBB24StateMarkerBranch"
+        }
+      ]
+    },
+    {
+      "id": "StateB3Branches",
+      "module": "BBB24StateB3Branches.B3Parents",
+      "board": "branch_state_board",
+      "sound": "branch_state_board_sound",
+      "small_sound": "branch_state_board_small_sound",
+      "was_pending": "branch_state_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 2,
+      "inventories": [
+        {
+          "path": "research/structural-final/StateB3Branches.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/affine-children",
+          "namespace": "BBB24AffineChildren"
+        },
+        {
+          "path": "build/state-b3-branches",
+          "namespace": "BBB24StateB3Branches"
+        }
+      ]
+    },
+    {
+      "id": "LateMarkerBranch",
+      "module": "BBB24LateMarkerBranch.LateMarkerBranch",
+      "board": "branch_state_board",
+      "sound": "branch_state_board_sound",
+      "small_sound": "branch_state_board_small_sound",
+      "was_pending": "branch_state_board_was_pending",
+      "state_bound": 3932964,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 1,
+      "inventories": [
+        {
+          "path": "research/structural-final/LateMarkerBranch.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/late-marker-branch",
+          "namespace": "BBB24LateMarkerBranch"
+        }
+      ]
+    },
+    {
+      "id": "StateAlphabetQuotient",
+      "module": "BBB24StateQuotient.QuotientBoard",
+      "board": "quotient_board",
+      "sound": "quotient_board_sound",
+      "small_sound": "quotient_board_small_sound",
+      "was_pending": "quotient_board_was_pending",
+      "state_bound": 59,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 37,
+      "inventories": [
+        {
+          "path": "research/structural-final/StateAlphabetQuotient.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "../small/theories",
+          "namespace": "SmallBB"
+        },
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/state-alphabet-quotient",
+          "namespace": "BBB24StateQuotient"
+        }
+      ]
+    },
+    {
+      "id": "AlphabetMask",
+      "module": "BBB24AlphabetMask.MaskBoard",
+      "board": "closed_mask_board",
+      "sound": "closed_mask_board_sound",
+      "small_sound": "closed_mask_board_small_sound",
+      "was_pending": "closed_mask_board_was_pending",
+      "state_bound": 59,
+      "instruction_bound": 67,
+      "scope": "both",
+      "rows": 13,
+      "inventories": [
+        {
+          "path": "research/alphabet-mask-families.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "../small/theories",
+          "namespace": "SmallBB"
+        },
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/alphabet-mask",
+          "namespace": "BBB24AlphabetMask"
+        }
+      ]
     }
   ]
 }

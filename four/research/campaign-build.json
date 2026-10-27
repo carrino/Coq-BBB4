@@ -1,5 +1,5 @@
 {
-  "description": "Rebuild the currently recorded campaign-input.json boards. No discovery searches.",
+  "description": "Replay all 113 final campaign boards from tracked compact inputs and frozen reports, without discovery searches. The campaign-initial target preserves the original 12-board checkpoint.",
   "steps": [
     {
       "id": "core",
@@ -23,6 +23,9 @@
         "four",
         "check-wave",
         "-j2"
+      ],
+      "boards": [
+        "BBB24Transport.FamilyTransportCloseout"
       ]
     },
     {
@@ -40,6 +43,9 @@
         "--report-prefix",
         "four/research/wave3-affine-pilot",
         "--resume"
+      ],
+      "boards": [
+        "BBB24AffineWave.Pilot.All"
       ]
     },
     {
@@ -57,6 +63,9 @@
         "--report-prefix",
         "four/research/wave3-affine-bulk4096a",
         "--resume"
+      ],
+      "boards": [
+        "BBB24AffineWave.Bulk4096A.All"
       ]
     },
     {
@@ -69,6 +78,9 @@
         "four/tools/check_late_cycles.py",
         "--stage",
         "full65536"
+      ],
+      "boards": [
+        "BBB24LateCycles.full65536.All"
       ]
     },
     {
@@ -81,6 +93,9 @@
         "four/tools/check_late_cycles.py",
         "--stage",
         "extra262144"
+      ],
+      "boards": [
+        "BBB24LateCycles.extra262144.All"
       ]
     },
     {
@@ -93,6 +108,9 @@
         "four/tools/check_late_cycle_sources.py",
         "--stage",
         "full65536"
+      ],
+      "boards": [
+        "BBB24LateCycles.full65536.NonHalt"
       ]
     },
     {
@@ -102,7 +120,7 @@
       ],
       "command": [
         "python3",
-        "four/tools/replay_recorded_weighted.py",
+        "four/tools/replay_portable_weighted.py",
         "--report",
         "four/research/weighted-pilot-check.json",
         "--output-dir",
@@ -118,7 +136,7 @@
       ],
       "command": [
         "python3",
-        "four/tools/check_weighted_closeout.py",
+        "four/tools/replay_portable_weighted_closeout.py",
         "--weighted-report",
         "four/research/weighted-pilot-check.json",
         "--proof-dir",
@@ -127,6 +145,9 @@
         "four/research/weighted-pilot-closeout.json",
         "--inventory",
         "four/research/weighted-pilot-machines.json"
+      ],
+      "boards": [
+        "BBB24Weighted.WeightedCloseout"
       ]
     },
     {
@@ -139,6 +160,9 @@
       "command": [
         "python3",
         "four/tools/check_conjugate_batch.py"
+      ],
+      "boards": [
+        "BBB24ConjugateR000.ConjugateAll"
       ]
     },
     {
@@ -149,6 +173,9 @@
       "command": [
         "python3",
         "four/tools/check_weighted_reuse.py"
+      ],
+      "boards": [
+        "BBB24WeightedReuse.WeightedReuseAll"
       ]
     },
     {
@@ -159,6 +186,9 @@
       "command": [
         "python3",
         "four/tools/check_alphabet23.py"
+      ],
+      "boards": [
+        "BBB24Alphabet.AlphabetBoard"
       ]
     },
     {
@@ -170,6 +200,9 @@
         "python3",
         "four/tools/check_one_state_reach.py",
         "--resume"
+      ],
+      "boards": [
+        "BBB24StateReach.StateReachAll"
       ]
     },
     {
@@ -181,6 +214,9 @@
         "python3",
         "four/tools/check_state_pipeline_batch.py",
         "--resume"
+      ],
+      "boards": [
+        "BBB24StateClosure.StateClosureAll"
       ]
     },
     {
@@ -200,6 +236,9 @@
         "--namespace",
         "BBB24StateRWPilot",
         "--resume"
+      ],
+      "boards": [
+        "BBB24StateRWPilot.StateRWAll"
       ]
     },
     {
@@ -221,10 +260,1983 @@
         "--namespace",
         "BBB24WeightedStatePilot",
         "--resume"
+      ],
+      "boards": [
+        "BBB24WeightedStatePilot.WeightedStateAll"
       ]
     },
     {
-      "id": "campaign",
+      "id": "affine-bulk4096b",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-bulk4096b-certs.json",
+        "--name",
+        "Bulk4096B",
+        "--report-prefix",
+        "four/research/wave3-affine-bulk4096b",
+        "--resume",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24AffineWave.Bulk4096B.All"
+      ]
+    },
+    {
+      "id": "affine-bulk4096c",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-bulk4096c-certs.json",
+        "--name",
+        "Bulk4096C",
+        "--report-prefix",
+        "four/research/wave3-affine-bulk4096c",
+        "--resume",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24AffineWave.Bulk4096C.All"
+      ]
+    },
+    {
+      "id": "affine-deep16384",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-deep16384-certs.json",
+        "--name",
+        "Deep16384Pilot",
+        "--report-prefix",
+        "four/research/wave3-affine-deep16384",
+        "--resume",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24AffineWave.Deep16384Pilot.All"
+      ]
+    },
+    {
+      "id": "affine-latepilot16384",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-latepilot16384-certs.json",
+        "--name",
+        "LatePilot16384",
+        "--report-prefix",
+        "four/research/wave3-affine-latepilot16384",
+        "--resume",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24AffineWave.LatePilot16384.All"
+      ]
+    },
+    {
+      "id": "affine-phase-cpu-repair",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-phase-cpu-repair-certs.json",
+        "--name",
+        "PhaseCpuRepair",
+        "--report-prefix",
+        "four/research/wave3-affine-phase-cpu-repair",
+        "--resume",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24AffineWave.PhaseCpuRepair.All"
+      ]
+    },
+    {
+      "id": "affine-residue-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-residue-pilot-certs.json",
+        "--name",
+        "ResiduePilot30",
+        "--report-prefix",
+        "four/research/wave3-affine-residue-pilot",
+        "--resume",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24AffineWave.ResiduePilot30.All"
+      ]
+    },
+    {
+      "id": "affine-residue-repair",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-residue-repair-certs.json",
+        "--name",
+        "ResidueRepair",
+        "--report-prefix",
+        "four/research/wave3-affine-residue-repair",
+        "--resume",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24AffineWave.ResidueRepair.All"
+      ]
+    },
+    {
+      "id": "affine-short-cell-prefix1024",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-short-cell-prefix1024-certs.json",
+        "--name",
+        "ShortCellPrefix1024",
+        "--report-prefix",
+        "four/research/wave3-affine-short-cell-prefix1024",
+        "--resume",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24AffineWave.ShortCellPrefix1024.All"
+      ]
+    },
+    {
+      "id": "affine-short-cell250",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-short-cell250-certs.json",
+        "--name",
+        "ShortCell250",
+        "--report-prefix",
+        "four/research/wave3-affine-short-cell250",
+        "--resume",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24AffineWave.ShortCell250.All"
+      ]
+    },
+    {
+      "id": "affine-short-residue",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_affine_wave.py",
+        "--input",
+        "four/research/wave3-affine-short-residue-certs.json",
+        "--name",
+        "ShortResidue",
+        "--report-prefix",
+        "four/research/wave3-affine-short-residue",
+        "--resume",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24AffineWave.ShortResidue.All"
+      ]
+    },
+    {
+      "id": "state-deep-prefix",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_pipeline_cached.py",
+        "--kind",
+        "prefix",
+        "--resume",
+        "--input",
+        "four/research/state-deep-prefix-input.json",
+        "--report",
+        "four/research/state-deep-prefix-summary.json",
+        "--output-dir",
+        "four/build/state-deep-prefix",
+        "--namespace",
+        "BBB24StateDeepPrefix",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24StateDeepPrefix.StateClosurePrefixAll"
+      ]
+    },
+    {
+      "id": "state-history-prefix",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_pipeline_cached.py",
+        "--kind",
+        "prefix",
+        "--resume",
+        "--input",
+        "four/research/state-history-prefix-input.json",
+        "--report",
+        "four/research/state-history-prefix-summary.json",
+        "--output-dir",
+        "four/build/state-history-prefix",
+        "--namespace",
+        "BBB24StateHistoryPrefix",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24StateHistoryPrefix.StateClosurePrefixAll"
+      ]
+    },
+    {
+      "id": "state-deep-selected-prefix019",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_pipeline_cached.py",
+        "--kind",
+        "selected",
+        "--resume",
+        "--input",
+        "four/research/state-deep-selected-input.json",
+        "--report",
+        "four/research/state-deep-selected-prefix019-summary.json",
+        "--output-dir",
+        "four/build/state-deep-selected",
+        "--namespace",
+        "BBB24StateDeepSelected",
+        "--limit-shards",
+        "19",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24StateDeepSelected.StateSelectedPrefix019"
+      ]
+    },
+    {
+      "id": "state-history-tail",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_pipeline_cached.py",
+        "--kind",
+        "history",
+        "--resume",
+        "--input",
+        "four/research/state-history-tail-input.json",
+        "--report",
+        "four/research/state-history-tail-summary.json",
+        "--output-dir",
+        "four/build/state-history-tail",
+        "--namespace",
+        "BBB24StateHistoryTail",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24StateHistoryTail.HistoryCertificateAll"
+      ]
+    },
+    {
+      "id": "state-repwl-frontier",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_repwl_recorded.py",
+        "--resume",
+        "--input",
+        "four/research/state-repwl-frontier-input.json",
+        "--report",
+        "four/research/state-repwl-frontier-summary.json",
+        "--output-dir",
+        "four/build/state-repwl-frontier",
+        "--namespace",
+        "BBB24StateRWFrontier",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24StateRWFrontier.StateRWAll"
+      ]
+    },
+    {
+      "id": "state-repwl-frontier-deep",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_repwl_recorded.py",
+        "--resume",
+        "--input",
+        "four/research/state-repwl-frontier-deep-input.json",
+        "--report",
+        "four/research/state-repwl-frontier-deep-summary.json",
+        "--output-dir",
+        "four/build/state-repwl-frontier-deep",
+        "--namespace",
+        "BBB24StateRWFrontierDeep",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24StateRWFrontierDeep.StateRWAll"
+      ]
+    },
+    {
+      "id": "state-repwl-frontier-wider",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_repwl_recorded.py",
+        "--resume",
+        "--input",
+        "four/research/state-repwl-frontier-wider-input.json",
+        "--report",
+        "four/research/state-repwl-frontier-wider-summary.json",
+        "--output-dir",
+        "four/build/state-repwl-frontier-wider",
+        "--namespace",
+        "BBB24StateRWFrontierWider",
+        "--timeout",
+        "1800"
+      ],
+      "boards": [
+        "BBB24StateRWFrontierWider.StateRWAll"
+      ]
+    },
+    {
+      "id": "census-template-templatereuse427",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template427.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.TemplateReuse427.All"
+      ]
+    },
+    {
+      "id": "census-template-templateorbit181",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template181.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.TemplateOrbit181.All"
+      ]
+    },
+    {
+      "id": "census-template-templateextra245",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template245.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.TemplateExtra245.All"
+      ]
+    },
+    {
+      "id": "census-template-templateinfer12",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template12.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.TemplateInfer12.All"
+      ]
+    },
+    {
+      "id": "census-template-shorttemplate909",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template-short.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.ShortTemplate909.All"
+      ]
+    },
+    {
+      "id": "census-template-relaxedtemplate511",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template-relaxed511.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.RelaxedTemplate511.All"
+      ]
+    },
+    {
+      "id": "census-template-neighbortemplate385",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template-neighbors.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.NeighborTemplate385.All"
+      ]
+    },
+    {
+      "id": "census-template-templaterefresh175",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template-refresh.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.TemplateRefresh175.All"
+      ]
+    },
+    {
+      "id": "census-template-templaterefresh49",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template-refresh49.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.TemplateRefresh49.All"
+      ]
+    },
+    {
+      "id": "census-template-templatelate6",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template-late6.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.TemplateLate6.All"
+      ]
+    },
+    {
+      "id": "census-template-shortneighbor129",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template-short-neighbor129.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.ShortNeighbor129.All"
+      ]
+    },
+    {
+      "id": "census-template-templateprefix7",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template-prefix7.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.TemplatePrefix7.All"
+      ]
+    },
+    {
+      "id": "census-template-templatefinal",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template-final.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.TemplateFinal.All"
+      ]
+    },
+    {
+      "id": "census-template-templatefollowup",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/prepare_affine_templates.py",
+        "--report",
+        "four/research/affine-template-followup.json"
+      ],
+      "boards": [
+        "BBB24AffineWave.TemplateFollowup.All"
+      ]
+    },
+    {
+      "id": "census-marker-state",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_marker_state.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24MarkerState.MarkerBoard"
+      ]
+    },
+    {
+      "id": "census-marker-potential",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_marker_potential.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24MarkerPotential.PotentialBoard"
+      ]
+    },
+    {
+      "id": "census-marker-trail",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_marker_trail.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24MarkerTrail.TrailBoard"
+      ]
+    },
+    {
+      "id": "census-marker-walls",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_marker_walls.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24MarkerWalls.WallsBoard"
+      ]
+    },
+    {
+      "id": "census-state-branches",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_branches.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24StateBranches.StateBranches"
+      ]
+    },
+    {
+      "id": "census-state-branch-cycles",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_branch_cycles.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24StateBranchCycles.StateBranchCycles"
+      ]
+    },
+    {
+      "id": "census-child-markerparent",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_affine_children.py",
+        "--input",
+        "four/research/state-marker-affine-children-input.json",
+        "--name",
+        "MarkerParent",
+        "--report",
+        "four/research/state-marker-affine-children-queued.json",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24AffineChildren.MarkerParent.Children"
+      ]
+    },
+    {
+      "id": "census-child-b3parents",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_affine_children.py",
+        "--input",
+        "four/research/state-b3-affine-children-input.json",
+        "--name",
+        "B3Parents",
+        "--report",
+        "four/research/state-b3-affine-children-queued.json",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24AffineChildren.B3Parents.Children"
+      ]
+    },
+    {
+      "id": "census-state-marker-join",
+      "depends": [
+        "core",
+        "census-child-markerparent"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_marker_join.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24StateMarkerBranch.MarkerParent"
+      ]
+    },
+    {
+      "id": "census-state-b3-join",
+      "depends": [
+        "core",
+        "census-child-b3parents"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_b3_joins.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24StateB3Branches.B3Parents"
+      ]
+    },
+    {
+      "id": "census-late-marker-join",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_late_marker_branch.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24LateMarkerBranch.LateMarkerBranch"
+      ]
+    },
+    {
+      "id": "census-state-quotient",
+      "depends": [
+        "core",
+        "census-alphabet-mask"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_state_quotients.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24StateQuotient.QuotientBoard"
+      ]
+    },
+    {
+      "id": "census-alphabet-mask",
+      "depends": [
+        "core",
+        "alphabet23"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_alphabet_mask.py",
+        "--prepare"
+      ],
+      "boards": [
+        "BBB24AlphabetMask.MaskBoard"
+      ]
+    },
+    {
+      "id": "weighted-batch000",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-full-snapshots/batch000/check.json",
+        "--registry",
+        "four/research/weighted-full-snapshots/batch000/registry.json",
+        "--inventory",
+        "four/research/weighted-full-snapshots/batch000/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch000-v3"
+      ],
+      "boards": [
+        "BBB24WeightedFullB000.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-batch001",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-full-snapshots/batch001/check.json",
+        "--registry",
+        "four/research/weighted-full-snapshots/batch001/registry.json",
+        "--inventory",
+        "four/research/weighted-full-snapshots/batch001/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch001-v4"
+      ],
+      "boards": [
+        "BBB24WeightedFullB001.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-batch002",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-full-snapshots/batch002/check.json",
+        "--registry",
+        "four/research/weighted-full-snapshots/batch002/registry.json",
+        "--inventory",
+        "four/research/weighted-full-snapshots/batch002/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch002-v4"
+      ],
+      "boards": [
+        "BBB24WeightedFullB002.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-batch003",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-full-snapshots/batch003/check.json",
+        "--registry",
+        "four/research/weighted-full-snapshots/batch003/registry.json",
+        "--inventory",
+        "four/research/weighted-full-snapshots/batch003/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch003-v4"
+      ],
+      "boards": [
+        "BBB24WeightedFullB003.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-batch004",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-full-snapshots/batch004/check.json",
+        "--registry",
+        "four/research/weighted-full-snapshots/batch004/registry.json",
+        "--inventory",
+        "four/research/weighted-full-snapshots/batch004/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch004-v4"
+      ],
+      "boards": [
+        "BBB24WeightedFullB004.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-batch005",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-full-snapshots/batch005/check.json",
+        "--registry",
+        "four/research/weighted-full-snapshots/batch005/registry.json",
+        "--inventory",
+        "four/research/weighted-full-snapshots/batch005/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch005-v4"
+      ],
+      "boards": [
+        "BBB24WeightedFullB005.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected006",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch006/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch006/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch006/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch006-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB006.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected007",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch007/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch007/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch007/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch007-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB007.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected008",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch008/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch008/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch008/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch008-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB008.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected009",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch009/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch009/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch009/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch009-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB009.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected010",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch010/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch010/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch010/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch010-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB010.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected011",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch011/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch011/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch011/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch011-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB011.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected012",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch012/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch012/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch012/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch012-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB012.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected013",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch013/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch013/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch013/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch013-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB013.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected014",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch014/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch014/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch014/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch014-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB014.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected015",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch015/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch015/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch015/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch015-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB015.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected016",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch016/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch016/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch016/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch016-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB016.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected017",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch017/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch017/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch017/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch017-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB017.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected018",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch018/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch018/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch018/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch018-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB018.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected019",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch019/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch019/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch019/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch019-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB019.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected020",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch020/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch020/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch020/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch020-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB020.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected021",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch021/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch021/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch021/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch021-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB021.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected022",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch022/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch022/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch022/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch022-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB022.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected023",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch023/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch023/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch023/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch023-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB023.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected024",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch024/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch024/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch024/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch024-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB024.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected025",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch025/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch025/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch025/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch025-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB025.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected026",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch026/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch026/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch026/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch026-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB026.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected027",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch027/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch027/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch027/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch027-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB027.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected028",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch028/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch028/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch028/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch028-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB028.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-selected029",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-selected/batch029/check.json",
+        "--registry",
+        "four/research/weighted-selected/batch029/registry.json",
+        "--inventory",
+        "four/research/weighted-selected/batch029/machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/full-proofs/batch029-selected-v5"
+      ],
+      "boards": [
+        "BBB24WeightedSelectedB029.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-capacity-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-capacity-pilot-check.json",
+        "--registry",
+        "four/research/weighted-capacity-pilot-registry.json",
+        "--inventory",
+        "four/research/weighted-capacity-pilot-machines.json",
+        "--output-dir",
+        "four/build/weighted-capacity-pilot/proof"
+      ],
+      "boards": [
+        "BBB24WeightedCapacityPilot.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-portfolio-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-portfolio-pilot-check.json",
+        "--registry",
+        "four/research/weighted-portfolio-pilot-registry.json",
+        "--inventory",
+        "four/research/weighted-portfolio-pilot-machines.json",
+        "--output-dir",
+        "four/build/weighted-portfolio-pilot/proof-v2"
+      ],
+      "boards": [
+        "BBB24WeightedPortfolioPilot.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-capacity-followup",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-capacity-followup-check.json",
+        "--registry",
+        "four/research/weighted-capacity-followup-registry.json",
+        "--inventory",
+        "four/research/weighted-capacity-followup-machines.json",
+        "--output-dir",
+        "four/build/weighted-followup64/capacity-proof"
+      ],
+      "boards": [
+        "BBB24WeightedCapacityFollowup.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-portfolio-followup",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-portfolio-followup-check.json",
+        "--registry",
+        "four/research/weighted-portfolio-followup-registry.json",
+        "--inventory",
+        "four/research/weighted-portfolio-followup-machines.json",
+        "--output-dir",
+        "four/build/weighted-followup64/portfolio-proof"
+      ],
+      "boards": [
+        "BBB24WeightedPortfolioFollowup.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-capacity-followup512",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-capacity-followup512-check.json",
+        "--registry",
+        "four/research/weighted-capacity-followup512-registry.json",
+        "--inventory",
+        "four/research/weighted-capacity-followup512-machines.json",
+        "--output-dir",
+        "four/build/weighted-followup512/capacity-proof-v2"
+      ],
+      "boards": [
+        "BBB24WeightedCapacityFollowup512.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-portfolio-followup512",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-portfolio-followup512-check.json",
+        "--registry",
+        "four/research/weighted-portfolio-followup512-registry.json",
+        "--inventory",
+        "four/research/weighted-portfolio-followup512-machines.json",
+        "--output-dir",
+        "four/build/weighted-followup512/portfolio-proof"
+      ],
+      "boards": [
+        "BBB24WeightedPortfolioFollowup512.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-late-followup512",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-late-followup512-check.json",
+        "--registry",
+        "four/research/weighted-late-followup512-registry.json",
+        "--inventory",
+        "four/research/weighted-late-followup512-machines.json",
+        "--output-dir",
+        "four/build/weighted-followup512/late-proof"
+      ],
+      "boards": [
+        "BBB24WeightedLateFollowup512.WeightedAll"
+      ]
+    },
+    {
+      "id": "weighted-v2-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_portable_weighted.py",
+        "--report",
+        "four/research/weighted-v2-pilot-check.json",
+        "--registry",
+        "four/research/weighted-v2-pilot-registry.json",
+        "--inventory",
+        "four/research/weighted-v2-pilot-machines.json",
+        "--output-dir",
+        "four/build/weighted-v2/pilot205-kernel"
+      ],
+      "boards": [
+        "BBB24WeightedV2Pilot.WeightedAll"
+      ]
+    },
+    {
+      "id": "conjugate-r001",
+      "depends": [
+        "wave2",
+        "weighted-closeout",
+        "cycles-nonhalt",
+        "weighted-reuse",
+        "weighted-suffix-pilot",
+        "affine-pilot",
+        "affine-bulk4096a",
+        "weighted-v2-pilot"
+      ],
+      "command": [
+        "python3",
+        "four/tools/compile_conjugate_extension.py"
+      ],
+      "boards": [
+        "BBB24ConjugateR001.ConjugateAll"
+      ]
+    },
+    {
+      "id": "weighted-suffix-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_suffix.py",
+        "--name",
+        "pilot"
+      ],
+      "boards": [
+        "BBB24WeightedSuffixPilot.WeightedSuffixAll"
+      ]
+    },
+    {
+      "id": "weighted-suffix-v2",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_suffix.py",
+        "--name",
+        "v2",
+        "--certificates",
+        "four/research/weighted-v2-pilot/certificates-0000.json"
+      ],
+      "boards": [
+        "BBB24WeightedSuffixV2.WeightedSuffixAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-batch000",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v3.py",
+        "--registry",
+        "four/research/weighted-full-snapshots/batch000/registry.json",
+        "--name",
+        "batch000"
+      ],
+      "boards": [
+        "BBB24WeightedStreamBatch000.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-ordinary001_006",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v7.py",
+        "--registry",
+        "four/research/ordinary-tail-templates/pools001_006/registry.json",
+        "--name",
+        "ordinary001_006"
+      ],
+      "boards": [
+        "BBB24WeightedStreamOrdinary001_006.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-alias20",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v8.py",
+        "--registry",
+        "four/research/weighted-v2-pilot-registry.json",
+        "--name",
+        "alias20"
+      ],
+      "boards": [
+        "BBB24WeightedStreamAlias20.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-alias_recovery",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v8.py",
+        "--registry",
+        "four/research/weighted-stream-reuse/alias_recovery_pool.json",
+        "--name",
+        "alias_recovery"
+      ],
+      "boards": [
+        "BBB24WeightedStreamAlias_recovery.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-ordinary007_011",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v8.py",
+        "--registry",
+        "four/research/ordinary-tail-templates/pools007_011/registry.json",
+        "--name",
+        "ordinary007_011"
+      ],
+      "boards": [
+        "BBB24WeightedStreamOrdinary007_011.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-ordinary012_017",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v8.py",
+        "--registry",
+        "four/research/ordinary-tail-templates/pools012_017/registry.json",
+        "--name",
+        "ordinary012_017"
+      ],
+      "boards": [
+        "BBB24WeightedStreamOrdinary012_017.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-pools001_006",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v7.py",
+        "--registry",
+        "four/research/weighted-stream-reuse/pools001_006.json",
+        "--name",
+        "pools001_006"
+      ],
+      "boards": [
+        "BBB24WeightedStreamPools001_006.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-weighted007_017_first512",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v9.py",
+        "--registry",
+        "four/research/weighted-stream-reuse/pools007_017.json",
+        "--name",
+        "weighted007_017_first512"
+      ],
+      "boards": [
+        "BBB24WeightedStreamWeighted007_017_first512.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "ready-reuse-full791",
+      "depends": [
+        "core",
+        "weighted-batch000",
+        "weighted-batch001",
+        "weighted-batch002",
+        "weighted-batch003"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_ready_reuse.py",
+        "--name",
+        "full791",
+        "--audit"
+      ],
+      "boards": [
+        "BBB24ReadyReuseFull791.ReadyReuseAll"
+      ]
+    },
+    {
+      "id": "ready-reuse-swap120",
+      "depends": [
+        "core",
+        "weighted-batch000",
+        "weighted-batch001",
+        "weighted-batch002",
+        "weighted-batch003"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_ready_reuse_v2.py",
+        "--name",
+        "swap120",
+        "--audit"
+      ],
+      "boards": [
+        "BBB24ReadyReuseSwap120.ReadyReuseAll"
+      ]
+    },
+    {
+      "id": "ready-reuse-cached5",
+      "depends": [
+        "core",
+        "weighted-batch004",
+        "weighted-batch005"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_ready_reuse_v2.py",
+        "--name",
+        "cached5",
+        "--audit"
+      ],
+      "boards": [
+        "BBB24ReadyReuseCached5.ReadyReuseAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-weighted007_017_rest",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v9.py",
+        "--registry",
+        "four/research/weighted-stream-reuse/pools007_017.json",
+        "--name",
+        "weighted007_017_rest"
+      ],
+      "boards": [
+        "BBB24WeightedStreamWeighted007_017_rest.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-ordinary018_023",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v9.py",
+        "--registry",
+        "four/research/ordinary-tail-templates/pools018_023/registry.json",
+        "--name",
+        "ordinary018_023"
+      ],
+      "boards": [
+        "BBB24WeightedStreamOrdinary018_023.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-weighted018_023_first256",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v9.py",
+        "--registry",
+        "four/research/weighted-stream-reuse/pools018_023.json",
+        "--name",
+        "weighted018_023_first256"
+      ],
+      "boards": [
+        "BBB24WeightedStreamWeighted018_023_first256.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "weighted-reuse-stream-weighted024_029",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_weighted_stream_reuse_v9.py",
+        "--registry",
+        "four/research/weighted-stream-reuse/pools024_029.json",
+        "--name",
+        "weighted024_029"
+      ],
+      "boards": [
+        "BBB24WeightedStreamWeighted024_029.WeightedStreamAll"
+      ]
+    },
+    {
+      "id": "closure-wave3-prefix",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_recorded_closure.py",
+        "--input",
+        "four/research/closure-wave3-prefix-input.json",
+        "--build-dir",
+        "four/build/closure-wave3-prefix",
+        "--report",
+        "four/research/closure-wave3-prefix-summary.json",
+        "--ledger",
+        "four/research/closure-wave3-prefix.tsv",
+        "--namespace",
+        "BBB24ClosureWave3",
+        "--resume",
+        "--timeout",
+        "1200"
+      ],
+      "boards": [
+        "BBB24ClosureWave3.ClosureWaveAll"
+      ]
+    },
+    {
+      "id": "closure-wave3-frontier",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_recorded_closure.py",
+        "--input",
+        "four/research/wave3-closure-proof-input.json",
+        "--build-dir",
+        "four/build/wave3-closure-proofs",
+        "--report",
+        "four/research/wave3-closure-checked.json",
+        "--ledger",
+        "four/research/wave3-closure-checked.tsv",
+        "--namespace",
+        "BBB24Wave3Closure",
+        "--resume",
+        "--timeout",
+        "1200"
+      ],
+      "boards": [
+        "BBB24Wave3Closure.ClosureWaveAll"
+      ]
+    },
+    {
+      "id": "campaign-initial",
       "depends": [
         "wave2",
         "affine-pilot",
@@ -245,7 +2257,140 @@
         "python3",
         "four/tools/check_campaign.py",
         "--resume"
-      ]
+      ],
+      "coverage_manifest": "four/research/campaign-input.json"
+    },
+    {
+      "id": "campaign",
+      "depends": [
+        "wave2",
+        "affine-pilot",
+        "affine-bulk4096a",
+        "cycles-full65536",
+        "cycles-extra262144",
+        "weighted-closeout",
+        "conjugate-r000",
+        "weighted-reuse",
+        "alphabet23",
+        "state-reach",
+        "state-closure",
+        "state-rw-pilot",
+        "weighted-batch000",
+        "weighted-batch001",
+        "weighted-batch002",
+        "weighted-batch003",
+        "weighted-batch004",
+        "weighted-batch005",
+        "weighted-selected006",
+        "weighted-selected007",
+        "weighted-selected008",
+        "weighted-selected009",
+        "weighted-selected010",
+        "weighted-selected011",
+        "weighted-selected012",
+        "weighted-selected013",
+        "weighted-selected014",
+        "weighted-selected015",
+        "weighted-selected016",
+        "weighted-selected017",
+        "weighted-selected018",
+        "weighted-selected019",
+        "weighted-selected020",
+        "weighted-selected021",
+        "weighted-selected022",
+        "weighted-selected023",
+        "weighted-selected024",
+        "weighted-selected025",
+        "weighted-selected026",
+        "weighted-selected027",
+        "weighted-selected028",
+        "weighted-selected029",
+        "weighted-capacity-pilot",
+        "weighted-portfolio-pilot",
+        "weighted-capacity-followup",
+        "weighted-portfolio-followup",
+        "weighted-capacity-followup512",
+        "weighted-portfolio-followup512",
+        "weighted-late-followup512",
+        "weighted-v2-pilot",
+        "conjugate-r001",
+        "weighted-suffix-pilot",
+        "weighted-suffix-v2",
+        "weighted-reuse-stream-batch000",
+        "weighted-reuse-stream-ordinary001_006",
+        "weighted-reuse-stream-alias20",
+        "weighted-reuse-stream-alias_recovery",
+        "weighted-reuse-stream-ordinary007_011",
+        "weighted-reuse-stream-ordinary012_017",
+        "weighted-reuse-stream-pools001_006",
+        "weighted-reuse-stream-weighted007_017_first512",
+        "ready-reuse-full791",
+        "ready-reuse-swap120",
+        "ready-reuse-cached5",
+        "weighted-reuse-stream-weighted007_017_rest",
+        "weighted-reuse-stream-ordinary018_023",
+        "weighted-reuse-stream-weighted018_023_first256",
+        "weighted-reuse-stream-weighted024_029",
+        "state-deep-prefix",
+        "state-history-prefix",
+        "state-deep-selected-prefix019",
+        "state-history-tail",
+        "state-repwl-frontier",
+        "state-repwl-frontier-deep",
+        "state-repwl-frontier-wider",
+        "census-template-templatereuse427",
+        "census-template-templateorbit181",
+        "census-template-templateextra245",
+        "census-template-templateinfer12",
+        "census-template-shorttemplate909",
+        "census-template-relaxedtemplate511",
+        "census-template-neighbortemplate385",
+        "census-template-templaterefresh175",
+        "census-template-templaterefresh49",
+        "census-template-templatelate6",
+        "census-template-shortneighbor129",
+        "census-template-templateprefix7",
+        "census-template-templatefinal",
+        "census-template-templatefollowup",
+        "affine-bulk4096b",
+        "affine-bulk4096c",
+        "affine-deep16384",
+        "affine-latepilot16384",
+        "affine-phase-cpu-repair",
+        "affine-residue-pilot",
+        "affine-residue-repair",
+        "affine-short-cell-prefix1024",
+        "affine-short-cell250",
+        "affine-short-residue",
+        "closure-wave3-prefix",
+        "closure-wave3-frontier",
+        "weighted-state-pilot",
+        "census-marker-state",
+        "census-marker-potential",
+        "census-marker-trail",
+        "census-marker-walls",
+        "census-state-branches",
+        "census-state-branch-cycles",
+        "census-state-marker-join",
+        "census-state-b3-join",
+        "census-late-marker-join",
+        "census-state-quotient",
+        "census-alphabet-mask"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_campaign_v2.py",
+        "--manifest",
+        "four/research/campaign-final-input.json",
+        "--report",
+        "four/research/campaign-final-summary.json",
+        "--output-dir",
+        "four/build/campaign-final",
+        "--namespace",
+        "BBB24CampaignFinal",
+        "--resume"
+      ],
+      "coverage_manifest": "four/research/campaign-final-input.json"
     }
   ]
 }

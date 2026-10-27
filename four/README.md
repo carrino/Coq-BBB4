@@ -125,10 +125,13 @@ That checkpoint attached 11,336 distinct families to census coverage and left
 their combined coverage theorem from compact tracked inputs.
 
 The [stronger campaign](WAVE3.md) adds weighted recurrence, state-only tiers,
-deeper affine/closure passes, and reusable recurring suffixes. Its first combined
-audit covers 34,290 distinct families for both bounds and 111,345 for the state
-bound. `make -C four check-campaign` rebuilds those recorded boards; the guide
-separates completed proofs from later search candidates.
+deeper affine/closure passes, structural marker invariants, and reusable
+recurring suffixes. Its final combined audit covers **122,895 distinct families
+for both bounds** and **153,629 for the state bound**. In the original
+133,185-row cohort, **33,492 instruction-bound** and **2,758 state-bound**
+obligations remain. `make -C four check-campaign` rebuilds the recorded boards
+and their combined coverage theorem; the guide separates these proved counts
+from the **32,629-row search remainder**.
 
 [`research/triage-256.json`](research/triage-256.json) records a deeper,
 untrusted survey at 256 steps and a deterministic sample of 512 surviving
