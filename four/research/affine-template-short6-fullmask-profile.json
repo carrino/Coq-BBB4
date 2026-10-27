@@ -1,0 +1,26 @@
+{
+  "status": "untrusted_full_mask_template_proposals",
+  "source_full_mask_families": 1586,
+  "source_families_with_target_matches": 1586,
+  "target_families": 59627,
+  "compatible_targets": 2177,
+  "template_proposals": 2250,
+  "transform_histogram": {
+    "same_initial_state": 1488,
+    "state_swap": 762
+  },
+  "input_sha256": {
+    "ledger": "12b5765ceeeb11da1fdab2eaf46f2f50d5a96abeff40feef9cbe90b8b07eaf70",
+    "targets": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+    "index": "90c74934b207e9de469a85a481995f43afa11a25fef23cb06f1b4fb320555213"
+  },
+  "source_sha256": {
+    "four/tools/affine_fullmask_index.py": "995fed1760b710d41ffe81c09bc8a132ca063986073db8ebbf073491b376b935",
+    "four/tools/affine_template_bank.py": "f3c020c7902755405c565b794f39f74928dd9bbe24dd493315b8632e8826e522",
+    "four/tools/affine_template_orbits.py": "4c14340905ddee752bbeb31734a049b16763f62f37a509c07938214d3d95cb8d",
+    "four/tools/generate_affine.py": "00b739f3f67a4200b3b777b22893961c8d8b3c06e445cf7f141e561efb99d5d2",
+    "four/tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "tools/gen_irulesblkpfx_certs.py": "88e4c34378eed688dad9d1d797a743906f197d6774118ff51e3d4bd30c197ecf"
+  },
+  "proof_status": "No proof count. Exact transformed tables select proposals; target prefix and all affine recurrence claims must be checked from the actual A-start."
+}

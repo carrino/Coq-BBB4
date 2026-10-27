@@ -1,0 +1,16 @@
+{
+  "scope": "Untrusted search scheduling only; exclusions are not a new proof claim.",
+  "original_rows": 3651,
+  "original_input_sha256": "64a3ec63b8887e30712342738265c272a019ed7d649681ca47dcad4863f7fd78",
+  "compiled_marker_exclusions": 948,
+  "prior_checked_rw_exclusions_after_markers": 9,
+  "remaining_rows": 2694,
+  "remaining_sha256": "f3f87f4f7da68e685fd3466d8e150da1c58ba5ca1e4ec9721cd7710e1c07023d",
+  "selection_sources_sha256": {
+    "four/research/state-marker-profile-v2.json": "40080a80e6aaedd7529be1f01d254bfce4fd642c7462399b27f9caac764a6d92",
+    "four/research/state-marker-potential-profile.json": "86d70364ba9708a4dadfe850c3cdfb8bb8c50dc72532ebb050351b15d480abea",
+    "four/research/state-marker-trail-profile.json": "e34d3e6e1b0bdfd7c75d8ccba5d2492bbcd4873e1b05e5b36aaa86d363e38644",
+    "four/research/state-marker-walls-profile.json": "59d3bf3a97d493765524bddd9cf553fad46f4bc2addfa4629cb2239c0c106b62",
+    "four/research/state-repwl-pilot-input.json": "c2022ab8628c9272f1cccc26585ac04db1287cb16b9c842f908261955bc222ac"
+  }
+}

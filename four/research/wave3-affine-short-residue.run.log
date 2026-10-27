@@ -1,0 +1,4 @@
+Checked Part0000 (11.70s)
+Checked All (32.78s)
+Full kernel audit receipt: /workspace/Coq-BBB4/four/build/affine-wave/proofs/ShortResidue/audit.json
+{"checked": 1, "census_linked": 1, "compile_seconds": 44.47, "audit_seconds": 244.29}

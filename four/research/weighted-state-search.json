@@ -1,0 +1,40 @@
+{
+  "attempted_rows": 3651,
+  "candidate_rows": 1203,
+  "census_linked_rows": 0,
+  "deferred_rows": 0,
+  "input_rows": 3651,
+  "kernel_checked_rows": 0,
+  "manifest": {
+    "binary_sha256": "81f4fdebca820fb3dc4f64553999ae806648674536388171b56c665b191da95d",
+    "input_rows": 3651,
+    "input_sha256": "64a3ec63b8887e30712342738265c272a019ed7d649681ca47dcad4863f7fd78",
+    "parameters": {
+      "anchor": 256,
+      "fuel": 8193,
+      "graph_timeout": 0.5,
+      "lp_timeout": 3,
+      "node_limit": 4096,
+      "rounds": 33,
+      "wall_width": 16,
+      "width": 2
+    },
+    "scope": "State-only search; no checked proof claims.",
+    "source_sha256": {
+      "../tools/multisymbol/weighted_certificates.py": "88aea51027ce507af14156a25f5edbc9c80c1a952e26d9f6096fadd569aba9bf",
+      "tools/ExtractWeightedV2.v": "629486ab3505fe5e81dabf58612257a95c8d8df931139edb3e1e39f472c31e01",
+      "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+      "tools/search_weighted_state.py": "807d5a16bf6f8302ac49eddfbe247a3b5ef860541b33046781ee1a29ce3e0b65",
+      "tools/weighted_campaign_v2.py": "98441bacddfb441afe2695e75c184da957b42ec484e062340724853ce3c7942d",
+      "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+      "tools/weighted_graphs_v2.ml": "6aaab0b0ba75a78a0df12bf232a8cf63ffe239df7da31267f0ef64bd3d43e0f8",
+      "tools/weighted_search.py": "783d099f855fa6db1f9c62b33b32161b300c558674a0e5894d4dd6f54cbb4b99",
+      "tools/weighted_search_v2.py": "0035b8fb5337864205139fc08fca93a86eae3172e0ae6bac378c64a468be1259"
+    }
+  },
+  "not_accepted_rows": 2448,
+  "not_accepted_sha256": "060dd4dc76af4b09e1ca795eea3bb42dd6b26f02b07aaf8bffe106e7fcb96225",
+  "registry_sha256": "98a207d9c6dee09ecb5a16bfc75ffe602685331ae793ab2c5f79dad1ff0856f5",
+  "results_sha256": "dafcef0fbebfa16d57faa5279241ac67979a70f17bc5f4f1d15d81522ec510b6",
+  "status": "Untrusted state search; zero kernel or census-link claims."
+}

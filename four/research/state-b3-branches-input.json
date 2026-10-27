@@ -1,0 +1,30 @@
+{
+  "status": "candidate_state_only_parent_joins",
+  "rows": [
+    {
+      "machine": "1LB2RA0RA2LA_3RB1RA3LA---",
+      "anchor": 391,
+      "cycle_child": "1LB2RA0RA2LA_3RB1RA3LA3LB",
+      "cycle": [
+        "C",
+        1,
+        511,
+        3,
+        0
+      ]
+    },
+    {
+      "machine": "1LB2RA0RA2LA_3RB1RA2LA---",
+      "anchor": 265,
+      "cycle_child": "1LB2RA0RA2LA_3RB1RA2LA3LB",
+      "cycle": [
+        "C",
+        1,
+        511,
+        3,
+        0
+      ]
+    }
+  ],
+  "source_frontier_sha256": "a5c2799e311c9d4713cae0239003078b822bfd1e113b360e1772ec37941ad608"
+}

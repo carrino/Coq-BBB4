@@ -245,6 +245,21 @@ make -C four check-campaign CAMPAIGN_JOBS=2
 The [third-wave guide](../four/WAVE3.md) explains the distinct search and proof
 counts, the dependency-aware replay targets, and the generated per-machine
 burndown lists. The original large generated Coq files are not tracked.
+The full replay reconstructs recorded certificates; it does not rerun heuristic
+search or require a third-party affine executable. Local audit receipts are
+usable only when the proof objects, sources, dependencies and Coq runtime match;
+a clean checkout checks the complete dependency closure again.
+
+To inspect or replay one method and its prerequisites:
+
+```bash
+python3 four/tools/rebuild_campaign.py --only affine-pilot --list
+python3 four/tools/rebuild_campaign.py --only weighted-state-pilot
+```
+
+The default campaign target produces separate lists of families still lacking
+a checked state bound or instruction bound. Candidate-search counts are
+reported separately from these proof obligations.
 
 ## Tier A — everything except the census walk
 

@@ -1,0 +1,434 @@
+{
+  "scope": "Scheduling only. Queued BOTH assignments are not proof evidence; all retained direct rows are independently checked.",
+  "sources": [
+    {
+      "id": "BBB24AffineWave.TemplateReuse427.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 427,
+      "report": {
+        "path": "research/affine-template427.json",
+        "sha256": "bb3b2e921f03e0f2f0311e68d8b18ae47cd1b82c735d16e88193fefbefe623b3"
+      },
+      "inventory": {
+        "path": "research/affine-template427.tsv",
+        "sha256": "8175731bb28d70e55ccb645c39e5170d28b50907abf42736ea8a2378c32bb4df",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.TemplateOrbit181.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 181,
+      "report": {
+        "path": "research/affine-template181.json",
+        "sha256": "620c3d09604297710f211d798148e2bb52533fec462823d8861051ccf194bb72"
+      },
+      "inventory": {
+        "path": "research/affine-template181.tsv",
+        "sha256": "44b165edf3dffe2aaea983d1274187ebc2d764e4f7dc0a46ae9a00e2f96b1626",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.TemplateExtra245.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 245,
+      "report": {
+        "path": "research/affine-template245.json",
+        "sha256": "95eabc78fc147382d147f24e5ae6b709afa849bb938d52b03e651352d113dac3"
+      },
+      "inventory": {
+        "path": "research/affine-template245.tsv",
+        "sha256": "0e028e9a8edfb5e33b4c9b1a3803f4e1d5c03af5e6644e9891bfb87b2cecfab0",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.TemplateInfer12.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 12,
+      "report": {
+        "path": "research/affine-template12.json",
+        "sha256": "3c65739c6a9145dfd11340256263c19f1aec6238fe653268479b5a2b2c007189"
+      },
+      "inventory": {
+        "path": "research/affine-template12.tsv",
+        "sha256": "28d60c3f8d984d4a22e014840e5305258a24109dce6d17b5eaef060dfc2a341f",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.ShortTemplate909.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 909,
+      "report": {
+        "path": "research/affine-template-short.json",
+        "sha256": "eba7faca57a442dbc8852e11ff40c9088616cf00533029385c20f9bb8c68ffa7"
+      },
+      "inventory": {
+        "path": "research/affine-template-short.tsv",
+        "sha256": "a15c2a58ecb845d3075a38259059919a5d4abef2534359ce2399bb6964b4f946",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.RelaxedTemplate511.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 511,
+      "report": {
+        "path": "research/affine-template-relaxed511.json",
+        "sha256": "4ab1d80956e3e1f9ca3ea020e1c470be1129ae3b8710cc33accecdb89c7c8de1"
+      },
+      "inventory": {
+        "path": "research/affine-template-relaxed511.tsv",
+        "sha256": "b150e0c8b44eb21c1df1d6af46e3d340c959064443720231423c5b4f8e554443",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.NeighborTemplate385.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 385,
+      "report": {
+        "path": "research/affine-template-neighbors.json",
+        "sha256": "62eec7227aea55f9d48ea4ab25d424b3209f7858584564693c0ccd2843da6728"
+      },
+      "inventory": {
+        "path": "research/affine-template-neighbors.tsv",
+        "sha256": "73d79f791116cf444560ba07ddbdda1420c85d4d1ad183d4e9ceb68a2072454b",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.TemplateRefresh175.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 175,
+      "report": {
+        "path": "research/affine-template-refresh.json",
+        "sha256": "0209c762c213f97eb993e9f3a2932a09248d91fd74517b2f61bb4767532f74ec"
+      },
+      "inventory": {
+        "path": "research/affine-template-refresh.tsv",
+        "sha256": "48fd59964c74f997d659c60f02adb2e742be6d4d6514b40857cb49522ac1eed4",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.TemplateRefresh49.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 49,
+      "report": {
+        "path": "research/affine-template-refresh49.json",
+        "sha256": "4c4ca107125afb2320791ce9ba0723acadc262be7b917d9ef3e3e493c39bd72b"
+      },
+      "inventory": {
+        "path": "research/affine-template-refresh49.tsv",
+        "sha256": "34640b58c8b57a259102d4c31ddfd704b2e4d79d531dc4f9ca9a979013805361",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.TemplateLate6.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 6,
+      "report": {
+        "path": "research/affine-template-late6.json",
+        "sha256": "a0b09b92690c3c494cab04831809a635890d422eb31dc01f9935b555b2824253"
+      },
+      "inventory": {
+        "path": "research/affine-template-late6.tsv",
+        "sha256": "1534c20bd78258a67a7525b70f6e8f9832d843d37f86be4c0c299dcaaabb744b",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.ShortNeighbor129.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 129,
+      "report": {
+        "path": "research/affine-template-short-neighbor129.json",
+        "sha256": "f4aaf07d495319090ce8c9d899c25495da73b25524f6db322c934b65fdf86d17"
+      },
+      "inventory": {
+        "path": "research/affine-template-short-neighbor129.tsv",
+        "sha256": "4be24b8a4c8a5eb2a9244047aaf6a7fee99115978e79ddc3944a0d764f6bf912",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.TemplatePrefix7.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 81,
+      "report": {
+        "path": "research/affine-template-prefix7.json",
+        "sha256": "e6c88337c676f0498bc69a2f39b4ab5e305462e882fa0654c757ad4784b93fe6"
+      },
+      "inventory": {
+        "path": "research/affine-template-prefix7.tsv",
+        "sha256": "6dc4481f84549346aeb484081d1a1cffe8cfde8d7da44eda76c2ff8e92fa14a2",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "BBB24AffineWave.TemplateFinal.All",
+      "scope": "both",
+      "status": "audited",
+      "rows": 72,
+      "report": {
+        "path": "research/affine-template-final.json",
+        "sha256": "2a902b1bb1b12bb0366d741b43b010956ad4748e7bb6fb9c59f15d70293abed9"
+      },
+      "inventory": {
+        "path": "research/affine-template-final.tsv",
+        "sha256": "be8bf6ba61968b7ba163d8556f7b3ae4edb890215610a3189a114bd2af6ba48f",
+        "format": "tsv"
+      }
+    },
+    {
+      "id": "research/conjugate-input-r000.json",
+      "scope": "both",
+      "status": "audited",
+      "rows": 1227,
+      "report": {
+        "path": "research/conjugate-r000-summary.json",
+        "sha256": "e77ef990973e55938245392614d693de18a090360361248cadf96827c6f2724e"
+      },
+      "eventual_report": "research/conjugate-r000-summary.json",
+      "inventory": {
+        "path": "research/conjugate-input-r000.json",
+        "sha256": "460dc14b801a82d6e03bcee9d158d6cb75c42a703b137256d418c34b03700e5f",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/conjugate-input-r001.json",
+      "scope": "both",
+      "status": "queued",
+      "rows": 735,
+      "report": {
+        "path": "research/conjugate-r001-compiled.json",
+        "sha256": "7393ad8993152f45a0ef008c33122633c30007371775ec52d268886a2a3b0789"
+      },
+      "eventual_report": "research/conjugate-r001-compiled.json",
+      "inventory": {
+        "path": "research/conjugate-input-r001.json",
+        "sha256": "3b6f8b94828df4a14e63a7d4780df36904026ae99a2728b9c7ab814bd348fe7c",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-reuse-input.json",
+      "scope": "both",
+      "status": "audited",
+      "rows": 421,
+      "report": {
+        "path": "research/weighted-reuse-summary.json",
+        "sha256": "d0293bc6ce468252bab754e70ec1057c8f324a248166c23fbc793aa16b20fa62"
+      },
+      "eventual_report": "research/weighted-reuse-summary.json",
+      "inventory": {
+        "path": "research/weighted-reuse-input.json",
+        "sha256": "b3eb5d852c28609d4786d8778c56ec83fc9d8d343d3ba0528186d780f888a42a",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-suffix-pilot-input.json",
+      "scope": "both",
+      "status": "audited",
+      "rows": 106,
+      "report": {
+        "path": "research/weighted-suffix-pilot-summary.json",
+        "sha256": "f262a870a25f16983f816bfecf6de9d73d888b2c66b5a21fdf51af74d595878a"
+      },
+      "eventual_report": "research/weighted-suffix-pilot-summary.json",
+      "inventory": {
+        "path": "research/weighted-suffix-pilot-input.json",
+        "sha256": "b5a6ed2e3ac6beac4811fa94f0bbd0b64a4655555a3dbec602070c0d5ae45ea8",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-suffix-v2-input.json",
+      "scope": "both",
+      "status": "audited",
+      "rows": 248,
+      "report": {
+        "path": "research/weighted-suffix-v2-summary.json",
+        "sha256": "370dcaef1393648177340d58992c12901d16075741ab5f525dd510c126c55114"
+      },
+      "eventual_report": "research/weighted-suffix-v2-summary.json",
+      "inventory": {
+        "path": "research/weighted-suffix-v2-input.json",
+        "sha256": "5b9c6dde4768659ae4849d26ba5e10d3a921729934c79849f6f4752f64833b16",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-stream-reuse/batch000-input.json",
+      "scope": "both",
+      "status": "audited",
+      "rows": 747,
+      "report": {
+        "path": "research/weighted-stream-reuse/batch000-summary.json",
+        "sha256": "a419b4cd7a900e8099b60329ee55efe24a79daeb4579f626555889fa5db59545"
+      },
+      "eventual_report": "research/weighted-stream-reuse/batch000-summary.json",
+      "inventory": {
+        "path": "research/weighted-stream-reuse/batch000-input.json",
+        "sha256": "be07e75055771e4da402a7baa737d49fb2730b8e0602ee6ac9035e8edc60bd6d",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-stream-reuse/ordinary001_006-input.json",
+      "scope": "both",
+      "status": "audited",
+      "rows": 1042,
+      "report": {
+        "path": "research/weighted-stream-reuse/ordinary001_006-summary.json",
+        "sha256": "a0d150fbfa19e7aaed81c9e53fad75bf29ed560c631a3649be9054d730ba4748"
+      },
+      "eventual_report": "research/weighted-stream-reuse/ordinary001_006-summary.json",
+      "inventory": {
+        "path": "research/weighted-stream-reuse/ordinary001_006-input.json",
+        "sha256": "80ce023ba572dd84467019cfa87f4434db44ab5008ed6f890cabe8f3b47784fb",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-stream-reuse/alias20-input.json",
+      "scope": "both",
+      "status": "audited",
+      "rows": 20,
+      "report": {
+        "path": "research/weighted-stream-reuse/alias20-summary.json",
+        "sha256": "b2ef57d450817f649c872f2cae9f15126a7105517b68f66a1aa42b88c3823214"
+      },
+      "eventual_report": "research/weighted-stream-reuse/alias20-summary.json",
+      "inventory": {
+        "path": "research/weighted-stream-reuse/alias20-input.json",
+        "sha256": "5595a0b2e21fcaae3d7a857bb64bc29e06666a692931301ea108a4a930776208",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-stream-reuse/alias_recovery-input.json",
+      "scope": "both",
+      "status": "audited",
+      "rows": 192,
+      "report": {
+        "path": "research/weighted-stream-reuse/alias_recovery-summary.json",
+        "sha256": "81cb55bc2bfbd78cbcd2d74ec0120c29531d7cdadccd7456d192bbcf86a70310"
+      },
+      "eventual_report": "research/weighted-stream-reuse/alias_recovery-summary.json",
+      "inventory": {
+        "path": "research/weighted-stream-reuse/alias_recovery-input.json",
+        "sha256": "9587039725f3ad21d4a3d92111ec8616f97d05e62f980a67112d0a4ead764eca",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-stream-reuse/ordinary007_011-input.json",
+      "scope": "both",
+      "status": "audited",
+      "rows": 229,
+      "report": {
+        "path": "research/weighted-stream-reuse/ordinary007_011-summary.json",
+        "sha256": "7bee6f52701395b9f6e0459a3e91c9899e42b128bd629ae17d6990553bea9f00"
+      },
+      "eventual_report": "research/weighted-stream-reuse/ordinary007_011-summary.json",
+      "inventory": {
+        "path": "research/weighted-stream-reuse/ordinary007_011-input.json",
+        "sha256": "db5fede8701d6710a71adf8ce4343b169f7d263f33584ca9ad0a54b0d3526833",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-stream-reuse/ordinary012_017-input.json",
+      "scope": "both",
+      "status": "audited",
+      "rows": 166,
+      "report": {
+        "path": "research/weighted-stream-reuse/ordinary012_017-summary.json",
+        "sha256": "e0d103d7c61b26ff288ece38b9c4319292f84b6b18a88a0376628711d6dda760"
+      },
+      "eventual_report": "research/weighted-stream-reuse/ordinary012_017-summary.json",
+      "inventory": {
+        "path": "research/weighted-stream-reuse/ordinary012_017-input.json",
+        "sha256": "82ddc84e9e84503812407bb4f38013bacdc310625019ec94eae120819192185f",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-stream-reuse/pools001_006-input.json",
+      "scope": "both",
+      "status": "queued",
+      "rows": 2074,
+      "report": null,
+      "eventual_report": "research/weighted-stream-reuse/pools001_006-summary.json",
+      "inventory": {
+        "path": "research/weighted-stream-reuse/pools001_006-input.json",
+        "sha256": "6e02dc1aef0b2c3c0246ee9961f5efe43f8995661d23b8c678787bc88cdae4f6",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/weighted-stream-reuse/weighted007_017_first512-input.json",
+      "scope": "both",
+      "status": "queued",
+      "rows": 512,
+      "report": null,
+      "eventual_report": "research/weighted-stream-reuse/weighted007_017_first512-summary.json",
+      "inventory": {
+        "path": "research/weighted-stream-reuse/weighted007_017_first512-input.json",
+        "sha256": "6675d89f13ff27dd63b0e79b2e5bb1f0cec460f6e983036ef269efcbccfeaa55",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/ready-reuse/full791-input.json",
+      "scope": "both",
+      "status": "queued",
+      "rows": 791,
+      "report": {
+        "path": "research/ready-reuse/full791-compiled.json",
+        "sha256": "ce4367c91a76589463c25f738c5960351147b5fd630e430f73fd8858cc980b89"
+      },
+      "eventual_report": "research/ready-reuse/full791-compiled.json",
+      "inventory": {
+        "path": "research/ready-reuse/full791-input.json",
+        "sha256": "ca5c5d2ae8f2ca1364491ba0bba3dd4c62c6952da668fc022fc6cff773d74edb",
+        "format": "json_columns"
+      }
+    },
+    {
+      "id": "research/ready-reuse/swap120-input.json",
+      "scope": "both",
+      "status": "queued",
+      "rows": 120,
+      "report": {
+        "path": "research/ready-reuse/swap120-compiled.json",
+        "sha256": "3b5a63fb2f1a01f2449033c14cf84d8ba03741b2e1b45e7f4d3386f770107c4f"
+      },
+      "eventual_report": "research/ready-reuse/swap120-compiled.json",
+      "inventory": {
+        "path": "research/ready-reuse/swap120-input.json",
+        "sha256": "fb12bc3361259cb23555ab42f34b75da6413083652296ca4bf0297495aa34b89",
+        "format": "json_columns"
+      }
+    }
+  ]
+}

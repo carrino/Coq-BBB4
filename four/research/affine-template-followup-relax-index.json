@@ -1,0 +1,12 @@
+{
+  "status": "untrusted_template_index",
+  "targets": 18449,
+  "used_templates": 9792,
+  "target_template_pairs": 74387,
+  "inputs_sha256": {
+    "build/affine-template-followup1145/short-neighbors.json": "1270cfe18db322fb65475b9689581850b88574cffc79857e508c78b4bfbc9d6f",
+    "build/affine-template-followup1145/relax.json": "6b572f62abc234883dc208284736eaed1b3ac539f89c8fb7787c537253b4c3b3"
+  },
+  "index_sha256": "a516d60854eca9a3870449dddeac8a984ab98c47bfea51f542657c3ccfb47cee",
+  "builder_sha256": "6143912b7ec744bbad4a4612261934432f881866070f29d3eaf304741e6ecbd7"
+}

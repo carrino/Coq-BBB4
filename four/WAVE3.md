@@ -51,6 +51,8 @@ checked prefix bridge.
 | Prefix and recurring-suffix reuse | Both bounds after checking the target's own blank-start prefix and its subsequent behavior |
 | Closed or masked three-symbol alphabet | State bound 59 and instruction bound 67, using the completed BBB(2,3) theorem |
 | Non-injective alphabet quotient | State bounds only; merged symbols do not preserve individual instruction identities |
+| Marker, potential and trail invariants | State recurrence from persistent tape structure; partial roots check every possible next transition |
+| Capacity certificates and instruction portfolios | Weighted recurrence with checked capacity bounds or separate recurrence proofs for each instruction |
 
 The weighted producer can supply a finite graph and ranking certificate, but
 Coq checks the start configuration, every successor, liveness, and all ranking
@@ -62,7 +64,7 @@ can handle targets whose transient transition entries differ from a source.
 A fresh checker call or a proved suffix transport verifies the target; mere
 table similarity is insufficient.
 
-## Frozen search checkpoints
+## Search results
 
 The weighted full sweep starts from the following declared cohort. These are
 search and preselection counts, not additional kernel-checked discharges:
@@ -82,13 +84,25 @@ remain eligible for subsequent methods.
 
 The later finite/history passes remove another 3,656 IDs from that frozen
 59,627-row cohort, leaving 55,971. Larger-budget timeout retries find another
-2,382 candidates, leaving **53,589** before weighted results and later reuse.
+2,382 candidates, leaving 53,589 before weighted results and later reuse.
+After deduplicating the weighted results, stronger repeated-word checks and
+pilots, the shared search remainder is **32,629**: **100,556 fewer** than the
+starting cohort, a **75.5% reduction**.
 The weighted input stays frozen so its progress and streamed proof batches have
 a stable denominator. Reports pin the complete input, method parameters, and
 the files used for exclusions. See
 [`weighted-full-cohort.json`](research/weighted-full-cohort.json),
 [`wave3-closure-full.json`](research/wave3-closure-full.json), and
-[`wave3-timeout-full.json`](research/wave3-timeout-full.json).
+[`wave3-timeout-full.json`](research/wave3-timeout-full.json). The final search
+union is recorded in
+[`repwl-search-union.json`](research/repwl-search-union.json).
+
+The weighted sweep completed all 59,627 inputs and retained 19,950 candidates:
+14,654 weighted certificates and 5,296 ordinary closure certificates. Its
+30 immutable pools preserve all candidates, including those assigned to
+another proof method. A separate state-weighted search retained 1,203 candidates
+from 3,651 inputs; only its nine-family pilot is included in the checked ledger.
+These overlapping candidate counts must not be added to the proved totals.
 
 ## Rebuild and inspect
 
@@ -142,3 +156,28 @@ The latter two contain families still lacking the corresponding checked proof
 in the selected boards, even when a search candidate exists. Their hashes are
 recorded in the summary. This keeps candidate discovery, proof completion, and
 the remaining global census obligation distinct.
+
+## Next burndown
+
+1. **Finish replaying the existing candidates.** Compare each queued inventory
+   against the final checked ledger before assigning work. The 4,176 stronger
+   repeated-word candidates, timeout-recovery queue and state-weighted search
+   already have compact inputs; replay failures remain explicit obligations.
+2. **Expand the new certificate tiers.** Capacity and per-instruction portfolio
+   checks produced 27 additional audited witnesses across their initial runs.
+   Run them over the deduplicated residual with resumable batches and bounded
+   budgets, then try larger n-grams and asymmetric windows.
+3. **Separate expensive timeouts from structural misses.** The repeated-word
+   residual profile identifies 5,841 timeouts in liveness checking. Improve
+   that computation or schedule selected longer retries before increasing
+   every machine's budget. Search misses remain candidates for affine rules,
+   reusable tails and new marker invariants.
+4. **Close the exhaustive census gap.** Transport proved families through the
+   symmetry and shadow machinery and connect the deeper survey to a checked
+   census walk, as in BBB(4). The 32,629-row queue is a search workload, not the
+   complete formal residual. The global upper bound still requires covering
+   every remaining formal family, including halting completions.
+
+Each new batch should retain its input inventory, resource failures and exact
+proof scope. The two final per-machine ledgers are the starting point for
+future assignments; state-only successes must not erase instruction work.

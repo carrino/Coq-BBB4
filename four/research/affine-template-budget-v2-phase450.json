@@ -1,0 +1,62 @@
+{
+  "status": "untrusted_native_replay",
+  "manifest": {
+    "index_sha256": "a196495747c3342203d44c2f726b17e293a4545b9007e4677f4f1ce295e33c3f",
+    "input_sha256": "3a744b670bd97a00fbfeb55847913d2adfcb75956b38f36bd49c864c8073dd7a",
+    "excluded_inventory_sha256": {
+      "four/research/late-cycles-full65536.json": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab",
+      "four/research/late-cycles-extra262144.json": "bc697fa40061c2bfd08cd26e9381776f7ba396e43fa50f504e6c33ed376a909e",
+      "four/research/alphabet23-families.json": "f7f53c4edf6ed72266364310a2a3421d098f1eec05d6ed83004b9f193fd06f7a",
+      "four/research/alphabet-mask-families.json": "d79507ff81da8c7a441eb1d1fee77fbe3b044ee174091f673695e5073d8c91dd",
+      "four/research/wave2-families.tsv": "03804f62ef1b4d182eda0d7547bd15dd2b18ed1f3155d4ff2bcbeef15d1f0985",
+      "four/research/weighted-pilot-machines.json": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333",
+      "four/research/affine-template427.tsv": "8175731bb28d70e55ccb645c39e5170d28b50907abf42736ea8a2378c32bb4df",
+      "four/research/affine-template181.tsv": "44b165edf3dffe2aaea983d1274187ebc2d764e4f7dc0a46ae9a00e2f96b1626",
+      "four/research/affine-template245.tsv": "0e028e9a8edfb5e33b4c9b1a3803f4e1d5c03af5e6644e9891bfb87b2cecfab0",
+      "four/research/affine-template12.tsv": "28d60c3f8d984d4a22e014840e5305258a24109dce6d17b5eaef060dfc2a341f",
+      "four/research/affine-template-short-input.json": "6d039ef57904af668ceb6972813f640ce6d0306d7517245f5e063fd06aa089b1",
+      "four/build/affine-template-short/source-prefix4.tsv": "8d29baaa22b49d01aadea0b2030aa7ff76ba5b6676f1ea471239112cc93c9eb4",
+      "four/research/affine-template-relaxed511-input.json": "22c57c3cfc7ec2977dfc8ec0fd2e7ac7f982150f8c4ed0cd310370099349b535",
+      "four/research/affine-template-neighbors-input.json": "ab52c74e2c52260f50a54b2f6863c6c4346487e6ac2f969162f3c1aeb2b963c9",
+      "four/research/affine-template-refresh-input.json": "cd3aa9fffb4852ccca3bfc53b48b2b52a3fb3a690659f9690e5c6d33c04a0c8b",
+      "four/research/affine-template-refresh49-input.json": "64bc700b763018e88c4538a679d22e4dcd6fbec404a328a7fb1dd0876a76e6b7",
+      "four/research/affine-template-late6-input.json": "e71d956b942b316ea9ee91a76dc9f8666e22c4b1617694d9c3b9c575e8384ca9",
+      "four/research/affine-template-short-neighbor129-input.json": "c7b4c4fa1ed2d8d8223d0b21c1055d7fa09a45a5a4a7b7a54400486696c9234c",
+      "four/research/affine-template-prefix7-input.json": "ac7a0f2cbb5bf7e2644b5e969e19c7492e965affbc67593d37810efa3a835198",
+      "four/build/affine-template-short/source-prefix7.tsv": "ca7215c0786a1e8bb932188d7dc090db22c316963e16ac8875116cd50ab91098",
+      "four/build/affine-template-phase450/source-ids.tsv": "2c691a168c41daa740d21e905c84d461585c6c01378df8a6286714e1e8256e2c"
+    },
+    "sources_sha256": {
+      "four/tools/affine_template_budget_sweep_v2.py": "a975e64db692bd102298d3441d973474ac208582ad01ec66eecf3e9c32905c9b",
+      "four/tools/affine_template_budget_probe_v2.ml": "f68668d26b0efcb506c6d837b213b9991e09877b40fe7ebc073647269605eb01",
+      "four/tools/affine_fullmask_neighbors.py": "41524a0c59ab8feb4ae9aa1ceea49079b52962197a08a63b9e9710b30fde569d",
+      "four/tools/affine_cert_io.ml": "f0221d100b913fd575e5450b38d295a52807297a27eea16437209f8b86ee8557",
+      "four/build/affine-wave/extracted/checker.ml": "801cda1eeeda8fae651efb6ed894f20005fcdd73c659f08ecbd1dc07c157f54b",
+      "four/build/affine-wave/extracted/affine_cert_io.cmx": "1549a380ae0cae888202e3e421a3f959cf0795056ad9ef01ef5ed9e1974d6cc7",
+      "four/build/affine-template-budget-v2/probe": "9a16deea4bbc1a3727d9ca42e10a173c589aa15ec29bd2dae0e6042da499d12e"
+    },
+    "bound": 8192,
+    "cfuel": 8192,
+    "fuel": 8192,
+    "timeout": 0.3,
+    "tail_cpu": 0.03,
+    "retry_ledger_sha256": {},
+    "compatible_targets": 3380,
+    "eligible_targets": 2710,
+    "selected_targets": 2710
+  },
+  "statuses": {
+    "no_template_match": 2662,
+    "replay_true": 47,
+    "timeout": 1
+  },
+  "accepted_targets": 47,
+  "row_seconds": 20.889864,
+  "template_instances": 22610,
+  "ir_check_calls": 47,
+  "tail_timeouts": 85,
+  "replay_sha256": "012aa10faf332140eaa3c0b2dcf4bb751e66c6316af79ac383018d9f00bf3e59",
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "accounting": "Targets are original input families. Recurring source flags and boot hashes are proposal filters; unchanged target ir_check supplies only native replay evidence until Coq and census replay."
+}

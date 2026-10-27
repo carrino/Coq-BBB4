@@ -1,0 +1,111 @@
+{
+  "scope": "Scheduling only. Queued BOTH assignments are not completed proofs.",
+  "checked_campaign_input": {
+    "path": "research/campaign-input.json",
+    "sha256": "5898e121ac5e594ad01006fcf347175a8d3ceb5d5d5c1ba26f2b41918c2e78e5"
+  },
+  "checked_campaign_summary": {
+    "path": "research/campaign-summary.json",
+    "sha256": "4fdb6cc2ef6d136d48c2f81a92f470fe8fcc8f8c49154c4e8d25f007cadeebea"
+  },
+  "inventory_parser_sha256": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+  "sources": [
+    {
+      "id": "Wave2",
+      "status": "checked",
+      "path": "research/family-transport-input.json",
+      "format": "transport",
+      "order": "input",
+      "sha256": "86a68d4b07844e830f2bb27684002d67311ecec297da5d81fa67b58189e544a6"
+    },
+    {
+      "id": "AffinePilot",
+      "status": "checked",
+      "path": "research/wave3-affine-pilot-certs.json",
+      "format": "affine",
+      "order": "sha256",
+      "sha256": "86a1d89c65e00f42adc08f6f01c9d2ea3ff2411cb10c660f4c1683b040d1aece"
+    },
+    {
+      "id": "AffineBulkA",
+      "status": "checked",
+      "path": "research/wave3-affine-bulk4096a-certs.json",
+      "format": "affine",
+      "order": "sha256",
+      "sha256": "63b8e9b7527d6be4074a00eeca6986a3982bd99cb993e4ce6914286614b44cdf"
+    },
+    {
+      "id": "LateCycles",
+      "status": "checked",
+      "path": "research/late-cycles-full65536.json",
+      "format": "columns",
+      "order": "input",
+      "sha256": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab"
+    },
+    {
+      "id": "ExtraCycles",
+      "status": "checked",
+      "path": "research/late-cycles-extra262144.json",
+      "format": "columns",
+      "order": "input",
+      "sha256": "bc697fa40061c2bfd08cd26e9381776f7ba396e43fa50f504e6c33ed376a909e"
+    },
+    {
+      "id": "WeightedPilot",
+      "status": "checked",
+      "path": "research/weighted-pilot-machines.json",
+      "format": "rows",
+      "sha256": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333"
+    },
+    {
+      "id": "Conjugate",
+      "status": "checked",
+      "path": "research/conjugate-input-r000.json",
+      "format": "columns",
+      "sha256": "460dc14b801a82d6e03bcee9d158d6cb75c42a703b137256d418c34b03700e5f"
+    },
+    {
+      "id": "WeightedReuse",
+      "status": "checked",
+      "path": "research/weighted-reuse-input.json",
+      "format": "columns",
+      "sha256": "b3eb5d852c28609d4786d8778c56ec83fc9d8d343d3ba0528186d780f888a42a"
+    },
+    {
+      "id": "Alphabet23",
+      "status": "checked",
+      "path": "research/alphabet23-families.json",
+      "format": "rows",
+      "order": "input",
+      "sha256": "f7f53c4edf6ed72266364310a2a3421d098f1eec05d6ed83004b9f193fd06f7a"
+    },
+    {
+      "id": "wave3-affine-bulk4096b-certs",
+      "status": "queued",
+      "path": "research/wave3-affine-bulk4096b-certs.json",
+      "format": "affine",
+      "sha256": "8e514092b0666adc66eedbeb6babc0c0078e3e17e0338b1c728cd505b94414d6"
+    },
+    {
+      "id": "wave3-affine-bulk4096c-certs",
+      "status": "queued",
+      "path": "research/wave3-affine-bulk4096c-certs.json",
+      "format": "affine",
+      "sha256": "ed9411960268e2382c43090a37b4d3eba5365eab5b249c44dd1e423b65a76b65"
+    },
+    {
+      "id": "wave3-closure-proof-input",
+      "status": "queued",
+      "path": "research/wave3-closure-proof-input.json",
+      "format": "columns",
+      "sha256": "1cd57305f701b8728085d0fea080260583ec4cdd5bc21c6d7ede1261f06fdac2"
+    },
+    {
+      "id": "wave3-timeout-proof-input",
+      "status": "queued",
+      "path": "research/wave3-timeout-proof-input.json",
+      "format": "columns",
+      "sha256": "b209160df46bded0ee5b7de83252e5097ed332f3faf9f000948ffe4ab44a33b6"
+    }
+  ]
+}

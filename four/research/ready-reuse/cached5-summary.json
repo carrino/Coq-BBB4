@@ -1,0 +1,111 @@
+{
+  "status": "kernel_audited",
+  "compiled_canonical_cores": 5,
+  "checked_canonical_cores": 5,
+  "descriptor": {
+    "module": "BBB24ReadyReuseCached5.ReadyReuseAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 4096,
+    "proof_source": "build/ready-reuse/cached5/ReadyReuseAll.v",
+    "load_paths": [
+      {
+        "path": "build/weighted-v2/full-proofs/batch004-v4",
+        "namespace": "BBB24WeightedFullB004"
+      },
+      {
+        "path": "build/weighted-v2/full-proofs/batch005-v4",
+        "namespace": "BBB24WeightedFullB005"
+      },
+      {
+        "path": "build/ready-reuse/cached5",
+        "namespace": "BBB24ReadyReuseCached5"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/ready-reuse/cached5-input.json",
+        "format": "json_columns"
+      }
+    ],
+    "audited_report": "research/ready-reuse/cached5-summary.json"
+  },
+  "inputs_sha256": {
+    "research/weighted-full-snapshots/batch004/registry.json": "b930c41fd2f02610a1752c70f9e48b03ca48d10752a5f4e61b0de5dad14424d3",
+    "research/weighted-full-snapshots/batch004/check.json": "b3c69ea2d62a2d24a8ba272d0c632a28f9072f082302f1a8bcf1737616a35bee",
+    "research/weighted-full-snapshots/batch004/certificates-0000.json": "14412c60de2016df6c220aef334b8941002a820d703f2a0adb46fdbd3a4610d9",
+    "research/weighted-full-snapshots/batch004/certificates-0001.json": "fb5558340693d533ce3b96e3cc8a7d89afcf72f2861c566560f3411274c71e40",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00000.v": "521057a529723c3528016f7271e097b3ee20a9aa88345a4cee4ea189ca65845d",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00001.v": "a4c48e65daddb10529ed291f2840937591e82142f5af7e3cfed3210fa30c989e",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00002.v": "f448bed745da2291946fa927b75826695b326b3f450f5bc659a387e912a698b9",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00003.v": "c8ad204bca28bc78a901199083a96faa6ef6cfdf0071ad1b4b0ba4b83e5514d6",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00004.v": "fd5eb863212c9244826db7971e2f36ed5c2ad4188ab9f8715898e6dc4582b0aa",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00005.v": "e2e4ab0bab35da5553a92b90789baf3cc426af13f5ff9779c06236392cb2c0c3",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00006.v": "56c5ed0f249a1ea972014756fcb1c3c28c47cb558b88dd0a25efa2a152bf0b80",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00007.v": "c78be7ce3d4aa5c2310504fe9535acd4fcf5f4d2af9eb919cbd0813bf638bbc1",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00008.v": "cce2f3c1974b2fa5104069c6b2a90db5e36d3be85b0b28e98993f8278416575b",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00009.v": "babb54430e7a5719de48a292fc2fcefa2c782bc7eec181b66743db3e475258f7",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00010.v": "a8ef48c180f83dd9f53f829c721cc0916b32e531ddb51bf5b665c01d8fcbeebd",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00011.v": "843dc88464a7f7e84dae942631cf0a195525c71ab6308d04e02075ed27a4cbf6",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00012.v": "7c0095e4399727c7d38dbf94ad5cd0c9f5f928683dfb21f4c76713d83d4a7d01",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00013.v": "93315ac44f91d2347889bbf08d40eebce832c13b0cbf98c96b47c9fb43b5e32e",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00014.v": "c91d251466c811730b1789a3731c81ffaa27fe7a9ec0680fb8b90e710db103a1",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00015.v": "5095484aa9660bba6d077843b405935252698739127693cd86d05c2810ea18ad",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00016.v": "e17442c17cc7a93d4c81af8154dec857b437e6ea1278377e1a025ac392143644",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00017.v": "05ce5514d45496267c25afa0d8484419f3a70071e904754371a0a0f97b839d78",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00018.v": "f320afffe6bdfb2e05b4343edf167018be83357c0ac914cfa33da6e7792a4e41",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00019.v": "b4581ae2a411a33066f21006e0bd9fd76568376b45336450982ff8391476184b",
+    "build/weighted-v2/full-proofs/batch004-v4/Weighted00020.v": "d23fa78aba1d9ed912619443ce8fe7a5dbc905fa5319b6f71d497bfbcd8d698b",
+    "research/weighted-full-snapshots/batch005/registry.json": "48af4db801bce17832829fd34758130dce69fca86545c46aef2998228b88bebe",
+    "research/weighted-full-snapshots/batch005/check.json": "8914d05dc30e620917145a1828105cfbea506fce3fed8744ddcda8f507e50f00",
+    "research/weighted-full-snapshots/batch005/certificates-0000.json": "15647f1c62321054db459ce85fe369eb90222963e8945fb6b4a1a0b65e27df48",
+    "research/weighted-full-snapshots/batch005/certificates-0001.json": "06ad564d0f4469381182df99ff3594aff4bd4e4a73cc9967bd7e33cdd75ab9ee",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00000.v": "9873b3beeb43e345640458c38878418683cb0f94f6338ac006c42973a6e06646",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00001.v": "fefa76f8654b60da882a49991af5f8a4fb100145cb10299ac04f3d625eff2bc3",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00002.v": "b62f0fae80cfa9027636922709d14bca012b3c34d36bae782ba06a8b48cb31d7",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00003.v": "30d55cba06b399a2872caaf1b2744be6ba6a34dcd52a08f5afb2fce99de3a313",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00004.v": "3bdbbf179a4ec64ada2700140d740b521176d45e72a6614466614756fecba42d",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00005.v": "b0be44c6df69d484b5619f81431f15364c60beba2c062acfad4f09f278016917",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00006.v": "5f7eb12016bb9f30e91fe6258358e4774eed6dfa2b11f6df048f71c62e87052a",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00007.v": "9bbefa747818b11c6ab09af7c840063dede14c62a2059d8d9182e59263dd4530",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00008.v": "95d9866583fad3109e36e937b5772c21efd27d6be7d3e888e07a3816e6b498fa",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00009.v": "6c4d8566029b0d927981a9a513ef3edf7ad35fe2dfa540c6c8c6b6eb47f4010e",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00010.v": "f39a283ff88d7b54c93e51c1b9e346db6857f23c3b21b975b66d879efde854e1",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00011.v": "e845b2ad6d10ceea44bb43edfe0f7734f947d98318e0e4cd855c81b75141b52d",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00012.v": "e6de6965471b220e6da6c54b6c2567b277aaa29c810b2a834633e0dbeedc807a",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00013.v": "4dd8752e643a211cf3f146ec67031c943eeab1eaa6ee9cf597e5359656d5e0c2",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00014.v": "c9638b8067d820260a13b18af7c37e1baf434dd3a4dfe2bcac5eeaf65ec4bd81",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00015.v": "50633e7d4450d198c66b6eb0b111e00d77ce3848dc8deb863a3f5c8863484365",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00016.v": "33e2c979d5fb009d8edd403a21071211fac3eb33136c8a6c20fbf3ebecefd8a5",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00017.v": "c9f5de28aa6f421a308cff5b2c60db1a4f94e28204b5dd24874a09149f351bcb",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00018.v": "927afb74181d59dc470e8f711853766221e8fdd846d99963825b0feb41efb95b",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00019.v": "738c8f67984cfc798dd798d8fbdb497454aad06a4a04fec13f61d00aa8f85614",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00020.v": "d443600e6212635d293977725636c3e5151519b6c7559344ba34aee9db3b5b4c",
+    "build/weighted-v2/full-proofs/batch005-v4/Weighted00021.v": "6c26de86d6971988e487393ead91b868a297c82bdc208a3f38373f2c411d1edb",
+    "tools/check_ready_reuse_v2.py": "d0ec4dd98fe93997216b73c7d5743da46b8793d5028d12f0227ba26b124df878",
+    "tools/check_weighted_stream_reuse.py": "869bb432de31dc16d12678a165ede15dc4ea793ba2d60b950f2b648341ca8626",
+    "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "theories/ReadyReuse.v": "b33bcbd95ffe7b65a62126a707f12305c30e2ebbefcdf97c683450689b03eda2",
+    "theories/ReadySwap.v": "37f440073404732dc8c01654f426061ede6b8bce28b9321ffd0c1edebd4591a5",
+    "tools/check_ready_reuse.py": "325a3eadd8e34b10cf31091480db7523436460adb3b54d1786d4dee5c10e4646",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e",
+    "research/ready-reuse/cached5-input.json": "a677a3108b662f1bcbb408d021515979217953ac8560f6d5b052a446a1bbc142"
+  },
+  "proof_source_sha256": {
+    "Part0000.v": "1ac7e71772ec1b2fafbac11bddec0047daaca5c8f278d7cd40122b46482217f9",
+    "ReadyReuseAll.v": "505cd4fb1924caaf63ef779c993e97618a929a932f1e7754381ba791a20a3d6f"
+  },
+  "compile": {
+    "wall_seconds": 9.503851033005049,
+    "cpu_seconds": 2.282865
+  },
+  "note": "Source rankings come from imported checked theorems. The final campaign must audit this exact transitive closure before adding an audited census count.",
+  "validation": "coqc plus incremental coqchk",
+  "audit_receipt": "build/ready-reuse/cached5/audit.json",
+  "audit_receipt_sha256": "693c9d1402a911a1313e313e68e28f242bab1f832fd3d2e857f06e4a01f0b24b",
+  "ledger_sha256": "189d5afb07e6ae22366921a764d39548b55aa222819ade2fa8b177b33db78537"
+}

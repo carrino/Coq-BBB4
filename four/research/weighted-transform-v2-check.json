@@ -1,0 +1,18 @@
+{
+  "problem": "Compact decoding can share a coefficient list between separate target components. The earlier in-place rename applied a permutation repeatedly to shared storage, causing checker rejections.",
+  "fix": "Each renamed component receives a freshly constructed coefficient vector; frozen earlier tools and proof artifacts are unchanged.",
+  "trust_note": "No accepted proof depended on producer correctness: every accepted target was independently kernel checked. This defect lost candidate proofs; it did not create unverified bound claims.",
+  "regression_targets": 20,
+  "original_source_index": 89,
+  "coefficient_references": 6,
+  "distinct_coefficient_lists": 5,
+  "old_rejected_inventory_sha256": "0a444a6dd8c16a5d5c26b58a1ac9bfeb09006ff92f372061d0580ce3422ee619",
+  "new_input": "research/weighted-stream-reuse/alias20-input.json",
+  "new_input_sha256": "5595a0b2e21fcaae3d7a857bb64bc29e06666a692931301ea108a4a930776208",
+  "audited_report": "research/weighted-stream-reuse/alias20-summary.json",
+  "audited_report_sha256": "b2ef57d450817f649c872f2cae9f15126a7105517b68f66a1aa42b88c3823214",
+  "source_sha256": {
+    "tools/weighted_transform_v2.py": "c7f3938876b426f89c4bf10257827b2c206128b072ea4eee5475d0fecd7708b3",
+    "tools/check_weighted_stream_reuse_v8.py": "6d651bef5f288c820f0d7c0fce9c4113b5a59b5143faa6274ef0531d22520083"
+  }
+}

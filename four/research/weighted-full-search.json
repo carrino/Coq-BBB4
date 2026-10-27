@@ -1,0 +1,292 @@
+{
+  "campaign_manifest_sha256": "daf0939c36a29229f9a754688a4a1af09e19e1480b57e4823642a949b8354bfe",
+  "candidate_inventory_sha256": "32102cd72e757c8ecbd6a2b71af2ec8a8938f1d00a1ab8ab12c345e211710677",
+  "candidate_kinds": {
+    "ordinary": 5296,
+    "weighted": 14654
+  },
+  "candidate_rows": 19950,
+  "complement_inventory_sha256": "190b30d63df432008172554ebc2a078fb957b074453c3f2ad076fabcd83cb38a",
+  "final_ledger_sha256": "6f6ee09467576a891dbd5da8637ae9401b08dfffe4695b4ef2279f780d9cdfa0",
+  "input_rows": 59627,
+  "snapshots": [
+    {
+      "candidate_rows": 555,
+      "input_range": [
+        0,
+        2048
+      ],
+      "path": "research/weighted-full-snapshots/batch000/registry.json",
+      "sha256": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58"
+    },
+    {
+      "candidate_rows": 701,
+      "input_range": [
+        2048,
+        4096
+      ],
+      "path": "research/weighted-full-snapshots/batch001/registry.json",
+      "sha256": "b9827823268e3cb7f998236fc54751fc422d9a1c13d5fc50b90f1943710d61b0"
+    },
+    {
+      "candidate_rows": 690,
+      "input_range": [
+        4096,
+        6144
+      ],
+      "path": "research/weighted-full-snapshots/batch002/registry.json",
+      "sha256": "cdd63241fae57dd1a04976eece09c1693baafc466e2572363171c8fdd92cd18c"
+    },
+    {
+      "candidate_rows": 683,
+      "input_range": [
+        6144,
+        8192
+      ],
+      "path": "research/weighted-full-snapshots/batch003/registry.json",
+      "sha256": "335b0dc9e826b4cfab93b0f6b92e4bc76cb8a9714ef1622f00b08f5853b1ae9b"
+    },
+    {
+      "candidate_rows": 665,
+      "input_range": [
+        8192,
+        10240
+      ],
+      "path": "research/weighted-full-snapshots/batch004/registry.json",
+      "sha256": "b930c41fd2f02610a1752c70f9e48b03ca48d10752a5f4e61b0de5dad14424d3"
+    },
+    {
+      "candidate_rows": 690,
+      "input_range": [
+        10240,
+        12288
+      ],
+      "path": "research/weighted-full-snapshots/batch005/registry.json",
+      "sha256": "48af4db801bce17832829fd34758130dce69fca86545c46aef2998228b88bebe"
+    },
+    {
+      "candidate_rows": 679,
+      "input_range": [
+        12288,
+        14336
+      ],
+      "path": "research/weighted-full-snapshots/batch006/registry.json",
+      "sha256": "e6abd1a8d9b7551ebb85ebe317458a59605e33a4f86bba31691e33e2ecc83a81"
+    },
+    {
+      "candidate_rows": 730,
+      "input_range": [
+        14336,
+        16384
+      ],
+      "path": "research/weighted-full-snapshots/batch007/registry.json",
+      "sha256": "4746b5273010a09dfbcaa752be1a77767a9001620fe993d978529bcd8c9ddcda"
+    },
+    {
+      "candidate_rows": 644,
+      "input_range": [
+        16384,
+        18432
+      ],
+      "path": "research/weighted-full-snapshots/batch008/registry.json",
+      "sha256": "b0e1d0edad4f5f62508ce20ba77c70163bea244974b9ea9e51e07e8fce5de713"
+    },
+    {
+      "candidate_rows": 716,
+      "input_range": [
+        18432,
+        20480
+      ],
+      "path": "research/weighted-full-snapshots/batch009/registry.json",
+      "sha256": "bdfa3cc756dd2faa4f655119a2ca6b5d31b04db685567ad9a0aa61031e036093"
+    },
+    {
+      "candidate_rows": 665,
+      "input_range": [
+        20480,
+        22528
+      ],
+      "path": "research/weighted-full-snapshots/batch010/registry.json",
+      "sha256": "4a0a0ff1ebe434085110381f36bf43218c70a2e04dde25b1fb3d8e01167bdee4"
+    },
+    {
+      "candidate_rows": 691,
+      "input_range": [
+        22528,
+        24576
+      ],
+      "path": "research/weighted-full-snapshots/batch011/registry.json",
+      "sha256": "388f417408e0c9fefe05b81e36204d1d42371506aac5074058425058bcc11099"
+    },
+    {
+      "candidate_rows": 728,
+      "input_range": [
+        24576,
+        26624
+      ],
+      "path": "research/weighted-full-snapshots/batch012/registry.json",
+      "sha256": "71be3b4f85f3a54b3eafaeeb3f4b5e9ee1827ef0a90449a1a540e57ddeaea540"
+    },
+    {
+      "candidate_rows": 699,
+      "input_range": [
+        26624,
+        28672
+      ],
+      "path": "research/weighted-full-snapshots/batch013/registry.json",
+      "sha256": "11825a6657c25e4d560d9fa6d47a32a559aba0f452cb2aa1673f046da526dbde"
+    },
+    {
+      "candidate_rows": 705,
+      "input_range": [
+        28672,
+        30720
+      ],
+      "path": "research/weighted-full-snapshots/batch014/registry.json",
+      "sha256": "b2cbad3331d7fd632c8c17e791bdba3dcce46dec15fe80d7c3eff1fdc7313616"
+    },
+    {
+      "candidate_rows": 646,
+      "input_range": [
+        30720,
+        32768
+      ],
+      "path": "research/weighted-full-snapshots/batch015/registry.json",
+      "sha256": "f1bb69d045a921374a880c2b42a993839a0d07e27fceb275a8c65c6465d9c106"
+    },
+    {
+      "candidate_rows": 652,
+      "input_range": [
+        32768,
+        34816
+      ],
+      "path": "research/weighted-full-snapshots/batch016/registry.json",
+      "sha256": "83065f59e4930de266de18d8aba752a755e6901f6610042bff923f22f4518586"
+    },
+    {
+      "candidate_rows": 655,
+      "input_range": [
+        34816,
+        36864
+      ],
+      "path": "research/weighted-full-snapshots/batch017/registry.json",
+      "sha256": "96a20aef1c74dd89888969d49280014df069604f8c0d762ab2de8b82aec605ea"
+    },
+    {
+      "candidate_rows": 710,
+      "input_range": [
+        36864,
+        38912
+      ],
+      "path": "research/weighted-full-snapshots/batch018/registry.json",
+      "sha256": "f639b60a3b886e2416f2c60b5e325e77c473ab6221113c538f59f70ad31bcf04"
+    },
+    {
+      "candidate_rows": 701,
+      "input_range": [
+        38912,
+        40960
+      ],
+      "path": "research/weighted-full-snapshots/batch019/registry.json",
+      "sha256": "c1f6c6f1e9a110d2c5c2138a81c1ef988ed85f6dec6b4741850cee990b36dc21"
+    },
+    {
+      "candidate_rows": 690,
+      "input_range": [
+        40960,
+        43008
+      ],
+      "path": "research/weighted-full-snapshots/batch020/registry.json",
+      "sha256": "91ef942aeda7202835e91abe0393d0d4841d5966a9f64e345bf2a3155068f020"
+    },
+    {
+      "candidate_rows": 708,
+      "input_range": [
+        43008,
+        45056
+      ],
+      "path": "research/weighted-full-snapshots/batch021/registry.json",
+      "sha256": "f8965a77b939e9e12cb75963e7d53d79bd6b6496b2794928c2450c9fc613a278"
+    },
+    {
+      "candidate_rows": 710,
+      "input_range": [
+        45056,
+        47104
+      ],
+      "path": "research/weighted-full-snapshots/batch022/registry.json",
+      "sha256": "ad99e29e71b7e742788e200d7c6a15dd54e85b4867affc73d060190c723a90bd"
+    },
+    {
+      "candidate_rows": 701,
+      "input_range": [
+        47104,
+        49152
+      ],
+      "path": "research/weighted-full-snapshots/batch023/registry.json",
+      "sha256": "4a229d3874fff68f0ed350a72af3c8cefaf69190e30c3224de49392845b30f2f"
+    },
+    {
+      "candidate_rows": 670,
+      "input_range": [
+        49152,
+        51200
+      ],
+      "path": "research/weighted-full-snapshots/batch024/registry.json",
+      "sha256": "832278c6d26e26c385d08cdd270460989505b95bb8873076766513147693ec7a"
+    },
+    {
+      "candidate_rows": 682,
+      "input_range": [
+        51200,
+        53248
+      ],
+      "path": "research/weighted-full-snapshots/batch025/registry.json",
+      "sha256": "9888fd030c133424e33ec1e447e66b04051aa379ddc16ff576f0dd6a3d8764d9"
+    },
+    {
+      "candidate_rows": 686,
+      "input_range": [
+        53248,
+        55296
+      ],
+      "path": "research/weighted-full-snapshots/batch026/registry.json",
+      "sha256": "11ec299dce30717c8ed4214ce0bb7ddcad870c1946b833a085f6bcf67c98b0a2"
+    },
+    {
+      "candidate_rows": 706,
+      "input_range": [
+        55296,
+        57344
+      ],
+      "path": "research/weighted-full-snapshots/batch027/registry.json",
+      "sha256": "92eac86184796de0abff454703cc0e08e3fa4449b0bab5a700d29bd8a0319626"
+    },
+    {
+      "candidate_rows": 706,
+      "input_range": [
+        57344,
+        59392
+      ],
+      "path": "research/weighted-full-snapshots/batch028/registry.json",
+      "sha256": "1018213c3d64e6296f749e24cd0135df7d91ba4eaf2e2a7d47f28932ef9d2912"
+    },
+    {
+      "candidate_rows": 86,
+      "input_range": [
+        59392,
+        59627
+      ],
+      "path": "research/weighted-full-snapshots/batch029/registry.json",
+      "sha256": "26924eaee4d0beefb3100ad4770a16ece05afe701669a79a147d650d80a51745"
+    }
+  ],
+  "sources_sha256": {
+    "research/weighted-full-cohort-input.json": "caee6f1a465cac15cddd867b4af0e032172a1224161faa60769503b956eddf71",
+    "research/weighted-full-cohort.json": "e87ebb0148efe78b3834d6683452f2ac7f54f3c4e64e53c23f0f2cfdc010536a",
+    "tools/summarize_weighted_full.py": "bdc498ef10dadf97cba81dbea975ad505f46f6b5c7b2d8de6c7a64cf65301c27",
+    "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a"
+  },
+  "status": "Complete untrusted candidate search; only separate audited boards establish proofs.",
+  "without_retained_candidate": 39677
+}

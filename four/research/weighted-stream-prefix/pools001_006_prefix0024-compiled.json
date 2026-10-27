@@ -1,0 +1,89 @@
+{
+  "status": "compiled_queued_campaign_audit",
+  "checked_canonical_cores": 0,
+  "compiled_canonical_cores": 695,
+  "descriptor": {
+    "module": "BBB24WeightedPrefixPools001_006P0024.PrefixAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 4096,
+    "proof_source": "build/weighted-stream-prefix/pools001_006_prefix0024/PrefixAll.v",
+    "load_paths": [
+      {
+        "path": "build/weighted-stream/pools001_006",
+        "namespace": "BBB24WeightedStreamPools001_006"
+      },
+      {
+        "path": "build/weighted-stream-prefix/pools001_006_prefix0024",
+        "namespace": "BBB24WeightedPrefixPools001_006P0024"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/weighted-stream-prefix/pools001_006_prefix0024-input.json",
+        "format": "json_columns"
+      }
+    ],
+    "compiled_report": "research/weighted-stream-prefix/pools001_006_prefix0024-compiled.json"
+  },
+  "input_sha256": "d67848da13445da759604c977d79d34c890fc80fba86292498f64173a0d1be29",
+  "source_artifacts_sha256": {
+    "build/weighted-stream/pools001_006/Part0000.v": "42c2a68d5186d1e68d38cda36873728bf5840b84775f623161390598a2a423b2",
+    "build/weighted-stream/pools001_006/Part0000.vo": "ca9c8794bb69300f2697bbf543fc2675c85834396c932d0e4a3b104655095b1d",
+    "build/weighted-stream/pools001_006/Part0001.v": "c4ce62dafba5c24356d658e123539b969b6becab9309510ec53a2963f5b659ec",
+    "build/weighted-stream/pools001_006/Part0001.vo": "03befc5d76c6bca79a909dfb828fef66ca0c152d57212487ef6392d13ba48bef",
+    "build/weighted-stream/pools001_006/Part0002.v": "a981634f03eae4c9948935fd789f4a85eb5af5c36e637524c4cdb8aa8d82e370",
+    "build/weighted-stream/pools001_006/Part0002.vo": "bfcf9b65931b14dd967ad3a028301ee1c27a573edcf62900f08ec2f171759627",
+    "build/weighted-stream/pools001_006/Part0003.v": "2c4ccf2452ddb8d9a1486d17314bba6c8be0cb877e9aa7549f8ec80659795355",
+    "build/weighted-stream/pools001_006/Part0003.vo": "bfa35436fd5138d33579279166d3f285bd33c7525eaee7e36386d923243ffee1",
+    "build/weighted-stream/pools001_006/Part0004.v": "e3bf32885c8fd32b1e54750e52c31b8dd60d172ee2d25da22e12a7165ea22543",
+    "build/weighted-stream/pools001_006/Part0004.vo": "62d224b013c8c6ed06b4a7c5ba6923703b3581fb96a873f4695ddc9cc9a7442b",
+    "build/weighted-stream/pools001_006/Part0005.v": "b0553261af9dc559428d1b3f8b73dca95fea6f9aac51c3c46a73d02e9c7c195c",
+    "build/weighted-stream/pools001_006/Part0005.vo": "613be4ff33adc525d68e78c75fb71dd635d244f2a3c4609b612a05fc5ec80785",
+    "build/weighted-stream/pools001_006/Part0006.v": "8aaff63bbd033d68b36fccbe3727dcfcee90a1ba755658ae63e221d26e5e322e",
+    "build/weighted-stream/pools001_006/Part0006.vo": "d10c95e397bcda5a93bd28ba98b3ed0d53b70b0b1cce64b5c32aa41afa2dd880",
+    "build/weighted-stream/pools001_006/Part0007.v": "5c418b84c830dd2836c8275085546347234c4da5c5ef10da94b6283d56829b45",
+    "build/weighted-stream/pools001_006/Part0007.vo": "23dcb44653c21a4598fd04c8627beea232fa3163a1d1af911f88ea401806cde0",
+    "build/weighted-stream/pools001_006/Part0008.v": "9cb7f4c7da15f2b4c307a5e57d4c494c9eeef2cdc045de5c61ebe7fc6f0c2acb",
+    "build/weighted-stream/pools001_006/Part0008.vo": "dbce8042b71e5ac246d0704655b90b4467a626887d5dae2ed54205f88ba0ae35",
+    "build/weighted-stream/pools001_006/Part0009.v": "1b0eaa71eaba7c66c7e2bbdf47553b0c889e0e2b917297b2e879ae9ea405b552",
+    "build/weighted-stream/pools001_006/Part0009.vo": "40772032a532726842f1a3d537f504f1ffbb7456cab8fc62f3c3dbad6846a329",
+    "build/weighted-stream/pools001_006/Part0010.v": "6523556077133aecfa25564a03947fa38ca94d940e7129d90fbb6d5f98f5615e",
+    "build/weighted-stream/pools001_006/Part0010.vo": "b2b178ba6e84c66121aaa86a5d2a61a94826ff3666077dd6c811c043dcd786a2",
+    "build/weighted-stream/pools001_006/Part0011.v": "bb56437887b808c042e2caec74cf54a9bae40a2c4f7bf373092c40f069ee4178",
+    "build/weighted-stream/pools001_006/Part0011.vo": "f039218759a82bca90857f5d988230d773972fc0f080abcd897ebd4282da0199",
+    "build/weighted-stream/pools001_006/Part0012.v": "87c82012578e1b74614bf2207b4625c948a4b6123d12e98a03de6a8a9f3e487e",
+    "build/weighted-stream/pools001_006/Part0012.vo": "c61edc42cd5f63631ad45cdfe336ca87504180b930ff6876cc88656afb70afa7",
+    "build/weighted-stream/pools001_006/Part0013.v": "1a906a13614761df79dff8b11e7a5e291ca3dec380a79884bfb59c5db25182f7",
+    "build/weighted-stream/pools001_006/Part0013.vo": "7f7048e779815a6b166672f35a6c4d2a1d0a5f6b65336afbdfaf4754877ddd72",
+    "build/weighted-stream/pools001_006/Part0014.v": "f25ebf34ca6c71798d2d8dc76e8a75c38fde5d5c37412958b02ae337a677bca3",
+    "build/weighted-stream/pools001_006/Part0014.vo": "a38e2ddef235177bc2a8e3d92007230ddb08c35188332e6d43ae1ed9a732de88",
+    "build/weighted-stream/pools001_006/Part0015.v": "3f111814ac36fa14ae9d266d5f249ff2eb03fc523b6b33a2d550ed40b8d72a9a",
+    "build/weighted-stream/pools001_006/Part0015.vo": "52d48ef43988466a3fd43ee05bd914e68f10e79452fd8150bfa2b1869ab11bf1",
+    "build/weighted-stream/pools001_006/Part0016.v": "2a3e2a755d20938581b2d58960e47a367f5faad7d1d96c4ffa71fbf52e7a7aea",
+    "build/weighted-stream/pools001_006/Part0016.vo": "06ca7a888abe6c2e45576398124118ee99c7331bfa253a1160fb4f1b5d6fe760",
+    "build/weighted-stream/pools001_006/Part0017.v": "a9b460535f1144a08cebdc9f2cd512d4662437f3a517ed534e20eb81fb452f92",
+    "build/weighted-stream/pools001_006/Part0017.vo": "4e3aa65cd585794ce7c26c92aa9aad9195c2295b1b15b32b03cf3770601bede2",
+    "build/weighted-stream/pools001_006/Part0018.v": "98c70b2fab47fbf836aa61a3ed2cbdc27b1492107876a4246a8c322cbb336f31",
+    "build/weighted-stream/pools001_006/Part0018.vo": "58993463d835f7cfe3d37e12a952049d022dafe65c33172560a94dc4b7c74d89",
+    "build/weighted-stream/pools001_006/Part0019.v": "ebdb39e58526dbd066aa398917511e6c5bc354f7e02f129fbd23cdd3d345fc18",
+    "build/weighted-stream/pools001_006/Part0019.vo": "3c1618da0e2c272ad3f869cd9e1e43be5c705d5c0ec6c7efdbe5b4ccb49244d1",
+    "build/weighted-stream/pools001_006/Part0020.v": "a33cb0f3bbfc7bd80b33e3ce794a1c5f6f76ec8fca58dd2aee004df983f0e11c",
+    "build/weighted-stream/pools001_006/Part0020.vo": "0d5bfc66b6055cf08ea4b5e2ebde096c861fceaa9adad99bb2654f00301b8e20",
+    "build/weighted-stream/pools001_006/Part0021.v": "e12868e4bb20c002eacbf8e3016c91576c19ac37b5813362dabbf697ecd75bf7",
+    "build/weighted-stream/pools001_006/Part0021.vo": "b60d0bb3c5a2b9f95945653d72631c0f11c6d652d2795ec5d02f426f6247b6a4",
+    "build/weighted-stream/pools001_006/Part0022.v": "e3f88fe45308dc8b11fca0d0a8135e2f0c14d6a03ba5847ef306b330a2e4234f",
+    "build/weighted-stream/pools001_006/Part0022.vo": "c643878c963b5c94c4cbdc73b5c03487952b0177ffd4f1ff00c44ed744cf3014",
+    "build/weighted-stream/pools001_006/Part0023.v": "125365ac3ddb3621b3cbe1a1b65a7886c745a85d20567d1a24aef3c049bb592a",
+    "build/weighted-stream/pools001_006/Part0023.vo": "2c0295ce3c1ceb942b8428bfa3cc989b0b3246fbfb947607b5ef1accdc3a4c9f"
+  },
+  "compiled_snapshot": "build/weighted-stream-prefix/pools001_006_prefix0024/compiled-snapshot.json",
+  "compiled_snapshot_sha256": "fc97841cbe2c14386d32d183518ab1e68ab4dccf8a38a06ecad5315cb0704cc4",
+  "tool_sha256": "28fbd7707a44059986932a9665e009c334bf118d24d3c6fbdbe85ec17b2661e4",
+  "ledger_sha256": "657a58ee3b8cbd609bf634b4058c41b01a0ef1b8eccfe05723eb5f9a23d36678",
+  "promotion_requirement": "The combined campaign must independently validate every transitive proof object, directly or through exact-artifact audit receipts, before publishing this prefix as checked.",
+  "driver_source_sha256": "38d6a3a4825adca890c94fd0c9fb70bea807f060708e860a79e9a7eba635f399"
+}

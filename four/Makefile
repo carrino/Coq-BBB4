@@ -24,7 +24,16 @@ check: all
 	  BBB24.TransportIndexRegression BBB24.Alphabet23 BBB24.DualCloseout \
 	  BBB24.OrbitCloseout BBB24.BoardManifest BBB24.BranchCloseout \
 	  BBB24.WeightedSuffix BBB24.AlphabetMask BBB24.AlphabetQuotientState \
-	  BBB24.WeightedTailRegression BBB24.WeightedStateRegression
+	  BBB24.WeightedTailRegression BBB24.WeightedStateRegression \
+	  BBB24.BranchPrefix BBB24.FastWall BBB24.FastWallRegression \
+	  BBB24.InstructionPortfolio BBB24.MarkerPotential BBB24.MarkerPotentialRegression \
+	  BBB24.MarkerState BBB24.MarkerStateRegression BBB24.MarkerTrail \
+	  BBB24.MarkerTrailRegression BBB24.MarkerWalls BBB24.MarkerWallsRegression \
+	  BBB24.ReadyReuse BBB24.ReadyReuseRegression BBB24.ReadySwap \
+	  BBB24.ReadySwapRegression BBB24.RightMarkerFamily BBB24.RightMarkerState \
+	  BBB24.StateBranchCloseout BBB24.StateBranchCycles BBB24.StateBranchJoin \
+	  BBB24.StateHistoryCertificate BBB24.StateHistoryCertificateRegression BBB24.WeightedCapacity \
+	  BBB24.WeightedSuffixRegression
 check-affine-batch: all
 	python3 tools/check_affine_batch.py
 check-affine-closeout: check-affine-batch

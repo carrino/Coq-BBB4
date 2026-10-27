@@ -1,0 +1,36 @@
+{
+  "scope": "Untrusted certificate-only parameter specialization and composite-return pilot; Coq replay still required",
+  "parameters": {
+    "bound": 4096,
+    "cfuel": 4096,
+    "fuel": 8192,
+    "cpu_seconds_per_row": 0.1,
+    "moduli": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      1
+    ],
+    "maximum_return_power": 4
+  },
+  "input_rows": 163,
+  "source_sha256": "224efe12b864760932e76320ed937bab6084b3554dd222a567e02f4bc08110bd",
+  "input_sha256": "b6732ffd4152e506c12810c89a5566a0ea4db9a5f61aad46df65a624e76e9fd4",
+  "search_statuses": {
+    "replay_false": 109,
+    "timeout": 24,
+    "repaired_candidate": 30
+  },
+  "native_replay_statuses": {
+    "replay_true": 30
+  },
+  "search_tsv_sha256": "c31136a76b406f41ef56827cab43070b31c223cf7be1bd426882132fb710f3a9",
+  "replay_tsv_sha256": "ea8e67568d6d976809d8433c4a6fca58fd675012f1daab0cffbfd8bd0101cb09",
+  "row_wall_seconds": 21.964785,
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "method": "Replace K by m*J+r for the initial residue class. Compose up to four claimed affine parameter returns, keep only integral induced updates, and require unchanged ir_check on every emitted certificate."
+}
