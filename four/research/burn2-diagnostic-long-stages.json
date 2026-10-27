@@ -1,0 +1,18 @@
+[
+  {
+    "anchor": 4096,
+    "extra": 2,
+    "fuel": 8192,
+    "history": 0,
+    "mode": "rw",
+    "size": 7
+  },
+  {
+    "anchor": 4096,
+    "extra": 3,
+    "fuel": 8192,
+    "history": 0,
+    "mode": "rw",
+    "size": 4
+  }
+]

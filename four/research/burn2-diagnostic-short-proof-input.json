@@ -1,0 +1,26 @@
+{
+  "scope": "State only; every selected family requires Coq replay. No instruction bound.",
+  "encoding": "Eight base-17 cells, A0 least significant. Code=4*write+2*right+next_B;16 undefined.",
+  "source_report": "research/burn2-diagnostic-short-search.json",
+  "source_report_sha256": "9584f09a8b390836991525dbac5fd65d4c9d46f1fc98c6c9ad830e3753cddabe",
+  "source_rows": 21,
+  "selected_rows": 9,
+  "state_bound": 4096,
+  "instruction_bound": null,
+  "groups": [
+{
+  "stage": 0,
+  "certificate": {
+    "anchor": 4096,
+    "extra": 32,
+    "fuel": 16384,
+    "history": 3,
+    "mode": "hist",
+    "size": 4
+  },
+  "rows": [
+    4408164996, 3641147725, 5277476996, 3587153311, 3349309575, 4842329254, 6438246227, 3302885533, 5330752004
+  ]
+}
+  ]
+}

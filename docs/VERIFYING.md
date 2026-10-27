@@ -266,6 +266,13 @@ and audit the supplement with `make -C four check-next-campaign`; inspect its
 commands with `make -C four list-next-campaign`. The guide also explains how to
 reconstruct the combined per-machine burndown after replaying both campaigns.
 
+The [second burndown round](../four/BURN2.md) extends that supplement with
+additional repeated-word replays, wider state searches, capacity refinements,
+and conjugacy transport. Run `make -C four check-burn2-campaign` to replay its
+expanded dependency graph, or `make -C four list-burn2-campaign` to inspect the
+commands. This includes the first supplement; the frozen 113-board checkpoint
+is still needed to reproduce the full combined burndown lists.
+
 The default campaign target produces separate lists of families still lacking
 a checked state bound or instruction bound. Candidate-search counts are
 reported separately from these proof obligations.

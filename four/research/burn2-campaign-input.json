@@ -1,0 +1,536 @@
+{
+  "boards": [
+    {
+      "board": "board",
+      "id": "NextRWBatch32V1",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/next-rw-batch32v1-board-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextRW",
+          "path": "build/next-rw"
+        }
+      ],
+      "module": "BBB24NextRW.Batch32V1All",
+      "rows": 32,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "NextTimeoutNonrwV1",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/next-timeout-nonrw-v1-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextTimeoutNonrwV1",
+          "path": "build/next-timeout/nonrw-v1"
+        }
+      ],
+      "module": "BBB24NextTimeoutNonrwV1.All",
+      "rows": 93,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "next_capacity",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-capacity-capacity-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextCapacity",
+          "path": "build/next-capacity/capacity-proof"
+        },
+        {
+          "namespace": "BBB24NextPortfolio",
+          "path": "build/next-capacity/portfolio-proof"
+        },
+        {
+          "namespace": "BBB24NextCapacityInventory",
+          "path": "build/next-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24NextCapacityInventory.Capacity",
+      "rows": 1,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "next_portfolio",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-capacity-portfolio-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextCapacity",
+          "path": "build/next-capacity/capacity-proof"
+        },
+        {
+          "namespace": "BBB24NextPortfolio",
+          "path": "build/next-capacity/portfolio-proof"
+        },
+        {
+          "namespace": "BBB24NextCapacityInventory",
+          "path": "build/next-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24NextCapacityInventory.Portfolio",
+      "rows": 4,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "state_board",
+      "id": "next_weighted_state",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-weighted-state-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextWeightedState",
+          "path": "build/next-weighted-state/full"
+        }
+      ],
+      "module": "BBB24NextWeightedState.WeightedStateAll",
+      "rows": 240,
+      "scope": "state",
+      "small_sound": "state_board_small",
+      "sound": "state_board_bound",
+      "state_bound": 4096,
+      "was_pending": "state_board_pending"
+    },
+    {
+      "board": "champion_census_board",
+      "exact_champion": true,
+      "id": "ChampionCensusNext",
+      "instruction_bound": 205770076433044242247860,
+      "instruction_bound_term": "scoreN",
+      "inventories": [
+        {
+          "format": "packed17",
+          "order": "input",
+          "path": "research/next-champion-inventory.json"
+        }
+      ],
+      "load_paths": [],
+      "module": "BBB24.ChampionCensusNext",
+      "rows": 1,
+      "scope": "both",
+      "small_sound": "champion_census_board_sound",
+      "sound": "champion_census_board_sound",
+      "state_bound": 205770076433044242247860,
+      "state_bound_term": "scoreN",
+      "was_pending": "champion_census_board_pending"
+    },
+    {
+      "board": "state_board",
+      "id": "bbb24burn2statepilot",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-state-pilot-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2StatePilot",
+          "path": "build/burn2-state/weighted-pilot-proof"
+        }
+      ],
+      "module": "BBB24Burn2StatePilot.WeightedStateAll",
+      "rows": 119,
+      "scope": "state",
+      "small_sound": "state_board_small",
+      "sound": "state_board_bound",
+      "state_bound": 4096,
+      "was_pending": "state_board_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn2CapacityInventory.Ordinary.inventory_exact",
+      "id": "burn2_capacity_ordinary",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-capacity-ordinary-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2CapacityOrdinary",
+          "path": "build/burn2-capacity/ordinary-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityWeighted",
+          "path": "build/burn2-capacity/weighted-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityInventory",
+          "path": "build/burn2-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24Burn2CapacityInventory.Ordinary",
+      "proof_source": "build/burn2-capacity/inventory-proof/Ordinary.v",
+      "rows": 7,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn2CapacityInventory.Weighted.inventory_exact",
+      "id": "burn2_capacity_weighted",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-capacity-weighted-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2CapacityOrdinary",
+          "path": "build/burn2-capacity/ordinary-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityWeighted",
+          "path": "build/burn2-capacity/weighted-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityInventory",
+          "path": "build/burn2-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24Burn2CapacityInventory.Weighted",
+      "proof_source": "build/burn2-capacity/inventory-proof/Weighted.v",
+      "rows": 6,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "bbb24burn2stateordinarypilot",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-state-ordinary-pilot-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2StateOrdinaryPilot",
+          "path": "build/burn2-state/ordinary-pilot-proof"
+        }
+      ],
+      "module": "BBB24Burn2StateOrdinaryPilot.OrdinaryAll",
+      "rows": 14,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "NextTimeoutBurn2Rw128V1",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/next-timeout-burn2-rw128-v1-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextTimeoutBurn2Rw128V1",
+          "path": "build/next-timeout/burn2-rw128-v1"
+        }
+      ],
+      "module": "BBB24NextTimeoutBurn2Rw128V1.All",
+      "rows": 128,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "Burn2Structural",
+      "instruction_bound": 8192,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/burn2-structural-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2Structural",
+          "path": "build/burn2-structural/proof"
+        }
+      ],
+      "module": "BBB24Burn2Structural.Inventory",
+      "rows": 67,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 8192,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "NextTimeoutBurn2Rw256Offset256V1",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/next-timeout-burn2-rw256-offset256-v1-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextTimeoutBurn2Rw256Offset256V1",
+          "path": "build/next-timeout/burn2-rw256-offset256-v1"
+        }
+      ],
+      "module": "BBB24NextTimeoutBurn2Rw256Offset256V1.All",
+      "rows": 256,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "Burn2RWB128",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/burn2-rw-b128-board-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2RWB128",
+          "path": "build/burn2-rw/b128"
+        }
+      ],
+      "module": "BBB24Burn2RWB128.All",
+      "rows": 128,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "state_board",
+      "id": "bbb24burn2statefull",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-state-full-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2StateFull",
+          "path": "build/burn2-state/weighted-full-proof"
+        }
+      ],
+      "module": "BBB24Burn2StateFull.WeightedStateAll",
+      "rows": 754,
+      "scope": "state",
+      "small_sound": "state_board_small",
+      "sound": "state_board_bound",
+      "state_bound": 4096,
+      "was_pending": "state_board_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn2DiagnosticShort.HistoryInventory.inventory_exact",
+      "id": "burn2_diagnostic_history",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-diagnostic-short-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2DiagnosticShort",
+          "path": "build/burn2-diagnostic-short/proof"
+        }
+      ],
+      "module": "BBB24Burn2DiagnosticShort.HistoryInventory",
+      "proof_source": "build/burn2-diagnostic-short/proof/HistoryInventory.v",
+      "rows": 9,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "bbb24burn2stateordinaryfull",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-state-full-ordinary-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2StateOrdinaryFull",
+          "path": "build/burn2-state/ordinary-full-proof"
+        }
+      ],
+      "module": "BBB24Burn2StateOrdinaryFull.OrdinaryAll",
+      "rows": 121,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "state_board",
+      "id": "bbb24burn3capacitystate",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-capacity-state-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3CapacityState",
+          "path": "build/burn3-capacity-state/proof"
+        }
+      ],
+      "module": "BBB24Burn3CapacityState.WeightedStateAll",
+      "rows": 5,
+      "scope": "state",
+      "small_sound": "state_board_small",
+      "sound": "state_board_bound",
+      "state_bound": 4096,
+      "was_pending": "state_board_pending"
+    },
+    {
+      "board": "board",
+      "id": "Burn2RWB256",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/burn2-rw-b256-board-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2RWB256",
+          "path": "build/burn2-rw/b256"
+        }
+      ],
+      "module": "BBB24Burn2RWB256.All",
+      "rows": 256,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "Burn2TimeoutStatePriority207",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/burn2-timeout-state-priority207-board-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2TimeoutStatePriority207",
+          "path": "build/burn2-timeout-state/priority207"
+        }
+      ],
+      "module": "BBB24Burn2TimeoutStatePriority207.All",
+      "rows": 207,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    }
+  ],
+  "cohort": {
+    "format": "packed17",
+    "machine_text_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+    "path": "research/campaign-cohort.json",
+    "rows": 133185
+  },
+  "scope": "Expanded supplementary census, preserving the first six boards and adding the second burndown round. Exact inventories and complete dependency audit are required; no global upper-bound claim."
+}

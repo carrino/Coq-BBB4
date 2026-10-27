@@ -1,0 +1,440 @@
+{
+  "description": "Replay the expanded supplementary census from frozen compact inputs. No discovery search; global union accounting also requires the original 113-board checkpoint.",
+  "steps": [
+    {
+      "id": "core",
+      "depends": [],
+      "command": [
+        "make",
+        "-C",
+        "four",
+        "all",
+        "-j2"
+      ],
+      "boards": [
+        "BBB24.ChampionCensusNext"
+      ]
+    },
+    {
+      "id": "next-rw",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_next_rw.py",
+        "--timeout",
+        "120",
+        "--audit-timeout",
+        "1200"
+      ],
+      "boards": [
+        "BBB24NextRW.Batch32V1All"
+      ]
+    },
+    {
+      "id": "next-timeout",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_next_timeout.py",
+        "run",
+        "--batch",
+        "nonrw-v1",
+        "--modes",
+        "ng,finite,hist",
+        "--timeout",
+        "60",
+        "--audit-timeout",
+        "1800",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24NextTimeoutNonrwV1.All"
+      ]
+    },
+    {
+      "id": "next-weighted-state",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_next_weighted_state.py",
+        "--report",
+        "four/research/next-weighted-state-checked.json",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24NextWeightedState.WeightedStateAll"
+      ]
+    },
+    {
+      "id": "next-capacity",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_next_capacity.py",
+        "--output-dir",
+        "four/build/next-capacity",
+        "--timeout",
+        "300",
+        "--audit-timeout",
+        "900"
+      ],
+      "boards": [
+        "BBB24NextCapacityInventory.Capacity",
+        "BBB24NextCapacityInventory.Portfolio"
+      ]
+    },
+    {
+      "id": "burn2-state-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_burn2_weighted_state.py",
+        "--input",
+        "four/research/burn2-state-pilot-input.json",
+        "--report",
+        "four/research/burn2-state-pilot-checked.json",
+        "--inventory",
+        "four/research/burn2-state-pilot-machines.json",
+        "--output-dir",
+        "four/build/burn2-state/weighted-pilot-proof",
+        "--namespace",
+        "BBB24Burn2StatePilot",
+        "--shard-size",
+        "4",
+        "--timeout",
+        "300",
+        "--audit-timeout",
+        "1800",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24Burn2StatePilot.WeightedStateAll"
+      ]
+    },
+    {
+      "id": "burn2-capacity",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_burn2_capacity.py"
+      ],
+      "boards": [
+        "BBB24Burn2CapacityInventory.Ordinary",
+        "BBB24Burn2CapacityInventory.Weighted"
+      ]
+    },
+    {
+      "id": "burn2-state-ordinary-pilot",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_burn2_state_ordinary.py",
+        "--input",
+        "four/research/burn2-state-ordinary-pilot-input.json",
+        "--report",
+        "four/research/burn2-state-ordinary-pilot-checked.json",
+        "--inventory",
+        "four/research/burn2-state-ordinary-pilot-machines.json",
+        "--output-dir",
+        "four/build/burn2-state/ordinary-pilot-proof",
+        "--namespace",
+        "BBB24Burn2StateOrdinaryPilot",
+        "--shard-size",
+        "2",
+        "--timeout",
+        "300",
+        "--audit-timeout",
+        "1800",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24Burn2StateOrdinaryPilot.OrdinaryAll"
+      ]
+    },
+    {
+      "id": "burn2-timeout128",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_next_timeout.py",
+        "run",
+        "--batch",
+        "burn2-rw128-v1",
+        "--modes",
+        "rw",
+        "--offset",
+        "0",
+        "--limit",
+        "128",
+        "--timeout",
+        "120",
+        "--audit-timeout",
+        "1800",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24NextTimeoutBurn2Rw128V1.All"
+      ]
+    },
+    {
+      "id": "burn2-structural",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_burn2_structural.py",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24Burn2Structural.Inventory"
+      ]
+    },
+    {
+      "id": "burn2-timeout256",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_next_timeout.py",
+        "run",
+        "--batch",
+        "burn2-rw256-offset256-v1",
+        "--modes",
+        "rw",
+        "--offset",
+        "256",
+        "--limit",
+        "256",
+        "--timeout",
+        "120",
+        "--audit-timeout",
+        "1800",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24NextTimeoutBurn2Rw256Offset256V1.All"
+      ]
+    },
+    {
+      "id": "burn2-rw128",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_burn2_rw.py",
+        "--batch",
+        "B128",
+        "--replay",
+        "--timeout",
+        "120",
+        "--audit-timeout",
+        "2400"
+      ],
+      "boards": [
+        "BBB24Burn2RWB128.All"
+      ]
+    },
+    {
+      "id": "burn2-state-full",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_burn2_weighted_state.py",
+        "--input",
+        "four/research/burn2-state-full-input.json",
+        "--report",
+        "four/research/burn2-state-full-checked.json",
+        "--inventory",
+        "four/research/burn2-state-full-machines.json",
+        "--output-dir",
+        "four/build/burn2-state/weighted-full-proof",
+        "--namespace",
+        "BBB24Burn2StateFull",
+        "--shard-size",
+        "4",
+        "--timeout",
+        "300",
+        "--audit-timeout",
+        "1800",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24Burn2StateFull.WeightedStateAll"
+      ]
+    },
+    {
+      "id": "burn2-diagnostic-history",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_burn2_diagnostic.py",
+        "--timeout",
+        "300",
+        "--audit-timeout",
+        "1200"
+      ],
+      "boards": [
+        "BBB24Burn2DiagnosticShort.HistoryInventory"
+      ]
+    },
+    {
+      "id": "burn2-state-ordinary-full",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_burn2_state_ordinary.py",
+        "--input",
+        "four/research/burn2-state-full-ordinary-input.json",
+        "--report",
+        "four/research/burn2-state-full-ordinary-checked.json",
+        "--inventory",
+        "four/research/burn2-state-full-ordinary-machines.json",
+        "--output-dir",
+        "four/build/burn2-state/ordinary-full-proof",
+        "--namespace",
+        "BBB24Burn2StateOrdinaryFull",
+        "--shard-size",
+        "2",
+        "--timeout",
+        "300",
+        "--audit-timeout",
+        "1800",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24Burn2StateOrdinaryFull.OrdinaryAll"
+      ]
+    },
+    {
+      "id": "burn2-capacity-state-followup",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_burn2_weighted_state.py",
+        "--input",
+        "four/research/burn3-capacity-state-input.json",
+        "--report",
+        "four/research/burn3-capacity-state-checked.json",
+        "--inventory",
+        "four/research/burn3-capacity-state-machines.json",
+        "--output-dir",
+        "four/build/burn3-capacity-state/proof",
+        "--namespace",
+        "BBB24Burn3CapacityState",
+        "--shard-size",
+        "1",
+        "--timeout",
+        "300",
+        "--audit-timeout",
+        "1200",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24Burn3CapacityState.WeightedStateAll"
+      ]
+    },
+    {
+      "id": "burn2-rw256",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_burn2_rw.py",
+        "--batch",
+        "B256",
+        "--replay",
+        "--timeout",
+        "120",
+        "--audit-timeout",
+        "2400"
+      ],
+      "boards": [
+        "BBB24Burn2RWB256.All"
+      ]
+    },
+    {
+      "id": "burn2-timeout-state-priority",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_burn2_timeout_states.py",
+        "--batch",
+        "Priority207",
+        "--replay",
+        "--timeout",
+        "120",
+        "--audit-timeout",
+        "2400"
+      ],
+      "boards": [
+        "BBB24Burn2TimeoutStatePriority207.All"
+      ]
+    },
+    {
+      "id": "burn2-campaign",
+      "depends": [
+        "next-rw",
+        "next-timeout",
+        "next-weighted-state",
+        "next-capacity",
+        "burn2-state-pilot",
+        "burn2-capacity",
+        "burn2-state-ordinary-pilot",
+        "burn2-timeout128",
+        "burn2-structural",
+        "burn2-timeout256",
+        "burn2-rw128",
+        "burn2-state-full",
+        "burn2-diagnostic-history",
+        "burn2-state-ordinary-full",
+        "burn2-capacity-state-followup",
+        "burn2-rw256",
+        "burn2-timeout-state-priority"
+      ],
+      "coverage_manifest": "four/research/burn2-campaign-input.json",
+      "command": [
+        "python3",
+        "four/tools/check_campaign_next.py",
+        "--manifest",
+        "four/research/burn2-campaign-input.json",
+        "--report",
+        "four/research/burn2-campaign-summary.json",
+        "--output-dir",
+        "four/build/burn2-campaign",
+        "--namespace",
+        "BBB24Burn2Campaign",
+        "--resume"
+      ]
+    }
+  ]
+}

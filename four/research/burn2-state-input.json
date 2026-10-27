@@ -1,0 +1,9 @@
+{
+  "state_residual": 2504,
+  "queued_state_excluded": 409,
+  "capacity_near_misses_excluded": 6,
+  "remaining_rows": 2089,
+  "remaining_sha256": "05a2237284b53d9c1ff3a6bc493f5ed4a3ca4c1fbb538827f976202ff9c8d37c",
+  "selection": "SHA256(bbb24-burn2-state: + machine), excluding queued and capacity-near-miss IDs",
+  "scope": "Untrusted search scheduling only"
+}

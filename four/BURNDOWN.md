@@ -28,14 +28,16 @@ proved recurring behavior, and separate state-only solvers. The combined
 checked inventories and their intersection with the starting cohort are
 recorded in [`campaign-final-summary.json`](research/campaign-final-summary.json).
 The [first supplementary round](NEXT_BURNDOWN.md) adds 131 instruction families
-and 254 state families to that frozen checkpoint. Of the 133,185 starting
-families, **99,824 have both bounds checked** and **130,681 have a state bound
-checked**, leaving **33,361 instruction-bound** and **2,504 state-bound**
-obligations. The exact union and per-machine lists are recorded in
-[`next-burndown-summary.json`](research/next-burndown-summary.json).
-The earlier separate search queue has **32,629** rows, down **75.5%** from the
-starting cohort; **4,227 distinct existing candidates** remain for proof replay.
-Search candidates and completed Coq discharges remain separate counts.
+and 254 state families to that frozen checkpoint. The [second round](BURN2.md)
+adds another **1,190 instruction bounds** and **1,432 state bounds**. Of the
+133,185 starting families, **101,014 have both bounds checked** and **132,113
+have a state bound checked**, leaving **32,171 instruction-bound** and **1,072
+state-bound** obligations. The exact union and per-machine lists are recorded in
+[`burn2-burndown-summary.json`](research/burn2-burndown-summary.json).
+The earlier separate search queue had **32,629** rows, down **75.5%** from the
+starting cohort. The existing replay queue now has **3,252 instruction
+candidates** and no remaining state obligations. Search candidates and
+completed Coq discharges remain separate counts.
 
 ## First checked sample snapshot
 

@@ -1,0 +1,66 @@
+{
+  "assignments": [
+    {
+      "id": "rw",
+      "rows": 2801,
+      "scope": "Remaining repeated-word queue; prioritize 124 state obligations"
+    },
+    {
+      "id": "timeout",
+      "rows": 1426,
+      "scope": "Remaining timeout repeated-word queue; bounded deterministic offsets",
+      "state_obligations": 285
+    },
+    {
+      "id": "capacity",
+      "rows": 54,
+      "scope": "54 seven-target near-misses; widen windows and combine orientations"
+    },
+    {
+      "id": "state",
+      "rows": 2089,
+      "scope": "Fresh state residual excluding all queued IDs and capacity near-misses; wider weighted-state search plus ordinary graph successes"
+    },
+    {
+      "id": "structural",
+      "scope": "Inspect residual family transport, census shadows and template reuse; account for overlaps explicitly"
+    },
+    {
+      "id": "review",
+      "scope": "Independent receipt, source/object and exact per-ID delta verification"
+    },
+    {
+      "excludes": [
+        "research/next-timeout-burn2-rw128-v1-input.json",
+        "research/next-timeout-burn2-rw256-offset256-v1-input.json"
+      ],
+      "id": "timeout-state-priority",
+      "rows": 207,
+      "scope": "Replay the remaining state-obligation subset after the two disjoint timeout batches; this is a subset of the original timeout assignment, not an additional disjoint cohort."
+    },
+    {
+      "id": "diagnostic-state",
+      "rows": 32,
+      "scope": "Bounded selected-instruction/direct-state capacity experiments and behavior-guided deeper history/RW probes on 32 fixed misses from the fresh-state assignment; no new proof claim without kernel audit."
+    }
+  ],
+  "input_sha256": {
+    "build/next-burndown/both-remaining.txt": "c3a6e078bd2035be5b70616123bda70bcb0dafd1c1cc314f1551ecda4bc30283",
+    "build/next-burndown/queued.tsv": "a942a894967973085b67e67e004376455b296b166c5c713a58cbd0acf383e6dd",
+    "build/next-burndown/state-remaining.txt": "80eb3390d632f8e48ae60ff4255b0faa06d971539e3ff9101ca4946d751d61bb",
+    "research/campaign-final-summary.json": "e3b29cf0416c9a93f0c6831f68040074b6016939aa1b486dbd361923996c5e89",
+    "research/next-burndown-summary.json": "a224f5bebeb41173699170e8b7e86868018a2366cf3204cb19ffcd64c292767d",
+    "research/next-campaign-summary.json": "c9ba0148d448e16cd869c7e1468a468d4f894e3d7853994e0e9fec05ef96ac1b"
+  },
+  "preservation": "All prior published reports, pinned checkers, sources and proof objects remain unchanged. New batch inputs and reports use fresh names; generated proof shards stay under ignored build directories.",
+  "scope": "Second supplementary burndown round. Candidate assignments are scheduling only; each accepted family requires exact inventory, pending membership, typed all-completion bounds and complete kernel audit. No global upper-bound claim.",
+  "starting_commit": "33d957bb413b400d99f38820b0ffe9c0fc4bd5ba",
+  "starting_remaining": {
+    "instruction": 33361,
+    "state": 2504
+  },
+  "starting_replay_candidates": {
+    "distinct": 4227,
+    "state_obligations": 409
+  }
+}
