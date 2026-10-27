@@ -126,12 +126,14 @@ their combined coverage theorem from compact tracked inputs.
 
 The [stronger campaign](WAVE3.md) adds weighted recurrence, state-only tiers,
 deeper affine/closure passes, structural marker invariants, and reusable
-recurring suffixes. Its final combined audit covers **122,895 distinct families
-for both bounds** and **153,629 for the state bound**. In the original
-133,185-row cohort, **33,492 instruction-bound** and **2,758 state-bound**
-obligations remain. `make -C four check-campaign` rebuilds the recorded boards
-and their combined coverage theorem; the guide separates these proved counts
-from the **32,629-row search remainder**.
+recurring suffixes. Together with the [first supplementary round](NEXT_BURNDOWN.md),
+the audited boards cover **123,026 distinct families for both bounds** and
+**153,883 for the state bound**. In the original 133,185-row cohort,
+**33,361 instruction-bound** and **2,504 state-bound** obligations remain.
+`make -C four check-campaign` rebuilds the frozen 113-board checkpoint;
+`make -C four check-next-campaign` rebuilds the six supplementary boards and
+their coverage theorem. The guides distinguish these proved counts from the
+earlier **32,629-row search remainder** and the current **4,227-ID replay queue**.
 
 [`research/triage-256.json`](research/triage-256.json) records a deeper,
 untrusted survey at 256 steps and a deterministic sample of 512 surviving

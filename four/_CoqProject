@@ -144,3 +144,4 @@ theories/StateHistoryCertificate.v
 theories/StateHistoryCertificateRegression.v
 theories/WeightedCapacity.v
 theories/WeightedSuffixRegression.v
+theories/ChampionCensusNext.v

@@ -183,6 +183,12 @@ the remaining global census obligation distinct.
 
 ## Next burndown
 
+The [first supplementary round](NEXT_BURNDOWN.md) has now checked 131 additional
+instruction families and 254 additional state families, including the champion
+census entry. The resulting cohort residuals are **33,361 instruction / 2,504
+state**. The original report and queue below remain frozen; the new guide links
+their verified union and the remaining 4,227-ID replay queue.
+
 1. **Finish replaying the existing candidates.** The deduplicated next-work
    list contains **4,352 instruction-bound candidates** (2,833 repeated-word
    and 1,519 timeout recoveries) and **661 state-bound candidates**. There are

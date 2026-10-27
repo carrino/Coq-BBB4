@@ -1,0 +1,172 @@
+{
+  "scope": "First supplementary audited boards after campaign-final. Historical campaign files remain unchanged. Exact champion registration requires an explicit singleton opt-in and binary score binding. No global upper-bound claim.",
+  "cohort": {
+    "path": "research/campaign-cohort.json",
+    "format": "packed17",
+    "rows": 133185,
+    "machine_text_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7"
+  },
+  "boards": [
+    {
+      "board": "board",
+      "id": "NextRWBatch32V1",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/next-rw-batch32v1-board-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextRW",
+          "path": "build/next-rw"
+        }
+      ],
+      "module": "BBB24NextRW.Batch32V1All",
+      "rows": 32,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "NextTimeoutNonrwV1",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/next-timeout-nonrw-v1-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextTimeoutNonrwV1",
+          "path": "build/next-timeout/nonrw-v1"
+        }
+      ],
+      "module": "BBB24NextTimeoutNonrwV1.All",
+      "rows": 93,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "next_capacity",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-capacity-capacity-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextCapacity",
+          "path": "build/next-capacity/capacity-proof"
+        },
+        {
+          "namespace": "BBB24NextPortfolio",
+          "path": "build/next-capacity/portfolio-proof"
+        },
+        {
+          "namespace": "BBB24NextCapacityInventory",
+          "path": "build/next-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24NextCapacityInventory.Capacity",
+      "rows": 1,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "next_portfolio",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-capacity-portfolio-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextCapacity",
+          "path": "build/next-capacity/capacity-proof"
+        },
+        {
+          "namespace": "BBB24NextPortfolio",
+          "path": "build/next-capacity/portfolio-proof"
+        },
+        {
+          "namespace": "BBB24NextCapacityInventory",
+          "path": "build/next-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24NextCapacityInventory.Portfolio",
+      "rows": 4,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "state_board",
+      "id": "next_weighted_state",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-weighted-state-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextWeightedState",
+          "path": "build/next-weighted-state/full"
+        }
+      ],
+      "module": "BBB24NextWeightedState.WeightedStateAll",
+      "rows": 240,
+      "scope": "state",
+      "small_sound": "state_board_small",
+      "sound": "state_board_bound",
+      "state_bound": 4096,
+      "was_pending": "state_board_pending"
+    },
+    {
+      "id": "ChampionCensusNext",
+      "scope": "both",
+      "module": "BBB24.ChampionCensusNext",
+      "board": "champion_census_board",
+      "sound": "champion_census_board_sound",
+      "small_sound": "champion_census_board_sound",
+      "was_pending": "champion_census_board_pending",
+      "rows": 1,
+      "state_bound": 205770076433044242247860,
+      "instruction_bound": 205770076433044242247860,
+      "state_bound_term": "scoreN",
+      "instruction_bound_term": "scoreN",
+      "load_paths": [],
+      "inventories": [
+        {
+          "path": "research/next-champion-inventory.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "exact_champion": true
+    }
+  ]
+}

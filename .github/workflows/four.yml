@@ -60,3 +60,21 @@ jobs:
           name: four-campaign-${{ matrix.step }}
           path: four/build/campaign-rebuild/*.log
           retention-days: 7
+  supplement-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Replay and audit the six supplementary boards
+        run: make -C four check-next-campaign
+      - name: Preserve supplement replay logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: four-supplement-replay
+          path: four/build/next-campaign-rebuild/*.log
+          retention-days: 7

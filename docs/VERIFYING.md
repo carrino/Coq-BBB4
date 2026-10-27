@@ -260,6 +260,12 @@ python3 four/tools/rebuild_campaign.py --only affine-pilot --list
 python3 four/tools/rebuild_campaign.py --only weighted-state-pilot
 ```
 
+The [supplementary burndown guide](../four/NEXT_BURNDOWN.md) adds six new boards,
+including the exact champion's census entry. Rebuild their dependency graph
+and audit the supplement with `make -C four check-next-campaign`; inspect its
+commands with `make -C four list-next-campaign`. The guide also explains how to
+reconstruct the combined per-machine burndown after replaying both campaigns.
+
 The default campaign target produces separate lists of families still lacking
 a checked state bound or instruction bound. Candidate-search counts are
 reported separately from these proof obligations.

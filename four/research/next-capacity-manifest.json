@@ -1,0 +1,48 @@
+{
+  "binary_sha256": "81f4fdebca820fb3dc4f64553999ae806648674536388171b56c665b191da95d",
+  "input_sha256": "b7a9cc198ecce2792498d5b56b6e2d4e252c4286cf0b57f0dcf463923325d794",
+  "parameters": {
+    "address_space_bytes": 1610612736,
+    "anchor": 4096,
+    "fuel": 8193,
+    "graph_orientation_seconds": 0.5,
+    "machine_wall_seconds": 20,
+    "node_limit": 2048,
+    "rounds": 33,
+    "target_lp_seconds": 2,
+    "wall_width": 16,
+    "width": 2,
+    "workers": 1
+  },
+  "scope": "Untrusted discovery sample; no proof claim or population extrapolation.",
+  "selection": {
+    "all_queue_ids_excluded": 4592,
+    "both_residual": 33492,
+    "eligible_after_exclusions": 28411,
+    "method": "First rows ordered by SHA256(seed + colon + machine)",
+    "prior_sample_ids_excluded": 576,
+    "queue_ids_in_both_residual": 4592,
+    "rows": 128,
+    "sample_prior_overlap": 0,
+    "sample_queue_overlap": 0,
+    "sample_state_unproved": 13,
+    "seed": "bbb24-next-capacity-2026-10-27",
+    "state_residual": 2758
+  },
+  "solver_sources_sha256": {
+    "tools/search_next_capacity.py": "267a8b2249652ae4c4facd30d5aa46ce04a089750a47b8c310cda860b3070eb3",
+    "tools/weighted_capacity_search.py": "8698e571369581a2259c4658479e882c38c2aa5a48c56d9b793fe16e82231a6f",
+    "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "tools/weighted_graphs_v2.ml": "6aaab0b0ba75a78a0df12bf232a8cf63ffe239df7da31267f0ef64bd3d43e0f8",
+    "tools/weighted_portfolio_search.py": "59229f2c9e17c11a96092ea5ee704b4f11a7da2209d3f06ed41a5f3501dae244",
+    "tools/weighted_search.py": "783d099f855fa6db1f9c62b33b32161b300c558674a0e5894d4dd6f54cbb4b99",
+    "tools/weighted_search_v2.py": "0035b8fb5337864205139fc08fca93a86eae3172e0ae6bac378c64a468be1259"
+  },
+  "sources_sha256": {
+    "build/campaign-final/both-unproved-initial-cohort.txt": "d39dd387880a7f8ba5064d0c0317f12c7c8abc6ecb5ca8eb171085c9102cb2b1",
+    "build/campaign-final/state-unproved-initial-cohort.txt": "4e6146e70bf3607dda21485b200e0bc40354b90bf3ee5b40fb1191b4b466db8e",
+    "build/campaign-next/queued.tsv": "69f5ae95e09705f20f1a289881d563fa20a371be3e8e2f57008cb26350e83b29",
+    "build/weighted-followup512/input.txt": "6cef12e6159fe44422a28ed3c89dc75ed0859c01f9dd057ed463af3b502e6652",
+    "build/weighted-followup64/input.txt": "f1319e3039ea904d0c183fb26830dd9525dc982d20b97bdd2b042e337d246717"
+  }
+}

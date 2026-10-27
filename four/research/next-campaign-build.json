@@ -1,0 +1,118 @@
+{
+  "description": "Replay the six supplementary boards from frozen compact inputs and preserve published reports; no discovery search. Union accounting additionally requires the original campaign replay.",
+  "steps": [
+    {
+      "id": "core",
+      "depends": [],
+      "command": [
+        "make",
+        "-C",
+        "four",
+        "all",
+        "-j2"
+      ],
+      "boards": [
+        "BBB24.ChampionCensusNext"
+      ]
+    },
+    {
+      "id": "next-rw",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_next_rw.py",
+        "--timeout",
+        "120",
+        "--audit-timeout",
+        "1200"
+      ],
+      "boards": [
+        "BBB24NextRW.Batch32V1All"
+      ]
+    },
+    {
+      "id": "next-timeout",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/check_next_timeout.py",
+        "run",
+        "--batch",
+        "nonrw-v1",
+        "--modes",
+        "ng,finite,hist",
+        "--timeout",
+        "60",
+        "--audit-timeout",
+        "1800",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24NextTimeoutNonrwV1.All"
+      ]
+    },
+    {
+      "id": "next-weighted-state",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_next_weighted_state.py",
+        "--report",
+        "four/research/next-weighted-state-checked.json",
+        "--resume"
+      ],
+      "boards": [
+        "BBB24NextWeightedState.WeightedStateAll"
+      ]
+    },
+    {
+      "id": "next-capacity",
+      "depends": [
+        "core"
+      ],
+      "command": [
+        "python3",
+        "four/tools/replay_next_capacity.py",
+        "--output-dir",
+        "four/build/next-capacity",
+        "--timeout",
+        "300",
+        "--audit-timeout",
+        "900"
+      ],
+      "boards": [
+        "BBB24NextCapacityInventory.Capacity",
+        "BBB24NextCapacityInventory.Portfolio"
+      ]
+    },
+    {
+      "id": "next-campaign",
+      "depends": [
+        "next-rw",
+        "next-timeout",
+        "next-weighted-state",
+        "next-capacity"
+      ],
+      "coverage_manifest": "four/research/next-campaign-input.json",
+      "command": [
+        "python3",
+        "four/tools/check_campaign_next.py",
+        "--manifest",
+        "four/research/next-campaign-input.json",
+        "--report",
+        "four/research/next-campaign-summary.json",
+        "--output-dir",
+        "four/build/next-campaign",
+        "--namespace",
+        "BBB24NextCampaign",
+        "--resume"
+      ]
+    }
+  ]
+}

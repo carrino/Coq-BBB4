@@ -1,4 +1,4 @@
-.PHONY: all small23-deps check check-affine-batch check-affine-closeout check-closure-batch check-shadow-links check-transport check-wave check-campaign list-campaign clean
+.PHONY: all small23-deps check check-affine-batch check-affine-closeout check-closure-batch check-shadow-links check-transport check-wave check-campaign list-campaign check-next-campaign list-next-campaign clean
 CAMPAIGN_JOBS ?= 1
 all: small23-deps Makefile.coq
 	$(MAKE) -f Makefile.coq
@@ -33,7 +33,7 @@ check: all
 	  BBB24.ReadySwapRegression BBB24.RightMarkerFamily BBB24.RightMarkerState \
 	  BBB24.StateBranchCloseout BBB24.StateBranchCycles BBB24.StateBranchJoin \
 	  BBB24.StateHistoryCertificate BBB24.StateHistoryCertificateRegression BBB24.WeightedCapacity \
-	  BBB24.WeightedSuffixRegression
+	  BBB24.WeightedSuffixRegression BBB24.ChampionCensusNext
 check-affine-batch: all
 	python3 tools/check_affine_batch.py
 check-affine-closeout: check-affine-batch
@@ -50,5 +50,9 @@ check-campaign:
 	python3 tools/rebuild_campaign.py --jobs $(CAMPAIGN_JOBS)
 list-campaign:
 	python3 tools/rebuild_campaign.py --list
+check-next-campaign:
+	python3 tools/rebuild_campaign.py --plan research/next-campaign-build.json --only next-campaign --jobs $(CAMPAIGN_JOBS) --log-dir build/next-campaign-rebuild
+list-next-campaign:
+	python3 tools/rebuild_campaign.py --plan research/next-campaign-build.json --only next-campaign --list
 clean: Makefile.coq
 	$(MAKE) -f Makefile.coq clean
