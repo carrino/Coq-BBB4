@@ -6,18 +6,23 @@
     "blank": {
       "families": 63426,
       "family_weight": 2842146,
+      "total_completion_weight": 2331696,
       "root_multiplier": 2,
       "raw_table_weight": 5684292,
+      "raw_total_table_weight": 4663392,
       "inventory_sha256": "4e7a25f1b57086896e77b2e0fa686be8d207cac4dedf3f70ab3ea1a5206867ee"
     },
     "nonblank": {
       "families": 547934,
       "family_weight": 5639582,
+      "total_completion_weight": 4874204,
       "root_multiplier": 6,
       "raw_table_weight": 33837492,
+      "raw_total_table_weight": 29245224,
       "inventory_sha256": "8599abad2aa4238e53eb8bc5ac406178d9d21cd9da56804d3c93572016dd1de9"
     }
   },
+  "raw_total_table_weight": 33908616,
   "status_counts": {
     "candidate_unchecked": 782,
     "coq_checked": 4,

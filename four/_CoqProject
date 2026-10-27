@@ -19,6 +19,7 @@ theories/Instructions.v
 theories/Bounds.v
 theories/CycleCensus.v
 theories/Census.v
+theories/TotalCompletion.v
 theories/Bootstrap.v
 theories/CensusRegression.v
 theories/Checkers/IRules/AnchorVisits.v

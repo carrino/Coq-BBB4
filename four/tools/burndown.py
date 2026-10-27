@@ -16,7 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FIELDS = ['status', 'reason', 'machine', 'root', 'free_cells',
-          'family_weight', 'root_multiplier', 'state_bound',
+          'family_weight', 'total_completion_weight', 'root_multiplier', 'state_bound',
           'instruction_bound', 'proof', 'census_linked']
 
 
@@ -37,6 +37,7 @@ def ledger_row(machine, result, verified):
     row = dict.fromkeys(FIELDS, '')
     row.update(machine=machine, root=root, free_cells=machine.count('---'),
                family_weight=17**machine.count('---'),
+               total_completion_weight=16**machine.count('---'),
                root_multiplier=2 if root == 'blank' else 6, census_linked='no')
     if result is None:
         row['status'] = 'not_sampled'
@@ -102,12 +103,15 @@ def main():
         rows = [ledger_row(m, by_machine.get(m), verified) for m in machines]
         require(all(r['root'] == label for r in rows), f'Wrong root in {label} inventory')
         weight = sum(r['family_weight'] for r in rows)
+        total_weight = sum(r['total_completion_weight'] for r in rows)
         require(len(rows) == report['roots'][label]['leaves']['unresolved'], 'Family count changed')
         require(weight == report['roots'][label]['weighted']['unresolved'], 'Family weight changed')
         all_statuses.update(r['status'] for r in rows)
         roots[label] = dict(families=len(rows), family_weight=weight,
+                            total_completion_weight=total_weight,
                             root_multiplier=root_class['multiplicity'],
                             raw_table_weight=weight*root_class['multiplicity'],
+                            raw_total_table_weight=total_weight*root_class['multiplicity'],
                             inventory_sha256=digest(path))
         if args.inventory:
             inventories.extend(rows)
@@ -117,6 +121,7 @@ def main():
     summary = dict(
         baseline='256-step exploratory survey; four separately checked affine families',
         families=len(seen), raw_table_weight=report['raw_unresolved_weight'], roots=roots,
+        raw_total_table_weight=sum(r['raw_total_table_weight'] for r in roots.values()),
         status_counts=dict(sorted(all_statuses.items())),
         sample_size=len(sample), sample_status_counts=dict(sorted(Counter(r['status'] for r in sampled).items())),
         sample_no_certificate_reasons=report['baseline']['unresolved_reasons'],

@@ -109,6 +109,8 @@ horizon is eight.
 [`BURNDOWN.md`](BURNDOWN.md) tracks the 611,360-family search queue, the sampled
 holdouts, and the separate certified remainder. It links a compact machine ledger
 and commands to generate the full inventory locally.
+[`GROUPING.md`](GROUPING.md) records the symmetry and shadow reductions, shared
+submachine patterns, and the BBB(4) pipeline stages still missing from this survey.
 
 [`research/triage-256.json`](research/triage-256.json) records a deeper,
 untrusted survey at 256 steps and a deterministic sample of 512 surviving

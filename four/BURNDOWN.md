@@ -1,15 +1,33 @@
 # BBB(2,4) burndown
 
+**This is an early survey, not the remainder after the full BBB(4) pipeline.**
+Only exact/translated cycles were swept at 256 steps, followed by affine search
+on a sample. The [grouping investigation](GROUPING.md) reduces the raw family
+list to **284,541 symmetry representatives**, with **10,572 candidate shadows**
+of **273,969 nonblank-start cores**, and identifies the missing pipeline stages.
+
 Baseline: 2026-10-26. The 256-step exploratory survey leaves **611,360
 partial-table families**, representing **39,521,784 raw tables** after the
 initial-transition symmetry multipliers. This is the practical search queue;
-the number of genuinely difficult families is still unknown.
+the number of difficult families after stronger filtering is still unknown.
 
 A family fixes some transitions and leaves others as `---`. Each free cell has
 17 possible completions. Family counts and raw-table weights therefore measure
 different things. The machine string is the stable row identifier. The two
 initial-transition classes below are representatives, not a full quotient by
 all state/symbol symmetries.
+
+For the non-halting search we can focus on **16^8 = 4,294,967,296 fully defined
+tables**. `TotalCompletion.totalize_scores` proves that filling a non-halting
+machine's unused entries preserves its exact state and instruction scores.
+The same 611,360 survey families represent **33,908,616 fully defined tables**
+(using 16 rather than 17 choices per free cell). Their family count does not
+change: the partial rows are compressed descriptions, not records to discard.
+
+The unrestricted BBB theorem still includes halting machines.
+`global_bounds_from_total_and_halts` records the remaining obligation explicitly:
+a bound for total tables plus a sufficiently small bound for halting times
+implies the unrestricted result. No halting-time bound is assumed here.
 
 ## Search queue
 
@@ -68,6 +86,10 @@ and instruction bound columns even though the current four proofs establish both
 
 - [x] Enumerate the fixed 256-step residual queue and record input hashes.
 - [x] Port the affine checker and validate four representative families.
+- [x] Measure symbol orbits and blank-prefix shadow links; keep transports
+  separate from proof discharge (see [GROUPING.md](GROUPING.md)).
+- [ ] Run the broader BBB(4)-style checker pipeline on representative cores
+  before treating the early survey remainder as difficult holdouts.
 - [ ] Check the remaining **782** sampled candidates; retain any Coq rejections
   as checker investigation cases, rather than counting them as solved.
 - [ ] Measure search/checking cost, then run budgeted, resumable batches over the
@@ -90,7 +112,8 @@ and instruction bound columns even though the current four proofs establish both
   status automatically.
 - `four/build/burndown-inventory.tsv`: generated full list of 611,360 families,
   ignored by Git. `family_weight` excludes `root_multiplier`; multiply them only
-  for exploratory raw-table accounting. The file is about 35 MB.
+  for exploratory raw-table accounting. `total_completion_weight` instead uses
+  16 choices per free cell, restricting to fully defined tables.
 
 From the repository root:
 

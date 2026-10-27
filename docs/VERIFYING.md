@@ -161,19 +161,25 @@ Inspect the final statements and assumptions:
 
 ```bash
 coqtop -quiet -Q four/theories BBB24 <<'COQ'
-From BBB24 Require Import Spec Champion Bootstrap IRuleCensus.
+From BBB24 Require Import Spec Champion Bootstrap IRuleCensus TotalCompletion.
 Check champion_exact.
 Check BBB24_lower_bounds.
 Check bootstrap_coverage.
 Check ir_check_sound.
+Check totalize_scores.
+Check global_bounds_from_total_and_halts.
 Print Assumptions champion_exact.
 Print Assumptions BBB24_lower_bounds.
 Print Assumptions bootstrap_coverage.
 Print Assumptions ir_check_sound.
+Print Assumptions totalize_scores.
+Print Assumptions global_bounds_from_total_and_halts.
 COQ
 ```
 
-All four assumption reports should contain only `functional_extensionality_dep`.
+The first four assumption reports should contain only
+`functional_extensionality_dep`; the two completion theorems are closed under
+the global context (no axioms).
 The census covers every table but explicitly defers unresolved partial-table
 families; its coverage theorem is not a global upper bound. The build uses VM
 computation throughout, avoiding native compilation of the large certificate DAG.
@@ -182,6 +188,10 @@ costs; it never expands the enormous tape or simulates every transition. See
 [`four/README.md`](../four/README.md) for the three rules and proof boundary.
 The [four-symbol burndown](../four/BURNDOWN.md) explains the remaining families
 and how to reproduce their machine-level inventory and proof-status ledger.
+`BBB24.TotalCompletion` proves the reduction to fully defined tables for
+non-halting machines and states the separate halting-time obligation. The
+[grouping report](../four/GROUPING.md) distinguishes exploratory reductions
+from checked coverage and compares the current survey to the BBB(4) pipeline.
 
 ## Tier A — everything except the census walk
 
