@@ -8,6 +8,11 @@ of **273,969 nonblank-start cores**. The [pipeline update](PIPELINE.md) adds
 closure sweeps, checked certificate replay, and census closeout. The baseline
 tables below remain frozen so successive passes can be compared.
 
+The first complete cheap closure sweep over **273,969 core representatives**
+found **93,792 candidates**, leaving **180,177** for stronger filtering. These
+are search outcomes, not kernel-checked discharges or final hard holdouts.
+See [the full stage table](PIPELINE.md#first-complete-core-sweep).
+
 ## Current checked sample
 
 The [current sample ledger](research/progress-sample.tsv) combines audited

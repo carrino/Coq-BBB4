@@ -10,6 +10,30 @@ This is still a staged investigation. A failure at one width, anchor, or fuel
 budget is not evidence of a difficult machine. The complete BBB(4)-style
 escalation ladder has not yet been run on this inventory.
 
+## First complete core sweep
+
+All **273,969** nonblank-start symmetry representatives received the following
+cheap ladder, with anchor 128 and both proposed bounds 4,096:
+
+| Stage | Families examined | Additional candidates | Remaining |
+| --- | ---: | ---: | ---: |
+| N-gram, width 2, fuel 100, rounds 4 | 273,969 | 57,241 | 216,728 |
+| N-gram, width 3, fuel 200, rounds 4 | 216,728 | 22,474 | 194,254 |
+| Repeated-word, length 2, threshold 2, fuel 128 | 194,254 | 14,077 | **180,177** |
+
+The sweep found **93,792 candidate families** in 684,951 checker calls, with no
+timeouts or stack failures. Summed row time was about 13.2 minutes here.
+[`research/pipeline-low-budget.json`](research/pipeline-low-budget.json) pins
+the complete input, checker sources, executable, parameters, and output hashes.
+Full candidate and remaining-family lists live in ignored
+`four/build/pipeline/low-budget/` and are reproducible with the commands below.
+
+These are **extracted-checker search results**, not 93,792 kernel-checked
+discharges. The 180,177 survivors have not received the full escalation ladder:
+finite/history n-grams, stronger repeated-word budgets, and broader affine
+search remain to be swept. Both numbers concern core family representatives,
+not raw machine tables or the census's structural pending weight.
+
 ## Checked pilot and census integration
 
 The deterministic pilot selects the 128 smallest SHA-256 machine hashes from

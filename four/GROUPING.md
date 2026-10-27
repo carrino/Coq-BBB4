@@ -5,6 +5,9 @@ bootstrap stops at eight steps; the exploratory baseline runs 256 steps with
 exact and translated-cycle checks. The [pipeline update](PIPELINE.md) adds
 stronger checker ports, bounded sweeps, and checked closeout over that baseline.
 Its survivors are still budget-limited results, not a final hard residue.
+The first complete cheap closure sweep reduced the 273,969 core work list to
+180,177 unaccepted representatives, with 93,792 candidate certificates awaiting
+broader replay. The separate checked sample ledger records actual proofs.
 
 The old pipeline is described in
 [`Census/Decide.v`](../theories/Census/Decide.v): after halt/cycle checks it
