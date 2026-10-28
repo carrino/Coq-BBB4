@@ -1,0 +1,1109 @@
+{
+  "boards": [
+    {
+      "board": "board",
+      "id": "NextRWBatch32V1",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/next-rw-batch32v1-board-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextRW",
+          "path": "build/next-rw"
+        }
+      ],
+      "module": "BBB24NextRW.Batch32V1All",
+      "rows": 32,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "NextTimeoutNonrwV1",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/next-timeout-nonrw-v1-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextTimeoutNonrwV1",
+          "path": "build/next-timeout/nonrw-v1"
+        }
+      ],
+      "module": "BBB24NextTimeoutNonrwV1.All",
+      "rows": 93,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "next_capacity",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-capacity-capacity-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextCapacity",
+          "path": "build/next-capacity/capacity-proof"
+        },
+        {
+          "namespace": "BBB24NextPortfolio",
+          "path": "build/next-capacity/portfolio-proof"
+        },
+        {
+          "namespace": "BBB24NextCapacityInventory",
+          "path": "build/next-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24NextCapacityInventory.Capacity",
+      "rows": 1,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "next_portfolio",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-capacity-portfolio-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextCapacity",
+          "path": "build/next-capacity/capacity-proof"
+        },
+        {
+          "namespace": "BBB24NextPortfolio",
+          "path": "build/next-capacity/portfolio-proof"
+        },
+        {
+          "namespace": "BBB24NextCapacityInventory",
+          "path": "build/next-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24NextCapacityInventory.Portfolio",
+      "rows": 4,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "state_board",
+      "id": "next_weighted_state",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-weighted-state-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextWeightedState",
+          "path": "build/next-weighted-state/full"
+        }
+      ],
+      "module": "BBB24NextWeightedState.WeightedStateAll",
+      "rows": 240,
+      "scope": "state",
+      "small_sound": "state_board_small",
+      "sound": "state_board_bound",
+      "state_bound": 4096,
+      "was_pending": "state_board_pending"
+    },
+    {
+      "board": "champion_census_board",
+      "exact_champion": true,
+      "id": "ChampionCensusNext",
+      "instruction_bound": 205770076433044242247860,
+      "instruction_bound_term": "scoreN",
+      "inventories": [
+        {
+          "format": "packed17",
+          "order": "input",
+          "path": "research/next-champion-inventory.json"
+        }
+      ],
+      "load_paths": [],
+      "module": "BBB24.ChampionCensusNext",
+      "rows": 1,
+      "scope": "both",
+      "small_sound": "champion_census_board_sound",
+      "sound": "champion_census_board_sound",
+      "state_bound": 205770076433044242247860,
+      "state_bound_term": "scoreN",
+      "was_pending": "champion_census_board_pending"
+    },
+    {
+      "board": "state_board",
+      "id": "bbb24burn2statepilot",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-state-pilot-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2StatePilot",
+          "path": "build/burn2-state/weighted-pilot-proof"
+        }
+      ],
+      "module": "BBB24Burn2StatePilot.WeightedStateAll",
+      "rows": 119,
+      "scope": "state",
+      "small_sound": "state_board_small",
+      "sound": "state_board_bound",
+      "state_bound": 4096,
+      "was_pending": "state_board_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn2CapacityInventory.Ordinary.inventory_exact",
+      "id": "burn2_capacity_ordinary",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-capacity-ordinary-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2CapacityOrdinary",
+          "path": "build/burn2-capacity/ordinary-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityWeighted",
+          "path": "build/burn2-capacity/weighted-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityInventory",
+          "path": "build/burn2-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24Burn2CapacityInventory.Ordinary",
+      "proof_source": "build/burn2-capacity/inventory-proof/Ordinary.v",
+      "rows": 7,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn2CapacityInventory.Weighted.inventory_exact",
+      "id": "burn2_capacity_weighted",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-capacity-weighted-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2CapacityOrdinary",
+          "path": "build/burn2-capacity/ordinary-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityWeighted",
+          "path": "build/burn2-capacity/weighted-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityInventory",
+          "path": "build/burn2-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24Burn2CapacityInventory.Weighted",
+      "proof_source": "build/burn2-capacity/inventory-proof/Weighted.v",
+      "rows": 6,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "bbb24burn2stateordinarypilot",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-state-ordinary-pilot-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2StateOrdinaryPilot",
+          "path": "build/burn2-state/ordinary-pilot-proof"
+        }
+      ],
+      "module": "BBB24Burn2StateOrdinaryPilot.OrdinaryAll",
+      "rows": 14,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "NextTimeoutBurn2Rw128V1",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/next-timeout-burn2-rw128-v1-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextTimeoutBurn2Rw128V1",
+          "path": "build/next-timeout/burn2-rw128-v1"
+        }
+      ],
+      "module": "BBB24NextTimeoutBurn2Rw128V1.All",
+      "rows": 128,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "Burn2Structural",
+      "instruction_bound": 8192,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/burn2-structural-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2Structural",
+          "path": "build/burn2-structural/proof"
+        }
+      ],
+      "module": "BBB24Burn2Structural.Inventory",
+      "rows": 67,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 8192,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "NextTimeoutBurn2Rw256Offset256V1",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/next-timeout-burn2-rw256-offset256-v1-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextTimeoutBurn2Rw256Offset256V1",
+          "path": "build/next-timeout/burn2-rw256-offset256-v1"
+        }
+      ],
+      "module": "BBB24NextTimeoutBurn2Rw256Offset256V1.All",
+      "rows": 256,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "Burn2RWB128",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/burn2-rw-b128-board-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2RWB128",
+          "path": "build/burn2-rw/b128"
+        }
+      ],
+      "module": "BBB24Burn2RWB128.All",
+      "rows": 128,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "state_board",
+      "id": "bbb24burn2statefull",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-state-full-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2StateFull",
+          "path": "build/burn2-state/weighted-full-proof"
+        }
+      ],
+      "module": "BBB24Burn2StateFull.WeightedStateAll",
+      "rows": 754,
+      "scope": "state",
+      "small_sound": "state_board_small",
+      "sound": "state_board_bound",
+      "state_bound": 4096,
+      "was_pending": "state_board_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn2DiagnosticShort.HistoryInventory.inventory_exact",
+      "id": "burn2_diagnostic_history",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-diagnostic-short-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2DiagnosticShort",
+          "path": "build/burn2-diagnostic-short/proof"
+        }
+      ],
+      "module": "BBB24Burn2DiagnosticShort.HistoryInventory",
+      "proof_source": "build/burn2-diagnostic-short/proof/HistoryInventory.v",
+      "rows": 9,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "bbb24burn2stateordinaryfull",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-state-full-ordinary-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2StateOrdinaryFull",
+          "path": "build/burn2-state/ordinary-full-proof"
+        }
+      ],
+      "module": "BBB24Burn2StateOrdinaryFull.OrdinaryAll",
+      "rows": 121,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "state_board",
+      "id": "bbb24burn3capacitystate",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-capacity-state-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3CapacityState",
+          "path": "build/burn3-capacity-state/proof"
+        }
+      ],
+      "module": "BBB24Burn3CapacityState.WeightedStateAll",
+      "rows": 5,
+      "scope": "state",
+      "small_sound": "state_board_small",
+      "sound": "state_board_bound",
+      "state_bound": 4096,
+      "was_pending": "state_board_pending"
+    },
+    {
+      "board": "board",
+      "id": "Burn2RWB256",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/burn2-rw-b256-board-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2RWB256",
+          "path": "build/burn2-rw/b256"
+        }
+      ],
+      "module": "BBB24Burn2RWB256.All",
+      "rows": 256,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "Burn2TimeoutStatePriority207",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/burn2-timeout-state-priority207-board-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2TimeoutStatePriority207",
+          "path": "build/burn2-timeout-state/priority207"
+        }
+      ],
+      "module": "BBB24Burn2TimeoutStatePriority207.All",
+      "rows": 207,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn3History.HistoryInventory.inventory_exact",
+      "id": "burn3_history",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-history-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3History",
+          "path": "build/burn3-history/proof"
+        }
+      ],
+      "module": "BBB24Burn3History.HistoryInventory",
+      "proof_source": "build/burn3-history/proof/HistoryInventory.v",
+      "rows": 378,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn3CapacityInstruction.Inventory.inventory_exact",
+      "id": "burn3_capacity_instruction",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-capacity-instruction-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3CapacityInstruction",
+          "path": "build/burn3-capacity-instruction/proof"
+        }
+      ],
+      "module": "BBB24Burn3CapacityInstruction.Inventory",
+      "proof_source": "build/burn3-capacity-instruction/proof/Inventory.v",
+      "rows": 2,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn3Tail.Inventory.inventory_exact",
+      "id": "burn3_tail_invariant",
+      "instruction_bound": 10,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-tail-invariant-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3Tail",
+          "path": "build/burn3-tail-invariant/proof"
+        }
+      ],
+      "module": "BBB24Burn3Tail.Inventory",
+      "proof_source": "build/burn3-tail-invariant/proof/Inventory.v",
+      "rows": 1,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn3Pair.Inventory.inventory_exact",
+      "id": "burn3_pair_capacity",
+      "instruction_bound": 0,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-pair-capacity-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3Pair",
+          "path": "build/burn3-frequent-invariants/proof"
+        }
+      ],
+      "module": "BBB24Burn3Pair.Inventory",
+      "proof_source": "build/burn3-frequent-invariants/proof/Inventory.v",
+      "rows": 1,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn3RelaxedMarker.Inventory.inventory_exact",
+      "id": "burn3_relaxed_marker",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-relaxed-marker-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3RelaxedMarker",
+          "path": "build/burn3-history-targets/proof"
+        }
+      ],
+      "module": "BBB24Burn3RelaxedMarker.Inventory",
+      "proof_source": "build/burn3-history-targets/proof/Inventory.v",
+      "rows": 1,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn3RelaxedMarkerBatch.Inventory.inventory_exact",
+      "id": "burn3_relaxed_marker_batch",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-relaxed-marker-batch-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3RelaxedMarker",
+          "path": "build/burn3-history-targets/proof"
+        },
+        {
+          "namespace": "BBB24Burn3RelaxedMarkerBatch",
+          "path": "build/burn3-relaxed-marker-batch/proof"
+        }
+      ],
+      "module": "BBB24Burn3RelaxedMarkerBatch.Inventory",
+      "proof_source": "build/burn3-relaxed-marker-batch/proof/Inventory.v",
+      "rows": 26,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "id": "Burn2RWB512",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/burn2-rw-b512-board-input.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2RWB512",
+          "path": "build/burn2-rw/b512"
+        }
+      ],
+      "module": "BBB24Burn2RWB512.All",
+      "rows": 512,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn3HistoryInstruction.HistoryInventory.inventory_exact",
+      "id": "burn3_history_instruction",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-history-instruction-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3HistoryInstruction",
+          "path": "build/burn3-history-instruction/proof"
+        }
+      ],
+      "module": "BBB24Burn3HistoryInstruction.HistoryInventory",
+      "proof_source": "build/burn3-history-instruction/proof/HistoryInventory.v",
+      "rows": 160,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4EntryMarker.Inventory.inventory_exact",
+      "id": "burn4_entry_marker",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-entry-marker-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn4EntryMarker",
+          "path": "build/burn4-entry-marker/proof"
+        }
+      ],
+      "module": "BBB24Burn4EntryMarker.Inventory",
+      "proof_source": "build/burn4-entry-marker/proof/Inventory.v",
+      "rows": 121,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4HistoryRefinement.HistoryInventory.inventory_exact",
+      "id": "burn4_history_refinement",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-history-refinement-pilot-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn4HistoryRefinement",
+          "path": "build/burn4-history-refinement-pilot/proof"
+        }
+      ],
+      "module": "BBB24Burn4HistoryRefinement.HistoryInventory",
+      "proof_source": "build/burn4-history-refinement-pilot/proof/HistoryInventory.v",
+      "rows": 1,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4Ternary.Inventory.inventory_exact",
+      "id": "burn4_ternary_counter",
+      "instruction_bound": 4,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-ternary-counter-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn4Ternary",
+          "path": "build/burn4-ternary-counter/proof"
+        }
+      ],
+      "module": "BBB24Burn4Ternary.Inventory",
+      "proof_source": "build/burn4-ternary-counter/proof/Inventory.v",
+      "rows": 1,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4HistoryTimeout8Pilot.HistoryInventory.inventory_exact",
+      "id": "burn4_history_timeout8_pilot",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-history-timeout8-pilot-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn4HistoryTimeout8Pilot",
+          "path": "build/burn4-history-timeout8/pilot/proof"
+        }
+      ],
+      "module": "BBB24Burn4HistoryTimeout8Pilot.HistoryInventory",
+      "proof_source": "build/burn4-history-timeout8/pilot/proof/HistoryInventory.v",
+      "rows": 5,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4History4Continuation.HistoryInventory.inventory_exact",
+      "id": "burn4_history4_continuation",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-history4-continuation-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn4History4Continuation",
+          "path": "build/burn4-history4-continuation/proof"
+        }
+      ],
+      "module": "BBB24Burn4History4Continuation.HistoryInventory",
+      "proof_source": "build/burn4-history4-continuation/proof/HistoryInventory.v",
+      "rows": 6,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4MarkerComposition.Inventory.inventory_exact",
+      "id": "burn4_marker_composition",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-marker-composition-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3RelaxedMarker",
+          "path": "build/burn3-history-targets/proof"
+        },
+        {
+          "namespace": "BBB24Burn4MarkerComposition",
+          "path": "build/burn4-marker-composition/proof"
+        }
+      ],
+      "module": "BBB24Burn4MarkerComposition.Inventory",
+      "proof_source": "build/burn4-marker-composition/proof/Inventory.v",
+      "rows": 1,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4TernaryTemplate.Inventory.inventory_exact",
+      "id": "burn4_ternary_template",
+      "instruction_bound": 7,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-ternary-template-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn4Ternary",
+          "path": "build/burn4-ternary-counter/proof"
+        },
+        {
+          "namespace": "BBB24Burn4TernaryTemplate",
+          "path": "build/burn4-ternary-template/proof"
+        }
+      ],
+      "module": "BBB24Burn4TernaryTemplate.Inventory",
+      "proof_source": "build/burn4-ternary-template/proof/Inventory.v",
+      "rows": 7,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4TernarySwapped.Inventory.inventory_exact",
+      "id": "burn4_ternary_swapped",
+      "instruction_bound": 8,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-ternary-swapped-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn4Ternary",
+          "path": "build/burn4-ternary-counter/proof"
+        },
+        {
+          "namespace": "BBB24Burn4TernaryTemplate",
+          "path": "build/burn4-ternary-template/proof"
+        },
+        {
+          "namespace": "BBB24Burn4TernarySwapped",
+          "path": "build/burn4-ternary-swapped/proof"
+        }
+      ],
+      "module": "BBB24Burn4TernarySwapped.Inventory",
+      "proof_source": "build/burn4-ternary-swapped/proof/Inventory.v",
+      "rows": 6,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4History4Closure.HistoryInventory.inventory_exact",
+      "id": "burn4_history4_continuation_closure",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-history4-continuation-closure-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn4History4Closure",
+          "path": "build/burn4-history4-continuation-closure/proof"
+        }
+      ],
+      "module": "BBB24Burn4History4Closure.HistoryInventory",
+      "proof_source": "build/burn4-history4-continuation-closure/proof/HistoryInventory.v",
+      "rows": 1,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4HistoryTimeout8Rest.HistoryInventory.inventory_exact",
+      "id": "burn4_history_timeout8_rest",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-history-timeout8-rest-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn4HistoryTimeout8Rest",
+          "path": "build/burn4-history-timeout8/rest/proof"
+        }
+      ],
+      "module": "BBB24Burn4HistoryTimeout8Rest.HistoryInventory",
+      "proof_source": "build/burn4-history-timeout8/rest/proof/HistoryInventory.v",
+      "rows": 16,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn5StructuralInstruction.Inventory.inventory_exact",
+      "id": "burn5_structural_instruction",
+      "instruction_bound": 8192,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn5-structural-instruction-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3Tail",
+          "path": "build/burn3-tail-invariant/proof"
+        },
+        {
+          "namespace": "BBB24Burn5StructuralInstruction",
+          "path": "build/burn5-structural-instruction/proof"
+        }
+      ],
+      "module": "BBB24Burn5StructuralInstruction.Inventory",
+      "proof_source": "build/burn5-structural-instruction/proof/Inventory.v",
+      "rows": 20,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 8192,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn5TailTemplate.Inventory.inventory_exact",
+      "id": "burn5_tail_template",
+      "instruction_bound": 147,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn5-tail-template-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3Tail",
+          "path": "build/burn3-tail-invariant/proof"
+        },
+        {
+          "namespace": "BBB24Burn5TailTemplate",
+          "path": "build/burn5-tail-template/proof"
+        }
+      ],
+      "module": "BBB24Burn5TailTemplate.Inventory",
+      "proof_source": "build/burn5-tail-template/proof/Inventory.v",
+      "rows": 21,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn4History4Growth64.HistoryInventory.inventory_exact",
+      "id": "burn4_history4_continuation_growth64",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn4-history4-continuation-growth64-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn4History4Growth64",
+          "path": "build/burn4-history4-continuation-growth64/proof"
+        }
+      ],
+      "module": "BBB24Burn4History4Growth64.HistoryInventory",
+      "proof_source": "build/burn4-history4-continuation-growth64/proof/HistoryInventory.v",
+      "rows": 3,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    }
+  ],
+  "cohort": {
+    "format": "packed17",
+    "machine_text_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+    "path": "research/campaign-cohort.json",
+    "rows": 133185
+  },
+  "scope": "Sixth supplementary checkpoint: frozen35-board supplement plus six exchanged-state ternary families,16 instruction-history timeout proofs,20 structural instruction transports,21 paired-tail templates, and four extended-growth history state families; exact family IDs with all completions."
+}

@@ -1,0 +1,43 @@
+{
+  "status": "untrusted_native_replay",
+  "manifest": {
+    "index_sha256": "383f1acea7e85f164a9c07fcff6e0020880a81a35ca29af81645787a33b63d94",
+    "input_sha256": "79dcff699284a49f611fbefd4a48daf8fd32d2197d7129599eb94befe72680f9",
+    "excluded_inventory_sha256": {
+      "four/research/late-cycles-full65536.json": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab",
+      "four/research/late-cycles-extra262144.json": "bc697fa40061c2bfd08cd26e9381776f7ba396e43fa50f504e6c33ed376a909e",
+      "four/research/alphabet23-families.json": "f7f53c4edf6ed72266364310a2a3421d098f1eec05d6ed83004b9f193fd06f7a",
+      "four/research/alphabet-mask-families.json": "d79507ff81da8c7a441eb1d1fee77fbe3b044ee174091f673695e5073d8c91dd",
+      "four/research/wave2-families.tsv": "03804f62ef1b4d182eda0d7547bd15dd2b18ed1f3155d4ff2bcbeef15d1f0985",
+      "four/research/weighted-pilot-machines.json": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333"
+    },
+    "sources_sha256": {
+      "four/tools/affine_template_sweep.py": "33f142820cc5396b04f94a61c13a0adb0d64210eebdeed91ba2f740c352cbee1",
+      "four/tools/affine_template_probe.ml": "6cedcb51082937b3edf029e814c82e14c109eb5e1cb0ff8e665757197c98e5fa",
+      "four/tools/affine_template_bank.py": "f3c020c7902755405c565b794f39f74928dd9bbe24dd493315b8632e8826e522",
+      "four/tools/affine_cert_io.ml": "f0221d100b913fd575e5450b38d295a52807297a27eea16437209f8b86ee8557",
+      "four/build/affine-wave/extracted/checker.ml": "801cda1eeeda8fae651efb6ed894f20005fcdd73c659f08ecbd1dc07c157f54b",
+      "four/build/affine-wave/extracted/affine_cert_io.cmx": "1549a380ae0cae888202e3e421a3f959cf0795056ad9ef01ef5ed9e1974d6cc7",
+      "four/build/affine-template-bank/probe": "da968f31813f77c262615411315cf8bcf2d7cee3dbc5fe11441c7a9afed786cb"
+    },
+    "bound": 4096,
+    "cfuel": 4096,
+    "fuel": 8192,
+    "timeout": 0.5,
+    "compatible_targets": 2521,
+    "eligible_targets": 2427,
+    "selected_targets": 2427
+  },
+  "statuses": {
+    "no_template_match": 2000,
+    "replay_true": 427
+  },
+  "accepted_targets": 427,
+  "row_seconds": 3.817227,
+  "template_instances": 18867,
+  "ir_check_calls": 427,
+  "replay_sha256": "24213609ac4732d1084ad68dd55c5324566c615c3e7372fee0b6d0863598d6cd",
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "accounting": "Targets are original input families. Recurring source flags and boot hashes are proposal filters; unchanged target ir_check supplies only native replay evidence until Coq and census replay."
+}

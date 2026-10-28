@@ -1,0 +1,52 @@
+{
+  "candidate_kind": null,
+  "counts": {
+    "graph_status_closed_partial": 2
+  },
+  "events": [
+    {
+      "machine": "1LB0LB---3RA_3RB2RA3LB1RA",
+      "mirror": 0,
+      "nodes": 4225,
+      "phase": "ranking",
+      "ranked": 3,
+      "seconds": 2.015291,
+      "status": "closed_partial"
+    },
+    {
+      "machine": "1LB0LB---3RA_3RB2RA3LB1RA",
+      "mirror": 1,
+      "nodes": 4225,
+      "phase": "ranking",
+      "ranked": 4,
+      "seconds": 2.011944,
+      "status": "closed_partial"
+    }
+  ],
+  "graph_sha256": "188bec31e3c4ef8f53eb1db1158c844e7441efa5759a38ad769d3a8608bfd393",
+  "machine": "1LB0LB---3RA_3RB2RA3LB1RA",
+  "parameters": {
+    "address_space_bytes": 2147483648,
+    "anchor": 4096,
+    "fuel": 8193,
+    "native_seconds": 2,
+    "node_cap": 8192,
+    "rounds": 65,
+    "target_lp_seconds": 3,
+    "wall_width": 32,
+    "width": 4
+  },
+  "scope": "Untrusted single-machine experiment; no proof claim.",
+  "sources_sha256": {
+    "build/burn2-capacity/row-043/result.json": "fb060dffd0e308515c581a6bf838fc6b3bf1f7d65787d478084be2efc7e8a6ee",
+    "build/burn2-capacity/row-043/variants.jsonl": "cc3aff055064edc431de7262ee9e9f21920b28801fb31f45e766d05fe95b4bfa",
+    "build/weighted-v2/dump": "81f4fdebca820fb3dc4f64553999ae806648674536388171b56c665b191da95d",
+    "tools/search_burn2_capacity_cap8192.py": "8d4f95b99eb85ff4225ff8000596e64e9fab75a2c98b6e2e24b8793f25c8687c",
+    "tools/weighted_capacity_search.py": "8698e571369581a2259c4658479e882c38c2aa5a48c56d9b793fe16e82231a6f",
+    "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "tools/weighted_portfolio_search.py": "59229f2c9e17c11a96092ea5ee704b4f11a7da2209d3f06ed41a5f3501dae244",
+    "tools/weighted_search.py": "783d099f855fa6db1f9c62b33b32161b300c558674a0e5894d4dd6f54cbb4b99",
+    "tools/weighted_search_v2.py": "0035b8fb5337864205139fc08fca93a86eae3172e0ae6bac378c64a468be1259"
+  },
+  "wall_seconds": 7.923
+}

@@ -1,0 +1,59 @@
+{
+  "status": "queued_for_combined_audit",
+  "scope": "state_only",
+  "families": 5,
+  "partial": 5,
+  "concrete": 0,
+  "defined_children": 80,
+  "halting_choices": 5,
+  "state_bound": 8192,
+  "instruction_bound": null,
+  "state_census_linked": null,
+  "descriptor": {
+    "kind": "state_only",
+    "module": "BBB24StateBranches.StateBranches",
+    "board": "BBB24StateBranches.StateBranches.branch_state_board",
+    "state_sound": "BBB24StateBranches.StateBranches.branch_state_board_sound",
+    "state_small_sound": "BBB24StateBranches.StateBranches.branch_state_board_small_sound",
+    "was_pending": "BBB24StateBranches.StateBranches.branch_state_board_was_pending",
+    "state_discharge": "BBB24StateBranches.StateBranches.branch_families_state_discharged",
+    "state_coverage": "BBB24StateBranches.StateBranches.bootstrap_branch_state_coverage",
+    "state_bound": 8192,
+    "members": "build/state-branches/machines.txt",
+    "flags": [
+      "-Q",
+      "four/theories",
+      "BBB24",
+      "-Q",
+      "four/build/state-branches",
+      "BBB24StateBranches"
+    ]
+  },
+  "input_sha256": "82f14cbf1d6b24d883f80ea5ddcca3332c896f3b2549282daa4abd6682ba4bbe",
+  "member_ids_sha256": "c5fb83fd128c9141c40baa6062ba3034dda4ecfc574f61efd22f17c7ced2d8e7",
+  "generated_source_sha256": "89ed0783bde2536866e486fa30ce5603b1dc370f24fe5ecb6e0fd6070dacb6cf",
+  "source_sha256": {
+    "four/theories/StateBranchCloseout.v": "034870bed899b00578db37171b2c160329e992160d5ed624a804c417d93f787b",
+    "four/theories/StateOnlyCloseout.v": "afb65dbfc17f3eaa495a5648e6cf024137ec360d4d573b38a563e685c0dce5d2",
+    "four/theories/OneStateReach.v": "412e37f661f7583e2685b910d077c2c1eb734840e2264db10f1700616f5d037b",
+    "four/theories/BranchCloseout.v": "08112eff8d25d157d295305dbc61f1c5c2a274fc28b3b1a734a034f4075129c1",
+    "four/theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+    "four/theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "four/theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "four/theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "four/theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "four/theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "four/theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "four/theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "four/theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "four/theories/TotalCompletion.v": "45fe012cff63886641e3b4a091ca9f2d80c071075d6f2b4cfc68f94137e8bbad",
+    "four/tools/check_state_branches.py": "117ca95f9fff12a693089070737e9d16689fbf0f2d489896ce33b7cc55fec23f",
+    "four/tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "proof_object_sha256": {
+    "theories/StateBranchCloseout.vo": "46496fd76d2e858a8860663e121a7f816c47df5b215b54900f661ed4c7bb42de",
+    "build/state-branches/StateBranches.vo": "801ac4d63b081e7fce60def01769b4ef32a0a24ad8d625606623014ed8f136a6"
+  },
+  "accounting": "Original partial families, not child counts. Each None branch halts within8192; all16 defined branches have state recurrence. No root NonHalt or instruction claim.",
+  "validation": "Compiled exact prefix, all16 defined child recurrence checks and original bootstrap membership; queued for combined recursive audit."
+}

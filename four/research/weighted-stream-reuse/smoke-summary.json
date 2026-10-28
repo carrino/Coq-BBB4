@@ -1,0 +1,62 @@
+{
+  "canonical_cores": 8,
+  "source_weighted_templates": 150,
+  "descriptor": {
+    "module": "BBB24WeightedStreamSmoke.WeightedStreamAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 4096,
+    "proof_source": "build/weighted-stream/smoke/WeightedStreamAll.v",
+    "load_paths": [
+      {
+        "path": "build/weighted-stream/smoke",
+        "namespace": "BBB24WeightedStreamSmoke"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/weighted-stream-reuse/smoke-input.json",
+        "format": "json_columns"
+      }
+    ],
+    "audited_report": "research/weighted-stream-reuse/smoke-summary.json"
+  },
+  "selection": {
+    "candidate_cores": 586,
+    "candidate_pairs": 657,
+    "checker_selected_cores": 8,
+    "context_cache_hits": 6401,
+    "context_cache_limit": 128,
+    "context_cache_misses": 95,
+    "max_boot": 4096,
+    "pattern_keys": 638,
+    "probe_candidates": 8,
+    "selected_cores": 268,
+    "source_masks": 39,
+    "source_templates": 150,
+    "used_templates": 99
+  },
+  "validation": "coqc plus incremental coqchk",
+  "inputs": {
+    "research/weighted-v2-pilot-registry.json": "2485fd638d2dc02783a767625ca477e347bd138e82a652f5f640caabe70b5cc3",
+    "research/weighted-v2-pilot/certificates-0000.json": "41000b5a174bcb1788779e3445e52a9b83614bd62a3a02d60f8fb87451c681f7",
+    "research/weighted-stream-reuse/smoke-input.json": "870773a7ef81f69c543b095572b124883de472104e6bcd51070ce084ab2f80fe",
+    "tools/check_weighted_stream_reuse.py": "869bb432de31dc16d12678a165ede15dc4ea793ba2d60b950f2b648341ca8626",
+    "tools/weighted_template_index.py": "60bc914354bd9610e6ff99fb242ad3fd328b3680545bff307122c2710eb4778e",
+    "tools/weighted_reuse_search.py": "2ee6f34ed9f9ebb2df7d001ae81bf2af8cb1b66c875eb3aec053023d3149f23b",
+    "tools/weighted_render.py": "e203d1d2964cece3f053f7cf9b2184931ad5cc3bb525d2f2a52699cc716d166f",
+    "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e"
+  },
+  "audit_receipt": "build/weighted-stream/smoke/audit-000001.json",
+  "audit_receipt_sha256": "c650f56a98831d115ea441338e7d09c1a953070674890295572b89e9044e6ae0",
+  "ledger_sha256": "1ed196a6cc7514cf005338aefe4db74bb672c5366918bdd51f2c41d1bd51c70e",
+  "proof_source_sha256": {
+    "Part0000.v": "78931f9b8d32d79107906a64b7bafb6007e5d6b3e8f4f6b12a154794c1d45297",
+    "WeightedStreamAll.v": "5e4b77521b3f3172d1cf7b1b1dcd1e782b40a8886c357716dcc88c39229dc5b5"
+  },
+  "publication_note": "Include this exact board in the final recursive combined audit before publishing an updated census total."
+}

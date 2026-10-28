@@ -1,0 +1,18 @@
+{
+  "status": "untrusted_one_transition_relaxed_proposals",
+  "target_families": 59627,
+  "compatible_targets": 39802,
+  "source_templates": 159715,
+  "mask_groups": 92,
+  "cap": 8,
+  "target_template_pairs": 168856,
+  "input_sha256": {
+    "four/build/affine-template-orbits/index.json": "7dc4ad97f4e8158c6e33c6266dc263d4268375f044b1e5cacb50c4f02e81beb3",
+    "four/build/affine-template-short3-orbits/index.json": "3fe02794b8ee76ee5c4e410e0c64fb3ec5d930a3900bda703e20ed086f3a6f70",
+    "four/build/affine-template-fullmask/index.json": "59d999766165e9c83b36185d2844a0368e2ee5595ff3c86e9847f54abcac54ed",
+    "four/build/affine-template-short3-fullmask/index.json": "6faa165b21d75c3782bcb955d93c1471af877a47949944a597ac7c62918bc0f9",
+    "four/build/weighted-v2/full-cohort.txt": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086"
+  },
+  "source_sha256": "0b5d5545988dc6fc5739dec2aa8ee96fef4d854e81b2eb35e2a06e4feda6906b",
+  "index_sha256": "edeb0d719ad0e23764f51c33929c5bc3d61bd2ecc3096e3127d9bd527f8ec7b5"
+}

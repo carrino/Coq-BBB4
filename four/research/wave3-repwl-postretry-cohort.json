@@ -1,0 +1,18 @@
+{
+  "not_accepted_rows": 1388,
+  "not_accepted_sha256": "c2fb2362f2aa23686d91823f320d76ad3b878047d653cf3c9d75cb8e2d0a7ddd",
+  "sources_sha256": {
+    "four/build/wave3/timeout-retry/not-accepted.txt": "c82a62be6185b49e858f8af2d3cb97bb098beca11d7f2fda3c91c6d3dd0119af",
+    "four/build/weighted-v2/full-cohort.txt": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+    "four/build/weighted-v2/full-snapshot000-candidates.txt": "76e71da7cf795aee25e95314435e32ed75c331d22d570ea744b2beb9cf854236",
+    "four/research/wave3-timeout-full.json": "7e660f58f98babd992cad0d01ba8e217b691886d449666b21053dbf25d6d7393",
+    "four/research/weighted-full-snapshots/batch000/registry.json": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58"
+  },
+  "status": "Partial completed-domain cohort for marginal RW diagnostics, not a full census remainder.",
+  "weighted_candidate_rows": 555,
+  "weighted_completed_rows": 2048,
+  "weighted_input_range": [
+    0,
+    2048
+  ]
+}

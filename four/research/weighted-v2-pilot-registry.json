@@ -1,0 +1,37 @@
+{
+  "bundles": [
+    {
+      "bytes": 195045,
+      "path": "research/weighted-v2-pilot/certificates-0000.json",
+      "rows": 205,
+      "sha256": "41000b5a174bcb1788779e3445e52a9b83614bd62a3a02d60f8fb87451c681f7"
+    }
+  ],
+  "format": "BBB24 compact weighted certificates v2",
+  "kinds": {
+    "ordinary": 55,
+    "weighted": 150
+  },
+  "rows": 205,
+  "source": {
+    "graph_params": {
+      "fuel": 8193,
+      "n": 2,
+      "node_limit": 2048,
+      "rounds": 33,
+      "t": 256,
+      "timeout": 0.2
+    },
+    "input_rows": 512,
+    "input_sha256": "dd576115ac4f1344da0fff47fabccfa06c43ef38b077d65fb5572d32c6bcf6ad",
+    "lp_params": {
+      "timeout": 1,
+      "wall_width": 16
+    },
+    "ordinary_candidates": 55,
+    "scope": "Partial residual sample only; not a complete survivor inventory.",
+    "snapshot_sha256": "50899882c24054dbf6cc1f9abfbd0b81427e148533f69f9c5216e0e79db7fd2d",
+    "weighted_candidates": 150
+  },
+  "status": "Untrusted candidates; kernel replay and census discharge required."
+}

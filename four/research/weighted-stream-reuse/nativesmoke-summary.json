@@ -1,0 +1,80 @@
+{
+  "canonical_cores": 8,
+  "source_weighted_templates": 394,
+  "descriptor": {
+    "module": "BBB24WeightedStreamNativesmoke.WeightedStreamAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 4096,
+    "proof_source": "build/weighted-stream/nativesmoke/WeightedStreamAll.v",
+    "load_paths": [
+      {
+        "path": "build/weighted-stream/nativesmoke",
+        "namespace": "BBB24WeightedStreamNativesmoke"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/weighted-stream-reuse/nativesmoke-input.json",
+        "format": "json_columns"
+      }
+    ],
+    "audited_report": "research/weighted-stream-reuse/nativesmoke-summary.json"
+  },
+  "selection": {
+    "candidate_pairs": 150,
+    "candidate_cores": 30,
+    "selected_cores": 30,
+    "source_templates": 394,
+    "source_masks": 49,
+    "pattern_keys": 1514,
+    "max_boot": 4096,
+    "context_cache_limit": 128,
+    "context_cache_hits": 675,
+    "context_cache_misses": 5,
+    "used_templates": 1,
+    "probe_candidates": 8,
+    "native_probe": {
+      "kind": "untrusted extracted OCaml; all successes subsequently replayed in Coq",
+      "parts": 1,
+      "wall_seconds": 6.897934105996683,
+      "child_cpu_seconds": 1.3867459999999998,
+      "extracted_sha256": {
+        "ml": "428f00f47dec1bfd89caa05bafba6b7b9a9e6db12c9b710f834df8f9d765fce1",
+        "mli": "20b1b7c3ad425c3bf10deb0cd2f616224320ecbf114e8ede21766f947be6ed81"
+      }
+    },
+    "checker_selected_cores": 8
+  },
+  "validation": "coqc plus incremental coqchk",
+  "inputs": {
+    "research/weighted-full-snapshots/batch000/registry.json": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58",
+    "research/weighted-full-snapshots/batch000/certificates-0000.json": "7ba8d622890ee1a340c5ec10cb97127dd3e418179add573a6ee89194c71659d0",
+    "research/weighted-full-snapshots/batch000/certificates-0001.json": "dba95e8bb80b3c395fe0541e180f6f12e8f2a4850301627e7f4a9a07bfabce94",
+    "tools/check_weighted_stream_reuse.py": "869bb432de31dc16d12678a165ede15dc4ea793ba2d60b950f2b648341ca8626",
+    "tools/weighted_render_v3.py": "5988c284b17a5e653dfbe6d15f1c3083fd94a32fa0daa3b8745c215d6afbcc98",
+    "tools/weighted_render_v4.py": "8cce618311b0d70bb67074cfdffaa939a517d88fe7c54cf1e275441b6a3e5d9f",
+    "theories/WeightedTail.v": "b8d2690fdbe9d32205281c9e8af69d4f1b443b3c6c6d686a85f5e42c52846a48",
+    "tools/check_weighted_stream_reuse_v5.py": "fbf535042670a93f31d4a8de86eba56324f12a6f509232a32d2b65df57a158ab",
+    "tools/weighted_tail_native.py": "388f9c25be33d51da20ee86fcecac0a9782de8b6fd1d0c51db162038543204e5",
+    "tools/ExtractWeightedTail.v": "11ab4b79b91d59ecbe482930ccf75d354a04788ee79b8192cbfe54ad99ebed23",
+    "research/weighted-stream-reuse/nativesmoke-input.json": "ac024d04f88a3727beffad7a773a6b60229dfbf8f9c3a2b6019532bca6b936cf",
+    "tools/check_weighted_stream_reuse_v6.py": "2031115ae2b9c7d9d4945fcd01a24772568c4858be89db73ab3e048c21d6344b",
+    "tools/weighted_template_index.py": "60bc914354bd9610e6ff99fb242ad3fd328b3680545bff307122c2710eb4778e",
+    "tools/weighted_reuse_search.py": "2ee6f34ed9f9ebb2df7d001ae81bf2af8cb1b66c875eb3aec053023d3149f23b",
+    "tools/weighted_render.py": "e203d1d2964cece3f053f7cf9b2184931ad5cc3bb525d2f2a52699cc716d166f",
+    "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e"
+  },
+  "audit_receipt": "build/weighted-stream/nativesmoke/audit.json",
+  "audit_receipt_sha256": "8a29873c25a68eeb761a2f333226d2b840b026d2059c2b7d5f6c685dfb02c08c",
+  "ledger_sha256": "2111c02ba0caaec537093f0c038bc166969fc45a779c74cb4928d9846835cde1",
+  "proof_source_sha256": {
+    "Part0000.v": "20ada2a7f01a9fffffeefcfee39a35d6cccbfd1d42db069b88930f3b73113a36",
+    "WeightedStreamAll.v": "db4eff100c89b8a05ee549bd5ff2b3f055ce9ed0e5f4fc3e1ca347d7d759e374"
+  },
+  "publication_note": "Include this exact board in the final recursive combined audit before publishing an updated census total."
+}

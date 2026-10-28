@@ -1,0 +1,13 @@
+{
+  "status": "untrusted_template_index",
+  "targets": 6244,
+  "used_templates": 5341,
+  "target_template_pairs": 8787,
+  "inputs_sha256": {
+    "build/affine-template-followup1145/short-orbits/index.json": "ab5387206c1a53a5a57c09d13eef90c094da2aecd2c5522f9e027e2929d2d9b8",
+    "build/affine-template-followup1145/short-fullmask/index.json": "9b63b8b0a27dafd8a39b948b120280696a5b832592ca88c58725e3a8af259f6f",
+    "build/affine-template-followup1145/residue-orbits/index.json": "dda3dccb53027319de387797fe80c0165b659daf90139ecf08f8ff6b245936cd"
+  },
+  "index_sha256": "0c53798b998d6e6912c90c48c99e363a1ab318dd63fe45b8a5140f818349bb68",
+  "builder_sha256": "6143912b7ec744bbad4a4612261934432f881866070f29d3eaf304741e6ecbd7"
+}

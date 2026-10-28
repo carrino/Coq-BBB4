@@ -1,0 +1,45 @@
+{
+  "emitted_certificates": 0,
+  "invalid_budget_results": [
+    {
+      "cpu_seconds": "0",
+      "exit_code": 2
+    },
+    {
+      "cpu_seconds": "-1",
+      "exit_code": 2
+    },
+    {
+      "cpu_seconds": "nan",
+      "exit_code": 2
+    },
+    {
+      "cpu_seconds": "infinity",
+      "exit_code": 2
+    }
+  ],
+  "malformed_certificate_results": [
+    {
+      "case": "duplicate_k0",
+      "status": "invalid_certificate"
+    },
+    {
+      "case": "missing_machine",
+      "status": "invalid_certificate"
+    },
+    {
+      "case": "bad_head_symbol",
+      "status": "invalid_certificate"
+    },
+    {
+      "case": "unsupported_multivariable",
+      "status": "unsupported"
+    }
+  ],
+  "native_probe_sha256": "3bad5646f689dee90293b4dab248aee34be827043042c6ff417d3e13536ad4e0",
+  "scope": "Negative tests of untrusted residue proposer parsing and CPU-budget checks. Accepted proof claims still require the unchanged Coq checker and kernel audit.",
+  "source_sha256": {
+    "four/tools/affine_cert_io.ml": "f0221d100b913fd575e5450b38d295a52807297a27eea16437209f8b86ee8557",
+    "four/tools/affine_residue_probe.ml": "224efe12b864760932e76320ed937bab6084b3554dd222a567e02f4bc08110bd"
+  }
+}

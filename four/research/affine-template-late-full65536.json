@@ -1,0 +1,45 @@
+{
+  "status": "untrusted_native_replay",
+  "manifest": {
+    "index_sha256": "7dc4ad97f4e8158c6e33c6266dc263d4268375f044b1e5cacb50c4f02e81beb3",
+    "input_sha256": "f672befb735d1a7029da3349b9808f29926b138be6acb580399500a72806782c",
+    "excluded_inventory_sha256": {
+      "four/research/late-cycles-full65536.json": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab",
+      "four/research/late-cycles-extra262144.json": "bc697fa40061c2bfd08cd26e9381776f7ba396e43fa50f504e6c33ed376a909e",
+      "four/research/alphabet23-families.json": "f7f53c4edf6ed72266364310a2a3421d098f1eec05d6ed83004b9f193fd06f7a",
+      "four/research/alphabet-mask-families.json": "d79507ff81da8c7a441eb1d1fee77fbe3b044ee174091f673695e5073d8c91dd",
+      "four/research/wave2-families.tsv": "03804f62ef1b4d182eda0d7547bd15dd2b18ed1f3155d4ff2bcbeef15d1f0985",
+      "four/research/weighted-pilot-machines.json": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333",
+      "four/research/affine-template427.tsv": "8175731bb28d70e55ccb645c39e5170d28b50907abf42736ea8a2378c32bb4df",
+      "four/research/affine-template181.tsv": "44b165edf3dffe2aaea983d1274187ebc2d764e4f7dc0a46ae9a00e2f96b1626"
+    },
+    "sources_sha256": {
+      "four/tools/affine_template_late_sweep.py": "56154465ba897bb9e86660ea51f252211c1849ce6417a398460356e083459577",
+      "four/tools/affine_template_fast_probe.ml": "f875f57ec609ca6cef0507402299ade3375b4713e7fc43a730eb2b94315366e2",
+      "four/tools/affine_template_orbits.py": "4c14340905ddee752bbeb31734a049b16763f62f37a509c07938214d3d95cb8d",
+      "four/tools/affine_cert_io.ml": "f0221d100b913fd575e5450b38d295a52807297a27eea16437209f8b86ee8557",
+      "four/build/affine-wave/extracted/checker.ml": "801cda1eeeda8fae651efb6ed894f20005fcdd73c659f08ecbd1dc07c157f54b",
+      "four/build/affine-wave/extracted/affine_cert_io.cmx": "1549a380ae0cae888202e3e421a3f959cf0795056ad9ef01ef5ed9e1974d6cc7",
+      "four/build/affine-template-late/probe": "15e8c17bd9490bc87a94c9f9b1ed10886f858eb0a6e8e6b8334f19b9d9d526bc"
+    },
+    "bound": 65536,
+    "cfuel": 4096,
+    "fuel": 8192,
+    "timeout": 2.0,
+    "compatible_targets": 3177,
+    "eligible_targets": 2581,
+    "selected_targets": 2581
+  },
+  "statuses": {
+    "no_template_match": 2574,
+    "replay_true": 7
+  },
+  "accepted_targets": 7,
+  "row_seconds": 88.708868,
+  "template_instances": 70246,
+  "ir_check_calls": 7,
+  "replay_sha256": "c231a847af0305db8967ccc07b1c1b5f0be2620d09c62a6fa74511d1b86f805f",
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "accounting": "Targets are original input families. Recurring source flags and boot hashes are proposal filters; unchanged target ir_check supplies only native replay evidence until Coq and census replay."
+}

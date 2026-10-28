@@ -2,9 +2,9 @@ name: Four-symbol BBB
 on:
   push:
     branches: [main]
-    paths: ['four/**', 'tools/multisymbol/survey.cpp', 'tools/gen_irulesblkpfx_certs.py', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
+    paths: ['four/**', 'small/**', 'tools/multisymbol/survey.cpp', 'tools/gen_irulesblkpfx_certs.py', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
   pull_request:
-    paths: ['four/**', 'tools/multisymbol/survey.cpp', 'tools/gen_irulesblkpfx_certs.py', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
+    paths: ['four/**', 'small/**', 'tools/multisymbol/survey.cpp', 'tools/gen_irulesblkpfx_certs.py', '.github/actions/setup-native-coq/**', '.github/workflows/four.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -14,7 +14,7 @@ concurrency:
 jobs:
   champion:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     defaults:
       run:
         shell: opam exec -- bash -euo pipefail {0}
@@ -29,3 +29,74 @@ jobs:
         run: python3 four/tools/generate_census.py --check
       - name: Check affine examples reproduction
         run: python3 four/tools/generate_affine.py --check
+      - name: Check closure pilot reproduction
+        run: python3 four/tools/generate_pipeline_examples.py --check
+      - name: Check advanced pilot reproduction
+        run: python3 four/tools/generate_advanced_examples.py --check
+      - name: Replay and audit the combined census closeout
+        run: make -C four check-wave -j2
+      - name: Check combined sample progress
+        run: python3 four/tools/progress.py --check
+  campaign-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        step: [affine-pilot, weighted-closeout, weighted-state-pilot, weighted-capacity-pilot, weighted-portfolio-pilot, state-reach, state-closure, state-rw-pilot, alphabet23]
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Replay and audit the recorded checker inventory
+        run: python3 four/tools/rebuild_campaign.py --only "${{ matrix.step }}"
+      - name: Preserve replay logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: four-campaign-${{ matrix.step }}
+          path: four/build/campaign-rebuild/*.log
+          retention-days: 7
+  supplement-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Replay and audit the six supplementary boards
+        run: make -C four check-next-campaign
+      - name: Preserve supplement replay logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: four-supplement-replay
+          path: four/build/next-campaign-rebuild/*.log
+          retention-days: 7
+  burn6-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Replay and audit the expanded supplementary census
+        run: make -C four check-burn6-campaign CAMPAIGN_JOBS=2
+      - name: Check expanded census replay integrity guards
+        run: |
+          python3 -m unittest discover -s four/tools -p 'test*burn2*.py'
+          python3 -m unittest discover -s four/tools -p 'test*burn4*.py'
+      - name: Preserve expanded census replay logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: four-burn6-replay
+          path: four/build/burn6-campaign-rebuild/*.log
+          retention-days: 7

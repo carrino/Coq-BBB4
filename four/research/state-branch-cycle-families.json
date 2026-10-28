@@ -1,0 +1,150 @@
+{
+  "status": "candidate_state_only_cycle_branches",
+  "source_frontier_sha256": "a5c2799e311c9d4713cae0239003078b822bfd1e113b360e1772ec37941ad608",
+  "rows": [
+    {
+      "machine": "1LB2RA1LA1RA_3RA---2LB0RA",
+      "anchor": 375,
+      "cycles": [
+        {
+          "value": 7,
+          "certificate": [
+            "C",
+            0,
+            511,
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "machine": "1LB2RB---3RA_2RA2LB3LB2RB",
+      "anchor": 707,
+      "cycles": [
+        {
+          "value": 8,
+          "certificate": [
+            "C",
+            0,
+            1023,
+            2,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "machine": "1LB2RA3RA1RB_2RA---2LB0LA",
+      "anchor": 291,
+      "cycles": [
+        {
+          "value": 7,
+          "certificate": [
+            "C",
+            0,
+            511,
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "machine": "1LB2RA1LA1RA_3RA---2LB3LB",
+      "anchor": 375,
+      "cycles": [
+        {
+          "value": 7,
+          "certificate": [
+            "C",
+            0,
+            511,
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "machine": "1LB1RA---0RB_2RA3LB1LB2LA",
+      "anchor": 282,
+      "cycles": [
+        {
+          "value": 8,
+          "certificate": [
+            "C",
+            0,
+            511,
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "machine": "1LB2RA1LA1RA_3RA---2LB3LA",
+      "anchor": 6444,
+      "cycles": [
+        {
+          "value": 7,
+          "certificate": [
+            "C",
+            0,
+            8191,
+            2,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "machine": "1LB2RA---3RA_2RA2LB3LB2RB",
+      "anchor": 769,
+      "cycles": [
+        {
+          "value": 8,
+          "certificate": [
+            "C",
+            0,
+            1023,
+            2,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "machine": "1LB2RA1LA1RA_3RA---2LB2RA",
+      "anchor": 6444,
+      "cycles": [
+        {
+          "value": 7,
+          "certificate": [
+            "C",
+            0,
+            8191,
+            2,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "machine": "1LB2RA1LA1RA_3RA---2LB2LA",
+      "anchor": 7194,
+      "cycles": [
+        {
+          "value": 7,
+          "certificate": [
+            "C",
+            0,
+            8191,
+            2,
+            1
+          ]
+        }
+      ]
+    }
+  ]
+}

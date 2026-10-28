@@ -1,0 +1,36 @@
+{
+  "status": "Untrusted cycle/census search; proof counts require the separate checked report.",
+  "parameters": {
+    "fuel": 4096,
+    "nodes_per_original_family": 64,
+    "candidate_bound": 4097,
+    "algorithm": "Brent checkpoints, normalized ray hashes, exact tape confirmation; no fixed period window"
+  },
+  "input_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+  "results_sha256": "d782e153ab3c9c6852193820a2053dd57dca765e076a99b4d504cc0865ce66b5",
+  "search_source_sha256": "30c55cfd8b5a7772e8127726d306c22e2412058f9bf95fa374507f79b141de37",
+  "original_families": 133185,
+  "concrete_families": 124395,
+  "partial_families": 8790,
+  "candidate_closed_original_families": 12133,
+  "candidate_concrete_families": 11989,
+  "candidate_partial_families": 144,
+  "certificate_roots": {
+    "C": 12133
+  },
+  "pending_original_families": 121052,
+  "original_families_reaching_undefined": 15,
+  "expanded_defined_children": 240,
+  "anchor_histogram": {
+    "127": 5841,
+    "255": 3146,
+    "511": 1915,
+    "1023": 795,
+    "2047": 428,
+    "4095": 8
+  },
+  "largest_candidate_period": 2002,
+  "simulated_steps": 502551382,
+  "seconds": 5.73739,
+  "accounting": "Expanded children are search work, not additional original families. Each branching proof also covers the None/halting choice."
+}

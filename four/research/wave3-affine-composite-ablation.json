@@ -1,0 +1,26 @@
+{
+  "base_source_sha256": "224efe12b864760932e76320ed937bab6084b3554dd222a567e02f4bc08110bd",
+  "final_statuses": {
+    "repaired_candidate": 32
+  },
+  "initial_budget_cpu_seconds": 0.1,
+  "initial_statuses": {
+    "repaired_candidate": 22,
+    "timeout": 10
+  },
+  "initial_tsv_sha256": "67faf4a05c0360915850c82d8a032019f8315e7a26fcfcd5734fe3fa5c2bd486",
+  "input_sha256": "8d2912b8dfa2c3547b846d480460cf25df6d7fd143ad597770c05c5c2d61a4b7",
+  "original_ledger_sha256": "d09230085c469eece1e9b63cba386062f93f64e44ca881292ac291220924db30",
+  "retry_budget_cpu_seconds": 1.0,
+  "retry_statuses": {
+    "repaired_candidate": 10
+  },
+  "retry_tsv_sha256": "e606318549f7382a8878e6cc28fc61fbcc17d2d6ccbfaba2484f98cb5f23ceb5",
+  "scope": "Untrusted diagnostic ablation on 32 previously repaired cases. These are existing family IDs, not new proof claims. Timeouts do not establish necessity of a residue restriction.",
+  "selection": "First 16 successes with (modulus,power)=(2,2), first 8 with (2,3), first 8 with (3,3), from frozen residue-common/search.tsv.",
+  "source_change": {
+    "replace": "[2;3;4;5;6;8;1]",
+    "with": "[1]"
+  },
+  "temporary_source_sha256": "dbb4515b42e189f81d648d96ca9adda37c81f23c0dd83b4f6c5ef336e6b26634"
+}

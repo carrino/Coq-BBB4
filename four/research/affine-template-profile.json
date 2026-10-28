@@ -1,0 +1,43 @@
+{
+  "status": "untrusted_affine_template_proposals",
+  "source_replay_true": 62560,
+  "recurring_mask_size_histogram": {
+    "2": 3,
+    "3": 17,
+    "4": 10,
+    "5": 343,
+    "6": 1730,
+    "7": 9536,
+    "8": 50921
+  },
+  "block_templates": {
+    "true": 22043,
+    "false": 40517
+  },
+  "unique_templates": 44928,
+  "indexed_proposals": 7746,
+  "distinct_masks": 69,
+  "target_families": 70625,
+  "table_compatible_targets": 2521,
+  "uncapped_proposals": 4311,
+  "capped_proposals": 4310,
+  "cap_per_target": 8,
+  "compatible_mask_size_histogram": {
+    "2": 176,
+    "3": 647,
+    "4": 138,
+    "5": 497,
+    "6": 625,
+    "7": 532
+  },
+  "input_sha256": {
+    "ledger": "3d3221456ecdcdc95c1a1e4ffa8f9743d522def4c83e515ffe88709d573f8213",
+    "targets": "0b78a48133381ccd729112c9f0dbdb32ed48f26b79b7e05fc0b61abab2d5c379",
+    "index": "383f1acea7e85f164a9c07fcff6e0020880a81a35ca29af81645787a33b63d94"
+  },
+  "source_sha256": {
+    "tools/affine_template_bank.py": "f3c020c7902755405c565b794f39f74928dd9bbe24dd493315b8632e8826e522",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "proof_status": "No target success or family discharge is claimed. Source recurring flags only select proposals; target ir_check remains necessary."
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "mode": "rw",
+    "size": 3,
+    "anchor": 4096,
+    "fuel": 1024,
+    "extra": 2,
+    "history": 0
+  },
+  {
+    "mode": "rw",
+    "size": 4,
+    "anchor": 4096,
+    "fuel": 2048,
+    "extra": 2,
+    "history": 0
+  },
+  {
+    "mode": "rw",
+    "size": 1,
+    "anchor": 4096,
+    "fuel": 1024,
+    "extra": 3,
+    "history": 0
+  },
+  {
+    "mode": "rw",
+    "size": 2,
+    "anchor": 4096,
+    "fuel": 2048,
+    "extra": 3,
+    "history": 0
+  }
+]

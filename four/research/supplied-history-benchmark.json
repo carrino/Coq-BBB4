@@ -1,0 +1,65 @@
+{
+  "scope": "16 late-history state-bound rows; paired CPU measurements including generated source parsing and recursive coqchk. No new census count claim.",
+  "source_input": "research/state-closure-history-input.json",
+  "source_input_sha256": "8a0fa9e1450c6b65a9722e480ff7792528eeb1c91922cb379f04e2020727aba3",
+  "selection": "First 16 rows of stage 3 (history 2, width 2, anchor 4096, fuel 4096, rounds 16)",
+  "machine_codes": [
+    3352160696,
+    3376298265,
+    3223373915,
+    2370969299,
+    4483427226,
+    3907309483,
+    3859044171,
+    3858715000,
+    3107949644,
+    5159643009,
+    4039056491,
+    3858734652,
+    4344576309,
+    2862245601,
+    2838168144,
+    3761831796
+  ],
+  "normal_and_sparse_supplied": [
+    {
+      "case": "NormalCases",
+      "phase": "compile",
+      "exit": 0,
+      "wall_seconds": 22.852191767000477,
+      "cpu_seconds": 17.027001
+    },
+    {
+      "case": "NormalCases",
+      "phase": "audit",
+      "exit": 0,
+      "wall_seconds": 75.70359798400023,
+      "cpu_seconds": 49.856319000000006
+    },
+    {
+      "case": "SuppliedCases",
+      "phase": "compile",
+      "exit": 0,
+      "wall_seconds": 8.626459510996938,
+      "cpu_seconds": 6.601037999999999
+    },
+    {
+      "case": "SuppliedCases",
+      "phase": "audit",
+      "exit": 0,
+      "wall_seconds": 57.073367406002944,
+      "cpu_seconds": 43.981910000000006
+    }
+  ],
+  "shared_import_recursive_audit": {
+    "exit": 0,
+    "cpu_seconds": 40.466814,
+    "wall_seconds": 57.641421492997324
+  },
+  "compile_speedup": 2.57944296033442,
+  "audit_marginal_speedup": 2.671194470933365,
+  "combined_marginal_speedup": 2.6113242469900055,
+  "normal_source_bytes": 506,
+  "supplied_source_bytes": 165129,
+  "method": "Supplied graph, deduplicated gram windows, and sparse default-zero rank maps; the same closedness, seed, prefix, and direct lex edge checks remain mandatory. Fixed shared import-audit time is reported separately and subtracted only for marginal extrapolation."
+}

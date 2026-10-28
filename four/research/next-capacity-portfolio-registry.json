@@ -1,0 +1,20 @@
+{
+  "bundles": [
+    {
+      "bytes": 13786,
+      "path": "research/next-capacity-portfolio-certificates.json",
+      "rows": 4,
+      "sha256": "709feb97a1aac86aa78c1c2e0411efa60dfa29f9cd8ac92e3ba09789b8e2456b"
+    }
+  ],
+  "format": "BBB24 next capacity pilot certificates v1",
+  "kinds": {
+    "weighted": 4
+  },
+  "rows": 4,
+  "source": {
+    "ledger_sha256": "46680f39407a3d59e23a33223e65a5958538e2689df96c3a76c26e5592345799",
+    "manifest_sha256": "fe4be38711faf8fc673ccd1220c39fd13ab35e0667148039e13314d90414500b"
+  },
+  "status": "Untrusted witnesses; separate Coq replay and census discharge required."
+}

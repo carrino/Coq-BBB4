@@ -781,10 +781,10 @@ candidate_unchecked		1LB3RB3RB0RA_3RA2LB3RA2LA	nonblank	0	1	1	6				no
 candidate_unchecked		1LB3RB3RB2LB_3RA0LA3RA2LB	nonblank	0	1	1	6				no
 candidate_unchecked		1LB3RB3RB2RA_2RA3RA0LA0LB	nonblank	0	1	1	6				no
 candidate_unchecked		1LB3RB3RB3LA_1RA0LA0RA2LB	nonblank	0	1	1	6				no
-coq_checked		0LB0LA---2RB_3RA1LB1RB1LB	blank	1	17	16	2	4096	4096	BBB24.AffineExamples.completions_0LB0LAXXX2RB_3RA1LB1RB1LB	no
-coq_checked		0LB1LB2RA0RB_3RA3RB1LA2LB	blank	0	1	1	2	4096	4096	BBB24.AffineExamples.completions_0LB1LB2RA0RB_3RA3RB1LA2LB	no
-coq_checked		0LB2RA3RB2LA_1RA2RA3LB2RB	blank	0	1	1	2	4096	4096	BBB24.AffineExamples.completions_0LB2RA3RB2LA_1RA2RA3LB2RB	no
-coq_checked		0LB3RB0LA1RB_3RA3LB0LA2LB	blank	0	1	1	2	4096	4096	BBB24.AffineExamples.completions_0LB3RB0LA1RB_3RA3LB0LA2LB	no
+coq_checked		0LB0LA---2RB_3RA1LB1RB1LB	blank	1	17	16	2	4096	4096	BBB24.AffineExamples.completions_0LB0LAXXX2RB_3RA1LB1RB1LB	yes
+coq_checked		0LB1LB2RA0RB_3RA3RB1LA2LB	blank	0	1	1	2	4096	4096	BBB24.AffineExamples.completions_0LB1LB2RA0RB_3RA3RB1LA2LB	yes
+coq_checked		0LB2RA3RB2LA_1RA2RA3LB2RB	blank	0	1	1	2	4096	4096	BBB24.AffineExamples.completions_0LB2RA3RB2LA_1RA2RA3LB2RB	yes
+coq_checked		0LB3RB0LA1RB_3RA3LB0LA2LB	blank	0	1	1	2	4096	4096	BBB24.AffineExamples.completions_0LB3RB0LA1RB_3RA3LB0LA2LB	yes
 no_certificate	nofit	0LB0LA0LA1RB_3RA2RB1LB2LB	blank	0	1	1	2				no
 no_certificate	nofit	0LB0LB3RA1RB_2RA2LA2LB3LB	blank	0	1	1	2				no
 no_certificate	nofit	0LB0RA2RA1RB_1RA3LB0LA2RB	blank	0	1	1	2				no

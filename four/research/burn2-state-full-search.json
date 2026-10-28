@@ -1,0 +1,33 @@
+{
+  "attempted_rows": 1833,
+  "diagnostics": {
+    "failed_state_0": 1602,
+    "failed_state_1": 4
+  },
+  "input_sha256": "05a2237284b53d9c1ff3a6bc493f5ed4a3ca4c1fbb538827f976202ff9c8d37c",
+  "kernel_checked_rows": 0,
+  "manifest_sha256": "fdc7e596acee0e25f17c18a9bfcd626f87599a14eab4372c3533c6000bc2bc94",
+  "not_accepted_rows": 958,
+  "offset": 256,
+  "ordinary_both_candidates": 121,
+  "orientation_statuses": {
+    "closed_partial": 1166,
+    "closed_unranked": 1949,
+    "closure_open": 310,
+    "ordinary_candidate": 241
+  },
+  "parameters": {
+    "anchor": 4096,
+    "fuel": 8193,
+    "graph_timeout": 0.5,
+    "lp_timeout": 3.0,
+    "node_limit": 4096,
+    "rounds": 33,
+    "wall_width": 16,
+    "width": 3
+  },
+  "producer_sha256": "f4f140120bb90834dc5e600e075285548a99f5faddc5dafe9087a650ad17433f",
+  "results_sha256": "f762a9da43571e778bd5a221db121a6abbfad0872557875f199f759ef86dd01b",
+  "scope": "Untrusted candidates; no kernel-checked claims.",
+  "weighted_state_candidates": 754
+}

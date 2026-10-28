@@ -1,0 +1,225 @@
+{
+  "boards": [
+    {
+      "candidate_overlap": 23,
+      "id": "Wave2",
+      "inventories": [
+        {
+          "format": "transport",
+          "order": "input",
+          "path": "research/family-transport-input.json",
+          "sha256": "86a68d4b07844e830f2bb27684002d67311ecec297da5d81fa67b58189e544a6"
+        }
+      ],
+      "inventory_rows": 11336,
+      "module": "BBB24Transport.FamilyTransportCloseout",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 119,
+      "id": "AffinePilot",
+      "inventories": [
+        {
+          "format": "affine",
+          "order": "sha256",
+          "path": "research/wave3-affine-pilot-certs.json",
+          "sha256": "86a1d89c65e00f42adc08f6f01c9d2ea3ff2411cb10c660f4c1683b040d1aece"
+        }
+      ],
+      "inventory_rows": 400,
+      "module": "BBB24AffineWave.Pilot.All",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 3743,
+      "id": "AffineBulkA",
+      "inventories": [
+        {
+          "format": "affine",
+          "order": "sha256",
+          "path": "research/wave3-affine-bulk4096a-certs.json",
+          "sha256": "63b8e9b7527d6be4074a00eeca6986a3982bd99cb993e4ce6914286614b44cdf"
+        }
+      ],
+      "inventory_rows": 8192,
+      "module": "BBB24AffineWave.Bulk4096A.All",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 734,
+      "id": "LateCycles",
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/late-cycles-full65536.json",
+          "sha256": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab"
+        }
+      ],
+      "inventory_rows": 12549,
+      "module": "BBB24LateCycles.full65536.All",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "ExtraCycles",
+      "inventories": [
+        {
+          "format": "columns",
+          "order": "input",
+          "path": "research/late-cycles-extra262144.json",
+          "sha256": "bc697fa40061c2bfd08cd26e9381776f7ba396e43fa50f504e6c33ed376a909e"
+        }
+      ],
+      "inventory_rows": 54,
+      "module": "BBB24LateCycles.extra262144.All",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 23,
+      "id": "WeightedPilot",
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/weighted-pilot-machines.json",
+          "sha256": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333"
+        }
+      ],
+      "inventory_rows": 110,
+      "module": "BBB24Weighted.WeightedCloseout",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 69,
+      "id": "Conjugate",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/conjugate-input-r000.json",
+          "sha256": "460dc14b801a82d6e03bcee9d158d6cb75c42a703b137256d418c34b03700e5f"
+        }
+      ],
+      "inventory_rows": 1227,
+      "module": "BBB24ConjugateR000.ConjugateAll",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 105,
+      "id": "WeightedReuse",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/weighted-reuse-input.json",
+          "sha256": "b3eb5d852c28609d4786d8778c56ec83fc9d8d343d3ba0528186d780f888a42a"
+        }
+      ],
+      "inventory_rows": 421,
+      "module": "BBB24WeightedReuse.WeightedReuseAll",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 71,
+      "id": "Alphabet23",
+      "inventories": [
+        {
+          "format": "rows",
+          "order": "input",
+          "path": "research/alphabet23-families.json",
+          "sha256": "f7f53c4edf6ed72266364310a2a3421d098f1eec05d6ed83004b9f193fd06f7a"
+        }
+      ],
+      "inventory_rows": 221,
+      "module": "BBB24Alphabet.AlphabetBoard",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 31,
+      "id": "WeightedV2Pilot",
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/weighted-v2-pilot-machines.json",
+          "sha256": "72d1277351f3118bd48d0493de59edf7c15f690b327cb01916a3c9eeddf95496"
+        }
+      ],
+      "inventory_rows": 205,
+      "module": "BBB24WeightedV2Pilot.WeightedAll",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 41,
+      "id": "WeightedSuffixPilot",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/weighted-suffix-pilot-input.json",
+          "sha256": "b5a6ed2e3ac6beac4811fa94f0bbd0b64a4655555a3dbec602070c0d5ae45ea8"
+        }
+      ],
+      "inventory_rows": 106,
+      "module": "BBB24WeightedSuffixPilot.WeightedSuffixAll",
+      "status": "checked-both"
+    },
+    {
+      "candidate_overlap": 10560,
+      "id": "AffineBulkB",
+      "inventories": [
+        {
+          "format": "affine",
+          "path": "research/wave3-affine-bulk4096b-certs.json",
+          "sha256": "8e514092b0666adc66eedbeb6babc0c0078e3e17e0338b1c728cd505b94414d6"
+        }
+      ],
+      "inventory_rows": 26970,
+      "status": "queued-proof-obligation"
+    },
+    {
+      "candidate_overlap": 6263,
+      "id": "AffineBulkC",
+      "inventories": [
+        {
+          "format": "affine",
+          "path": "research/wave3-affine-bulk4096c-certs.json",
+          "sha256": "ed9411960268e2382c43090a37b4d3eba5365eab5b249c44dd1e423b65a76b65"
+        }
+      ],
+      "inventory_rows": 16716,
+      "status": "queued-proof-obligation"
+    },
+    {
+      "candidate_overlap": 0,
+      "id": "PriorClosureQueue",
+      "inventories": [
+        {
+          "format": "columns",
+          "path": "research/closure-wave3-input.json",
+          "sha256": "13785511c540083f79b3fc53a87aaaa9dd7c09832d1133ae402d1a87f5ddb7d5"
+        }
+      ],
+      "inventory_rows": 32768,
+      "status": "queued-proof-obligation"
+    }
+  ],
+  "candidate_source_rows": 33102,
+  "checked_excluded_rows": 4886,
+  "checked_inventory_snapshot_sha256": "e87ebb0148efe78b3834d6683452f2ac7f54f3c4e64e53c23f0f2cfdc010536a",
+  "compressed_bytes": 103407,
+  "exclusion_ledger_sha256": "a678d8f29145b32274e47154c289b94741ad8979c27e29c13c393d34b9b71110",
+  "input_sha256": "1cd57305f701b8728085d0fea080260583ec4cdd5bc21c6d7ede1261f06fdac2",
+  "mode_counts": {
+    "finite": 1803,
+    "hist": 1852,
+    "ng": 6390,
+    "rw": 1451
+  },
+  "native_success_wall_seconds_by_mode": {
+    "finite": 60.906965,
+    "hist": 53.279192,
+    "ng": 76.386594,
+    "rw": 111.470957
+  },
+  "native_success_wall_seconds_total": 302.043708,
+  "queued_only_excluded_rows": 16720,
+  "selected_rows": 11496,
+  "status": "Prepared Coq replay input only; no new kernel claims. Checked exclusions and queued obligations are separate; queued exclusions remain obligations until their own audits finish."
+}

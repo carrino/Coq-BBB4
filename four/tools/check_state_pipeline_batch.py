@@ -1,0 +1,268 @@
+"""Kernel replay of a STATE-only finite/history census board.
+
+Default replay needs the compact tracked packed input and tracked search report,
+not the full work queue or ignored search logs. Search is never proof evidence:
+every family is checked for its state bound and original pending membership.
+"""
+import argparse
+import csv
+import hashlib
+import io
+import json
+from pathlib import Path
+import subprocess
+import time
+
+from check_shadow_links import dependency_hashes
+from generate_pipeline_examples import codes
+
+ROOT=Path(__file__).resolve().parents[1]
+FIELDS=('machine','stage','mode','bound','size','anchor','fuel','extra','history')
+SHARD_SIZE=256
+
+
+def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def unpack(packed):
+    if type(packed) is not int or not 0<=packed<17**8:
+        raise ValueError('Expected exactly eight base-17 transition codes')
+    cells=[]
+    for _ in range(8):
+        packed,v=divmod(packed,17)
+        cells.append('---' if v==16 else f'{v//4}{"R" if v&2 else "L"}{"B" if v&1 else "A"}')
+    return ''.join(cells[:4])+'_'+''.join(cells[4:])
+
+
+def pack(machine):
+    packed=sum(v*17**i for i,v in enumerate(codes(machine)))
+    if unpack(packed)!=machine:raise ValueError('Packed machine round trip failed')
+    return packed
+
+
+def candidate_text(rows):
+    return '\t'.join(FIELDS)+'\n'+''.join('\t'.join(str(row[k]) for k in FIELDS)+'\n' for row in rows)
+
+
+def select(args):
+    report=json.loads(args.search_report.read_text())
+    path=args.search_dir/'candidates.tsv'
+    if sha(path)!=report['candidate_tsv_sha256']:
+        raise ValueError('Search candidate ledger differs from the search report')
+    with path.open() as stream:rows=list(csv.DictReader(stream,delimiter='\t'))
+    groups=[]
+    for index,cert in enumerate(report['manifest']['stages']):
+        packed=sorted((pack(row['machine']) for row in rows if int(row['stage'])==index),key=unpack)
+        if packed:groups.append({'stage':index,'certificate':cert,'rows':packed})
+    data={'scope':'State only; every selected family requires Coq replay. No instruction bound.',
+          'encoding':'Eight base-17 cells, A0 least significant. Code=4*write+2*right+next_B;16 undefined.',
+          'source_report':str(args.search_report.resolve().relative_to(ROOT)),
+          'source_report_sha256':sha(args.search_report),'source_rows':report['manifest']['selected_rows'],
+          'selected_rows':len(rows),'state_bound':report['manifest']['state_bound'],'instruction_bound':None,
+          'groups':groups}
+    prefix=json.dumps({k:v for k,v in data.items() if k!='groups'},indent=2)[:-2]
+    parts=[]
+    for group in groups:
+        head=json.dumps({k:v for k,v in group.items() if k!='rows'},indent=2)[:-2]
+        rows=group['rows']
+        lines=[', '.join(map(str,rows[i:i+24])) for i in range(0,len(rows),24)]
+        parts.append(head+',\n  "rows": [\n    '+',\n    '.join(lines)+'\n  ]\n}')
+    args.input.write_text(prefix+',\n  "groups": [\n'+',\n'.join(parts)+'\n  ]\n}\n')
+
+
+def load(args):
+    data=json.loads(args.input.read_text())
+    report_path=ROOT/data['source_report'];report=json.loads(report_path.read_text())
+    if sha(report_path)!=data['source_report_sha256']:
+        raise ValueError('State batch belongs to another frozen search report')
+    if data['source_rows']!=report['manifest']['selected_rows'] or data['selected_rows']!=report['candidate_rows']:
+        raise ValueError('State source inventory count differs')
+    bound=data['state_bound']
+    if type(bound) is not int or bound<0 or bound!=report['manifest']['state_bound'] or data['instruction_bound'] is not None:
+        raise ValueError('Invalid state-only bound')
+    groups=data['groups']; all_rows=[];candidate_rows=[];last_stage=-1
+    for group in groups:
+        index=group['stage'];cert=group['certificate'];rows=group['rows']
+        if not isinstance(index,int) or index<=last_stage or index>=len(report['manifest']['stages']):
+            raise ValueError('Invalid or repeated stage')
+        last_stage=index
+        if cert!=report['manifest']['stages'][index]:raise ValueError('State certificate differs')
+        machines=[unpack(v) for v in rows]
+        if not machines or machines!=sorted(machines):raise ValueError('Noncanonical group order')
+        all_rows.extend(rows)
+        candidate_rows.extend({'machine':m,'stage':index,**cert,'bound':bound}
+                              for m in sorted(machines,key=lambda m:hashlib.sha256(m.encode()).digest()))
+    if len(all_rows)!=data['selected_rows'] or len(set(all_rows))!=len(all_rows):
+        raise ValueError('Empty, incomplete, or repeated family inventory')
+    if hashlib.sha256(candidate_text(candidate_rows).encode()).hexdigest()!=report['candidate_tsv_sha256']:
+        raise ValueError('Packed input does not reproduce the complete searched candidate ledger')
+    return data,groups
+
+
+HEADER='''(** GENERATED by four/tools/check_state_pipeline_batch.py; STATE only. *)
+From Coq Require Import List NArith Lia.
+From BBB24 Require Import Statement Spec Census Bootstrap Closeout
+  StateOnlyCloseout StatePipeline.
+Import ListNotations.
+'''
+
+
+def cert_text(cert):
+    params=f"{cert['size']} {cert['anchor']} {cert['fuel']} {cert['extra']}"
+    return f'StateFinite {params}' if cert['mode']=='finite' else f"StateHistory {cert['history']} {params}"
+
+
+def shard_text(rows,cert,bound):
+    body=';\n  '.join(';'.join(f'{v}%N' for v in rows[i:i+16]) for i in range(0,len(rows),16))
+    return HEADER+f'''
+Definition rows : list N := [
+  {body}].
+Definition certificate := {cert_text(cert)}.
+Lemma rows_checked : stp_batch_check {bound}%N certificate rows=true.
+Proof. vm_compute. reflexivity. Qed.
+Definition board := stp_board rows.
+Theorem board_state_sound : StateBoardSound (N.to_nat {bound}%N) board.
+Proof. apply (stp_batch_state_sound {bound}%N certificate); exact rows_checked. Qed.
+Theorem board_nonhalt : forall family, In family board -> NonHalt family.
+Proof. apply (stp_batch_nonhalt {bound}%N certificate); exact rows_checked. Qed.
+Lemma pending_checked : forallb (pending_check 9 empty bootstrap) board=true.
+Proof. vm_compute. reflexivity. Qed.
+Theorem board_pending : forall family, In family board -> bootstrap_pending family.
+Proof.
+  intros family Hin. apply pending_check_sound.
+  pose proof pending_checked as H. apply forallb_forall with (x:=family) in H; assumption.
+Qed.
+Example board_count : length board={len(rows)}.
+Proof. reflexivity. Qed.
+'''
+
+
+def forall_proof(modules,theorem):
+    return '\n'.join(f'  apply Forall_cons; [exact {m}.{theorem}|].' for m in modules)+'\n  apply Forall_nil.'
+
+
+def aggregate(modules,count,bound,namespace):
+    boards=';\n  '.join(m+'.board' for m in modules)
+    return HEADER+f'''From BBB24 Require Import CensusUnion.
+From {namespace} Require Import {' '.join(modules)}.
+Definition state_boards := [
+  {boards}].
+Definition state_board := concat state_boards.
+Theorem state_board_small : StateBoardSound (N.to_nat {bound}%N) state_board.
+Proof. apply state_boards_sound. unfold state_boards.
+{forall_proof(modules,'board_state_sound')}
+Qed.
+Theorem state_board_bound : StateBoardSound score state_board.
+Proof.
+  assert (Hbound : ({bound} <= scoreN)%N) by (vm_compute; discriminate).
+  intros family Hin tm Hle q s Hquiet.
+  pose proof (state_board_small family Hin tm Hle q s Hquiet). unfold score. lia.
+Qed.
+Theorem state_board_pending : forall family, In family state_board -> bootstrap_pending family.
+Proof. apply boards_pending. unfold state_boards.
+{forall_proof(modules,'board_pending')}
+Qed.
+Example state_board_count :
+  fold_left (fun count (_ : TM) => N.succ count) state_board 0%N = {count}%N.
+Proof. vm_compute. reflexivity. Qed.
+Definition state_pending := remaining bootstrap_pending state_board.
+Theorem state_coverage : forall tm, QHBound score tm \\/ state_pending tm.
+Proof. exact (state_closeout_coverage _ _ _ bootstrap_state_coverage state_board_bound). Qed.
+Theorem state_families_discharged : forall family, In family state_board ->
+  forall tm, TM_le family tm -> bootstrap_pending tm /\\ QHBound (N.to_nat {bound}%N) tm /\\ ~state_pending tm.
+Proof. exact (state_board_discharge _ _ state_board_pending state_board_small). Qed.
+Theorem state_upper_if_remaining :
+  (forall tm, state_pending tm -> QHBound score tm) -> forall tm, QHBound score tm.
+Proof. intros H tm. destruct (state_coverage tm); auto. Qed.
+Print Assumptions state_families_discharged.
+'''
+
+
+def run(command,log,timeout):
+    start=time.monotonic()
+    with log.open('w') as stream:
+        subprocess.run(command,cwd=ROOT.parent,stdout=stream,stderr=subprocess.STDOUT,check=True,timeout=timeout)
+    return round(time.monotonic()-start,3)
+
+
+def source_hashes(loadpath):
+    dependencies=dependency_hashes([ROOT/'theories/StatePipeline.v',ROOT/'theories/CensusUnion.v'],loadpath)
+    return {**dependencies,'tools/check_state_pipeline_batch.py':sha(Path(__file__)),
+            'tools/generate_pipeline_examples.py':sha(ROOT/'tools/generate_pipeline_examples.py'),
+            'tools/check_shadow_links.py':sha(ROOT/'tools/check_shadow_links.py')}
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--select',action='store_true')
+    parser.add_argument('--refresh',action='store_true')
+    parser.add_argument('--pilot',type=int,default=0,help='Prefix only, no audit or report publication')
+    parser.add_argument('--resume',action='store_true')
+    parser.add_argument('--timeout',type=int,default=600)
+    parser.add_argument('--input',type=Path,default=ROOT/'research/state-closure-input.json')
+    parser.add_argument('--report',type=Path,default=ROOT/'research/state-closure-summary.json')
+    parser.add_argument('--output-dir',type=Path,default=ROOT/'build/state-closure')
+    parser.add_argument('--namespace',default='BBB24StateClosure')
+    parser.add_argument('--search-dir',type=Path,default=ROOT/'build/state-pipeline/full')
+    parser.add_argument('--search-report',type=Path,default=ROOT/'research/state-closure-full.json')
+    args=parser.parse_args()
+    if not args.namespace.isidentifier() or args.pilot<0:raise ValueError('Invalid namespace or pilot')
+    if args.select:
+        if not args.refresh:raise ValueError('--select requires --refresh')
+        select(args)
+    data,groups=load(args);bound=data['state_bound']
+    args.output_dir.mkdir(parents=True,exist_ok=True)
+    loadpath=['-Q',str(ROOT/'theories'),'BBB24','-Q',str(args.output_dir.resolve()),args.namespace]
+    sources=source_hashes(loadpath);input_hash=sha(args.input)
+    if not args.refresh and not args.pilot:
+        old=json.loads(args.report.read_text())
+        if old['source_sha256']!=sources or old['input_sha256']!=input_hash:
+            raise ValueError('State proof evidence changed; refresh and re-audit')
+    paths=[];modules=[];checked=[]
+    for group in groups:
+        rows=group['rows']
+        if args.pilot:rows=rows[:max(0,args.pilot-len(checked))]
+        for offset in range(0,len(rows),SHARD_SIZE):
+            batch=rows[offset:offset+SHARD_SIZE]
+            module=f'StateClosure{len(modules):03}'
+            path=args.output_dir/(module+'.v');path.write_text(shard_text(batch,group['certificate'],bound))
+            evidence={'source_sha256':sha(path),'dependencies_sha256':{k:v for k,v in sources.items() if k.endswith('.v')}}
+            receipt=path.with_suffix('.checked.json');vo=path.with_suffix('.vo')
+            reuse=args.resume and receipt.exists() and vo.exists() and json.loads(receipt.read_text())=={**evidence,'vo_sha256':sha(vo)}
+            seconds=0 if reuse else run(['coqc','-native-compiler','no',*loadpath,str(path.resolve())],path.with_suffix('.log'),args.timeout)
+            if not reuse:receipt.write_text(json.dumps({**evidence,'vo_sha256':sha(vo)},indent=2)+'\n')
+            print(f'{"Reused" if reuse else "Checked"} {module}: {seconds}s',flush=True)
+            paths.append(path);modules.append(module)
+            checked.extend((n,group['stage'],module) for n in batch)
+    all_path=args.output_dir/'StateClosureAll.v'
+    all_path.write_text(aggregate(modules,len(checked),bound,args.namespace))
+    run(['coqc','-native-compiler','no',*loadpath,str(all_path.resolve())],args.output_dir/'aggregate.log',args.timeout)
+    paths.append(all_path)
+    if args.pilot:
+        print(f'Pilot compiled {len(checked)} rows; no audit/report publication.',flush=True);return
+    run(['coqchk','-silent','-bytecode-compiler','yes',*loadpath,f'{args.namespace}.StateClosureAll'],args.output_dir/'coqchk.log',args.timeout*len(paths))
+    if input_hash!=sha(args.input) or sources!=source_hashes(loadpath):raise ValueError('Inputs changed during audit')
+    stream=io.StringIO();writer=csv.writer(stream,delimiter='\t',lineterminator='\n')
+    writer.writerow(['machine','state_bound','instruction_bound','state_census_linked','instruction_census_linked','stage','proof'])
+    theorem=f'{args.namespace}.StateClosureAll.state_families_discharged'
+    writer.writerows((unpack(n),bound,'','yes','no',stage,theorem) for n,stage,_ in checked)
+    ledger=stream.getvalue()
+    report={'scope':'State-only direct-core closeout; no instruction-bound or raw-table-count claim.',
+            'source_rows':data['source_rows'],'state_checked_families':len(checked),
+            'state_census_linked_families':len(checked),'instruction_checked_families':0,
+            'state_bound':bound,'instruction_bound':None,
+            'state_coverage_theorem':f'{args.namespace}.StateClosureAll.state_coverage',
+            'state_discharge_theorem':theorem,
+            'state_residual_predicate':f'{args.namespace}.StateClosureAll.state_pending',
+            'validation':'VM checker and pending-membership proofs for every input, plus recursive coqchk.',
+            'input_sha256':input_hash,'source_sha256':sources,'shard_sha256':{p.name:sha(p) for p in paths},
+            'generated_ledger':str(args.output_dir.resolve().relative_to(ROOT))+'/families.tsv',
+            'ledger_sha256':hashlib.sha256(ledger.encode()).hexdigest()}
+    contents=json.dumps(report,indent=2)+'\n'
+    if args.refresh:args.report.write_text(contents)
+    elif args.report.read_text()!=contents:raise ValueError('Replay differs from the recorded report')
+    (args.output_dir/'families.tsv').write_text(ledger)
+    print(json.dumps({k:report[k] for k in ('state_checked_families','state_census_linked_families','instruction_checked_families')}),flush=True)
+
+
+if __name__=='__main__':main()

@@ -1,0 +1,7 @@
+machine	source_certificate	permutation	state_swap	mirrored	boot	state_bound	instruction_bound	census_linked
+1LB2RB0LB1RB_1RA3LB2LA0RA	720	132	True	True	4	4096	4096	yes
+1LB2RA0RA3RB_1RA2LA3LB1LB	855	123	True	False	8	4096	4096	yes
+1LB2LB1RB0RA_2RA0LB3LB0LA	1048	231	True	True	0	4096	4096	yes
+1LB2RA3RA3LB_3RA2LB1LA1RA	1135	312	True	True	16	4096	4096	yes
+1LB2LA3LB3RB_2RA1RB1LA---	1630	123	False	False	16	4096	4096	yes
+1LB2RB2LA---_2RA3RA1RB3LA	1630	213	True	True	8	4096	4096	yes

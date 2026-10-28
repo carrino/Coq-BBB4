@@ -1,0 +1,431 @@
+{
+  "status": "untrusted_state_only_search",
+  "input_families": 9353,
+  "input_sha256": "69992ffb6970f44e8bc3561a5ccc23dc92b6330e98a85b4fdc8ed42a70bfc023",
+  "prior_report_sha256": "7ad8db65a0766303c440b02d7204cebceee24e4152870cf62bc068823abb8bdf",
+  "symbol_partitions": 14,
+  "compatible_pairs": 37,
+  "coherent_families": 37,
+  "surviving_candidate_families": 37,
+  "concrete": 18,
+  "partial": 19,
+  "alphabet_size_histogram": {
+    "3": 37
+  },
+  "rows": [
+    {
+      "machine": "1LB2LA3RB2RB_1RB3RA0LA0LA",
+      "partition": [
+        0,
+        1,
+        2,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB1RA1LB2LB_2RB3LB0RB1RA",
+      "partition": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB1RA1LB2LB_2RA3LB2RA---",
+      "partition": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB0LB---2RA_3RA3RA1RA3LB",
+      "partition": [
+        0,
+        0,
+        1,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB2LB1RA1LB_3RA3LB---0RA",
+      "partition": [
+        0,
+        1,
+        2,
+        0
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB2LA3RA2LA_2RB0LB2RA0LB",
+      "partition": [
+        0,
+        1,
+        2,
+        1
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB2LB0RB2LB_3RB2RA3LB2RA",
+      "partition": [
+        0,
+        1,
+        2,
+        1
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB1RA1LB2LB_2RA3LB0RA---",
+      "partition": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB1LB---1RA_3RA3RA3LB2RA",
+      "partition": [
+        0,
+        0,
+        1,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB2LB1RA1LB_3RA3LB---3RA",
+      "partition": [
+        0,
+        1,
+        2,
+        0
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB2RA3LB1LB_3RA---2LB3RA",
+      "partition": [
+        0,
+        1,
+        2,
+        0
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB2RB1LB1RA_3RB3RA3RB2LA",
+      "partition": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB1RA1LB2LB_2RB3LB0RB3RA",
+      "partition": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB2LB2RA1LB_3RA---3LB3RA",
+      "partition": [
+        0,
+        1,
+        2,
+        0
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB2LA1RA1LB_2RB3LB2RA2RB",
+      "partition": [
+        0,
+        1,
+        2,
+        0
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB2LA1RA1RA_3RB0LB3RA2RA",
+      "partition": [
+        0,
+        1,
+        2,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB---1LB2LB_3RB3LA3RB2RA",
+      "partition": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB2RA3LA2RA_3RB3RA0LA1RA",
+      "partition": [
+        0,
+        1,
+        2,
+        1
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB2LB2RA1LB_3RA---3LB0RA",
+      "partition": [
+        0,
+        1,
+        2,
+        0
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB1LB---1RA_2RA2RA3RA3LB",
+      "partition": [
+        0,
+        0,
+        1,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB2RA3LA2RA_3RB3RA0LA3RA",
+      "partition": [
+        0,
+        1,
+        2,
+        1
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB2RA3LA2RA_1RB3RA0LA1RA",
+      "partition": [
+        0,
+        1,
+        2,
+        1
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB2LA1RA1RA_2RB0LB3RA3RA",
+      "partition": [
+        0,
+        1,
+        2,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB0RB1LB1RA_3RB3RA3RB2LA",
+      "partition": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB2LB0RB2LB_1RB2RA3LB2RA",
+      "partition": [
+        0,
+        1,
+        2,
+        1
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB0LB---3RA_2RA2RA3LB1RA",
+      "partition": [
+        0,
+        0,
+        1,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB---1LB2LB_3RB3LA3RB0RA",
+      "partition": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB---0LB0LB_2RB3LA0RA0RA",
+      "partition": [
+        0,
+        1,
+        2,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB1LB---2RA_3RA3RA1RA3LB",
+      "partition": [
+        0,
+        0,
+        1,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB2RA3LA2RA_1RB3RA0LA3RA",
+      "partition": [
+        0,
+        1,
+        2,
+        1
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB1RA1LB2LB_2RB3LB2RB1RA",
+      "partition": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB1LB---3RA_2RA2RA3LB1RA",
+      "partition": [
+        0,
+        0,
+        1,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB1RA1LB2LB_2RB3LB2RB3RA",
+      "partition": [
+        0,
+        1,
+        0,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB2RA3LB1LB_3RA---2LB0RA",
+      "partition": [
+        0,
+        1,
+        2,
+        0
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB0LB---1RA_3RA3RA3LB2RA",
+      "partition": [
+        0,
+        0,
+        1,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    },
+    {
+      "machine": "1LB2LA1RA1RA_3RB0LB2RA2RA",
+      "partition": [
+        0,
+        1,
+        2,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": false
+    },
+    {
+      "machine": "1LB0LB---1RA_2RA2RA3RA3LB",
+      "partition": [
+        0,
+        0,
+        1,
+        2
+      ],
+      "compatible_partitions": 1,
+      "partial": true
+    }
+  ],
+  "failed_survival": [],
+  "source_sha256": {
+    "tools/alphabet_quotients.py": "b9462127f23eef11fa17a72f0f03c519977c7e64987a0eed7af9bfb82baa20a5",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "semantics": "Preserves the state trace only. Individual instruction identities can be merged, so no instruction-bound claim.",
+  "accounting": "Original core families; no proof or census discharge claimed by this search report."
+}

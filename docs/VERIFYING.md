@@ -148,14 +148,22 @@ make -C four check -j2
 python3 four/tools/generate_champion.py --check
 python3 four/tools/generate_census.py --check
 python3 four/tools/generate_affine.py --check
+python3 four/tools/generate_pipeline_examples.py --check
+python3 four/tools/generate_advanced_examples.py --check
 ```
 
 The build recursively audits `BBB24.Champion`, `BBB24.Bootstrap`,
-`BBB24.AffineExamples`, the affine checkers, and the certificate rejection
-checks. The Python commands reproduce the champion certificate, census DAG,
-and four representative affine examples without changing them. Census reproduction
+`BBB24.AffineExamples`, the closure and affine checkers, symmetry/shadow
+transport, census closeout, and the certificate rejection checks.
+`BBB24.PipelineExamples` replays all 76 closure-pilot successes and attaches
+their completion proofs to census coverage. `BBB24.AdvancedExamples` checks the
+33 finite/history/repeated-word pilot successes. The Python commands reproduce the
+champion certificate, census DAG, affine examples, and both closure pilots without
+changing them. Census reproduction
 requires a C++17 compiler (`g++`). `make -C four` alone
-builds without the independent audit. No other project census is required.
+builds without the independent audit. Alphabet reduction automatically builds
+the completed `SmallBB.Value23` theorem; it does not require the BBB(4) census
+or the unrelated (3,2) legacy dependencies.
 
 Inspect the final statements and assumptions:
 
@@ -192,6 +200,108 @@ and how to reproduce their machine-level inventory and proof-status ledger.
 non-halting machines and states the separate halting-time obligation. The
 [grouping report](../four/GROUPING.md) distinguishes exploratory reductions
 from checked coverage and compares the current survey to the BBB(4) pipeline.
+The [pipeline guide](../four/PIPELINE.md) documents the new checker tiers,
+resumable sweeps, proof-status boundaries, and the optional full affine replay:
+
+```bash
+make -C four check-affine-batch
+coqtop -quiet -Q four/theories BBB24 <<'COQ'
+From BBB24 Require Import PipelineExamples Symmetry Shadow.
+Check bootstrap_pipeline_coverage.
+Check pipeline_families_discharged.
+Check perm_bounds.
+Check shadow_check_sound.
+Print Assumptions bootstrap_pipeline_coverage.
+COQ
+```
+
+The affine batch reconstructs its proof shards under the ignored build directory
+and audits them. It does not require rerunning the external affine search.
+
+For the larger census closeout, including the 4,096-family closure replay,
+all conditional shadow links, and the combined transported-family board:
+
+```bash
+make -C four check-wave -j2
+```
+
+This target reconstructs and recursively audits every required generated shard
+from tracked compact inputs; ignored survey logs are not required. The
+[second-wave guide](../four/WAVE2.md) lists the constituent targets and loadpaths
+for `BBB24Wave.WaveCloseout.wave_coverage` and its explicit remaining obligation.
+The original census weights are preserved; the new theorem excludes proved
+families and their completions from a refined residual.
+
+For the stronger campaign, including separate state-only boards, weighted
+certificates, longer cycles, alphabet reduction, and recurring-suffix reuse:
+
+```bash
+make -C four list-campaign
+make -C four check-campaign
+# Optional on a host with at least 32 GiB:
+make -C four check-campaign CAMPAIGN_JOBS=2
+```
+
+The [third-wave guide](../four/WAVE3.md) explains the distinct search and proof
+counts, the dependency-aware replay targets, and the generated per-machine
+burndown lists. The original large generated Coq files are not tracked.
+The full replay reconstructs recorded certificates; it does not rerun heuristic
+search or require a third-party affine executable. Local audit receipts are
+usable only when the proof objects, sources, dependencies and Coq runtime match;
+a clean checkout checks the complete dependency closure again.
+Weighted replay requires the recorded source, certificate, and inventory bytes,
+then freshly compiles and audits them. It records new object hashes locally
+because compiled `.vo` bytes can differ across Coq installations.
+
+To inspect or replay one method and its prerequisites:
+
+```bash
+python3 four/tools/rebuild_campaign.py --only affine-pilot --list
+python3 four/tools/rebuild_campaign.py --only weighted-state-pilot
+```
+
+The [supplementary burndown guide](../four/NEXT_BURNDOWN.md) adds six new boards,
+including the exact champion's census entry. Rebuild their dependency graph
+and audit the supplement with `make -C four check-next-campaign`; inspect its
+commands with `make -C four list-next-campaign`. The guide also explains how to
+reconstruct the combined per-machine burndown after replaying both campaigns.
+
+The [second burndown round](../four/BURN2.md) extends that supplement with
+additional repeated-word replays, wider state searches, capacity refinements,
+and conjugacy transport. Run `make -C four check-burn2-campaign` to replay its
+expanded dependency graph, or `make -C four list-burn2-campaign` to inspect the
+commands. This includes the first supplement; the frozen 113-board checkpoint
+is still needed to reproduce the full combined burndown lists.
+
+The [third burndown round](../four/BURN3.md) adds deeper history proofs,
+instruction upgrades, and three small invariant developments. Run
+`make -C four check-burn3-campaign` to replay all 28 supplementary boards;
+`make -C four list-burn3-campaign` prints the 27-step dependency plan. This
+includes both earlier supplements. Generated Coq remains under ignored build
+directories; handwritten proof sources and compact certificates are tracked.
+
+The [fourth checkpoint](../four/BURN4.md) adds 121 state proofs from a marker
+invariant established on entry into B, plus one deeper-history proof. Run
+`make -C four check-burn4-campaign` for the 30-board supplement, or
+`make -C four list-burn4-campaign` to inspect its 29-step build plan. The guide
+includes the exact command for regenerating its remaining-family lists.
+
+The [fifth checkpoint](../four/BURN5.md) adds ternary-counter templates, a
+marker/history composition, and further checked history certificates. Use
+`make -C four check-burn5-campaign` to replay its 35 boards, or
+`make -C four list-burn5-campaign` to inspect the 34-step plan. The counter
+template and composition steps explicitly depend on their earlier proof
+packages; no discovery search is needed for replay.
+
+The [sixth checkpoint](../four/BURN6.md) extends that supplement with checked
+state-swapped entries, conjugacy reuse, paired-digit tail templates and more
+history certificates. Run `make -C four check-burn6-campaign` for the latest
+41-board supplement, or `make -C four list-burn6-campaign` for its 40-step plan.
+The guide includes the exact combined-ledger and remaining-list commands.
+
+The default campaign target produces separate lists of families still lacking
+a checked state bound or instruction bound. Candidate-search counts are
+reported separately from these proof obligations.
 
 ## Tier A — everything except the census walk
 

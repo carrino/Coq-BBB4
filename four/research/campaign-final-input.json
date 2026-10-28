@@ -1,0 +1,3021 @@
+{
+  "scope": "Final combined checked boards; exact inventory equality and separate state/instruction bounds are audited together. The original campaign-input.json remains unchanged.",
+  "cohort": {
+    "path": "research/campaign-cohort.json",
+    "format": "packed17",
+    "rows": 133185,
+    "machine_text_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7"
+  },
+  "boards": [
+    {
+      "id": "Wave2",
+      "module": "BBB24Transport.FamilyTransportCloseout",
+      "board": "transport_board",
+      "sound": "transport_board_sound",
+      "small_sound": "transport_board_small_sound",
+      "was_pending": "transport_board_was_pending",
+      "state_bound": 4097,
+      "instruction_bound": 4097,
+      "scope": "both",
+      "rows": 11336,
+      "inventories": [
+        {
+          "path": "research/family-transport-input.json",
+          "format": "transport",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-batch",
+          "namespace": "BBB24Batch"
+        },
+        {
+          "path": "build/affine-closeout",
+          "namespace": "BBB24AffineCloseout"
+        },
+        {
+          "path": "build/closure-batch",
+          "namespace": "BBB24ClosureBatch"
+        },
+        {
+          "path": "build/family-transport",
+          "namespace": "BBB24Transport"
+        }
+      ]
+    },
+    {
+      "id": "AffinePilot",
+      "module": "BBB24AffineWave.Pilot.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 400,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-pilot-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineBulkA",
+      "module": "BBB24AffineWave.Bulk4096A.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 8192,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-bulk4096a-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "LateCycles",
+      "module": "BBB24LateCycles.full65536.All",
+      "board": "late_cycle_board",
+      "sound": "late_cycle_board_sound",
+      "small_sound": "late_cycle_board_small_sound",
+      "was_pending": "late_cycle_board_was_pending",
+      "state_bound": 65537,
+      "instruction_bound": 65537,
+      "scope": "both",
+      "rows": 12549,
+      "inventories": [
+        {
+          "path": "research/late-cycles-full65536.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/late-cycle-proofs",
+          "namespace": "BBB24LateCycles"
+        }
+      ]
+    },
+    {
+      "id": "ExtraCycles",
+      "module": "BBB24LateCycles.extra262144.All",
+      "board": "late_cycle_board",
+      "sound": "late_cycle_board_sound",
+      "small_sound": "late_cycle_board_small_sound",
+      "was_pending": "late_cycle_board_was_pending",
+      "state_bound": 262145,
+      "instruction_bound": 262145,
+      "scope": "both",
+      "rows": 54,
+      "inventories": [
+        {
+          "path": "research/late-cycles-extra262144.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/late-cycle-proofs",
+          "namespace": "BBB24LateCycles"
+        }
+      ]
+    },
+    {
+      "id": "WeightedPilot",
+      "module": "BBB24Weighted.WeightedCloseout",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 110,
+      "inventories": [
+        {
+          "path": "research/weighted-pilot-machines.json",
+          "format": "rows"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Weighted",
+          "path": "build/weighted/pilot-kernel"
+        }
+      ]
+    },
+    {
+      "id": "Conjugate",
+      "module": "BBB24ConjugateR000.ConjugateAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 131072,
+      "instruction_bound": 131072,
+      "scope": "both",
+      "rows": 1227,
+      "inventories": [
+        {
+          "path": "research/conjugate-input-r000.json",
+          "format": "columns"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-batch",
+          "namespace": "BBB24Batch"
+        },
+        {
+          "path": "build/affine-closeout",
+          "namespace": "BBB24AffineCloseout"
+        },
+        {
+          "path": "build/closure-batch",
+          "namespace": "BBB24ClosureBatch"
+        },
+        {
+          "path": "build/family-transport",
+          "namespace": "BBB24Transport"
+        },
+        {
+          "path": "build/weighted/pilot-kernel",
+          "namespace": "BBB24Weighted"
+        },
+        {
+          "path": "build/late-cycle-proofs",
+          "namespace": "BBB24LateCycles"
+        },
+        {
+          "path": "build/conjugate/r000",
+          "namespace": "BBB24ConjugateR000"
+        }
+      ]
+    },
+    {
+      "id": "WeightedReuse",
+      "module": "BBB24WeightedReuse.WeightedReuseAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 421,
+      "inventories": [
+        {
+          "path": "research/weighted-reuse-input.json",
+          "format": "columns"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-reuse",
+          "namespace": "BBB24WeightedReuse"
+        }
+      ]
+    },
+    {
+      "id": "Alphabet23",
+      "module": "BBB24Alphabet.AlphabetBoard",
+      "board": "closed_alphabet_board",
+      "sound": "closed_alphabet_board_sound",
+      "small_sound": "closed_alphabet_board_small_sound",
+      "was_pending": "closed_alphabet_board_was_pending",
+      "state_bound": 59,
+      "instruction_bound": 67,
+      "scope": "both",
+      "rows": 221,
+      "inventories": [
+        {
+          "path": "research/alphabet23-families.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "../small/theories",
+          "namespace": "SmallBB"
+        },
+        {
+          "path": "build/alphabet23",
+          "namespace": "BBB24Alphabet"
+        }
+      ]
+    },
+    {
+      "id": "StateReach",
+      "module": "BBB24StateReach.StateReachAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_zero",
+      "was_pending": "state_board_pending",
+      "state_bound": 0,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 83194,
+      "inventories": [
+        {
+          "path": "research/one-state-reach-input.json",
+          "format": "packed16",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/one-state-reach",
+          "namespace": "BBB24StateReach"
+        }
+      ]
+    },
+    {
+      "id": "StateClosure",
+      "module": "BBB24StateClosure.StateClosureAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 9853,
+      "inventories": [
+        {
+          "path": "research/state-closure-input.json",
+          "format": "packed17_groups",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-closure",
+          "namespace": "BBB24StateClosure"
+        }
+      ]
+    },
+    {
+      "id": "StateRW",
+      "module": "BBB24StateRWPilot.StateRWAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 14,
+      "inventories": [
+        {
+          "path": "research/state-repwl-pilot-input.json",
+          "format": "packed17_groups",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-repwl-pilot",
+          "namespace": "BBB24StateRWPilot"
+        }
+      ]
+    },
+    {
+      "id": "Weighted000",
+      "module": "BBB24WeightedFullB000.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 555,
+      "inventories": [
+        {
+          "path": "research/weighted-full-snapshots/batch000/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedFullB000",
+          "path": "build/weighted-v2/full-proofs/batch000-v3"
+        }
+      ]
+    },
+    {
+      "id": "Weighted001",
+      "module": "BBB24WeightedFullB001.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 701,
+      "inventories": [
+        {
+          "path": "research/weighted-full-snapshots/batch001/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedFullB001",
+          "path": "build/weighted-v2/full-proofs/batch001-v4"
+        }
+      ]
+    },
+    {
+      "id": "Weighted002",
+      "module": "BBB24WeightedFullB002.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 690,
+      "inventories": [
+        {
+          "path": "research/weighted-full-snapshots/batch002/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedFullB002",
+          "path": "build/weighted-v2/full-proofs/batch002-v4"
+        }
+      ]
+    },
+    {
+      "id": "Weighted003",
+      "module": "BBB24WeightedFullB003.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 683,
+      "inventories": [
+        {
+          "path": "research/weighted-full-snapshots/batch003/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedFullB003",
+          "path": "build/weighted-v2/full-proofs/batch003-v4"
+        }
+      ]
+    },
+    {
+      "id": "Weighted004",
+      "module": "BBB24WeightedFullB004.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 665,
+      "inventories": [
+        {
+          "path": "research/weighted-full-snapshots/batch004/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedFullB004",
+          "path": "build/weighted-v2/full-proofs/batch004-v4"
+        }
+      ]
+    },
+    {
+      "id": "Weighted005",
+      "module": "BBB24WeightedFullB005.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 690,
+      "inventories": [
+        {
+          "path": "research/weighted-full-snapshots/batch005/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedFullB005",
+          "path": "build/weighted-v2/full-proofs/batch005-v4"
+        }
+      ]
+    },
+    {
+      "id": "Weighted006",
+      "module": "BBB24WeightedSelectedB006.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 570,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch006/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB006",
+          "path": "build/weighted-v2/full-proofs/batch006-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted007",
+      "module": "BBB24WeightedSelectedB007.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 530,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch007/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB007",
+          "path": "build/weighted-v2/full-proofs/batch007-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted008",
+      "module": "BBB24WeightedSelectedB008.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 477,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch008/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB008",
+          "path": "build/weighted-v2/full-proofs/batch008-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted009",
+      "module": "BBB24WeightedSelectedB009.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 508,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch009/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB009",
+          "path": "build/weighted-v2/full-proofs/batch009-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted010",
+      "module": "BBB24WeightedSelectedB010.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 491,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch010/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB010",
+          "path": "build/weighted-v2/full-proofs/batch010-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted011",
+      "module": "BBB24WeightedSelectedB011.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 500,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch011/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB011",
+          "path": "build/weighted-v2/full-proofs/batch011-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted012",
+      "module": "BBB24WeightedSelectedB012.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 495,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch012/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB012",
+          "path": "build/weighted-v2/full-proofs/batch012-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted013",
+      "module": "BBB24WeightedSelectedB013.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 501,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch013/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB013",
+          "path": "build/weighted-v2/full-proofs/batch013-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted014",
+      "module": "BBB24WeightedSelectedB014.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 499,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch014/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB014",
+          "path": "build/weighted-v2/full-proofs/batch014-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted015",
+      "module": "BBB24WeightedSelectedB015.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 443,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch015/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB015",
+          "path": "build/weighted-v2/full-proofs/batch015-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted016",
+      "module": "BBB24WeightedSelectedB016.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 453,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch016/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB016",
+          "path": "build/weighted-v2/full-proofs/batch016-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted017",
+      "module": "BBB24WeightedSelectedB017.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 453,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch017/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB017",
+          "path": "build/weighted-v2/full-proofs/batch017-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted018",
+      "module": "BBB24WeightedSelectedB018.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 492,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch018/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB018",
+          "path": "build/weighted-v2/full-proofs/batch018-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted019",
+      "module": "BBB24WeightedSelectedB019.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 419,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch019/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB019",
+          "path": "build/weighted-v2/full-proofs/batch019-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted020",
+      "module": "BBB24WeightedSelectedB020.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 422,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch020/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB020",
+          "path": "build/weighted-v2/full-proofs/batch020-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted021",
+      "module": "BBB24WeightedSelectedB021.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 418,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch021/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB021",
+          "path": "build/weighted-v2/full-proofs/batch021-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted022",
+      "module": "BBB24WeightedSelectedB022.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 437,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch022/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB022",
+          "path": "build/weighted-v2/full-proofs/batch022-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted023",
+      "module": "BBB24WeightedSelectedB023.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 407,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch023/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB023",
+          "path": "build/weighted-v2/full-proofs/batch023-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted024",
+      "module": "BBB24WeightedSelectedB024.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 387,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch024/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB024",
+          "path": "build/weighted-v2/full-proofs/batch024-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted025",
+      "module": "BBB24WeightedSelectedB025.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 424,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch025/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB025",
+          "path": "build/weighted-v2/full-proofs/batch025-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted026",
+      "module": "BBB24WeightedSelectedB026.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 418,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch026/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB026",
+          "path": "build/weighted-v2/full-proofs/batch026-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted027",
+      "module": "BBB24WeightedSelectedB027.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 407,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch027/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB027",
+          "path": "build/weighted-v2/full-proofs/batch027-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted028",
+      "module": "BBB24WeightedSelectedB028.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 437,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch028/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB028",
+          "path": "build/weighted-v2/full-proofs/batch028-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted029",
+      "module": "BBB24WeightedSelectedB029.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 48,
+      "inventories": [
+        {
+          "path": "research/weighted-selected/batch029/machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedSelectedB029",
+          "path": "build/weighted-v2/full-proofs/batch029-selected-v5"
+        }
+      ]
+    },
+    {
+      "id": "Weighted030",
+      "module": "BBB24WeightedCapacityPilot.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 2,
+      "inventories": [
+        {
+          "path": "research/weighted-capacity-pilot-machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedCapacityPilot",
+          "path": "build/weighted-capacity-pilot/proof"
+        }
+      ]
+    },
+    {
+      "id": "Weighted031",
+      "module": "BBB24WeightedPortfolioPilot.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 1,
+      "inventories": [
+        {
+          "path": "research/weighted-portfolio-pilot-machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedPortfolioPilot",
+          "path": "build/weighted-portfolio-pilot/proof-v2"
+        }
+      ]
+    },
+    {
+      "id": "Weighted032",
+      "module": "BBB24WeightedCapacityFollowup.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 1,
+      "inventories": [
+        {
+          "path": "research/weighted-capacity-followup-machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedCapacityFollowup",
+          "path": "build/weighted-followup64/capacity-proof"
+        }
+      ]
+    },
+    {
+      "id": "Weighted033",
+      "module": "BBB24WeightedPortfolioFollowup.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 1,
+      "inventories": [
+        {
+          "path": "research/weighted-portfolio-followup-machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedPortfolioFollowup",
+          "path": "build/weighted-followup64/portfolio-proof"
+        }
+      ]
+    },
+    {
+      "id": "Weighted034",
+      "module": "BBB24WeightedCapacityFollowup512.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 12,
+      "inventories": [
+        {
+          "path": "research/weighted-capacity-followup512-machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedCapacityFollowup512",
+          "path": "build/weighted-followup512/capacity-proof-v2"
+        }
+      ]
+    },
+    {
+      "id": "Weighted035",
+      "module": "BBB24WeightedPortfolioFollowup512.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 9,
+      "inventories": [
+        {
+          "path": "research/weighted-portfolio-followup512-machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedPortfolioFollowup512",
+          "path": "build/weighted-followup512/portfolio-proof"
+        }
+      ]
+    },
+    {
+      "id": "Weighted036",
+      "module": "BBB24WeightedLateFollowup512.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 1,
+      "inventories": [
+        {
+          "path": "research/weighted-late-followup512-machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedLateFollowup512",
+          "path": "build/weighted-followup512/late-proof"
+        }
+      ]
+    },
+    {
+      "id": "WeightedV2Pilot",
+      "module": "BBB24WeightedV2Pilot.WeightedAll",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 205,
+      "inventories": [
+        {
+          "path": "research/weighted-v2-pilot-machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedV2Pilot",
+          "path": "build/weighted-v2/pilot205-kernel"
+        }
+      ]
+    },
+    {
+      "id": "Structural001",
+      "module": "BBB24ConjugateR001.ConjugateAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 131072,
+      "instruction_bound": 131072,
+      "scope": "both",
+      "rows": 735,
+      "inventories": [
+        {
+          "path": "research/conjugate-input-r001.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-batch",
+          "namespace": "BBB24Batch"
+        },
+        {
+          "path": "build/affine-closeout",
+          "namespace": "BBB24AffineCloseout"
+        },
+        {
+          "path": "build/closure-batch",
+          "namespace": "BBB24ClosureBatch"
+        },
+        {
+          "path": "build/family-transport",
+          "namespace": "BBB24Transport"
+        },
+        {
+          "path": "build/weighted/pilot-kernel",
+          "namespace": "BBB24Weighted"
+        },
+        {
+          "path": "build/late-cycle-proofs",
+          "namespace": "BBB24LateCycles"
+        },
+        {
+          "path": "build/weighted-reuse",
+          "namespace": "BBB24WeightedReuse"
+        },
+        {
+          "path": "build/weighted-suffix/pilot",
+          "namespace": "BBB24WeightedSuffixPilot"
+        },
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        },
+        {
+          "path": "build/weighted-v2/pilot205-kernel",
+          "namespace": "BBB24WeightedV2Pilot"
+        },
+        {
+          "path": "build/conjugate/r001",
+          "namespace": "BBB24ConjugateR001"
+        }
+      ]
+    },
+    {
+      "id": "Structural003",
+      "module": "BBB24WeightedSuffixPilot.WeightedSuffixAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 106,
+      "inventories": [
+        {
+          "path": "research/weighted-suffix-pilot-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-suffix/pilot",
+          "namespace": "BBB24WeightedSuffixPilot"
+        }
+      ]
+    },
+    {
+      "id": "Structural004",
+      "module": "BBB24WeightedSuffixV2.WeightedSuffixAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 248,
+      "inventories": [
+        {
+          "path": "research/weighted-suffix-v2-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-suffix/v2",
+          "namespace": "BBB24WeightedSuffixV2"
+        }
+      ]
+    },
+    {
+      "id": "Structural005",
+      "module": "BBB24WeightedStreamBatch000.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 747,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/batch000-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/batch000",
+          "namespace": "BBB24WeightedStreamBatch000"
+        }
+      ]
+    },
+    {
+      "id": "Structural006",
+      "module": "BBB24WeightedStreamOrdinary001_006.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 1042,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/ordinary001_006-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/ordinary001_006",
+          "namespace": "BBB24WeightedStreamOrdinary001_006"
+        }
+      ]
+    },
+    {
+      "id": "Structural007",
+      "module": "BBB24WeightedStreamAlias20.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 20,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/alias20-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/alias20",
+          "namespace": "BBB24WeightedStreamAlias20"
+        }
+      ]
+    },
+    {
+      "id": "Structural008",
+      "module": "BBB24WeightedStreamAlias_recovery.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 192,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/alias_recovery-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/alias_recovery",
+          "namespace": "BBB24WeightedStreamAlias_recovery"
+        }
+      ]
+    },
+    {
+      "id": "Structural009",
+      "module": "BBB24WeightedStreamOrdinary007_011.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 229,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/ordinary007_011-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/ordinary007_011",
+          "namespace": "BBB24WeightedStreamOrdinary007_011"
+        }
+      ]
+    },
+    {
+      "id": "Structural010",
+      "module": "BBB24WeightedStreamOrdinary012_017.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 166,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/ordinary012_017-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/ordinary012_017",
+          "namespace": "BBB24WeightedStreamOrdinary012_017"
+        }
+      ]
+    },
+    {
+      "id": "Structural011",
+      "module": "BBB24WeightedStreamPools001_006.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 2074,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/pools001_006-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/pools001_006",
+          "namespace": "BBB24WeightedStreamPools001_006"
+        }
+      ]
+    },
+    {
+      "id": "Structural012",
+      "module": "BBB24WeightedStreamWeighted007_017_first512.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 512,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/weighted007_017_first512-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/weighted007_017_first512",
+          "namespace": "BBB24WeightedStreamWeighted007_017_first512"
+        }
+      ]
+    },
+    {
+      "id": "Structural013",
+      "module": "BBB24ReadyReuseFull791.ReadyReuseAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 791,
+      "inventories": [
+        {
+          "path": "research/ready-reuse/full791-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-v2/full-proofs/batch000-v3",
+          "namespace": "BBB24WeightedFullB000"
+        },
+        {
+          "path": "build/weighted-v2/full-proofs/batch001-v4",
+          "namespace": "BBB24WeightedFullB001"
+        },
+        {
+          "path": "build/weighted-v2/full-proofs/batch002-v4",
+          "namespace": "BBB24WeightedFullB002"
+        },
+        {
+          "path": "build/weighted-v2/full-proofs/batch003-v4",
+          "namespace": "BBB24WeightedFullB003"
+        },
+        {
+          "path": "build/ready-reuse/full791",
+          "namespace": "BBB24ReadyReuseFull791"
+        }
+      ]
+    },
+    {
+      "id": "Structural014",
+      "module": "BBB24ReadyReuseSwap120.ReadyReuseAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 120,
+      "inventories": [
+        {
+          "path": "research/ready-reuse/swap120-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-v2/full-proofs/batch000-v3",
+          "namespace": "BBB24WeightedFullB000"
+        },
+        {
+          "path": "build/weighted-v2/full-proofs/batch001-v4",
+          "namespace": "BBB24WeightedFullB001"
+        },
+        {
+          "path": "build/weighted-v2/full-proofs/batch002-v4",
+          "namespace": "BBB24WeightedFullB002"
+        },
+        {
+          "path": "build/weighted-v2/full-proofs/batch003-v4",
+          "namespace": "BBB24WeightedFullB003"
+        },
+        {
+          "path": "build/ready-reuse/swap120",
+          "namespace": "BBB24ReadyReuseSwap120"
+        }
+      ]
+    },
+    {
+      "id": "Structural015",
+      "module": "BBB24ReadyReuseCached5.ReadyReuseAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 5,
+      "inventories": [
+        {
+          "path": "research/ready-reuse/cached5-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-v2/full-proofs/batch004-v4",
+          "namespace": "BBB24WeightedFullB004"
+        },
+        {
+          "path": "build/weighted-v2/full-proofs/batch005-v4",
+          "namespace": "BBB24WeightedFullB005"
+        },
+        {
+          "path": "build/ready-reuse/cached5",
+          "namespace": "BBB24ReadyReuseCached5"
+        }
+      ]
+    },
+    {
+      "id": "Structural016",
+      "module": "BBB24WeightedStreamWeighted007_017_rest.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 302,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/weighted007_017_rest-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/weighted007_017_rest",
+          "namespace": "BBB24WeightedStreamWeighted007_017_rest"
+        }
+      ]
+    },
+    {
+      "id": "Structural017",
+      "module": "BBB24WeightedStreamOrdinary018_023.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 77,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/ordinary018_023-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/ordinary018_023",
+          "namespace": "BBB24WeightedStreamOrdinary018_023"
+        }
+      ]
+    },
+    {
+      "id": "Structural018",
+      "module": "BBB24WeightedStreamWeighted018_023_first256.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 180,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/weighted018_023_first256-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/weighted018_023_first256",
+          "namespace": "BBB24WeightedStreamWeighted018_023_first256"
+        }
+      ]
+    },
+    {
+      "id": "Structural019",
+      "module": "BBB24WeightedStreamWeighted024_029.WeightedStreamAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 6,
+      "inventories": [
+        {
+          "path": "research/weighted-stream-reuse/weighted024_029-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-stream/weighted024_029",
+          "namespace": "BBB24WeightedStreamWeighted024_029"
+        }
+      ]
+    },
+    {
+      "id": "StateFinal000",
+      "module": "BBB24StateDeepPrefix.StateClosurePrefixAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 11441,
+      "inventories": [
+        {
+          "path": "research/state-deep-prefix-families.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-closure-deep",
+          "namespace": "BBB24StateDeepClosure"
+        },
+        {
+          "path": "build/state-deep-prefix",
+          "namespace": "BBB24StateDeepPrefix"
+        }
+      ]
+    },
+    {
+      "id": "StateFinal001",
+      "module": "BBB24StateHistoryPrefix.StateClosurePrefixAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 1689,
+      "inventories": [
+        {
+          "path": "research/state-history-prefix-families.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-closure-history",
+          "namespace": "BBB24StateHistoryClosure"
+        },
+        {
+          "path": "build/state-history-prefix",
+          "namespace": "BBB24StateHistoryPrefix"
+        }
+      ]
+    },
+    {
+      "id": "StateFinal002",
+      "module": "BBB24StateDeepSelected.StateSelectedPrefix019",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 4446,
+      "inventories": [
+        {
+          "path": "research/state-deep-selected-prefix019-families.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-deep-selected",
+          "namespace": "BBB24StateDeepSelected"
+        }
+      ]
+    },
+    {
+      "id": "StateFinal003",
+      "module": "BBB24StateHistoryTail.HistoryCertificateAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 3525,
+      "inventories": [
+        {
+          "path": "research/state-history-tail-families.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-history-tail",
+          "namespace": "BBB24StateHistoryTail"
+        }
+      ]
+    },
+    {
+      "id": "StateFinal004",
+      "module": "BBB24StateRWFrontier.StateRWAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 658,
+      "inventories": [
+        {
+          "path": "research/state-repwl-frontier-families.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-repwl-frontier",
+          "namespace": "BBB24StateRWFrontier"
+        }
+      ]
+    },
+    {
+      "id": "StateFinal005",
+      "module": "BBB24StateRWFrontierDeep.StateRWAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 617,
+      "inventories": [
+        {
+          "path": "research/state-repwl-frontier-deep-families.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-repwl-frontier-deep",
+          "namespace": "BBB24StateRWFrontierDeep"
+        }
+      ]
+    },
+    {
+      "id": "StateFinal006",
+      "module": "BBB24StateRWFrontierWider.StateRWAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 101,
+      "inventories": [
+        {
+          "path": "research/state-repwl-frontier-wider-families.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-repwl-frontier-wider",
+          "namespace": "BBB24StateRWFrontierWider"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate000",
+      "module": "BBB24AffineWave.TemplateReuse427.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 427,
+      "inventories": [
+        {
+          "path": "research/affine-template427-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate001",
+      "module": "BBB24AffineWave.TemplateOrbit181.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 181,
+      "inventories": [
+        {
+          "path": "research/affine-template181-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate002",
+      "module": "BBB24AffineWave.TemplateExtra245.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 65536,
+      "instruction_bound": 65536,
+      "scope": "both",
+      "rows": 245,
+      "inventories": [
+        {
+          "path": "research/affine-template245-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate003",
+      "module": "BBB24AffineWave.TemplateInfer12.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 65536,
+      "instruction_bound": 65536,
+      "scope": "both",
+      "rows": 12,
+      "inventories": [
+        {
+          "path": "research/affine-template12-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate004",
+      "module": "BBB24AffineWave.ShortTemplate909.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 909,
+      "inventories": [
+        {
+          "path": "research/affine-template-short-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate005",
+      "module": "BBB24AffineWave.RelaxedTemplate511.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 511,
+      "inventories": [
+        {
+          "path": "research/affine-template-relaxed511-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate006",
+      "module": "BBB24AffineWave.NeighborTemplate385.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 385,
+      "inventories": [
+        {
+          "path": "research/affine-template-neighbors-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate007",
+      "module": "BBB24AffineWave.TemplateRefresh175.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 175,
+      "inventories": [
+        {
+          "path": "research/affine-template-refresh-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate008",
+      "module": "BBB24AffineWave.TemplateRefresh49.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 49,
+      "inventories": [
+        {
+          "path": "research/affine-template-refresh49-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate009",
+      "module": "BBB24AffineWave.TemplateLate6.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 65536,
+      "instruction_bound": 65536,
+      "scope": "both",
+      "rows": 6,
+      "inventories": [
+        {
+          "path": "research/affine-template-late6-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate010",
+      "module": "BBB24AffineWave.ShortNeighbor129.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 129,
+      "inventories": [
+        {
+          "path": "research/affine-template-short-neighbor129-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate011",
+      "module": "BBB24AffineWave.TemplatePrefix7.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 81,
+      "inventories": [
+        {
+          "path": "research/affine-template-prefix7-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplate012",
+      "module": "BBB24AffineWave.TemplateFinal.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 8192,
+      "instruction_bound": 8192,
+      "scope": "both",
+      "rows": 72,
+      "inventories": [
+        {
+          "path": "research/affine-template-final-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineTemplateFollowup",
+      "module": "BBB24AffineWave.TemplateFollowup.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 8192,
+      "instruction_bound": 8192,
+      "scope": "both",
+      "rows": 359,
+      "inventories": [
+        {
+          "path": "research/affine-template-followup-input.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineCompleted001",
+      "module": "BBB24AffineWave.Bulk4096B.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 26970,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-bulk4096b-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineCompleted002",
+      "module": "BBB24AffineWave.Bulk4096C.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 16716,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-bulk4096c-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineCompleted003",
+      "module": "BBB24AffineWave.Deep16384Pilot.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 16384,
+      "instruction_bound": 16384,
+      "scope": "both",
+      "rows": 9,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-deep16384-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineCompleted004",
+      "module": "BBB24AffineWave.LatePilot16384.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 16384,
+      "instruction_bound": 16384,
+      "scope": "both",
+      "rows": 4,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-latepilot16384-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineCompleted005",
+      "module": "BBB24AffineWave.PhaseCpuRepair.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 8192,
+      "instruction_bound": 8192,
+      "scope": "both",
+      "rows": 375,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-phase-cpu-repair-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineCompleted007",
+      "module": "BBB24AffineWave.ResiduePilot30.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 30,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-residue-pilot-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineCompleted008",
+      "module": "BBB24AffineWave.ResidueRepair.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 581,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-residue-repair-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineCompleted009",
+      "module": "BBB24AffineWave.ShortCellPrefix1024.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 1024,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-short-cell-prefix1024-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineCompleted010",
+      "module": "BBB24AffineWave.ShortCell250.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 1381,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-short-cell250-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineCompleted011",
+      "module": "BBB24AffineWave.ShortResidue.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 1,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-short-residue-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "ClosurePrefix",
+      "module": "BBB24ClosureWave3.ClosureWaveAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 10880,
+      "inventories": [
+        {
+          "path": "research/closure-wave3-prefix-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/closure-wave3-prefix",
+          "namespace": "BBB24ClosureWave3"
+        }
+      ]
+    },
+    {
+      "id": "ClosureWave",
+      "module": "BBB24Wave3Closure.ClosureWaveAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 11496,
+      "inventories": [
+        {
+          "path": "research/wave3-closure-proof-input.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/wave3-closure-proofs",
+          "namespace": "BBB24Wave3Closure"
+        }
+      ]
+    },
+    {
+      "id": "WeightedStatePilot",
+      "module": "BBB24WeightedStatePilot.WeightedStateAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 9,
+      "inventories": [
+        {
+          "path": "research/weighted-state-pilot-machines.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedStatePilot",
+          "path": "build/weighted-state-pilot"
+        }
+      ]
+    },
+    {
+      "id": "MarkerState",
+      "module": "BBB24MarkerState.MarkerBoard",
+      "board": "marker_board",
+      "sound": "marker_board_sound",
+      "small_sound": "marker_board_zero_sound",
+      "was_pending": "marker_board_was_pending",
+      "state_bound": 0,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 568,
+      "inventories": [
+        {
+          "path": "research/structural-final/MarkerState.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/marker-state",
+          "namespace": "BBB24MarkerState"
+        }
+      ]
+    },
+    {
+      "id": "MarkerPotential",
+      "module": "BBB24MarkerPotential.PotentialBoard",
+      "board": "marker_board",
+      "sound": "marker_board_sound",
+      "small_sound": "marker_board_zero_sound",
+      "was_pending": "marker_board_was_pending",
+      "state_bound": 0,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 276,
+      "inventories": [
+        {
+          "path": "research/structural-final/MarkerPotential.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/marker-potential",
+          "namespace": "BBB24MarkerPotential"
+        }
+      ]
+    },
+    {
+      "id": "MarkerTrail",
+      "module": "BBB24MarkerTrail.TrailBoard",
+      "board": "marker_board",
+      "sound": "marker_board_sound",
+      "small_sound": "marker_board_zero_sound",
+      "was_pending": "marker_board_was_pending",
+      "state_bound": 0,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 95,
+      "inventories": [
+        {
+          "path": "research/structural-final/MarkerTrail.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/marker-trail",
+          "namespace": "BBB24MarkerTrail"
+        }
+      ]
+    },
+    {
+      "id": "MarkerWalls",
+      "module": "BBB24MarkerWalls.WallsBoard",
+      "board": "marker_board",
+      "sound": "marker_board_sound",
+      "small_sound": "marker_board_zero_sound",
+      "was_pending": "marker_board_was_pending",
+      "state_bound": 0,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 9,
+      "inventories": [
+        {
+          "path": "research/structural-final/MarkerWalls.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/marker-walls",
+          "namespace": "BBB24MarkerWalls"
+        }
+      ]
+    },
+    {
+      "id": "StateBranches",
+      "module": "BBB24StateBranches.StateBranches",
+      "board": "branch_state_board",
+      "sound": "branch_state_board_sound",
+      "small_sound": "branch_state_board_small_sound",
+      "was_pending": "branch_state_board_was_pending",
+      "state_bound": 8192,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 5,
+      "inventories": [
+        {
+          "path": "research/structural-final/StateBranches.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/state-branches",
+          "namespace": "BBB24StateBranches"
+        }
+      ]
+    },
+    {
+      "id": "StateBranchCycles",
+      "module": "BBB24StateBranchCycles.StateBranchCycles",
+      "board": "branch_state_board",
+      "sound": "branch_state_board_sound",
+      "small_sound": "branch_state_board_small_sound",
+      "was_pending": "branch_state_board_was_pending",
+      "state_bound": 8192,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 9,
+      "inventories": [
+        {
+          "path": "research/structural-final/StateBranchCycles.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/state-branch-cycles",
+          "namespace": "BBB24StateBranchCycles"
+        }
+      ]
+    },
+    {
+      "id": "StateMarkerBranch",
+      "module": "BBB24StateMarkerBranch.MarkerParent",
+      "board": "branch_state_board",
+      "sound": "branch_state_board_sound",
+      "small_sound": "branch_state_board_small_sound",
+      "was_pending": "branch_state_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 1,
+      "inventories": [
+        {
+          "path": "research/structural-final/StateMarkerBranch.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/affine-children",
+          "namespace": "BBB24AffineChildren"
+        },
+        {
+          "path": "build/state-marker-branch",
+          "namespace": "BBB24StateMarkerBranch"
+        }
+      ]
+    },
+    {
+      "id": "StateB3Branches",
+      "module": "BBB24StateB3Branches.B3Parents",
+      "board": "branch_state_board",
+      "sound": "branch_state_board_sound",
+      "small_sound": "branch_state_board_small_sound",
+      "was_pending": "branch_state_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 2,
+      "inventories": [
+        {
+          "path": "research/structural-final/StateB3Branches.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/affine-children",
+          "namespace": "BBB24AffineChildren"
+        },
+        {
+          "path": "build/state-b3-branches",
+          "namespace": "BBB24StateB3Branches"
+        }
+      ]
+    },
+    {
+      "id": "LateMarkerBranch",
+      "module": "BBB24LateMarkerBranch.LateMarkerBranch",
+      "board": "branch_state_board",
+      "sound": "branch_state_board_sound",
+      "small_sound": "branch_state_board_small_sound",
+      "was_pending": "branch_state_board_was_pending",
+      "state_bound": 3932964,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 1,
+      "inventories": [
+        {
+          "path": "research/structural-final/LateMarkerBranch.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/late-marker-branch",
+          "namespace": "BBB24LateMarkerBranch"
+        }
+      ]
+    },
+    {
+      "id": "StateAlphabetQuotient",
+      "module": "BBB24StateQuotient.QuotientBoard",
+      "board": "quotient_board",
+      "sound": "quotient_board_sound",
+      "small_sound": "quotient_board_small_sound",
+      "was_pending": "quotient_board_was_pending",
+      "state_bound": 59,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 37,
+      "inventories": [
+        {
+          "path": "research/structural-final/StateAlphabetQuotient.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "../small/theories",
+          "namespace": "SmallBB"
+        },
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/state-alphabet-quotient",
+          "namespace": "BBB24StateQuotient"
+        }
+      ]
+    },
+    {
+      "id": "AlphabetMask",
+      "module": "BBB24AlphabetMask.MaskBoard",
+      "board": "closed_mask_board",
+      "sound": "closed_mask_board_sound",
+      "small_sound": "closed_mask_board_small_sound",
+      "was_pending": "closed_mask_board_was_pending",
+      "state_bound": 59,
+      "instruction_bound": 67,
+      "scope": "both",
+      "rows": 13,
+      "inventories": [
+        {
+          "path": "research/alphabet-mask-families.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "../small/theories",
+          "namespace": "SmallBB"
+        },
+        {
+          "path": "theories",
+          "namespace": "BBB24"
+        },
+        {
+          "path": "build/alphabet-mask",
+          "namespace": "BBB24AlphabetMask"
+        }
+      ]
+    }
+  ]
+}

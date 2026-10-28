@@ -1,0 +1,20 @@
+{
+  "status": "Kernel-audited generic source-theorem reuse and positive/negative regression.",
+  "theorems": [
+    "graph_prepares_ready_tail",
+    "ready_reuse_sound",
+    "ready_reuse_batch_sound"
+  ],
+  "source_sha256": {
+    "theories/ReadyReuse.v": "b33bcbd95ffe7b65a62126a707f12305c30e2ebbefcdf97c683450689b03eda2",
+    "theories/ReadyReuseRegression.v": "8b8f6979e81e02d1075ac3fa4b18855267538e41bf55c617be8d3dba48f5ebad"
+  },
+  "audit_receipt": "build/ready-reuse/audit.json",
+  "audit_receipt_sha256": "ab472ae96b3f7e866e8dcf2fb9b281493598e4566c58420e466a8dcdeff23b74",
+  "audit_kind": "incremental",
+  "assumptions": {
+    "graph_prepares_ready_tail": "closed under the global context",
+    "ready_reuse_batch_sound": "existing FunctionalExtensionality.functional_extensionality_dep"
+  },
+  "census_claim": "This generic theorem report adds no concrete family count; concrete imported-source boards require their own or combined transitive audit."
+}

@@ -1,0 +1,114 @@
+{
+  "candidate_rows": 151,
+  "candidate_tsv_sha256": "e12b2a5df60bb8da02190a944d7ba2fd75c06096ae1c6095e8f6895986f828b2",
+  "census_linked_rows": 0,
+  "kernel_checked_rows": 0,
+  "manifest": {
+    "anchor": 0,
+    "batch": 7,
+    "bound": 4096,
+    "fuel": 5120,
+    "input_range": [
+      14336,
+      16384
+    ],
+    "input_rows": 1228,
+    "input_sha256": "4db0e88cc6c5ab11a95a78368c0673bda458fa1fdd43d3ee5ffa55d0f09c8cab",
+    "prior_remaining_rows": 1857,
+    "prior_remaining_sha256": "c82a62be6185b49e858f8af2d3cb97bb098beca11d7f2fda3c91c6d3dd0119af",
+    "prior_report_sha256": "7e660f58f98babd992cad0d01ba8e217b691886d449666b21053dbf25d6d7393",
+    "size_cut": 32,
+    "status": "Completed-domain search input; weighted candidates remain untrusted.",
+    "stream_source_sha256": "e2c35973b7e429ecf42bef58eaad7bea476ba0951a94a618d591b655a1a567a7",
+    "threshold": 2,
+    "timeout_seconds_per_row": 1.0,
+    "weighted_candidate_rows": 730,
+    "weighted_codec_sha256": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "weighted_overlap_removed_rows": 629,
+    "weighted_registry": "four/research/weighted-full-snapshots/batch007/registry.json",
+    "weighted_registry_sha256": "4746b5273010a09dfbcaa752be1a77767a9001620fe993d978529bcd8c9ddcda",
+    "weighted_rows": 2048,
+    "widths": [
+      3,
+      2
+    ]
+  },
+  "not_accepted_rows": 1077,
+  "not_accepted_sha256": "02c370c41556dde0936b1749f969eb4a85fbbc9a6d94449a7cfee88cd1002c38",
+  "remaining_timeout_rows": 194,
+  "remaining_timeouts_sha256": "e70f2c5f394bf30b4ec01233fb4461d7e8d037d0c2b21c755bcfabffd8948065",
+  "results": [
+    {
+      "candidate_rows": 96,
+      "report": "four/build/wave3/repwl-stream/batch007/width3.json",
+      "report_sha256": "2c9869c18c35716d1d7b7585615f614e242fbf0ff642fe4f3af97993eb9a63ff",
+      "result": {
+        "anchor": 0,
+        "extra": 2,
+        "failure_phases": {
+          "close": 1056,
+          "liveness": 76
+        },
+        "fuel": 5120,
+        "log_sha256": "79e1f5abd491c836deadd6a96434d60146dd5fee6510bca38de318924945f7f6",
+        "max_candidate_node_size": 15,
+        "max_node_size": 33,
+        "mirror": false,
+        "new_candidate_rows": 96,
+        "rows": 1228,
+        "size": 3,
+        "size_cap": 32,
+        "stage": 0,
+        "statuses": {
+          "candidate": 96,
+          "fuel_exhausted": 669,
+          "node_cut": 387,
+          "timeout": 76
+        },
+        "sum_cpu_seconds": 117.748893,
+        "sum_row_seconds": 167.155936,
+        "swap23": false
+      },
+      "width": 3
+    },
+    {
+      "candidate_rows": 55,
+      "report": "four/build/wave3/repwl-stream/batch007/width2.json",
+      "report_sha256": "1e5a8fc5eb071563d1cd22a6fad7a8ece1b4e9372d2bac9cbef7cc7259e5a889",
+      "result": {
+        "anchor": 0,
+        "extra": 2,
+        "failure_phases": {
+          "close": 933,
+          "liveness": 144
+        },
+        "fuel": 5120,
+        "log_sha256": "99c37c3eab02882bd85bedc900a3e92cea34404bdaa7dbe289eb4075675c90da",
+        "max_candidate_node_size": 12,
+        "max_node_size": 33,
+        "mirror": false,
+        "new_candidate_rows": 55,
+        "rows": 1132,
+        "size": 2,
+        "size_cap": 32,
+        "stage": 0,
+        "statuses": {
+          "blocked": 1,
+          "candidate": 55,
+          "fuel_exhausted": 372,
+          "node_cut": 560,
+          "ranking_failure": 3,
+          "timeout": 141
+        },
+        "sum_cpu_seconds": 139.625958,
+        "sum_row_seconds": 208.705789,
+        "swap23": false
+      },
+      "width": 2
+    }
+  ],
+  "source_version_sha256": "18756f53716b4445feeb61eb2b3852444c08160cb62ab7bceb45751a2610173f",
+  "status": "Complete RW search on one frozen weighted residual range; no new kernel claims.",
+  "sum_cpu_seconds": 257.374851,
+  "sum_row_seconds": 375.861725
+}

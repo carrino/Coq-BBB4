@@ -1,0 +1,118 @@
+{
+  "bundles": [
+    {
+      "bytes": 195045,
+      "path": "research/weighted-v2-pilot/certificates-0000.json",
+      "rows": 205,
+      "sha256": "41000b5a174bcb1788779e3445e52a9b83614bd62a3a02d60f8fb87451c681f7"
+    },
+    {
+      "bytes": 623754,
+      "path": "research/weighted-full-snapshots/batch000/certificates-0000.json",
+      "rows": 512,
+      "sha256": "7ba8d622890ee1a340c5ec10cb97127dd3e418179add573a6ee89194c71659d0"
+    },
+    {
+      "bytes": 44372,
+      "path": "research/weighted-full-snapshots/batch000/certificates-0001.json",
+      "rows": 43,
+      "sha256": "dba95e8bb80b3c395fe0541e180f6f12e8f2a4850301627e7f4a9a07bfabce94"
+    },
+    {
+      "bytes": 596134,
+      "path": "research/weighted-full-snapshots/batch001/certificates-0000.json",
+      "rows": 512,
+      "sha256": "55f1c5ea5e1851de00d4f0631dc846da4c3680f114f69adbb5f96aa4fb90e2c8"
+    },
+    {
+      "bytes": 245305,
+      "path": "research/weighted-full-snapshots/batch001/certificates-0001.json",
+      "rows": 189,
+      "sha256": "617bc1e53cee5e06c4a8f7a0e9de53cc93c79df31d8ca04e033d4c07f48aef4e"
+    },
+    {
+      "bytes": 584110,
+      "path": "research/weighted-full-snapshots/batch002/certificates-0000.json",
+      "rows": 512,
+      "sha256": "1b0e557daab0d3177eda7a7a2506b639ae122b6afa65f8860e1820a9a8a43319"
+    },
+    {
+      "bytes": 223753,
+      "path": "research/weighted-full-snapshots/batch002/certificates-0001.json",
+      "rows": 178,
+      "sha256": "65a2070549a19589c2c07c714340150e6a331ef79a0e906930a0097fb6c23a0f"
+    },
+    {
+      "bytes": 664530,
+      "path": "research/weighted-full-snapshots/batch003/certificates-0000.json",
+      "rows": 512,
+      "sha256": "336271dad0821be55c38031b82195b2b141b48cddec515df14d6f82e5e552be9"
+    },
+    {
+      "bytes": 197485,
+      "path": "research/weighted-full-snapshots/batch003/certificates-0001.json",
+      "rows": 171,
+      "sha256": "20a70211763bc695ff831f474eb199b66b0a9c01498fabefca43c983f58be65b"
+    },
+    {
+      "bytes": 584026,
+      "path": "research/weighted-full-snapshots/batch004/certificates-0000.json",
+      "rows": 512,
+      "sha256": "14412c60de2016df6c220aef334b8941002a820d703f2a0adb46fdbd3a4610d9"
+    },
+    {
+      "bytes": 208089,
+      "path": "research/weighted-full-snapshots/batch004/certificates-0001.json",
+      "rows": 153,
+      "sha256": "fb5558340693d533ce3b96e3cc8a7d89afcf72f2861c566560f3411274c71e40"
+    },
+    {
+      "bytes": 672766,
+      "path": "research/weighted-full-snapshots/batch005/certificates-0000.json",
+      "rows": 512,
+      "sha256": "15647f1c62321054db459ce85fe369eb90222963e8945fb6b4a1a0b65e27df48"
+    },
+    {
+      "bytes": 234821,
+      "path": "research/weighted-full-snapshots/batch005/certificates-0001.json",
+      "rows": 178,
+      "sha256": "06ad564d0f4469381182df99ff3594aff4bd4e4a73cc9967bd7e33cdd75ab9ee"
+    },
+    {
+      "bytes": 617362,
+      "path": "research/weighted-full-snapshots/batch006/certificates-0000.json",
+      "rows": 512,
+      "sha256": "bf787ecffd4c9b1e36a9cd987524b0e48e9716ccafca29ba47577e632de9c64b"
+    },
+    {
+      "bytes": 196649,
+      "path": "research/weighted-full-snapshots/batch006/certificates-0001.json",
+      "rows": 167,
+      "sha256": "30b17ce2ebdd051e2965086989e8a8b4fd5068d9c08e2c7a8095ca89ce0d4ff6"
+    }
+  ],
+  "format": "BBB24 compact weighted certificates v2",
+  "kinds": {
+    "ordinary": 1334,
+    "weighted": 3534
+  },
+  "rows": 4868,
+  "source": {
+    "registries": [
+      {
+        "path": "research/weighted-v2-pilot-registry.json",
+        "sha256": "2485fd638d2dc02783a767625ca477e347bd138e82a652f5f640caabe70b5cc3"
+      },
+      {
+        "path": "research/weighted-full-snapshots/batch000/registry.json",
+        "sha256": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58"
+      },
+      {
+        "path": "research/weighted-stream-reuse/pools001_006.json",
+        "sha256": "6fca232dcc1385758702ea21689da23d097ab28dd28b2521b19d9a0aad2f98bd"
+      }
+    ],
+    "union_tool_sha256": "5ec43e292d38a29723fd19546106b4e7c87995f00036928628224a0243ba1de4"
+  },
+  "status": "Ordered immutable candidate-pool union; no proof or census claim."
+}

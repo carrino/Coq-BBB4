@@ -1,0 +1,90 @@
+{
+  "scope": "Untrusted search and certificate-repair pilots; no new proof claims in this report",
+  "baseline_replay_rejections": 163,
+  "results": {
+    "prefix_repair": {
+      "rows": 163,
+      "statuses": {
+        "replay_false": 162,
+        "repaired_candidate": 1
+      },
+      "row_wall_seconds": 22.194188
+    },
+    "dictionary_repair": {
+      "rows": 162,
+      "statuses": {
+        "replay_false": 113,
+        "timeout": 49
+      },
+      "row_wall_seconds": 141.102672
+    },
+    "phase_repair": {
+      "rows": 163,
+      "statuses": {
+        "replay_false": 152,
+        "timeout": 4,
+        "repaired_candidate": 7
+      },
+      "row_wall_seconds": 19.840259
+    },
+    "higher_fuel": {
+      "rows": 163,
+      "statuses": {
+        "replay_false": 161,
+        "timeout": 2
+      },
+      "row_wall_seconds": 33.683116
+    },
+    "five_sample_fitter": {
+      "rows": 161,
+      "statuses": {
+        "replay_false": 161
+      },
+      "row_wall_seconds": 2.773563
+    },
+    "earlier_fit_cell_priority": {
+      "rows": 283,
+      "statuses": {
+        "replay_false": 169,
+        "replay_true": 114
+      },
+      "row_wall_seconds": 2.973756,
+      "search_input_rows": 624,
+      "search_candidates": 283,
+      "new_extracted_successes": 55,
+      "new_from_search_misses": 53,
+      "new_from_replay_failures": 2
+    }
+  },
+  "parameters": {
+    "bound": 4096,
+    "cfuel": 4096,
+    "fuel": 8192,
+    "phase_limit": 8,
+    "phase_timeout_seconds": 2,
+    "higher_fuel_cfuel": 16384,
+    "higher_fuel_fuel": 65536
+  },
+  "interpretation": "Earlier-fit selection also included59 baseline extracted successes that were outside the original563-case Coq probe. The55 new successes exclude all baseline extracted successes. Dictionary and phase timeouts remain unaccepted; they do not establish failure at larger budgets. Repaired certificates require independent frozen-parser replay and Coq proof packaging.",
+  "evidence_sha256": {
+    "four/build/affine-wave/repair-pilot/fast.tsv": "703a40d461ede45d21e92f62ae91faea845b78dc308e44c55d2018e151f7b6e9",
+    "four/build/affine-wave/repair-pilot/blocks.tsv": "b51df067754fcf6d57b989bc58fe83d64910be99a2ac93859cd472bbafda374d",
+    "four/build/affine-wave/repair-pilot/phase8.tsv": "aee52421f2d3c4949524cb030b8ca8d14afb1ac9d4acdfc36144d365d99deaa2",
+    "four/build/affine-wave/repair-pilot/high-fuel.tsv": "8e552e1fcf2e948b4c49dbc01b962c8ccada18fc94d5d07e4b06d4aa117ae267",
+    "four/build/affine-wave/five-pilot/replay.tsv": "67123f7797819f2612a330f8f722d96a4c31742aae6c57566fe721507784d400",
+    "four/build/affine-wave/variant-pilot/replay.tsv": "2eab8ff963d12ae8d1798ee1cb01354f2d02fafef4f1a93981279b3bdc8ea7bd",
+    "four/build/affine-wave/variant-pilot/search.csv": "22c13159f161b77bb3960ec80077567967cf6cb94841536d9ef646cadd70d279",
+    "four/build/affine-wave/pilot-proofs/outcomes.json": "c185ab83af8fc80c6dff5c9c01cef7754b14e2e3ef1c75405b199e7f6be70429",
+    "four/build/affine-wave/repair-pilot/input.txt": "b6732ffd4152e506c12810c89a5566a0ea4db9a5f61aad46df65a624e76e9fd4",
+    "four/build/affine-wave/variant-pilot/input.txt": "6d76010c6569d0ab3a354345ec4fdb40355118c0e9780e8d3f623d83a5338831",
+    "four/build/affine-wave/steps-4096/replay-prefix.tsv": "19352d2bf75dc0340dbede82b91bceb825b2340da66495971a29656024cbe1c9"
+  },
+  "source_sha256": {
+    "four/tools/affine_phase_probe.ml": "1220aa84bb45f09c046b10c9170f5ecb11b0deeacfa1bc86f42b2e9fc1455c76",
+    "four/tools/affine_repair_probe.ml": "ff70acb077c7971861394fa82554fbb1ceab3e915fe7809116d2b4f2fa141aa4",
+    "four/tools/affine_cert_io.ml": "f0221d100b913fd575e5450b38d295a52807297a27eea16437209f8b86ee8557",
+    "four/tools/build_affine_search.py": "b2071f730048f147cb46d890ac376e3d5b71f4ee55567b533057ec68ed52ff3e"
+  },
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0
+}

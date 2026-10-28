@@ -1,0 +1,6 @@
+[
+  {"size": 2, "extra": 2, "anchor": 0, "fuel": 5120, "size_cap": 32, "mirror": false, "swap23": false},
+  {"size": 3, "extra": 2, "anchor": 0, "fuel": 5120, "size_cap": 32, "mirror": false, "swap23": false},
+  {"size": 4, "extra": 2, "anchor": 0, "fuel": 5120, "size_cap": 32, "mirror": false, "swap23": false},
+  {"size": 6, "extra": 2, "anchor": 0, "fuel": 5120, "size_cap": 32, "mirror": false, "swap23": false}
+]

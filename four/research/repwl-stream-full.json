@@ -1,0 +1,491 @@
+{
+  "candidate_rows": 4158,
+  "candidate_tsv_sha256": "b4ba922a75ade287705002061284a99942fbf65d6102e915b5f1440d5b59acf4",
+  "census_linked_rows": 0,
+  "complete_source_cohort": true,
+  "completed_ranges": 30,
+  "global_residual_after_prefix_rows": 32647,
+  "kernel_checked_rows": 0,
+  "output_directory": "four/build/wave3/repwl-full",
+  "outputs_sha256": {
+    "candidates.tsv": "b4ba922a75ade287705002061284a99942fbf65d6102e915b5f1440d5b59acf4",
+    "global-residual-after-prefix.txt": "f5a2b444646b7de036889fd348cd3788d9c371606e14a5e58a9626cc95ba2d6e",
+    "remaining-timeouts.txt": "7f015f09ca3ab2d91621f8567cbe6b8d4721184ef9347a439b71fe494f013232",
+    "searched-not-accepted.txt": "f5a2b444646b7de036889fd348cd3788d9c371606e14a5e58a9626cc95ba2d6e"
+  },
+  "prior_remaining_rows": 53589,
+  "ranges": [
+    {
+      "batch": 0,
+      "candidate_rows": 154,
+      "input_range": [
+        0,
+        2048
+      ],
+      "input_rows": 1388,
+      "not_accepted_rows": 1234,
+      "proof_input": "four/research/repwl-stream/batch000-proof-input.json",
+      "proof_input_sha256": "6d602eeddb3dfc3a479c92285bde54619511974ba341294123d23202ddc32e31",
+      "remaining_timeout_rows": 223,
+      "report": "four/research/repwl-stream/batch000.json",
+      "report_sha256": "080b6beb3067a01cefb15020fb0b5ff5092a2d4b1122fe80249b8794748c3ace"
+    },
+    {
+      "batch": 1,
+      "candidate_rows": 162,
+      "input_range": [
+        2048,
+        4096
+      ],
+      "input_rows": 1271,
+      "not_accepted_rows": 1109,
+      "proof_input": "four/research/repwl-stream/batch001-proof-input.json",
+      "proof_input_sha256": "cd2e42de49a0dcc32b3ae64cd4d4c7632a105ec2384cdbecebb429ade6f73c83",
+      "remaining_timeout_rows": 195,
+      "report": "four/research/repwl-stream/batch001.json",
+      "report_sha256": "7f282dc1cad21063deb238b3e006ef40f79613696960316974c18b4f287a5b66"
+    },
+    {
+      "batch": 2,
+      "candidate_rows": 144,
+      "input_range": [
+        4096,
+        6144
+      ],
+      "input_rows": 1259,
+      "not_accepted_rows": 1115,
+      "proof_input": "four/research/repwl-stream/batch002-proof-input.json",
+      "proof_input_sha256": "4be810b86116d9f1ce1719161926c23d8abe747ed61a321a456d58a529515740",
+      "remaining_timeout_rows": 211,
+      "report": "four/research/repwl-stream/batch002.json",
+      "report_sha256": "9f8f015964a06ef4db318d49b65473bcd7c3d76e3a40abdf3d2aa2afbc5c05b0"
+    },
+    {
+      "batch": 3,
+      "candidate_rows": 127,
+      "input_range": [
+        6144,
+        8192
+      ],
+      "input_rows": 1279,
+      "not_accepted_rows": 1152,
+      "proof_input": "four/research/repwl-stream/batch003-proof-input.json",
+      "proof_input_sha256": "e7cb6b9d1c86f0c53e4e14c9318209fd4b44102866f440c002541d9fee48e27f",
+      "remaining_timeout_rows": 209,
+      "report": "four/research/repwl-stream/batch003.json",
+      "report_sha256": "7b29f8edaf22aaebd6bb789893023ec95023149882794bdfd3553ac49297e0d0"
+    },
+    {
+      "batch": 4,
+      "candidate_rows": 152,
+      "input_range": [
+        8192,
+        10240
+      ],
+      "input_rows": 1295,
+      "not_accepted_rows": 1143,
+      "proof_input": "four/research/repwl-stream/batch004-proof-input.json",
+      "proof_input_sha256": "b64e627894173845e5f9ef7b1ed6fd37a676665813c705ccef1b77efeb9317e0",
+      "remaining_timeout_rows": 234,
+      "report": "four/research/repwl-stream/batch004.json",
+      "report_sha256": "c874a2748123be0b8c28f6232a20bd0a4178517e53ae2ddda9cbd179a4ecba68"
+    },
+    {
+      "batch": 5,
+      "candidate_rows": 146,
+      "input_range": [
+        10240,
+        12288
+      ],
+      "input_rows": 1283,
+      "not_accepted_rows": 1137,
+      "proof_input": "four/research/repwl-stream/batch005-proof-input.json",
+      "proof_input_sha256": "e57e28196add74a0c0df56178e40c5d139c595fc956286a309d36d6cd7b99885",
+      "remaining_timeout_rows": 197,
+      "report": "four/research/repwl-stream/batch005.json",
+      "report_sha256": "f3d8b12071ad8fa301c21203f3e5ab024d42f01096d8e1f89aee89eb2b6f4a4a"
+    },
+    {
+      "batch": 6,
+      "candidate_rows": 133,
+      "input_range": [
+        12288,
+        14336
+      ],
+      "input_rows": 1276,
+      "not_accepted_rows": 1143,
+      "proof_input": "four/research/repwl-stream/batch006-proof-input.json",
+      "proof_input_sha256": "7268221fb8f4379ed706f0f3b63d46ea9fc58aee35a08908e2f01c0d4c8aa50d",
+      "remaining_timeout_rows": 204,
+      "report": "four/research/repwl-stream/batch006.json",
+      "report_sha256": "1e5ad4c2fe37690ba2f4a753086c3004e7b8b1c6a76ee7c5b3a27b237bbab869"
+    },
+    {
+      "batch": 7,
+      "candidate_rows": 151,
+      "input_range": [
+        14336,
+        16384
+      ],
+      "input_rows": 1228,
+      "not_accepted_rows": 1077,
+      "proof_input": "four/research/repwl-stream/batch007-proof-input.json",
+      "proof_input_sha256": "2eeac84d27131b6b541642b6f148fe9938d542f822f2df1339849021e1860660",
+      "remaining_timeout_rows": 194,
+      "report": "four/research/repwl-stream/batch007.json",
+      "report_sha256": "69efc85dfc8ec27bf65c23bb3c959de27ad9bc47d993cf26e20537ab54e2f41f"
+    },
+    {
+      "batch": 8,
+      "candidate_rows": 131,
+      "input_range": [
+        16384,
+        18432
+      ],
+      "input_rows": 1322,
+      "not_accepted_rows": 1191,
+      "proof_input": "four/research/repwl-stream/batch008-proof-input.json",
+      "proof_input_sha256": "4171dafee6d787679453a690b197820634515259e5a7ff3ca221d780c94298a5",
+      "remaining_timeout_rows": 224,
+      "report": "four/research/repwl-stream/batch008.json",
+      "report_sha256": "38fa5aaae033671150b943910721278ef8ed37deb080a96be0b1b8058bb357df"
+    },
+    {
+      "batch": 9,
+      "candidate_rows": 145,
+      "input_range": [
+        18432,
+        20480
+      ],
+      "input_rows": 1258,
+      "not_accepted_rows": 1113,
+      "proof_input": "four/research/repwl-stream/batch009-proof-input.json",
+      "proof_input_sha256": "c896988d7129cbc926571b4580ccaffcd6faa2c313a807924f415d01657d5c0b",
+      "remaining_timeout_rows": 178,
+      "report": "four/research/repwl-stream/batch009.json",
+      "report_sha256": "d57ae85292c078645fa686e01e39b94b68a71fd72223e6e5da3f08ffa4914a2b"
+    },
+    {
+      "batch": 10,
+      "candidate_rows": 143,
+      "input_range": [
+        20480,
+        22528
+      ],
+      "input_rows": 1270,
+      "not_accepted_rows": 1127,
+      "proof_input": "four/research/repwl-stream/batch010-proof-input.json",
+      "proof_input_sha256": "6c18d1087002b766e316a287f020951de027273c888d18eaff28da1f46865862",
+      "remaining_timeout_rows": 201,
+      "report": "four/research/repwl-stream/batch010.json",
+      "report_sha256": "a134f0f8d990e2f1a10e59c302d490250cf60f704b23ff7bc944e16b82bef7cf"
+    },
+    {
+      "batch": 11,
+      "candidate_rows": 130,
+      "input_range": [
+        22528,
+        24576
+      ],
+      "input_rows": 1240,
+      "not_accepted_rows": 1110,
+      "proof_input": "four/research/repwl-stream/batch011-proof-input.json",
+      "proof_input_sha256": "7cd05e3998ee432c7629ef6109465e1d705e53d14915e05979f6a43084a11114",
+      "remaining_timeout_rows": 203,
+      "report": "four/research/repwl-stream/batch011.json",
+      "report_sha256": "5cbc69a025be8a3a4744244d8654e7401ed638854e174614b24228acb8703516"
+    },
+    {
+      "batch": 12,
+      "candidate_rows": 147,
+      "input_range": [
+        24576,
+        26624
+      ],
+      "input_rows": 1229,
+      "not_accepted_rows": 1082,
+      "proof_input": "four/research/repwl-stream/batch012-proof-input.json",
+      "proof_input_sha256": "607cf242f4ca370d4ddde1e591b16db262b9f10256a4e204396e6c27dc453109",
+      "remaining_timeout_rows": 195,
+      "report": "four/research/repwl-stream/batch012.json",
+      "report_sha256": "2660211fcbf0893c6daa30b3ad51a60743318dfb2489edcdc060c05bb2480d4a"
+    },
+    {
+      "batch": 13,
+      "candidate_rows": 139,
+      "input_range": [
+        26624,
+        28672
+      ],
+      "input_rows": 1241,
+      "not_accepted_rows": 1102,
+      "proof_input": "four/research/repwl-stream/batch013-proof-input.json",
+      "proof_input_sha256": "efa4969791c0304ca2b247814ee4b8a04a33b0698b58ec0e0cc7beabf094e884",
+      "remaining_timeout_rows": 193,
+      "report": "four/research/repwl-stream/batch013.json",
+      "report_sha256": "138b29ae1818c508740abfa643fab030cc865ec7d67bfcd7c2b58148cfbe51ed"
+    },
+    {
+      "batch": 14,
+      "candidate_rows": 126,
+      "input_range": [
+        28672,
+        30720
+      ],
+      "input_rows": 1234,
+      "not_accepted_rows": 1108,
+      "proof_input": "four/research/repwl-stream/batch014-proof-input.json",
+      "proof_input_sha256": "edc876cffb6c86f2920543f8d7109221c9c7a9e567c2062cfcc8b1319cf39444",
+      "remaining_timeout_rows": 173,
+      "report": "four/research/repwl-stream/batch014.json",
+      "report_sha256": "e5ef0289342bbfba63450f9d261a3cd51dd753c01a9001d58f16625958a5cde9"
+    },
+    {
+      "batch": 15,
+      "candidate_rows": 173,
+      "input_range": [
+        30720,
+        32768
+      ],
+      "input_rows": 1283,
+      "not_accepted_rows": 1110,
+      "proof_input": "four/research/repwl-stream/batch015-proof-input.json",
+      "proof_input_sha256": "55d0c4331c2af1d65fe8c1de4a5b9c5082ccc24c0bbcfae6d28182d4bf93d1f9",
+      "remaining_timeout_rows": 200,
+      "report": "four/research/repwl-stream/batch015.json",
+      "report_sha256": "65fba506eea2ea1f235614084b300d216c15d3b69bc72292936147cdda54c558"
+    },
+    {
+      "batch": 16,
+      "candidate_rows": 148,
+      "input_range": [
+        32768,
+        34816
+      ],
+      "input_rows": 1289,
+      "not_accepted_rows": 1141,
+      "proof_input": "four/research/repwl-stream/batch016-proof-input.json",
+      "proof_input_sha256": "e0370552df0b34a4bd7e84611c1e487ccd9d42871c614628b6046105601ee4f7",
+      "remaining_timeout_rows": 207,
+      "report": "four/research/repwl-stream/batch016.json",
+      "report_sha256": "5c9a664c7512623410e1e0dcec0752d01287b6a6e795274c208497785208cf67"
+    },
+    {
+      "batch": 17,
+      "candidate_rows": 148,
+      "input_range": [
+        34816,
+        36864
+      ],
+      "input_rows": 1289,
+      "not_accepted_rows": 1141,
+      "proof_input": "four/research/repwl-stream/batch017-proof-input.json",
+      "proof_input_sha256": "5eae8a8f6c0794df770d6bc0a5b1b28fb0dbc7502a02b746a3d35153f240711a",
+      "remaining_timeout_rows": 197,
+      "report": "four/research/repwl-stream/batch017.json",
+      "report_sha256": "f9c39562aefb12edcbd9b9b84d75aafd56c2d26a54f3d715fed8e2888ea86d11"
+    },
+    {
+      "batch": 18,
+      "candidate_rows": 153,
+      "input_range": [
+        36864,
+        38912
+      ],
+      "input_rows": 1230,
+      "not_accepted_rows": 1077,
+      "proof_input": "four/research/repwl-stream/batch018-proof-input.json",
+      "proof_input_sha256": "dca4f5e396e2e5f096d7291eec42a4faf22df075084b4b5d15e66cfa3e9aa450",
+      "remaining_timeout_rows": 189,
+      "report": "four/research/repwl-stream/batch018.json",
+      "report_sha256": "47c9abdc3a9b3707db660c97e741b45832cabf82861ff2710920e6e8bf337fed"
+    },
+    {
+      "batch": 19,
+      "candidate_rows": 127,
+      "input_range": [
+        38912,
+        40960
+      ],
+      "input_rows": 1226,
+      "not_accepted_rows": 1099,
+      "proof_input": "four/research/repwl-stream/batch019-proof-input.json",
+      "proof_input_sha256": "21157ef20d9239694326f4a76d5f2ca3a666f76ebced093b33a4ed6c1672ad9d",
+      "remaining_timeout_rows": 191,
+      "report": "four/research/repwl-stream/batch019.json",
+      "report_sha256": "ce3ea7ea0aeb2afa52133728e2f559d110dc59de8b2fedb4ccdb8df97af2525b"
+    },
+    {
+      "batch": 20,
+      "candidate_rows": 128,
+      "input_range": [
+        40960,
+        43008
+      ],
+      "input_rows": 1266,
+      "not_accepted_rows": 1138,
+      "proof_input": "four/research/repwl-stream/batch020-proof-input.json",
+      "proof_input_sha256": "60e643966b823c823c70b1b633c91cdbc831cdbf732946a20f5e076d9c567ac8",
+      "remaining_timeout_rows": 218,
+      "report": "four/research/repwl-stream/batch020.json",
+      "report_sha256": "65c064e55ed0a1cf3aaf232817b243c3ce7694c44514bffe5021691e8ce1989e"
+    },
+    {
+      "batch": 21,
+      "candidate_rows": 120,
+      "input_range": [
+        43008,
+        45056
+      ],
+      "input_rows": 1240,
+      "not_accepted_rows": 1120,
+      "proof_input": "four/research/repwl-stream/batch021-proof-input.json",
+      "proof_input_sha256": "3690ad263ea8bcbf836453f2cd272f0df25393b41f5aba87eb265b071c766334",
+      "remaining_timeout_rows": 214,
+      "report": "four/research/repwl-stream/batch021.json",
+      "report_sha256": "c1e0fe7f1e3a01958fd138ce7f2d50e73e2f605c29c392a1269e75f6d1ced3e5"
+    },
+    {
+      "batch": 22,
+      "candidate_rows": 132,
+      "input_range": [
+        45056,
+        47104
+      ],
+      "input_rows": 1231,
+      "not_accepted_rows": 1099,
+      "proof_input": "four/research/repwl-stream/batch022-proof-input.json",
+      "proof_input_sha256": "d18214ee7fdddac5ec1121c9606374c1dd7d45396cd5bf58a56eba93da5d92f3",
+      "remaining_timeout_rows": 172,
+      "report": "four/research/repwl-stream/batch022.json",
+      "report_sha256": "9d5bf70cb1e1015f6537319dc198415b6c4ed8e8bc2dafaca8bde7d9d0d06e1e"
+    },
+    {
+      "batch": 23,
+      "candidate_rows": 141,
+      "input_range": [
+        47104,
+        49152
+      ],
+      "input_rows": 1258,
+      "not_accepted_rows": 1117,
+      "proof_input": "four/research/repwl-stream/batch023-proof-input.json",
+      "proof_input_sha256": "9eb07f040342ccbfeec30ab2999781ca92d88aed524b5d00469c271fa28a3cb0",
+      "remaining_timeout_rows": 215,
+      "report": "four/research/repwl-stream/batch023.json",
+      "report_sha256": "10ffa6671fba1c2fcf20ed62bd6260f86cce9a6c91281e08c8d72d0ae1897368"
+    },
+    {
+      "batch": 24,
+      "candidate_rows": 142,
+      "input_range": [
+        49152,
+        51200
+      ],
+      "input_rows": 1267,
+      "not_accepted_rows": 1125,
+      "proof_input": "four/research/repwl-stream/batch024-proof-input.json",
+      "proof_input_sha256": "292f7acc7ed8280809c25faf7f15d708594d13a8a0b7899e4994fd8d13d18622",
+      "remaining_timeout_rows": 190,
+      "report": "four/research/repwl-stream/batch024.json",
+      "report_sha256": "c6afaaa6e88cbe318b43896530d04c7f799c9a55db7040fa24539463e42d1b35"
+    },
+    {
+      "batch": 25,
+      "candidate_rows": 142,
+      "input_range": [
+        51200,
+        53248
+      ],
+      "input_rows": 1259,
+      "not_accepted_rows": 1117,
+      "proof_input": "four/research/repwl-stream/batch025-proof-input.json",
+      "proof_input_sha256": "8a1a1ddb7b20596869f04f0078fb2e9f4b35ee2abc8858c56de75be805458853",
+      "remaining_timeout_rows": 219,
+      "report": "four/research/repwl-stream/batch025.json",
+      "report_sha256": "85582dd1f4c257f59c2569d475a497611e4dca881835daa7b97a1360228b85fd"
+    },
+    {
+      "batch": 26,
+      "candidate_rows": 152,
+      "input_range": [
+        53248,
+        55296
+      ],
+      "input_rows": 1260,
+      "not_accepted_rows": 1108,
+      "proof_input": "four/research/repwl-stream/batch026-proof-input.json",
+      "proof_input_sha256": "c37fa0b06afb10165bdf3cb7cc62a1ea6c29a1931fd67a4312cb65f30cc24a73",
+      "remaining_timeout_rows": 199,
+      "report": "four/research/repwl-stream/batch026.json",
+      "report_sha256": "e1f24f9b3851902d9b1a40a1302a1f3c0555eb73e3917bd2f25a90da9c08409a"
+    },
+    {
+      "batch": 27,
+      "candidate_rows": 151,
+      "input_range": [
+        55296,
+        57344
+      ],
+      "input_rows": 1249,
+      "not_accepted_rows": 1098,
+      "proof_input": "four/research/repwl-stream/batch027-proof-input.json",
+      "proof_input_sha256": "6e1035e29f6e1d07b9e3dc701cf3da07047cdfa49dc4b6f13e6234e116258f84",
+      "remaining_timeout_rows": 208,
+      "report": "four/research/repwl-stream/batch027.json",
+      "report_sha256": "de23e4d1135b107d2e1b9ee5eaad3b16f35a6a72c181bb02a7c3682d0dd4be58"
+    },
+    {
+      "batch": 28,
+      "candidate_rows": 155,
+      "input_range": [
+        57344,
+        59392
+      ],
+      "input_rows": 1248,
+      "not_accepted_rows": 1093,
+      "proof_input": "four/research/repwl-stream/batch028-proof-input.json",
+      "proof_input_sha256": "8be2e73d5fcc1e4fb12c141c2ab997c3eb1703aabbf4fd054e2a9a227a9760c9",
+      "remaining_timeout_rows": 169,
+      "report": "four/research/repwl-stream/batch028.json",
+      "report_sha256": "52bcae92b5cdea5eb3b831e18bccb4bcf8991056ca5d8326c67bcc2ff1c8c3ae"
+    },
+    {
+      "batch": 29,
+      "candidate_rows": 16,
+      "input_range": [
+        59392,
+        59627
+      ],
+      "input_rows": 137,
+      "not_accepted_rows": 121,
+      "proof_input": "four/research/repwl-stream/batch029-proof-input.json",
+      "proof_input_sha256": "de31caf2c1410227b28da213c7ef976f34b5b785e36a35ab8c3405024ee86ec0",
+      "remaining_timeout_rows": 19,
+      "report": "four/research/repwl-stream/batch029.json",
+      "report_sha256": "1543bebab0e7316e71ef258dbefae7ba503ce72f99bab27901b1c7cd246b38a2"
+    }
+  ],
+  "remaining_timeout_rows": 5841,
+  "searched_not_accepted_rows": 32647,
+  "searched_rows": 36805,
+  "source_range": [
+    0,
+    59627
+  ],
+  "source_total_rows": 59627,
+  "sources_sha256": {
+    "four/build/wave3/timeout-retry/not-accepted.txt": "c82a62be6185b49e858f8af2d3cb97bb098beca11d7f2fda3c91c6d3dd0119af",
+    "four/build/weighted-v2/full-cohort.txt": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+    "four/research/repwl-stream/sources.json": "18756f53716b4445feeb61eb2b3852444c08160cb62ab7bceb45751a2610173f",
+    "four/research/wave3-timeout-full.json": "7e660f58f98babd992cad0d01ba8e217b691886d449666b21053dbf25d6d7393",
+    "four/tools/check_closure_wave.py": "aea6d6247d2049dd6edb0bc9347a095258f74b05b56e57e50c1d701a25b8a134",
+    "four/tools/pipeline_sweep.py": "16de1d015366a4a2ca10adfe0751abd5351cb67df1f8f28dc602926663493f0d",
+    "four/tools/summarize_repwl_stream.py": "67cd07fdae906edf8d70b3f66908a1880ee5b51b242eb06bbc57c46cc8adae84"
+  },
+  "status": "Frozen completed-range search checkpoint; all candidates require independent kernel replay.",
+  "sum_cpu_seconds": 7768.000382,
+  "sum_row_seconds": 10753.820423,
+  "unprocessed_prior_rows": 0,
+  "weighted_candidate_exclusions_in_prefix": 16784
+}

@@ -1,10 +1,72 @@
 # BBB(2,4) burndown
 
-**This is an early survey, not the remainder after the full BBB(4) pipeline.**
-Only exact/translated cycles were swept at 256 steps, followed by affine search
-on a sample. The [grouping investigation](GROUPING.md) reduces the raw family
+**The 611,360-family baseline is an early survey, not the remainder after the
+full BBB(4) pipeline.** It used exact/translated cycles at 256 steps, followed
+by affine search on a sample. The [grouping investigation](GROUPING.md) reduces the raw family
 list to **284,541 symmetry representatives**, with **10,572 candidate shadows**
-of **273,969 nonblank-start cores**, and identifies the missing pipeline stages.
+of **273,969 nonblank-start cores**. The [pipeline update](PIPELINE.md) adds
+closure sweeps, checked certificate replay, and census closeout. The baseline
+tables below remain frozen so successive passes can be compared.
+
+The first complete cheap closure sweep over **273,969 core representatives**
+found **93,792 candidates**, leaving **180,177** for stronger filtering. These
+are search outcomes, not kernel-checked discharges or final hard holdouts.
+See [the full stage table](PIPELINE.md#first-complete-core-sweep).
+
+The [second full wave](WAVE2.md) added 46,992 candidates. Across those two sweeps,
+**140,784 core representatives have search candidates** and **133,185 remain**
+for stronger methods, including 13 timeouts. At that checkpoint, **11,336 distinct
+families had checked bounds and census links**, including **649 of the
+original 1,024-family sample**. That checked closeout is tracked in
+[`wave2-families.tsv`](research/wave2-families.tsv), with the
+deduplicated counts in [`wave2-summary.json`](research/wave2-summary.json).
+The original-sample ledger is [`wave2-sample.tsv`](research/wave2-sample.tsv).
+
+The [stronger census campaign](WAVE3.md) continues from that frozen 133,185-row
+cohort. It adds weighted n-grams, deeper affine and closure checks, reuse of
+proved recurring behavior, and separate state-only solvers. The combined
+checked inventories and their intersection with the starting cohort are
+recorded in [`campaign-final-summary.json`](research/campaign-final-summary.json).
+The [first supplementary round](NEXT_BURNDOWN.md) adds 131 instruction families
+and 254 state families to that frozen checkpoint. The [second round](BURN2.md)
+adds another **1,190 instruction bounds** and **1,432 state bounds**, and the
+[third round](BURN3.md) adds **676 instruction bounds** and **405 state bounds**.
+The [fourth checkpoint](BURN4.md) adds another **122 state bounds**. The
+[fifth](BURN5.md) adds **13 instruction bounds and seven state bounds**, and
+the [sixth](BURN6.md) adds **63 instruction bounds and four state bounds**. Of the
+133,185 starting families, **101,766 have both bounds checked** and **132,651
+have a state bound checked**, leaving **31,419 instruction-bound** and **534
+state-bound** obligations. The exact union and per-machine lists are recorded
+in [`burn6-burndown-summary.json`](research/burn6-burndown-summary.json).
+The earlier separate search queue had **32,629** rows, down **75.5%** from the
+starting cohort. The existing replay queue now has **2,740 instruction
+candidates** and no remaining state obligations. Search candidates and
+completed Coq discharges remain separate counts.
+
+## First checked sample snapshot
+
+The [first checked sample ledger](research/progress-sample.tsv) combines audited
+affine replay and closure-pilot proofs without double-counting their overlap:
+
+| Status at the first checkpoint in the 1,024-family sample | Families |
+| --- | ---: |
+| Both bounds checked | **637** |
+| Affine checker rejected; no other checked proof yet | 151 |
+| No affine search certificate; no other checked proof yet | 236 |
+| Of the 637 checked: linked to refined census coverage | **80** |
+
+The affine replay proves 628 families; the closure pilot proves 76, with 67
+in common. The pilot therefore adds nine distinct proofs, including seven
+rejected affine certificates and two affine search failures. The 80 linked
+families are the four original affine examples and the 76 pilot families.
+At that checkpoint, 557 checked families still needed census links; the second
+wave has attached all of them. These are sample counts, not the size of the
+full queue or a population-rate estimate.
+
+[`research/progress-summary.json`](research/progress-summary.json) records the
+counts and evidence hashes. Reproduce with `python3 four/tools/progress.py
+--check` after the builds in [PIPELINE.md](PIPELINE.md). Rejected checker calls
+remain explicit investigation cases; rejection does not refute a bound.
 
 Baseline: 2026-10-26. The 256-step exploratory survey leaves **611,360
 partial-table families**, representing **39,521,784 raw tables** after the
@@ -37,8 +99,8 @@ implies the unrestricted result. No halting-time bound is assumed here.
 | `A0 = 1LB` (multiplier 6) | 547,934 | 33,837,492 |
 | Total | **611,360** | **39,521,784** |
 
-Only 1,024 families have had the recorded affine search run, with 512 sampled
-from each class. Its current ledger is:
+The baseline affine search sampled 1,024 families, with 512 from each class.
+Its original ledger is:
 
 | Status | Families | Meaning |
 | --- | ---: | --- |
@@ -67,11 +129,13 @@ The **certified eight-step census** still has **1,756,620 pending leaves**, with
 structural weight **216,078,348 raw tables**. Its coverage theorem accounts for
 every table, but its pending set has not been replaced by the deeper survey.
 
-The four affine completion theorems prove both state and instruction bounds at
-4,096. They have not yet been attached to the census coverage proof. Consequently
-`census_linked` is `no` even on their rows, and the certified pending weight has
-not decreased. The exploratory symmetry multipliers also need a coverage proof
-before they can be used in the formal census.
+The four original affine completion theorems now have census links in
+`AffineCloseout.v`. The closure pilot adds 76 more distinct families and a
+combined `bootstrap_pipeline_coverage` theorem. All completions of those 80
+family records are excluded from the refined residual. This does not remove
+80 entire eight-step leaves or recompute the original structural counts.
+The exploratory symmetry quotient still needs a coverage link before its
+population counts can be used in the formal census.
 
 The burndown has three separate milestones per family:
 
@@ -79,7 +143,7 @@ The burndown has three separate milestones per family:
 2. Coq checks the state and instruction bounds, with a named completion theorem.
 3. The exhaustive census consumes that theorem and removes the obligation.
 
-Only the third milestone reduces the certified remainder. Keep separate state
+Only the third milestone excludes a family from the certified remainder. Keep separate state
 and instruction bound columns even though the current four proofs establish both.
 
 ## Next work
@@ -88,15 +152,18 @@ and instruction bound columns even though the current four proofs establish both
 - [x] Port the affine checker and validate four representative families.
 - [x] Measure symbol orbits and blank-prefix shadow links; keep transports
   separate from proof discharge (see [GROUPING.md](GROUPING.md)).
-- [ ] Run the broader BBB(4)-style checker pipeline on representative cores
-  before treating the early survey remainder as difficult holdouts.
-- [ ] Check the remaining **782** sampled candidates; retain any Coq rejections
-  as checker investigation cases, rather than counting them as solved.
+- [x] Port n-gram, finite-end/history n-gram, and repeated-word sound checkers.
+- [x] Kernel-check and census-link all 76 closure-pilot successes and the four
+  original affine examples.
+- [ ] Complete the broader escalation ladder on representative cores before
+  treating survivors as difficult holdouts.
+- [ ] Attach further accepted replay batches to census coverage; retain Coq
+  rejections as checker investigation cases rather than counting them as solved.
 - [ ] Measure search/checking cost, then run budgeted, resumable batches over the
   **610,336** unsampled families.
 - [ ] Group the no-certificate cases by observed behavior, starting with the
   **98 `noshape`** examples; retain individual machine IDs and evidence.
-- [ ] Attach accepted certificates and deeper enumeration to the coverage proof,
+- [ ] Extend checked closeout and deeper enumeration to the coverage proof,
   including a justified symmetry reduction or unrestricted enumeration.
 - [ ] Reach zero certified pending obligations before claiming a global maximum.
 

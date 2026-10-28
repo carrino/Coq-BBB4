@@ -1,0 +1,61 @@
+{
+  "scope": "Untrusted phase-repair timer comparison on frozen 163 rejected affine certificates. No new Coq-checked or census-linked claims.",
+  "parameters": {
+    "bound": 8192,
+    "cfuel": 4096,
+    "fuel": 8192,
+    "cpu_seconds_per_row": 0.25,
+    "selected_phases": 8,
+    "comparison_phases": 32
+  },
+  "input_sha256": "b6732ffd4152e506c12810c89a5566a0ea4db9a5f61aad46df65a624e76e9fd4",
+  "source_sha256": {
+    "four/tools/affine_phase_cpu_probe.ml": "1eea8c8b5bbe7e618d3cff18e24b12906ae179d53bb5ea7a5babf1c9b0f74898",
+    "four/tools/affine_phase_probe.ml": "1220aa84bb45f09c046b10c9170f5ecb11b0deeacfa1bc86f42b2e9fc1455c76",
+    "four/tools/affine_cert_io.ml": "f0221d100b913fd575e5450b38d295a52807297a27eea16437209f8b86ee8557",
+    "four/tools/affine_probe.ml": "56aad335b126c8d4c3b842651c768cc1c9b3a026fe8a97e9da729762adcbea94"
+  },
+  "datasets": {
+    "phase8192": {
+      "rows": 163,
+      "statuses": {
+        "replay_false": 150,
+        "timeout": 4,
+        "repaired_candidate": 9
+      },
+      "sha256": "14f863c08705b70c4c9e0d4589f6a8cae18fa1b20c1f49f41956e5c57e4e0616",
+      "row_wall_seconds": 41.017
+    },
+    "phase-cpu8192": {
+      "rows": 163,
+      "statuses": {
+        "replay_false": 148,
+        "timeout": 6,
+        "repaired_candidate": 9
+      },
+      "sha256": "a1c34d40682e50f3cf08c072045ee4d334f365a8674d175f056d9d0dd078fad7",
+      "row_wall_seconds": 70.484
+    },
+    "phase-cpu32": {
+      "rows": 163,
+      "statuses": {
+        "replay_false": 111,
+        "timeout": 44,
+        "repaired_candidate": 8
+      },
+      "sha256": "c92af4199f7e4c271d8974749f0bbccefeec4cc3527fbd30a8726a33acfd55fd",
+      "row_wall_seconds": 95.18
+    },
+    "phase-cpu8192-replay": {
+      "rows": 9,
+      "statuses": {
+        "replay_true": 9
+      },
+      "sha256": "f238e8646cd41114de866dc2931dc086bbc27b0c779d8c3a2ec9dd502e0418d5"
+    }
+  },
+  "all_nine_prior_repairs_retained": true,
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "decision": "Use 8 phases and 0.25 seconds user-plus-system CPU per row; 32 phases added no repairs under this budget. Scheduler delay does not consume the budget. Every candidate is re-read by the frozen native parser before independent Coq batch replay."
+}

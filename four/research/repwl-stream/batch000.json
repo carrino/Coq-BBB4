@@ -1,0 +1,114 @@
+{
+  "candidate_rows": 154,
+  "candidate_tsv_sha256": "4c093e8b284acb47e2aa330bed3e2322f689b5927c883e586957263f67e67798",
+  "census_linked_rows": 0,
+  "kernel_checked_rows": 0,
+  "manifest": {
+    "anchor": 0,
+    "batch": 0,
+    "bound": 4096,
+    "fuel": 5120,
+    "input_range": [
+      0,
+      2048
+    ],
+    "input_rows": 1388,
+    "input_sha256": "c2fb2362f2aa23686d91823f320d76ad3b878047d653cf3c9d75cb8e2d0a7ddd",
+    "prior_remaining_rows": 1844,
+    "prior_remaining_sha256": "c82a62be6185b49e858f8af2d3cb97bb098beca11d7f2fda3c91c6d3dd0119af",
+    "prior_report_sha256": "7e660f58f98babd992cad0d01ba8e217b691886d449666b21053dbf25d6d7393",
+    "size_cut": 32,
+    "status": "Completed-domain search input; weighted candidates remain untrusted.",
+    "stream_source_sha256": "e2c35973b7e429ecf42bef58eaad7bea476ba0951a94a618d591b655a1a567a7",
+    "threshold": 2,
+    "timeout_seconds_per_row": 1.0,
+    "weighted_candidate_rows": 555,
+    "weighted_codec_sha256": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "weighted_overlap_removed_rows": 456,
+    "weighted_registry": "four/research/weighted-full-snapshots/batch000/registry.json",
+    "weighted_registry_sha256": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58",
+    "weighted_rows": 2048,
+    "widths": [
+      3,
+      2
+    ]
+  },
+  "not_accepted_rows": 1234,
+  "not_accepted_sha256": "5ae11043ce3f022c8920dc9cd6d8033c43ce4f6ae6c684cd87bdf7a450a88ea5",
+  "remaining_timeout_rows": 223,
+  "remaining_timeouts_sha256": "4100cddfda2d457bafe09868935b69f346f8f5099233af39e4001256f0874dec",
+  "results": [
+    {
+      "candidate_rows": 92,
+      "report": "four/research/wave3-repwl-prefix000-width3.json",
+      "report_sha256": "49c6a13fa72069425160a8082d35353ed790b036d3c000e901de253a0bd16022",
+      "result": {
+        "anchor": 0,
+        "extra": 2,
+        "failure_phases": {
+          "close": 1214,
+          "liveness": 82
+        },
+        "fuel": 5120,
+        "log_sha256": "270faca06175394cd3b604f634a9e601b333c36ff4cb49a2d451edfaf949e538",
+        "max_candidate_node_size": 15,
+        "max_node_size": 33,
+        "mirror": false,
+        "new_candidate_rows": 92,
+        "rows": 1388,
+        "size": 3,
+        "size_cap": 32,
+        "stage": 0,
+        "statuses": {
+          "candidate": 92,
+          "fuel_exhausted": 747,
+          "node_cut": 467,
+          "ranking_failure": 1,
+          "timeout": 81
+        },
+        "sum_cpu_seconds": 112.908413,
+        "sum_row_seconds": 167.534765,
+        "swap23": false
+      },
+      "width": 3
+    },
+    {
+      "candidate_rows": 62,
+      "report": "four/research/wave3-repwl-prefix000-width2.json",
+      "report_sha256": "a7bfa85d3ca386df330933fda551d7fd12b6a3c4952d963092e2bac8b27ee434",
+      "result": {
+        "anchor": 0,
+        "extra": 2,
+        "failure_phases": {
+          "close": 1055,
+          "liveness": 179
+        },
+        "fuel": 5120,
+        "log_sha256": "a73ed4c10d63f252391ec66ef1e64a34250ea23cb0349492823057d184968257",
+        "max_candidate_node_size": 13,
+        "max_node_size": 33,
+        "mirror": false,
+        "new_candidate_rows": 62,
+        "rows": 1296,
+        "size": 2,
+        "size_cap": 32,
+        "stage": 0,
+        "statuses": {
+          "candidate": 62,
+          "fuel_exhausted": 413,
+          "node_cut": 642,
+          "ranking_failure": 10,
+          "timeout": 169
+        },
+        "sum_cpu_seconds": 179.462071,
+        "sum_row_seconds": 248.350813,
+        "swap23": false
+      },
+      "width": 2
+    }
+  ],
+  "source_version_sha256": "18756f53716b4445feeb61eb2b3852444c08160cb62ab7bceb45751a2610173f",
+  "status": "Complete RW search on one frozen weighted residual range; no new kernel claims.",
+  "sum_cpu_seconds": 292.370484,
+  "sum_row_seconds": 415.885578
+}

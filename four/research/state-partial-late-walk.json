@@ -1,0 +1,35 @@
+{
+  "status": "untrusted_partial_prefix_measurement",
+  "input_families": 355,
+  "input_sha256": "68499ac8dded03f67efcbd06c78ac3efa98f4206e50e677389c4c5921d15b68a",
+  "source_sha256": "0e21d048a00c3a107bf1169ea59c993f3f9046e980a67aae2b99bd0cbf8c872e",
+  "runs": [
+    {
+      "fuel": 1048576,
+      "statuses": {
+        "budget_exhausted": 355
+      },
+      "sha256": "f9aaaf113b4b1b10e532899eba8780bd509fba79f86283fc46b665b624b55736",
+      "hits": []
+    },
+    {
+      "fuel": 10000000,
+      "statuses": {
+        "budget_exhausted": 354,
+        "reached_undefined": 1
+      },
+      "sha256": "1e02907c397e6ddfbe68b443c95ec460e5bcca54cd3efd177dfce383a234898c",
+      "hits": [
+        {
+          "machine": "1LB2RA1LA1LA_1RB1RA3LB---",
+          "status": "reached_undefined",
+          "anchor": "3932963",
+          "cell": "7",
+          "position": "-2033",
+          "span": "2050"
+        }
+      ]
+    }
+  ],
+  "accounting": "Original partial-family prefixes only. No no-hit result implies nonhalting. The late-marker proof bundle independently checks the one reached undefined instruction."
+}

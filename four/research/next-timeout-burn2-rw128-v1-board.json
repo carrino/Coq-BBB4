@@ -1,0 +1,25 @@
+{
+  "board": "board",
+  "id": "NextTimeoutBurn2Rw128V1",
+  "instruction_bound": 4096,
+  "inventories": [
+    {
+      "format": "columns",
+      "order": "input",
+      "path": "research/next-timeout-burn2-rw128-v1-input.json"
+    }
+  ],
+  "load_paths": [
+    {
+      "namespace": "BBB24NextTimeoutBurn2Rw128V1",
+      "path": "build/next-timeout/burn2-rw128-v1"
+    }
+  ],
+  "module": "BBB24NextTimeoutBurn2Rw128V1.All",
+  "rows": 128,
+  "scope": "both",
+  "small_sound": "small_sound",
+  "sound": "sound",
+  "state_bound": 4096,
+  "was_pending": "was_pending"
+}

@@ -1,0 +1,46 @@
+{
+  "status": "untrusted_native_replay",
+  "manifest": {
+    "index_sha256": "8bbe11ebfe57e4fdc36f4150cf004460222bf420f9af1806ac3038313253964c",
+    "input_sha256": "e343b7deedc70f5eba17f38f3bca3bc9c8a6517da2ffdeac81d14d1128ea7144",
+    "excluded_inventory_sha256": {
+      "four/research/late-cycles-full65536.json": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab",
+      "four/research/late-cycles-extra262144.json": "bc697fa40061c2bfd08cd26e9381776f7ba396e43fa50f504e6c33ed376a909e",
+      "four/research/alphabet23-families.json": "f7f53c4edf6ed72266364310a2a3421d098f1eec05d6ed83004b9f193fd06f7a",
+      "four/research/alphabet-mask-families.json": "d79507ff81da8c7a441eb1d1fee77fbe3b044ee174091f673695e5073d8c91dd",
+      "four/research/wave2-families.tsv": "03804f62ef1b4d182eda0d7547bd15dd2b18ed1f3155d4ff2bcbeef15d1f0985",
+      "four/research/weighted-pilot-machines.json": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333",
+      "four/research/affine-template427.tsv": "8175731bb28d70e55ccb645c39e5170d28b50907abf42736ea8a2378c32bb4df",
+      "four/research/affine-template181.tsv": "44b165edf3dffe2aaea983d1274187ebc2d764e4f7dc0a46ae9a00e2f96b1626",
+      "four/research/affine-template245.tsv": "0e028e9a8edfb5e33b4c9b1a3803f4e1d5c03af5e6644e9891bfb87b2cecfab0"
+    },
+    "sources_sha256": {
+      "four/tools/affine_template_phaseinfer_sweep.py": "e592caf73693e342330731524881da4154c16332c128e7aa60c4ce9a31373dc0",
+      "four/tools/affine_template_phaseinfer_probe.ml": "e981978c158a0ae5d671f31119275c0bb1d022aa204159a9c3f495e558449f09",
+      "four/tools/merge_affine_template_indexes.py": "6143912b7ec744bbad4a4612261934432f881866070f29d3eaf304741e6ecbd7",
+      "four/tools/affine_cert_io.ml": "f0221d100b913fd575e5450b38d295a52807297a27eea16437209f8b86ee8557",
+      "four/build/affine-wave/extracted/checker.ml": "801cda1eeeda8fae651efb6ed894f20005fcdd73c659f08ecbd1dc07c157f54b",
+      "four/build/affine-wave/extracted/affine_cert_io.cmx": "1549a380ae0cae888202e3e421a3f959cf0795056ad9ef01ef5ed9e1974d6cc7",
+      "four/build/affine-template-phaseinfer/probe": "2eb574f3a1fad69d6dcf041cee8ea3df400f68f68c130749a6b86430bd0043f9"
+    },
+    "bound": 4096,
+    "cfuel": 4096,
+    "fuel": 8192,
+    "timeout": 0.5,
+    "compatible_targets": 4016,
+    "eligible_targets": 3175,
+    "selected_targets": 128
+  },
+  "statuses": {
+    "no_template_match": 125,
+    "trial_limit": 3
+  },
+  "accepted_targets": 0,
+  "row_seconds": 0.992372,
+  "template_instances": 505,
+  "ir_check_calls": 0,
+  "replay_sha256": "27f46f80480c12e6c9f6f47e7bb292bc0bb51c4912aa105eb9ab7004c039fbe4",
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "accounting": "Targets are original input families. Recurring source flags and boot hashes are proposal filters; unchanged target ir_check supplies only native replay evidence until Coq and census replay."
+}

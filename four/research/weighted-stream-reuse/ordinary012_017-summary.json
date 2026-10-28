@@ -1,0 +1,102 @@
+{
+  "canonical_cores": 166,
+  "source_weighted_templates": 1090,
+  "descriptor": {
+    "module": "BBB24WeightedStreamOrdinary012_017.WeightedStreamAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 4096,
+    "proof_source": "build/weighted-stream/ordinary012_017/WeightedStreamAll.v",
+    "load_paths": [
+      {
+        "path": "build/weighted-stream/ordinary012_017",
+        "namespace": "BBB24WeightedStreamOrdinary012_017"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/weighted-stream-reuse/ordinary012_017-input.json",
+        "format": "json_columns"
+      }
+    ],
+    "audited_report": "research/weighted-stream-reuse/ordinary012_017-summary.json"
+  },
+  "selection": {
+    "candidate_pairs": 2024,
+    "candidate_cores": 553,
+    "selected_cores": 166,
+    "source_templates": 1090,
+    "source_masks": 47,
+    "pattern_keys": 3936,
+    "max_boot": 4096,
+    "context_cache_limit": 128,
+    "context_cache_hits": 25183,
+    "context_cache_misses": 787,
+    "used_templates": 160,
+    "probe_candidates": 166,
+    "native_probe": {
+      "kind": "untrusted extracted OCaml with data reader; all successes subsequently replayed in Coq",
+      "parts": 10,
+      "wall_seconds": 23.600671977001184,
+      "child_cpu_seconds": 5.200374,
+      "extracted_sha256": {
+        "ml": "428f00f47dec1bfd89caa05bafba6b7b9a9e6db12c9b710f834df8f9d765fce1",
+        "mli": "20b1b7c3ad425c3bf10deb0cd2f616224320ecbf114e8ede21766f947be6ed81"
+      },
+      "selector_sha256": "c2cf2e320d1aeb3bd7bdaa09661a746ac5ec94bf39b804878ed5e7c5b4a172ab"
+    },
+    "checker_selected_cores": 166
+  },
+  "validation": "coqc plus incremental coqchk",
+  "inputs": {
+    "research/ordinary-tail-templates/pools012_017/registry.json": "c1d50edaec2a3616cdf21f522c2bee22f4ad005e2cb9643bf1f7b0198f8639ad",
+    "research/ordinary-tail-templates/pools012_017/contexts-0000.json": "24ecc4d3bbb09534da906b7eea1b1567bb61dc5cc9f2c2a858eb26a498e3c599",
+    "research/ordinary-tail-templates/pools012_017/contexts-0001.json": "41619c06362317d21d0a188eca21211f55dcee227501919adb5598adcb2b9cef",
+    "research/ordinary-tail-templates/pools012_017/contexts-0002.json": "0d4781e643c2c4858c55822398e8c0c191e0ae8426295b5fab3afd73978ae10d",
+    "research/ordinary-tail-templates/pools012_017/contexts-0003.json": "c4bb9a8d6d08c5ffb1104a56bb4127d2bbc7843a3897f06d4c83a4ec9b5e9d9f",
+    "research/ordinary-tail-templates/pools012_017/contexts-0004.json": "d33982a5c55a24752283f4137f6b75beb402dd3a0bb6cdf8046fc0af332bff08",
+    "research/ordinary-tail-templates/pools012_017/contexts-0005.json": "33999411d35455f20abaa7c607ba6b64b7712f0d9451cf30626b74c6273c30ba",
+    "research/ordinary-tail-templates/pools012_017/contexts-0006.json": "f30346472b6b24719e6ee6e4ac7951c4ea66b060a6452446fa753401c096aa9c",
+    "research/ordinary-tail-templates/pools012_017/contexts-0007.json": "1eb991969d42e9a398ef3e3f3e13492d79177050e92ecc10f822f20eb1b2b2d3",
+    "research/ordinary-tail-templates/pools012_017/contexts-0008.json": "288003a104f0fa33d41397dce545636620461083000d76281a3b434d228af9ea",
+    "tools/check_weighted_stream_reuse.py": "869bb432de31dc16d12678a165ede15dc4ea793ba2d60b950f2b648341ca8626",
+    "tools/weighted_render_v3.py": "5988c284b17a5e653dfbe6d15f1c3083fd94a32fa0daa3b8745c215d6afbcc98",
+    "tools/weighted_render_v4.py": "8cce618311b0d70bb67074cfdffaa939a517d88fe7c54cf1e275441b6a3e5d9f",
+    "theories/WeightedTail.v": "b8d2690fdbe9d32205281c9e8af69d4f1b443b3c6c6d686a85f5e42c52846a48",
+    "tools/check_weighted_stream_reuse_v5.py": "fbf535042670a93f31d4a8de86eba56324f12a6f509232a32d2b65df57a158ab",
+    "tools/weighted_tail_native.py": "388f9c25be33d51da20ee86fcecac0a9782de8b6fd1d0c51db162038543204e5",
+    "tools/ExtractWeightedTail.v": "11ab4b79b91d59ecbe482930ccf75d354a04788ee79b8192cbfe54ad99ebed23",
+    "tools/check_weighted_stream_reuse_v6.py": "2031115ae2b9c7d9d4945fcd01a24772568c4858be89db73ab3e048c21d6344b",
+    "tools/weighted_tail_data.py": "defbca7c1c770e5962c02685d941dab3150297df4448fc07e05b0e920a80fb15",
+    "tools/weighted_tail_selector.ml": "3f7e3d1e36e88977efdfb3602af953574710943e2a587f1973d17d8b31daa0f8",
+    "tools/check_weighted_stream_reuse_v7.py": "412e8c44f8ce56bff625f5d172669458b8bc019a86ff4b289a202707ae7fdf50",
+    "tools/weighted_transform_v2.py": "c7f3938876b426f89c4bf10257827b2c206128b072ea4eee5475d0fecd7708b3",
+    "research/weighted-stream-reuse/ordinary012_017-input.json": "82ddc84e9e84503812407bb4f38013bacdc310625019ec94eae120819192185f",
+    "tools/check_weighted_stream_reuse_v8.py": "6d651bef5f288c820f0d7c0fce9c4113b5a59b5143faa6274ef0531d22520083",
+    "tools/weighted_template_index.py": "60bc914354bd9610e6ff99fb242ad3fd328b3680545bff307122c2710eb4778e",
+    "tools/weighted_reuse_search.py": "2ee6f34ed9f9ebb2df7d001ae81bf2af8cb1b66c875eb3aec053023d3149f23b",
+    "tools/weighted_render.py": "e203d1d2964cece3f053f7cf9b2184931ad5cc3bb525d2f2a52699cc716d166f",
+    "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e"
+  },
+  "audit_receipt": "build/weighted-stream/ordinary012_017/audit.json",
+  "audit_receipt_sha256": "95f711a7b123995eff9555cc2098124203fbc58c15492eee62e63ac228c4ca7e",
+  "ledger_sha256": "a8376ae52177005cac1fcbf411241a25887b460d6799690b8f28a2efb8ed61a9",
+  "proof_source_sha256": {
+    "Part0000.v": "082a597ceb900956b33c8d23852f43ea23946a4cb8a5021c72e1ca7eb217012e",
+    "Part0001.v": "5ce531a4dad158d047df0e234a18493ca9e3f554ca3b3e8a8011d0c9e610026f",
+    "Part0002.v": "eaf736166b73d65fed0d866ab76183dea0c06efe4b147adbd4e8f81b18176bfd",
+    "Part0003.v": "33c273d00e7b0754778d3d435740fabd524f9976ee295df476404414d3c8c7ab",
+    "Part0004.v": "e4df41db5eb0b4ce34414fcceb775f2b1c9c19a0f14a48ea945d76bf2f1b08a2",
+    "Part0005.v": "303004006ec880605cdc2025ef4b765eac12e11884e5ec66c1a602c095e7506c",
+    "Part0006.v": "f5d512b668d9fe32b2b86e86d3dd1cd09d032043bd766717d7cbfc8da1037166",
+    "Part0007.v": "aec45753debbc3e368361161fe4864919f21c156c6b66f1206fe5b1e3218fc73",
+    "Part0008.v": "b40818b83b085aca7d5a32600ab868f136019235e07165899285c8ddb68b9f7b",
+    "Part0009.v": "152b2c17c0bb12767504126edd4a6e5e52819a5a270829f4c728f1cf13af09ef",
+    "WeightedStreamAll.v": "087a83ecd35698d0268ee1fb8eb71fb634a1b6c3284315f57281a84e8093aaa2"
+  },
+  "publication_note": "Include this exact board in the final recursive combined audit before publishing an updated census total."
+}

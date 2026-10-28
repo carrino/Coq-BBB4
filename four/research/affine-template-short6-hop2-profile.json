@@ -1,0 +1,15 @@
+{
+  "status": "untrusted_one_transition_relaxed_proposals",
+  "target_families": 59627,
+  "compatible_targets": 2433,
+  "source_templates": 2472,
+  "mask_groups": 67,
+  "cap": 8,
+  "target_template_pairs": 2870,
+  "input_sha256": {
+    "four/build/affine-template-short6-hop2/orbits/index.json": "8574923f7919d4df9fb68e3fea18cb575981f0adcc0fd58bf65e50a8fc22aa14",
+    "four/build/weighted-v2/full-cohort.txt": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086"
+  },
+  "source_sha256": "0b5d5545988dc6fc5739dec2aa8ee96fef4d854e81b2eb35e2a06e4feda6906b",
+  "index_sha256": "93cd8b2e1944a512418928df712b63631df72437b93151df0c44ce340a3b0e83"
+}

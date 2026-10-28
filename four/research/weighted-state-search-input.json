@@ -1,0 +1,35 @@
+{
+  "bundles": [
+    {
+      "bytes": 487018,
+      "path": "research/weighted-state-search/certificates-0000.json",
+      "rows": 512,
+      "sha256": "53c0affc1f2a447c107082852a1dc35d513de5892cc0aec1615665748cf81658"
+    },
+    {
+      "bytes": 480506,
+      "path": "research/weighted-state-search/certificates-0001.json",
+      "rows": 512,
+      "sha256": "59a807e90962621fbe881274408977709d6555857570e3ca17c1a8338c8ed5f0"
+    },
+    {
+      "bytes": 160809,
+      "path": "research/weighted-state-search/certificates-0002.json",
+      "rows": 179,
+      "sha256": "c858adcefa67d5712e1dcf9fab8be39701fcb067da9ff8cf85c71a4b69fc5fd3"
+    }
+  ],
+  "format": "BBB24 compact weighted certificates v2",
+  "kinds": {
+    "weighted": 1203
+  },
+  "rows": 1203,
+  "source": {
+    "attempted_rows": 3651,
+    "input_sha256": "64a3ec63b8887e30712342738265c272a019ed7d649681ca47dcad4863f7fd78",
+    "manifest_sha256": "46e4d7abf284c0c29c4b3c434ef5acd340b7e35731ca14a0e154963668ef48e9",
+    "results_sha256": "dafcef0fbebfa16d57faa5279241ac67979a70f17bc5f4f1d15d81522ec510b6",
+    "scope": "State-only candidate certificates; instruction recurrence is not checked."
+  },
+  "status": "Untrusted candidates; kernel replay and census discharge required."
+}

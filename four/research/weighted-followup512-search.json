@@ -1,0 +1,38 @@
+{
+  "scope": "Untrusted late-boot capacity/portfolio diagnostic; audited certificate boards are separate.",
+  "manifest": {
+    "scope": "Bounded extension after the64-row diagnostic, disjoint from both previous pilot samples. No proof claim.",
+    "source": "four/build/wave3/repwl-full/after-pilots.txt",
+    "source_sha256": "36bc0f278cbb684df3fc1829742667ea67fe525927457618eb8d6f4eeb18748b",
+    "rows": 512,
+    "input_sha256": "6cef12e6159fe44422a28ed3c89dc75ed0859c01f9dd057ed463af3b502e6652",
+    "graph_parameters": {
+      "width": 2,
+      "anchor": 4096,
+      "fuel": 8193,
+      "rounds": 33,
+      "wall_seconds": 0.5,
+      "node_limit": 2048
+    },
+    "binary_sha256": "81f4fdebca820fb3dc4f64553999ae806648674536388171b56c665b191da95d"
+  },
+  "results": {
+    "scope": "Untrusted bounded diagnostic; every selected certificate still needs Coq replay.",
+    "counts": {
+      "graph_status_closed_unranked": 947,
+      "graphs": 1010,
+      "graph_status_closed_partial": 63,
+      "graph_status_closure_open": 14,
+      "portfolio_candidate": 12,
+      "capacity_candidate": 13,
+      "weighted_candidate": 1,
+      "ordinary_candidate": 0
+    },
+    "graph_input_sha256": "480e5212ac7567f14882ec6d3787e5b3dbd422a8b1b9aacf96f7c05ba3998132",
+    "solver_sha256": "deac309d20696dd442c11f780ddc0a5d8fcbe3ec15efac347743e922f9b5de32",
+    "wall_seconds": 158.1790622480039,
+    "cpu_seconds": 129.374985514
+  },
+  "public_producer": "tools/weighted_portfolio_search.py",
+  "public_producer_sha256": "59229f2c9e17c11a96092ea5ee704b4f11a7da2209d3f06ed41a5f3501dae244"
+}

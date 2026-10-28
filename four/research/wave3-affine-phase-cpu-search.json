@@ -1,0 +1,81 @@
+{
+  "scope": "Untrusted CPU-budgeted symbolic-phase repair; every success still requires Coq proof and original census membership",
+  "cohort_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+  "source_replay_sha256": "3d3221456ecdcdc95c1a1e4ffa8f9743d522def4c83e515ffe88709d573f8213",
+  "excluded_native_replay_sha256": "b917ed9a54bc36418900134a222e9fcd7fddb99910e4e5c4c3cc017602e0c91a",
+  "input_rows": 9478,
+  "repair_statuses": {
+    "replay_false": 8674,
+    "timeout": 354,
+    "repaired_candidate": 450
+  },
+  "additional_assigned_candidate_exclusions": 4163,
+  "closure_remaining_sha256": "c82a62be6185b49e858f8af2d3cb97bb098beca11d7f2fda3c91c6d3dd0119af",
+  "weighted_snapshot_archives": [
+    {
+      "path": "four/build/affine-wave/phase-cpu-common/weighted-snapshots/index-a4886ccf639bc115040edc33eade18701d42222969c9dae509f716ff0eb82518.json",
+      "sha256": "a4886ccf639bc115040edc33eade18701d42222969c9dae509f716ff0eb82518"
+    }
+  ],
+  "weighted_registries_sha256": {
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch000/registry.json": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch001/registry.json": "b9827823268e3cb7f998236fc54751fc422d9a1c13d5fc50b90f1943710d61b0",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch002/registry.json": "cdd63241fae57dd1a04976eece09c1693baafc466e2572363171c8fdd92cd18c",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch003/registry.json": "335b0dc9e826b4cfab93b0f6b92e4bc76cb8a9714ef1622f00b08f5853b1ae9b",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch004/registry.json": "b930c41fd2f02610a1752c70f9e48b03ca48d10752a5f4e61b0de5dad14424d3",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch005/registry.json": "48af4db801bce17832829fd34758130dce69fca86545c46aef2998228b88bebe",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch006/registry.json": "e6abd1a8d9b7551ebb85ebe317458a59605e33a4f86bba31691e33e2ecc83a81",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch007/registry.json": "4746b5273010a09dfbcaa752be1a77767a9001620fe993d978529bcd8c9ddcda",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch008/registry.json": "b0e1d0edad4f5f62508ce20ba77c70163bea244974b9ea9e51e07e8fce5de713",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch009/registry.json": "bdfa3cc756dd2faa4f655119a2ca6b5d31b04db685567ad9a0aa61031e036093",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch010/registry.json": "4a0a0ff1ebe434085110381f36bf43218c70a2e04dde25b1fb3d8e01167bdee4",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch011/registry.json": "388f417408e0c9fefe05b81e36204d1d42371506aac5074058425058bcc11099",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch012/registry.json": "71be3b4f85f3a54b3eafaeeb3f4b5e9ee1827ef0a90449a1a540e57ddeaea540",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch013/registry.json": "11825a6657c25e4d560d9fa6d47a32a559aba0f452cb2aa1673f046da526dbde",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch014/registry.json": "b2cbad3331d7fd632c8c17e791bdba3dcce46dec15fe80d7c3eff1fdc7313616",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch015/registry.json": "f1bb69d045a921374a880c2b42a993839a0d07e27fceb275a8c65c6465d9c106",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch016/registry.json": "83065f59e4930de266de18d8aba752a755e6901f6610042bff923f22f4518586",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch017/registry.json": "96a20aef1c74dd89888969d49280014df069604f8c0d762ab2de8b82aec605ea"
+  },
+  "deferral_tool_sha256": "cf9964def219c67ef6a8ce62420d7b90d819ed821afcf28e7ad36ff214283423",
+  "selection_status": "Weighted and closure assignments are queued candidates, not proofs; excluding them only avoids duplicate search work.",
+  "frozen_parser_replay_statuses": {
+    "replay_true": 450
+  },
+  "source_sha256": "1eea8c8b5bbe7e618d3cff18e24b12906ae179d53bb5ea7a5babf1c9b0f74898",
+  "source_parser_sha256": "f0221d100b913fd575e5450b38d295a52807297a27eea16437209f8b86ee8557",
+  "frozen_probe_source_sha256": "56aad335b126c8d4c3b842651c768cc1c9b3a026fe8a97e9da729762adcbea94",
+  "extracted_checker_sha256": "801cda1eeeda8fae651efb6ed894f20005fcdd73c659f08ecbd1dc07c157f54b",
+  "input_sha256": "6ad8601aad3288f8c23fc672c13c2243513ea6d8ff889a731b785fae7c26c690",
+  "search_tsv_sha256": "8047e9ee9de53f58328638ba182ee8e2c930e0d3e2742623eec466287456f284",
+  "replay_tsv_sha256": "fa0a7582cf09749c30e7494790a04d2c84a6ecb5bdb64262df122b0ca1c8a90f",
+  "search_command": [
+    "four/build/affine-wave/extracted/affine_phase_cpu",
+    "8192",
+    "4096",
+    "8192",
+    "8",
+    "0.25",
+    "four/build/affine-wave/phase-cpu-common/input.txt",
+    "four/build/affine-wave/phase-cpu-common/certs"
+  ],
+  "replay_command": [
+    "four/build/affine-wave/extracted/affine_probe",
+    "8192",
+    "4096",
+    "8192",
+    "30",
+    "four/build/affine-wave/phase-cpu-common/replay-input.txt"
+  ],
+  "timeout_basis": "user plus system CPU time via ITIMER_PROF; timeout is unresolved",
+  "parameters": {
+    "bound": 8192,
+    "cfuel": 4096,
+    "fuel": 8192,
+    "phases": 8,
+    "cpu_seconds": 0.25
+  },
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "elapsed_seconds": 1983.686
+}

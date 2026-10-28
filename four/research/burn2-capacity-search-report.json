@@ -1,0 +1,3093 @@
+{
+  "candidate_kinds": {
+    "ordinary": 7,
+    "weighted": 6
+  },
+  "ledger_sha256": "46560c37ea5b3d2bf9b3112c3ce0e0eb62021b87b4c85b8f075130d6c992b97f",
+  "manifest_sha256": "2cff9bc019b1c4b03ec4baf9a76730ad1f15b4b8e0297d6a856096ca369641f4",
+  "per_machine": [
+    {
+      "candidate_kind": "weighted",
+      "counts": {
+        "graph_status_closed_unranked": 1
+      },
+      "events": [
+        {
+          "machine": "1LB1RA---1LB_1RB3LB3RA2RA",
+          "mirror": 0,
+          "nodes": 138,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.011502,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 0,
+      "machine": "1LB1RA---1LB_1RB3LB3RA2RA",
+      "maximum_targets_in_one_variant": 8,
+      "old_index": 0,
+      "old_variants_sha256": "0549f48f1a1f1bee0e8532213331affaea5addde0544f7de7c072a55c923dcad",
+      "recurrence_targets": [
+        0,
+        1,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.668,
+      "worker_maxrss_kib": 68744
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2LB1RA2RA_2RA2LB3RA3LA",
+          "mirror": 0,
+          "nodes": 163,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.025324,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB1RA2RA_2RA2LB3RA3LA",
+          "mirror": 1,
+          "nodes": 163,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.02348,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB1RA2RA_2RA2LB3RA3LA",
+          "mirror": 0,
+          "nodes": 269,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.064352,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB1RA2RA_2RA2LB3RA3LA",
+          "mirror": 1,
+          "nodes": 269,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.054361,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 1,
+      "machine": "1LB2LB1RA2RA_2RA2LB3RA3LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 2,
+      "old_variants_sha256": "7eff59ed34b12482550309a20b929f54ca60ed756ad99c50ee9fd70ed4e6bb89",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.02,
+      "worker_maxrss_kib": 68732
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2RB3LA0RB_2RA3RA2LB2RA",
+          "mirror": 0,
+          "nodes": 371,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.433514,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB3LA0RB_2RA3RA2LB2RA",
+          "mirror": 1,
+          "nodes": 371,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.635275,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB3LA0RB_2RA3RA2LB2RA",
+          "mirror": 0,
+          "nodes": 910,
+          "phase": "ranking",
+          "ranked": 4,
+          "seconds": 2.002846,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RB3LA0RB_2RA3RA2LB2RA",
+          "mirror": 1,
+          "nodes": 910,
+          "phase": "ranking",
+          "ranked": 4,
+          "seconds": 2.002913,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 2,
+      "machine": "1LB2RB3LA0RB_2RA3RA2LB2RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 3,
+      "old_variants_sha256": "f398082527e4a0cc5a82e2f417fed2141a7ab37caaee40fe325f737c67c8c386",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 6.597,
+      "worker_maxrss_kib": 72516
+    },
+    {
+      "candidate_kind": "weighted",
+      "counts": {
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB0RB0LA2LA_3RA1LB1RA3LB",
+          "mirror": 0,
+          "nodes": 1036,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 1.606341,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB0RB0LA2LA_3RA1LB1RA3LB",
+          "mirror": 1,
+          "nodes": 1036,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 1.607544,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 3,
+      "machine": "1LB0RB0LA2LA_3RA1LB1RA3LB",
+      "maximum_targets_in_one_variant": 8,
+      "old_index": 4,
+      "old_variants_sha256": "2236d81ac67c247d98749d50ad72eac8dc45f10ac48fe4f691e519763924ef90",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 4.146,
+      "worker_maxrss_kib": 71496
+    },
+    {
+      "candidate_kind": "ordinary",
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_ordinary_candidate": 1
+      },
+      "events": [
+        {
+          "machine": "1LB2RA0RB3LB_1RA3LA2RB2LA",
+          "mirror": 0,
+          "nodes": 1196,
+          "phase": "ranking",
+          "ranked": 3,
+          "seconds": 2.003251,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RA0RB3LB_1RA3LA2RB2LA",
+          "mirror": 1,
+          "nodes": 1196,
+          "phase": "ranking",
+          "ranked": 3,
+          "seconds": 2.003531,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RA0RB3LB_1RA3LA2RB2LA",
+          "mirror": 0,
+          "nodes": 312,
+          "phase": "ranking",
+          "ranked": 8,
+          "seconds": 0.051279,
+          "status": "ordinary_candidate"
+        }
+      ],
+      "index": 4,
+      "machine": "1LB2RA0RB3LB_1RA3LA2RB2LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 10,
+      "old_variants_sha256": "3d038cc44e935bb61d4f58309ba2f7ec862f8d9ede4f6c1a958819a1dffc97b8",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 5.393,
+      "worker_maxrss_kib": 75084
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 2,
+        "graph_status_closure_open": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2LB3LB2RA_3RA1RA1LB1RB",
+          "mirror": 0,
+          "nodes": 644,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.079768,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LB2RA_3RA1RA1LB1RB",
+          "mirror": 1,
+          "nodes": 644,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.095711,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LB2RA_3RA1RA1LB1RB",
+          "mirror": 0,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.040599,
+          "status": "closure_open"
+        },
+        {
+          "machine": "1LB2LB3LB2RA_3RA1RA1LB1RB",
+          "mirror": 1,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.046907,
+          "status": "closure_open"
+        }
+      ],
+      "index": 5,
+      "machine": "1LB2LB3LB2RA_3RA1RA1LB1RB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 11,
+      "old_variants_sha256": "bc07735271ec07f45a2dafb69acede70d16485b7bcb3ff1df9515edfcc93bdc9",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        5,
+        6
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.074,
+      "worker_maxrss_kib": 69200
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RA3RB1LB_0RA1LA2LB1RA",
+          "mirror": 0,
+          "nodes": 485,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.084897,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3RB1LB_0RA1LA2LB1RA",
+          "mirror": 1,
+          "nodes": 485,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.103138,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3RB1LB_0RA1LA2LB1RA",
+          "mirror": 0,
+          "nodes": 1357,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.480994,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3RB1LB_0RA1LA2LB1RA",
+          "mirror": 1,
+          "nodes": 1357,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.406268,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 6,
+      "machine": "1LB2RA3RB1LB_0RA1LA2LB1RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 13,
+      "old_variants_sha256": "c2013b6ba116f0aae619e00f1d3890afb44d501f597ae4ae70f7be7ccdbc2de8",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.778,
+      "worker_maxrss_kib": 75356
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RB2LB1LB_2RA1LA3RB0LA",
+          "mirror": 0,
+          "nodes": 456,
+          "phase": "ranking",
+          "ranked": 0,
+          "seconds": 2.000914,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RB2LB1LB_2RA1LA3RB0LA",
+          "mirror": 1,
+          "nodes": 456,
+          "phase": "ranking",
+          "ranked": 0,
+          "seconds": 2.001028,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RB2LB1LB_2RA1LA3RB0LA",
+          "mirror": 0,
+          "nodes": 1221,
+          "phase": "ranking",
+          "ranked": 0,
+          "seconds": 2.002624,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RB2LB1LB_2RA1LA3RB0LA",
+          "mirror": 1,
+          "nodes": 1221,
+          "phase": "ranking",
+          "ranked": 0,
+          "seconds": 2.003328,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 7,
+      "machine": "1LB2RB2LB1LB_2RA1LA3RB0LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 14,
+      "old_variants_sha256": "276499e94ea143e38eed1b6fecfd4f3c53c6bc1ab3af3370bb789296a9b9bd89",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 10.289,
+      "worker_maxrss_kib": 78024
+    },
+    {
+      "candidate_kind": "ordinary",
+      "counts": {
+        "graph_status_ordinary_candidate": 1
+      },
+      "events": [
+        {
+          "machine": "1LB2RA0RB3LA_1RB3RA0LA2LB",
+          "mirror": 0,
+          "nodes": 820,
+          "phase": "ranking",
+          "ranked": 8,
+          "seconds": 0.30846,
+          "status": "ordinary_candidate"
+        }
+      ],
+      "index": 8,
+      "machine": "1LB2RA0RB3LA_1RB3RA0LA2LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 15,
+      "old_variants_sha256": "8ed0d13110fc9e104ac42921657cd78234aff5b0c1d9b615abdc5e4b82c5ecd2",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.453,
+      "worker_maxrss_kib": 68744
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB0LB---1RA_2RA2RA3RA3LB",
+          "mirror": 0,
+          "nodes": 1021,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.293025,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB0LB---1RA_2RA2RA3RA3LB",
+          "mirror": 1,
+          "nodes": 1021,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.270324,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB0LB---1RA_2RA2RA3RA3LB",
+          "mirror": 0,
+          "nodes": 3935,
+          "phase": "ranking",
+          "ranked": 4,
+          "seconds": 2.012456,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB0LB---1RA_2RA2RA3RA3LB",
+          "mirror": 1,
+          "nodes": 3935,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 2.009045,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 9,
+      "machine": "1LB0LB---1RA_2RA2RA3RA3LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 16,
+      "old_variants_sha256": "a6df9a423676c6602bfd6d15e5edc83611428d9793f191ce5adc4f6f51849014",
+      "recurrence_targets": [
+        0,
+        1,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 9.649,
+      "worker_maxrss_kib": 98020
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+          "mirror": 0,
+          "nodes": 915,
+          "phase": "ranking",
+          "ranked": 2,
+          "seconds": 2.001601,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+          "mirror": 1,
+          "nodes": 915,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 2.001603,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+          "mirror": 0,
+          "nodes": 3105,
+          "phase": "ranking",
+          "ranked": 2,
+          "seconds": 2.007052,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+          "mirror": 1,
+          "nodes": 3105,
+          "phase": "ranking",
+          "ranked": 2,
+          "seconds": 2.010022,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 10,
+      "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 17,
+      "old_variants_sha256": "1246b54733341a8b53ba8e046ffdda673d3bae88cc5b2f7eb9842058a7dd3ade",
+      "recurrence_targets": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 10.608,
+      "worker_maxrss_kib": 83228
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 2,
+        "graph_status_closure_open": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2LB3LB3RA_2RA1RA0RB1LB",
+          "mirror": 0,
+          "nodes": 644,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.081292,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LB3RA_2RA1RA0RB1LB",
+          "mirror": 1,
+          "nodes": 644,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.096619,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LB3RA_2RA1RA0RB1LB",
+          "mirror": 0,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.051091,
+          "status": "closure_open"
+        },
+        {
+          "machine": "1LB2LB3LB3RA_2RA1RA0RB1LB",
+          "mirror": 1,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.043177,
+          "status": "closure_open"
+        }
+      ],
+      "index": 11,
+      "machine": "1LB2LB3LB3RA_2RA1RA0RB1LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 20,
+      "old_variants_sha256": "1c928397e66ed8efb71c9e24fd828d15d67ef160786efb71c19f349a446348ef",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        5,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.224,
+      "worker_maxrss_kib": 70208
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2LB3LB3RA_1RB2LB2RA2LB",
+          "mirror": 0,
+          "nodes": 246,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.020533,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LB3RA_1RB2LB2RA2LB",
+          "mirror": 1,
+          "nodes": 246,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.022393,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LB3RA_1RB2LB2RA2LB",
+          "mirror": 0,
+          "nodes": 637,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.0941,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LB3RA_1RB2LB2RA2LB",
+          "mirror": 1,
+          "nodes": 637,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.092338,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 12,
+      "machine": "1LB2LB3LB3RA_1RB2LB2RA2LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 24,
+      "old_variants_sha256": "8e480a0cba4d35620caa90f2a65e38e4301afae66d0839334d309c2c6f7ed182",
+      "recurrence_targets": [
+        0,
+        2,
+        3,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.623,
+      "worker_maxrss_kib": 70228
+    },
+    {
+      "candidate_kind": "weighted",
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB1LA1RB1RB_2RA3RB1LB3LA",
+          "mirror": 0,
+          "nodes": 189,
+          "phase": "ranking",
+          "ranked": 4,
+          "seconds": 0.023772,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1LA1RB1RB_2RA3RB1LB3LA",
+          "mirror": 1,
+          "nodes": 189,
+          "phase": "ranking",
+          "ranked": 4,
+          "seconds": 0.020412,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1LA1RB1RB_2RA3RB1LB3LA",
+          "mirror": 0,
+          "nodes": 353,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.041012,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1LA1RB1RB_2RA3RB1LB3LA",
+          "mirror": 1,
+          "nodes": 353,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.053304,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 13,
+      "machine": "1LB1LA1RB1RB_2RA3RB1LB3LA",
+      "maximum_targets_in_one_variant": 8,
+      "old_index": 27,
+      "old_variants_sha256": "a7cb511cd4405fe37c486541276b58303a450b6615000009c6da26c20b18b3f2",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.136,
+      "worker_maxrss_kib": 71184
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+          "mirror": 0,
+          "nodes": 321,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.962738,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+          "mirror": 1,
+          "nodes": 321,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.850061,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+          "mirror": 0,
+          "nodes": 764,
+          "phase": "ranking",
+          "ranked": 3,
+          "seconds": 2.002474,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+          "mirror": 1,
+          "nodes": 764,
+          "phase": "ranking",
+          "ranked": 0,
+          "seconds": 2.002424,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 14,
+      "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 31,
+      "old_variants_sha256": "9338094abe6596d2ac3366e498507f2a1da784c88573ea2d739011e90591d1aa",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 7.904,
+      "worker_maxrss_kib": 74844
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RB1RA1RB_2RA3LB2LB0LA",
+          "mirror": 0,
+          "nodes": 233,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.03796,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB1RA1RB_2RA3LB2LB0LA",
+          "mirror": 1,
+          "nodes": 233,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.041981,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB1RA1RB_2RA3LB2LB0LA",
+          "mirror": 0,
+          "nodes": 113,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.114294,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB1RA1RB_2RA3LB2LB0LA",
+          "mirror": 1,
+          "nodes": 113,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.131921,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 15,
+      "machine": "1LB2RB1RA1RB_2RA3LB2LB0LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 32,
+      "old_variants_sha256": "b7a48f56883beb3fe1c35eb049eb380df4f2448b6becd2107fbfed8b3dc501de",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.023,
+      "worker_maxrss_kib": 68736
+    },
+    {
+      "candidate_kind": "weighted",
+      "counts": {
+        "graph_status_closed_unranked": 1
+      },
+      "events": [
+        {
+          "machine": "1LB1RA2RB2LA_3RA3LA3LA3RB",
+          "mirror": 0,
+          "nodes": 142,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.014071,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 16,
+      "machine": "1LB1RA2RB2LA_3RA3LA3LA3RB",
+      "maximum_targets_in_one_variant": 8,
+      "old_index": 33,
+      "old_variants_sha256": "efe4a09d778675da4e041bc2c8209862faa63e73354ac53aeb08baadcb4ccf44",
+      "recurrence_targets": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.616,
+      "worker_maxrss_kib": 68732
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB1LA2RB3RB_2RA3LB1RA1RB",
+          "mirror": 0,
+          "nodes": 193,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.02879,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1LA2RB3RB_2RA3LB1RA1RB",
+          "mirror": 1,
+          "nodes": 193,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.036851,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1LA2RB3RB_2RA3LB1RA1RB",
+          "mirror": 0,
+          "nodes": 356,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.064247,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1LA2RB3RB_2RA3LB1RA1RB",
+          "mirror": 1,
+          "nodes": 356,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.066554,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 17,
+      "machine": "1LB1LA2RB3RB_2RA3LB1RA1RB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 34,
+      "old_variants_sha256": "8d6331292ee6d4cfe6f2da958ee3441ffb99f14d63a443693cbcf8d06a0970b3",
+      "recurrence_targets": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.073,
+      "worker_maxrss_kib": 68940
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB0LA0RB3RA_2RA0LB3LB2RB",
+          "mirror": 0,
+          "nodes": 112,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.014484,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB0LA0RB3RA_2RA0LB3LB2RB",
+          "mirror": 1,
+          "nodes": 112,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.011509,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB0LA0RB3RA_2RA0LB3LB2RB",
+          "mirror": 0,
+          "nodes": 204,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.036108,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB0LA0RB3RA_2RA0LB3LB2RB",
+          "mirror": 1,
+          "nodes": 204,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.034715,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 18,
+      "machine": "1LB0LA0RB3RA_2RA0LB3LB2RB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 35,
+      "old_variants_sha256": "6572ddc49f279727126a61e1129c843145554a90f591306ddfd637460f542596",
+      "recurrence_targets": [
+        0,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.968,
+      "worker_maxrss_kib": 68748
+    },
+    {
+      "candidate_kind": "ordinary",
+      "counts": {
+        "graph_status_ordinary_candidate": 1
+      },
+      "events": [
+        {
+          "machine": "1LB1RB1LA3RA_2RA2LB3RB0LA",
+          "mirror": 0,
+          "nodes": 143,
+          "phase": "ranking",
+          "ranked": 8,
+          "seconds": 0.013787,
+          "status": "ordinary_candidate"
+        }
+      ],
+      "index": 19,
+      "machine": "1LB1RB1LA3RA_2RA2LB3RB0LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 40,
+      "old_variants_sha256": "131b104fbd82e3ede8b96bcd6a9f01accddbb1ae8a4cc5837ff1c2fb99080233",
+      "recurrence_targets": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.569,
+      "worker_maxrss_kib": 68732
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2RA3RB3LB_0RA3LB2LB1LB",
+          "mirror": 0,
+          "nodes": 997,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.220954,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3RB3LB_0RA3LB2LB1LB",
+          "mirror": 1,
+          "nodes": 997,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.239703,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3RB3LB_0RA3LB2LB1LB",
+          "mirror": 0,
+          "nodes": 3864,
+          "phase": "ranking",
+          "ranked": 4,
+          "seconds": 2.007523,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RA3RB3LB_0RA3LB2LB1LB",
+          "mirror": 1,
+          "nodes": 3864,
+          "phase": "ranking",
+          "ranked": 4,
+          "seconds": 2.017775,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 20,
+      "machine": "1LB2RA3RB3LB_0RA3LB2LB1LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 41,
+      "old_variants_sha256": "5d906de14fd779e7f76cfe5b213657d9bf130a3c1ba0d66225a25c0f354447bb",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 7.755,
+      "worker_maxrss_kib": 100420
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2LB3LB2RA_1RA3RA2LB1RA",
+          "mirror": 0,
+          "nodes": 246,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.027352,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LB2RA_1RA3RA2LB1RA",
+          "mirror": 1,
+          "nodes": 246,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.03265,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LB2RA_1RA3RA2LB1RA",
+          "mirror": 0,
+          "nodes": 637,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.132579,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LB2RA_1RA3RA2LB1RA",
+          "mirror": 1,
+          "nodes": 637,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.140318,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 21,
+      "machine": "1LB2LB3LB2RA_1RA3RA2LB1RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 43,
+      "old_variants_sha256": "e509e1c9dced67683dbbb61934594ba522d91fe5ace9e8d39a5b45fa283df192",
+      "recurrence_targets": [
+        0,
+        2,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.771,
+      "worker_maxrss_kib": 70108
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB1LB---2RA_1RB3LB1RA0RA",
+          "mirror": 0,
+          "nodes": 295,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.032586,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1LB---2RA_1RB3LB1RA0RA",
+          "mirror": 1,
+          "nodes": 295,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.029035,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1LB---2RA_1RB3LB1RA0RA",
+          "mirror": 0,
+          "nodes": 718,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.139823,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1LB---2RA_1RB3LB1RA0RA",
+          "mirror": 1,
+          "nodes": 718,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.111369,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 22,
+      "machine": "1LB1LB---2RA_1RB3LB1RA0RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 47,
+      "old_variants_sha256": "fd1050eb5ae0ddfbe78569f447664b0b8dd2191039fca2de206917dfeabdd13c",
+      "recurrence_targets": [
+        1,
+        3,
+        4,
+        5,
+        6
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.279,
+      "worker_maxrss_kib": 75008
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2LA3LB3RB_2RA3LA1RA1RB",
+          "mirror": 0,
+          "nodes": 478,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.094046,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA3LB3RB_2RA3LA1RA1RB",
+          "mirror": 1,
+          "nodes": 478,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.099281,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA3LB3RB_2RA3LA1RA1RB",
+          "mirror": 0,
+          "nodes": 1104,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.366517,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA3LB3RB_2RA3LA1RA1RB",
+          "mirror": 1,
+          "nodes": 1104,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.39366,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 23,
+      "machine": "1LB2LA3LB3RB_2RA3LA1RA1RB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 49,
+      "old_variants_sha256": "804aa94210a02366364da9344b7b168a3bb6621d27c1674be257d372b7b5602c",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.629,
+      "worker_maxrss_kib": 72292
+    },
+    {
+      "candidate_kind": "ordinary",
+      "counts": {
+        "graph_status_ordinary_candidate": 1
+      },
+      "events": [
+        {
+          "machine": "1LB2LB2RA0LB_2RB3RA3LB3RA",
+          "mirror": 0,
+          "nodes": 1344,
+          "phase": "ranking",
+          "ranked": 8,
+          "seconds": 0.280329,
+          "status": "ordinary_candidate"
+        }
+      ],
+      "index": 24,
+      "machine": "1LB2LB2RA0LB_2RB3RA3LB3RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 50,
+      "old_variants_sha256": "d0d2a0a7cd05283739342cfa0f69f32cbe5027ca9254185933a4ef387ce29d0b",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.222,
+      "worker_maxrss_kib": 68724
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2LA1RA2LB_3RB3LB1RA0RA",
+          "mirror": 0,
+          "nodes": 200,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.029858,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA1RA2LB_3RB3LB1RA0RA",
+          "mirror": 1,
+          "nodes": 200,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.027307,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA1RA2LB_3RB3LB1RA0RA",
+          "mirror": 0,
+          "nodes": 483,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.091086,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA1RA2LB_3RB3LB1RA0RA",
+          "mirror": 1,
+          "nodes": 483,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.103585,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 25,
+      "machine": "1LB2LA1RA2LB_3RB3LB1RA0RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 51,
+      "old_variants_sha256": "c273b273b84f1b0167d2e443efd3a4aabd1540646e2aca14da0eecedb635ab0e",
+      "recurrence_targets": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.025,
+      "worker_maxrss_kib": 71240
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB1RA1LB2LB_3RB3LB---3RA",
+          "mirror": 0,
+          "nodes": 520,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.066367,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RA1LB2LB_3RB3LB---3RA",
+          "mirror": 1,
+          "nodes": 520,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.07316,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RA1LB2LB_3RB3LB---3RA",
+          "mirror": 0,
+          "nodes": 1941,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.518597,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RA1LB2LB_3RB3LB---3RA",
+          "mirror": 1,
+          "nodes": 1941,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.558629,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 26,
+      "machine": "1LB1RA1LB2LB_3RB3LB---3RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 52,
+      "old_variants_sha256": "f0306e6636ddcb709eae44f301f9081c2afa5d7a0894633ff20cbd28e685f4c8",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        5,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 3.076,
+      "worker_maxrss_kib": 81892
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2LB2LA0RA_1RB3LA3RA0RA",
+          "mirror": 0,
+          "nodes": 484,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 1.342314,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB2LA0RA_1RB3LA3RA0RA",
+          "mirror": 1,
+          "nodes": 484,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 1.129909,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB2LA0RA_1RB3LA3RA0RA",
+          "mirror": 0,
+          "nodes": 1493,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 2.00348,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2LB2LA0RA_1RB3LA3RA0RA",
+          "mirror": 1,
+          "nodes": 1493,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 2.003429,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 27,
+      "machine": "1LB2LB2LA0RA_1RB3LA3RA0RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 55,
+      "old_variants_sha256": "0fb868673f165a31fb7b15d94a2819319dd7118c2713bf9d24ac2f4fe7e0db71",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 7.796,
+      "worker_maxrss_kib": 76796
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2LA1RA1RB_3RA1LA2RB0RB",
+          "mirror": 0,
+          "nodes": 158,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.02808,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA1RA1RB_3RA1LA2RB0RB",
+          "mirror": 1,
+          "nodes": 158,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.027254,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA1RA1RB_3RA1LA2RB0RB",
+          "mirror": 0,
+          "nodes": 298,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.072314,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA1RA1RB_3RA1LA2RB0RB",
+          "mirror": 1,
+          "nodes": 298,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.070571,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 28,
+      "machine": "1LB2LA1RA1RB_3RA1LA2RB0RB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 60,
+      "old_variants_sha256": "3f7942922a6ff11718653c00cd44c4e1007a2b2615a5b0b6e9620b2cacfc84e7",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.97,
+      "worker_maxrss_kib": 68720
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RA3RB3RB_3RA0LA2LB1LB",
+          "mirror": 0,
+          "nodes": 426,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.099694,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3RB3RB_3RA0LA2LB1LB",
+          "mirror": 1,
+          "nodes": 426,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.093831,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3RB3RB_3RA0LA2LB1LB",
+          "mirror": 0,
+          "nodes": 1236,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.4492,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3RB3RB_3RA0LA2LB1LB",
+          "mirror": 1,
+          "nodes": 1236,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.536673,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 29,
+      "machine": "1LB2RA3RB3RB_3RA0LA2LB1LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 64,
+      "old_variants_sha256": "7c21ceda5cc26e185c679262b0cbf42a8d18c39ea9d7f2dd42971f99a1a160a2",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.325,
+      "worker_maxrss_kib": 73668
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closure_open": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2RB0RA1RA_3RA2RB1LA3LB",
+          "mirror": 0,
+          "nodes": 2468,
+          "phase": "ranking",
+          "ranked": 3,
+          "seconds": 2.005579,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RB0RA1RA_3RA2RB1LA3LB",
+          "mirror": 1,
+          "nodes": 2468,
+          "phase": "ranking",
+          "ranked": 3,
+          "seconds": 2.006814,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RB0RA1RA_3RA2RB1LA3LB",
+          "mirror": 0,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.080387,
+          "status": "closure_open"
+        },
+        {
+          "machine": "1LB2RB0RA1RA_3RA2RB1LA3LB",
+          "mirror": 1,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.064265,
+          "status": "closure_open"
+        }
+      ],
+      "index": 30,
+      "machine": "1LB2RB0RA1RA_3RA2RB1LA3LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 66,
+      "old_variants_sha256": "932faa9f40dffaf8a1d92b1f18eb15f512b62a7706d073911794af3152a52f5b",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 6.241,
+      "worker_maxrss_kib": 81520
+    },
+    {
+      "candidate_kind": "weighted",
+      "counts": {
+        "graph_status_closed_unranked": 1
+      },
+      "events": [
+        {
+          "machine": "1LB0RB0RB2LA_2RA3LB3RB0LA",
+          "mirror": 0,
+          "nodes": 1040,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.377415,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 31,
+      "machine": "1LB0RB0RB2LA_2RA3LB3RB0LA",
+      "maximum_targets_in_one_variant": 8,
+      "old_index": 71,
+      "old_variants_sha256": "1849ce1b3e8f14f3586d5651a43714242568736ef6070f57dd0e7bb68f8cba5c",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.373,
+      "worker_maxrss_kib": 69344
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2RA3LB1LB_0RB3LB2LA3RA",
+          "mirror": 0,
+          "nodes": 434,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.749632,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3LB1LB_0RB3LB2LA3RA",
+          "mirror": 1,
+          "nodes": 434,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.763617,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3LB1LB_0RB3LB2LA3RA",
+          "mirror": 0,
+          "nodes": 1453,
+          "phase": "ranking",
+          "ranked": 0,
+          "seconds": 2.004726,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RA3LB1LB_0RB3LB2LA3RA",
+          "mirror": 1,
+          "nodes": 1453,
+          "phase": "ranking",
+          "ranked": 0,
+          "seconds": 2.002975,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 32,
+      "machine": "1LB2RA3LB1LB_0RB3LB2LA3RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 72,
+      "old_variants_sha256": "c471168af27d31739394557e561db3a42ab11a4c97f425b838186af6334a5408",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 7.396,
+      "worker_maxrss_kib": 77772
+    },
+    {
+      "candidate_kind": "ordinary",
+      "counts": {
+        "graph_status_ordinary_candidate": 1
+      },
+      "events": [
+        {
+          "machine": "1LB0LB1RB3LA_2RA2LA3RB2LA",
+          "mirror": 0,
+          "nodes": 274,
+          "phase": "ranking",
+          "ranked": 8,
+          "seconds": 0.040826,
+          "status": "ordinary_candidate"
+        }
+      ],
+      "index": 33,
+      "machine": "1LB0LB1RB3LA_2RA2LA3RB2LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 73,
+      "old_variants_sha256": "14a763bf36b6ae9ebd233bae69832e4df85607766dd0c50fde8d846cf2eb3f79",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.719,
+      "worker_maxrss_kib": 68724
+    },
+    {
+      "candidate_kind": "ordinary",
+      "counts": {
+        "graph_status_closed_unranked": 2,
+        "graph_status_ordinary_candidate": 1
+      },
+      "events": [
+        {
+          "machine": "1LB2LB1RA1LA_1RA3RA---3LB",
+          "mirror": 0,
+          "nodes": 406,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.369645,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB1RA1LA_1RA3RA---3LB",
+          "mirror": 1,
+          "nodes": 406,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.350847,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB1RA1LA_1RA3RA---3LB",
+          "mirror": 0,
+          "nodes": 618,
+          "phase": "ranking",
+          "ranked": 8,
+          "seconds": 0.115499,
+          "status": "ordinary_candidate"
+        }
+      ],
+      "index": 34,
+      "machine": "1LB2LB1RA1LA_1RA3RA---3LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 78,
+      "old_variants_sha256": "3ccf405de2d54480e9cd02dd232827695ec035835cdd81417de21d0ce6eb09a9",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.676,
+      "worker_maxrss_kib": 69456
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2LA0RB1LA_2RB2RA3LA1LB",
+          "mirror": 0,
+          "nodes": 279,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.58345,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA0RB1LA_2RB2RA3LA1LB",
+          "mirror": 1,
+          "nodes": 279,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.602255,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LA0RB1LA_2RB2RA3LA1LB",
+          "mirror": 0,
+          "nodes": 879,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 2.002843,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2LA0RB1LA_2RB2RA3LA1LB",
+          "mirror": 1,
+          "nodes": 879,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 2.001851,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 35,
+      "machine": "1LB2LA0RB1LA_2RB2RA3LA1LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 79,
+      "old_variants_sha256": "a0746b4e1e8f9f7d90398d09377444cbc52d64b216c1c4f4e7eaf450707acf14",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 5.96,
+      "worker_maxrss_kib": 70620
+    },
+    {
+      "candidate_kind": "weighted",
+      "counts": {
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2LB2LB3RB_1RA3LB1LB1RA",
+          "mirror": 0,
+          "nodes": 87,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.020744,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB2LB3RB_1RA3LB1LB1RA",
+          "mirror": 1,
+          "nodes": 87,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.017499,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 36,
+      "machine": "1LB2LB2LB3RB_1RA3LB1LB1RA",
+      "maximum_targets_in_one_variant": 8,
+      "old_index": 89,
+      "old_variants_sha256": "595ab9b24c55477cef185a75d4aecd3becc7b22904f7261d4118c7ef2f565405",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.623,
+      "worker_maxrss_kib": 68736
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB1RB---3LA_3RA2LB3RB2LA",
+          "mirror": 0,
+          "nodes": 162,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.01522,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RB---3LA_3RA2LB3RB2LA",
+          "mirror": 1,
+          "nodes": 162,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.013934,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RB---3LA_3RA2LB3RB2LA",
+          "mirror": 0,
+          "nodes": 403,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.050455,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RB---3LA_3RA2LB3RB2LA",
+          "mirror": 1,
+          "nodes": 403,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.052175,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 37,
+      "machine": "1LB1RB---3LA_3RA2LB3RB2LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 90,
+      "old_variants_sha256": "3e9fe2a1717308ae7c9b0560eada77abeb9f8fc92eb10eca47e888c54b43f2f9",
+      "recurrence_targets": [
+        0,
+        1,
+        3,
+        4,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.278,
+      "worker_maxrss_kib": 68736
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RA3LA2RB_0RA0LA2RB0RB",
+          "mirror": 0,
+          "nodes": 161,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.095861,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3LA2RB_0RA0LA2RB0RB",
+          "mirror": 1,
+          "nodes": 161,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.098225,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3LA2RB_0RA0LA2RB0RB",
+          "mirror": 0,
+          "nodes": 255,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.234688,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA3LA2RB_0RA0LA2RB0RB",
+          "mirror": 1,
+          "nodes": 255,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.244509,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 38,
+      "machine": "1LB2RA3LA2RB_0RA0LA2RB0RB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 92,
+      "old_variants_sha256": "5d89953447162161f13a5f5ac87bad0bded5191d8caac2a77fe0dba8a8fdd14f",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.269,
+      "worker_maxrss_kib": 68748
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB1RB1RA2LA_3RA0RA3RA3LB",
+          "mirror": 0,
+          "nodes": 409,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.116131,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RB1RA2LA_3RA0RA3RA3LB",
+          "mirror": 1,
+          "nodes": 409,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.127437,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RB1RA2LA_3RA0RA3RA3LB",
+          "mirror": 0,
+          "nodes": 370,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.518502,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RB1RA2LA_3RA0RA3RA3LB",
+          "mirror": 1,
+          "nodes": 370,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.481,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 39,
+      "machine": "1LB1RB1RA2LA_3RA0RA3RA3LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 93,
+      "old_variants_sha256": "eb8d742681595aff643e05bd02c99756a2d8e2b493aa8bf0df70070a6aee2ab3",
+      "recurrence_targets": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.929,
+      "worker_maxrss_kib": 68728
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2RB0RB3RA_2RA0RA3LB2LB",
+          "mirror": 0,
+          "nodes": 612,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.304386,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB0RB3RA_2RA0RA3LB2LB",
+          "mirror": 1,
+          "nodes": 612,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.296111,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB0RB3RA_2RA0RA3LB2LB",
+          "mirror": 0,
+          "nodes": 1835,
+          "phase": "ranking",
+          "ranked": 1,
+          "seconds": 2.00435,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2RB0RB3RA_2RA0RA3LB2LB",
+          "mirror": 1,
+          "nodes": 1835,
+          "phase": "ranking",
+          "ranked": 0,
+          "seconds": 2.00593,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 40,
+      "machine": "1LB2RB0RB3RA_2RA0RA3LB2LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 95,
+      "old_variants_sha256": "aa15dca4b07c8fe23ba055b06d6d736857524af638c30899b7cadbac263b3e4a",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 7.141,
+      "worker_maxrss_kib": 81396
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RA2RB3RA_3RA3LB2LB1RA",
+          "mirror": 0,
+          "nodes": 419,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.064586,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA2RB3RA_3RA3LB2LB1RA",
+          "mirror": 1,
+          "nodes": 419,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.064177,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA2RB3RA_3RA3LB2LB1RA",
+          "mirror": 0,
+          "nodes": 1034,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.25599,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA2RB3RA_3RA3LB2LB1RA",
+          "mirror": 1,
+          "nodes": 1034,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.255859,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 41,
+      "machine": "1LB2RA2RB3RA_3RA3LB2LB1RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 98,
+      "old_variants_sha256": "2a68da6858ddf26d48961a98acd2381d935233a495115b8b630fd6373a837043",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.472,
+      "worker_maxrss_kib": 78720
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RA0RB3RA_2RA3LA0RB1LA",
+          "mirror": 0,
+          "nodes": 110,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.130054,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA0RB3RA_2RA3LA0RB1LA",
+          "mirror": 1,
+          "nodes": 110,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.132292,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA0RB3RA_2RA3LA0RB1LA",
+          "mirror": 0,
+          "nodes": 180,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.334466,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA0RB3RA_2RA3LA0RB1LA",
+          "mirror": 1,
+          "nodes": 180,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.312379,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 42,
+      "machine": "1LB2RA0RB3RA_2RA3LA0RB1LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 99,
+      "old_variants_sha256": "836ceb9b8a3bf73e02fb86473387807e474a9caf4a2c87bafb74d443e62e3ae7",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.626,
+      "worker_maxrss_kib": 68756
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB0LB---3RA_3RB2RA3LB1RA",
+          "mirror": 0,
+          "nodes": 1095,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.20864,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB0LB---3RA_3RB2RA3LB1RA",
+          "mirror": 1,
+          "nodes": 1095,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.187195,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB0LB---3RA_3RB2RA3LB1RA",
+          "mirror": 0,
+          "nodes": 4225,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 2.000298,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB0LB---3RA_3RB2RA3LB1RA",
+          "mirror": 1,
+          "nodes": 4225,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 2.000089,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 43,
+      "machine": "1LB0LB---3RA_3RB2RA3LB1RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 103,
+      "old_variants_sha256": "6ed59d72222c4ad604ebe91483827525f68ede5957bada29dddaf2ea35bb4864",
+      "recurrence_targets": [
+        0,
+        1,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 5.261,
+      "worker_maxrss_kib": 73564
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2LB3RA2RA_1RA3LB2LB1RB",
+          "mirror": 0,
+          "nodes": 308,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 1.158499,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3RA2RA_1RA3LB2LB1RB",
+          "mirror": 1,
+          "nodes": 308,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 1.256025,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3RA2RA_1RA3LB2LB1RB",
+          "mirror": 0,
+          "nodes": 239,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.648357,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3RA2RA_1RA3LB2LB1RB",
+          "mirror": 1,
+          "nodes": 239,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.595678,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 44,
+      "machine": "1LB2LB3RA2RA_1RA3LB2LB1RB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 110,
+      "old_variants_sha256": "21601a81613c4e674bfd5337bd5e28b70c6047321e609385ee5957a4b7810376",
+      "recurrence_targets": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 4.252,
+      "worker_maxrss_kib": 68800
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 2,
+        "graph_status_closure_open": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2RB0RB2RA_3RA2RB1LA3LB",
+          "mirror": 0,
+          "nodes": 971,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.607209,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB0RB2RA_3RA2RB1LA3LB",
+          "mirror": 1,
+          "nodes": 971,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.639603,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB0RB2RA_3RA2RB1LA3LB",
+          "mirror": 0,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.049197,
+          "status": "closure_open"
+        },
+        {
+          "machine": "1LB2RB0RB2RA_3RA2RB1LA3LB",
+          "mirror": 1,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.045463,
+          "status": "closure_open"
+        }
+      ],
+      "index": 45,
+      "machine": "1LB2RB0RB2RA_3RA2RB1LA3LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 111,
+      "old_variants_sha256": "234c77cdc1e35095a1eb234b757d5938243c66d3a1896ce95b0e799b658e00af",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.625,
+      "worker_maxrss_kib": 74624
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB1RA0RB1RB_0RB3RA3LA2LB",
+          "mirror": 0,
+          "nodes": 129,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.0898,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RA0RB1RB_0RB3RA3LA2LB",
+          "mirror": 1,
+          "nodes": 129,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.089181,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RA0RB1RB_0RB3RA3LA2LB",
+          "mirror": 0,
+          "nodes": 219,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.299824,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB1RA0RB1RB_0RB3RA3LA2LB",
+          "mirror": 1,
+          "nodes": 219,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.357167,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 46,
+      "machine": "1LB1RA0RB1RB_0RB3RA3LA2LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 112,
+      "old_variants_sha256": "06e976ba82e85e57e3b938f8b8dfd855fb9a3b6734fbd344eaa2de9a163ac5ac",
+      "recurrence_targets": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.418,
+      "worker_maxrss_kib": 68740
+    },
+    {
+      "candidate_kind": "ordinary",
+      "counts": {
+        "graph_status_ordinary_candidate": 1
+      },
+      "events": [
+        {
+          "machine": "1LB2RA1RA2LA_0RB3LB2LB3RA",
+          "mirror": 0,
+          "nodes": 447,
+          "phase": "ranking",
+          "ranked": 8,
+          "seconds": 0.08682,
+          "status": "ordinary_candidate"
+        }
+      ],
+      "index": 47,
+      "machine": "1LB2RA1RA2LA_0RB3LB2LB3RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 114,
+      "old_variants_sha256": "0aa5df2ba16e97df913ad3b31b4f0e0787cb4a80fc0be803d1e42f977ab1bbec",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.668,
+      "worker_maxrss_kib": 68736
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2LB1RB0LA_1RA2LB3RB0LA",
+          "mirror": 0,
+          "nodes": 476,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.089114,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB1RB0LA_1RA2LB3RB0LA",
+          "mirror": 1,
+          "nodes": 476,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.089709,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB1RB0LA_1RA2LB3RB0LA",
+          "mirror": 0,
+          "nodes": 1799,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.83718,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB1RB0LA_1RA2LB3RB0LA",
+          "mirror": 1,
+          "nodes": 1799,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.790059,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 48,
+      "machine": "1LB2LB1RB0LA_1RA2LB3RB0LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 115,
+      "old_variants_sha256": "ff767a2581e11543bac810e0d217c007778dce1e71d841a3395955a3253031b3",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.822,
+      "worker_maxrss_kib": 78352
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closure_open": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+          "mirror": 0,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.054556,
+          "status": "closure_open"
+        },
+        {
+          "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+          "mirror": 1,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.047034,
+          "status": "closure_open"
+        },
+        {
+          "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+          "mirror": 0,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.161284,
+          "status": "closure_open"
+        },
+        {
+          "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+          "mirror": 1,
+          "nodes": 0,
+          "phase": "closure",
+          "ranked": 0,
+          "seconds": 0.168253,
+          "status": "closure_open"
+        }
+      ],
+      "index": 49,
+      "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 118,
+      "old_variants_sha256": "0de75b28393cca00413b3ea08533aafe546082223100c766717ab8b00fd44f17",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.02,
+      "worker_maxrss_kib": 68728
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RB2RB2LA_3RA0LA0RB3LB",
+          "mirror": 0,
+          "nodes": 213,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.089517,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB2RB2LA_3RA0LA0RB3LB",
+          "mirror": 1,
+          "nodes": 213,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.078919,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB2RB2LA_3RA0LA0RB3LB",
+          "mirror": 0,
+          "nodes": 198,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.052731,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RB2RB2LA_3RA0LA0RB3LB",
+          "mirror": 1,
+          "nodes": 198,
+          "phase": "ranking",
+          "ranked": 7,
+          "seconds": 0.058793,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 50,
+      "machine": "1LB2RB2RB2LA_3RA0LA0RB3LB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 120,
+      "old_variants_sha256": "d814d8b913e04da12b37f3cd151c00f13a22349cbc755989edcdc5111f5f7a4e",
+      "recurrence_targets": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.869,
+      "worker_maxrss_kib": 68728
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_unranked": 4
+      },
+      "events": [
+        {
+          "machine": "1LB2RA0RB2RB_3RA1LA3LB1RB",
+          "mirror": 0,
+          "nodes": 557,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.128064,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA0RB2RB_3RA1LA3LB1RB",
+          "mirror": 1,
+          "nodes": 557,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.116927,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA0RB2RB_3RA1LA3LB1RB",
+          "mirror": 0,
+          "nodes": 623,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.173694,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2RA0RB2RB_3RA1LA3LB1RB",
+          "mirror": 1,
+          "nodes": 623,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.14459,
+          "status": "closed_unranked"
+        }
+      ],
+      "index": 51,
+      "machine": "1LB2RA0RB2RB_3RA1LA3LB1RB",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 121,
+      "old_variants_sha256": "4b1cbfef5f69b091676571ad21c1beaff0ce2ace00589983c7223ad1b765f799",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.026,
+      "worker_maxrss_kib": 72828
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2LB3LA2RB_3RA1RA0LA1RA",
+          "mirror": 0,
+          "nodes": 708,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 1.036501,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LA2RB_3RA1RA0LA1RA",
+          "mirror": 1,
+          "nodes": 708,
+          "phase": "ranking",
+          "ranked": 6,
+          "seconds": 0.964424,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3LA2RB_3RA1RA0LA1RA",
+          "mirror": 0,
+          "nodes": 2423,
+          "phase": "ranking",
+          "ranked": 0,
+          "seconds": 2.007628,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2LB3LA2RB_3RA1RA0LA1RA",
+          "mirror": 1,
+          "nodes": 2423,
+          "phase": "ranking",
+          "ranked": 0,
+          "seconds": 2.00862,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 52,
+      "machine": "1LB2LB3LA2RB_3RA1RA0LA1RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 122,
+      "old_variants_sha256": "d2ffe21db5b6ad15a4b8153401797f0995060d3eec8ce7f347e9f029ebc6f8f2",
+      "recurrence_targets": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 8.398,
+      "worker_maxrss_kib": 82244
+    },
+    {
+      "candidate_kind": null,
+      "counts": {
+        "graph_status_closed_partial": 2,
+        "graph_status_closed_unranked": 2
+      },
+      "events": [
+        {
+          "machine": "1LB2LB3RA3LB_1RB1LA3RA1RA",
+          "mirror": 0,
+          "nodes": 165,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.540751,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3RA3LB_1RB1LA3RA1RA",
+          "mirror": 1,
+          "nodes": 165,
+          "phase": "ranking",
+          "ranked": 5,
+          "seconds": 0.519573,
+          "status": "closed_unranked"
+        },
+        {
+          "machine": "1LB2LB3RA3LB_1RB1LA3RA1RA",
+          "mirror": 0,
+          "nodes": 307,
+          "phase": "ranking",
+          "ranked": 4,
+          "seconds": 2.00064,
+          "status": "closed_partial"
+        },
+        {
+          "machine": "1LB2LB3RA3LB_1RB1LA3RA1RA",
+          "mirror": 1,
+          "nodes": 307,
+          "phase": "ranking",
+          "ranked": 4,
+          "seconds": 2.00115,
+          "status": "closed_partial"
+        }
+      ],
+      "index": 53,
+      "machine": "1LB2LB3RA3LB_1RB1LA3RA1RA",
+      "maximum_targets_in_one_variant": 7,
+      "old_index": 126,
+      "old_variants_sha256": "c34a5568d52c54299520f4992c612a664da443562ec5326990b8d55ee162acfb",
+      "recurrence_targets": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ],
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 6.291,
+      "worker_maxrss_kib": 68720
+    }
+  ],
+  "rows": 54,
+  "scope": "Search candidates only; no kernel proof claim.",
+  "statuses": {
+    "completed": 54
+  },
+  "summed_wall_seconds": 177.012
+}

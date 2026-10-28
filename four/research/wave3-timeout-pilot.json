@@ -1,0 +1,675 @@
+{
+  "estimated_total_sum_row_seconds": 1408.138,
+  "runs": [
+    {
+      "command": [
+        "python3",
+        "four/tools/resume_advanced_sweep.py",
+        "--prior-report",
+        "four/build/wave3/timeout-retry/rw-92a37020abe3/input.json",
+        "--workers",
+        "1",
+        "--input",
+        "four/build/wave3/timeout-retry/rw-92a37020abe3/input.txt",
+        "--stages",
+        "four/build/wave3/timeout-retry/rw-92a37020abe3/stages.json",
+        "--output-dir",
+        "four/build/wave3/timeout-retry/rw-92a37020abe3/pilot64",
+        "--report",
+        "four/build/wave3/timeout-retry/rw-92a37020abe3/pilot64.json",
+        "--sample",
+        "64",
+        "--bound",
+        "4096",
+        "--timeout",
+        "0.5"
+      ],
+      "estimated_full_sum_row_seconds": 1.503,
+      "parameters": {
+        "anchor": 128,
+        "bound": 4096,
+        "extra": 2,
+        "fuel": 256,
+        "history": 0,
+        "mode": "rw",
+        "size": 2
+      },
+      "pilot_rows": 3,
+      "queue_directory": "four/build/wave3/timeout-retry/rw-92a37020abe3",
+      "queue_rows": 3,
+      "report": {
+        "candidate_rows": 0,
+        "candidate_tsv_sha256": "08eed1f44516501b91507b63965fc7968943948b842ab1028d1245364691f596",
+        "census_linked_rows": 0,
+        "execution_provenance": {
+          "prefixes": []
+        },
+        "kernel_checked_rows": 0,
+        "manifest": {
+          "both_bounds": true,
+          "bound": 4096,
+          "extraction_sha256": "03eefd26bb45e421b67f25a0c74daf2f45a95bab2a6e942713b3c729f9bd5775",
+          "input_rows": 3,
+          "input_sha256": "a349c065a1ac4d79d4f8860d38432feb5947b7323d5b06cc21a134337f9e1bf7",
+          "prior_report_sha256": "627d884eebadcd02836f4d99043e93c7621b56f830f7acc1f200cb02a500bce3",
+          "probe_sha256": "a3c1e02a1c8edd98e8a7e00f175e8090add438bd5824090eac3728f80555325b",
+          "selected_rows": 3,
+          "selected_sha256": "a349c065a1ac4d79d4f8860d38432feb5947b7323d5b06cc21a134337f9e1bf7",
+          "selection": "lowest SHA256(machine UTF-8) values",
+          "sources_sha256": {
+            "continuation/prefix-provenance.json": "c198a9b3141a234314e3f8434da8bedcae3cb597be653d0c1d083ed0e93372a7",
+            "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+            "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+            "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+            "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+            "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+            "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+            "theories/Checkers/FiniteNGram.v": "786ba3d650b1ac4ddb2a630a46a5526d4fabc3cdb9207ca2a1576a6d0d3e3697",
+            "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+            "theories/Checkers/NGramHist.v": "5976b6f0267b4cf70f3e96e33ce633484062780aa6e24d83581cb6c9ebee9488",
+            "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+            "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+            "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+            "theories/FiniteCensus.v": "7aacff3e2be77c06239992a0361ca8bbdd13265b9ed26ffd4377e976e7404524",
+            "theories/FiniteRankSearch.v": "e5f380a603f81f42a07c13805062eee79e96b163d75c2f1d09befafda0ccac45",
+            "theories/HistCensus.v": "f6f42a2dfc76fb95f552b1569c414d13e9702a3a04234f0b33c114e3165b9c89",
+            "theories/HistRankSearch.v": "ee92b8f518f520c703adf0e9b58f9e00bb03e693a3df4faf0f167c842886249d",
+            "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+            "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+            "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+            "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+            "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+            "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+            "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+            "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+            "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+            "theories/StateBounds.v": "2892c4dc4dea327dcef826fd35912e3df6ff60436dc1d520811e9729a456d224",
+            "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+            "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+            "tools/ExtractAdvanced.v": "8a0b61c417596ef94102f6e89d9e2bbf6adf685ccdd3422667b2755087072b6a",
+            "tools/advanced_probe.ml": "86383b7f660d0f78647bd02761501da72643515bbc885046f702d7aef72363ed",
+            "tools/advanced_probe_v2.ml": "25729f71f7750f9ac3d73a4628e5870f4e7166992d0e6d6dea15e452b0d4c413",
+            "tools/advanced_sweep.py": "5e0c13795ad71f464301ff3ec48c4af449320146d1d2e6fddd22fba34e20e201",
+            "tools/pipeline_sweep.py": "16de1d015366a4a2ca10adfe0751abd5351cb67df1f8f28dc602926663493f0d",
+            "tools/resume_advanced_sweep.py": "85dc53bb0d65825582af6d85d8fafc37fb06f80cee9ed9d54dc75c020b85c92a"
+          },
+          "stages": [
+            {
+              "anchor": 128,
+              "extra": 2,
+              "fuel": 256,
+              "history": 0,
+              "mode": "rw",
+              "size": 2
+            }
+          ],
+          "timeout_seconds_per_stage_row": 0.5,
+          "workers": 1
+        },
+        "not_accepted_rows": 3,
+        "not_accepted_sha256": "a349c065a1ac4d79d4f8860d38432feb5947b7323d5b06cc21a134337f9e1bf7",
+        "results": [
+          {
+            "anchor": 128,
+            "extra": 2,
+            "fuel": 256,
+            "history": 0,
+            "mode": "rw",
+            "rows": 3,
+            "size": 2,
+            "stage": 0,
+            "statuses": {
+              "timeout": 3
+            },
+            "sum_row_seconds": 1.502715,
+            "worker_results_sha256": [
+              "5736159598471720f8062d8df32cef17a438ca676b31ff26dc7c25ddbb59ef82"
+            ]
+          }
+        ],
+        "status": "Untrusted extracted checker search; zero kernel replay or census-link claims. Imported completed prefixes retain their original driver provenance."
+      },
+      "report_sha256": "7afe34b7be518178efc1eee918219f3049939152aee2b2db5ac636d607cd89d9",
+      "run_and_check_wall_seconds": 1.712651,
+      "statuses": {
+        "timeout": 3
+      },
+      "sum_row_seconds": 1.502715
+    },
+    {
+      "command": [
+        "python3",
+        "four/tools/resume_advanced_sweep.py",
+        "--prior-report",
+        "four/build/wave3/timeout-retry/rw-0766382d2c16/input.json",
+        "--workers",
+        "1",
+        "--input",
+        "four/build/wave3/timeout-retry/rw-0766382d2c16/input.txt",
+        "--stages",
+        "four/build/wave3/timeout-retry/rw-0766382d2c16/stages.json",
+        "--output-dir",
+        "four/build/wave3/timeout-retry/rw-0766382d2c16/pilot64",
+        "--report",
+        "four/build/wave3/timeout-retry/rw-0766382d2c16/pilot64.json",
+        "--sample",
+        "64",
+        "--bound",
+        "4096",
+        "--timeout",
+        "0.5"
+      ],
+      "estimated_full_sum_row_seconds": 425.466,
+      "parameters": {
+        "anchor": 128,
+        "bound": 4096,
+        "extra": 2,
+        "fuel": 512,
+        "history": 0,
+        "mode": "rw",
+        "size": 2
+      },
+      "pilot_rows": 64,
+      "queue_directory": "four/build/wave3/timeout-retry/rw-0766382d2c16",
+      "queue_rows": 2310,
+      "report": {
+        "candidate_rows": 58,
+        "candidate_tsv_sha256": "5caf725a158cafc1d7ab642ed545d64eaf230f397c7a6c45ec99f8b94ff9d007",
+        "census_linked_rows": 0,
+        "execution_provenance": {
+          "prefixes": []
+        },
+        "kernel_checked_rows": 0,
+        "manifest": {
+          "both_bounds": true,
+          "bound": 4096,
+          "extraction_sha256": "03eefd26bb45e421b67f25a0c74daf2f45a95bab2a6e942713b3c729f9bd5775",
+          "input_rows": 2310,
+          "input_sha256": "79fa38b594b798e8000510056b640ec8e9a134598acb3538139c15b892bf8a79",
+          "prior_report_sha256": "6c8008854c15cc84777e79520165c9c0c816e7d9841e632ccca9f3f7c31013a1",
+          "probe_sha256": "a3c1e02a1c8edd98e8a7e00f175e8090add438bd5824090eac3728f80555325b",
+          "selected_rows": 64,
+          "selected_sha256": "3831bd6bbabe790a80043a8158773cd07271a3ab256e71b8921d326346e7dafa",
+          "selection": "lowest SHA256(machine UTF-8) values",
+          "sources_sha256": {
+            "continuation/prefix-provenance.json": "c198a9b3141a234314e3f8434da8bedcae3cb597be653d0c1d083ed0e93372a7",
+            "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+            "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+            "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+            "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+            "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+            "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+            "theories/Checkers/FiniteNGram.v": "786ba3d650b1ac4ddb2a630a46a5526d4fabc3cdb9207ca2a1576a6d0d3e3697",
+            "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+            "theories/Checkers/NGramHist.v": "5976b6f0267b4cf70f3e96e33ce633484062780aa6e24d83581cb6c9ebee9488",
+            "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+            "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+            "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+            "theories/FiniteCensus.v": "7aacff3e2be77c06239992a0361ca8bbdd13265b9ed26ffd4377e976e7404524",
+            "theories/FiniteRankSearch.v": "e5f380a603f81f42a07c13805062eee79e96b163d75c2f1d09befafda0ccac45",
+            "theories/HistCensus.v": "f6f42a2dfc76fb95f552b1569c414d13e9702a3a04234f0b33c114e3165b9c89",
+            "theories/HistRankSearch.v": "ee92b8f518f520c703adf0e9b58f9e00bb03e693a3df4faf0f167c842886249d",
+            "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+            "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+            "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+            "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+            "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+            "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+            "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+            "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+            "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+            "theories/StateBounds.v": "2892c4dc4dea327dcef826fd35912e3df6ff60436dc1d520811e9729a456d224",
+            "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+            "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+            "tools/ExtractAdvanced.v": "8a0b61c417596ef94102f6e89d9e2bbf6adf685ccdd3422667b2755087072b6a",
+            "tools/advanced_probe.ml": "86383b7f660d0f78647bd02761501da72643515bbc885046f702d7aef72363ed",
+            "tools/advanced_probe_v2.ml": "25729f71f7750f9ac3d73a4628e5870f4e7166992d0e6d6dea15e452b0d4c413",
+            "tools/advanced_sweep.py": "5e0c13795ad71f464301ff3ec48c4af449320146d1d2e6fddd22fba34e20e201",
+            "tools/pipeline_sweep.py": "16de1d015366a4a2ca10adfe0751abd5351cb67df1f8f28dc602926663493f0d",
+            "tools/resume_advanced_sweep.py": "85dc53bb0d65825582af6d85d8fafc37fb06f80cee9ed9d54dc75c020b85c92a"
+          },
+          "stages": [
+            {
+              "anchor": 128,
+              "extra": 2,
+              "fuel": 512,
+              "history": 0,
+              "mode": "rw",
+              "size": 2
+            }
+          ],
+          "timeout_seconds_per_stage_row": 0.5,
+          "workers": 1
+        },
+        "not_accepted_rows": 6,
+        "not_accepted_sha256": "01b00c34a97f675b1d6e4a425a15cd7b48c136aaecc6b32071066fd3412da01c",
+        "results": [
+          {
+            "anchor": 128,
+            "extra": 2,
+            "fuel": 512,
+            "history": 0,
+            "mode": "rw",
+            "rows": 64,
+            "size": 2,
+            "stage": 0,
+            "statuses": {
+              "candidate": 58,
+              "rejected": 1,
+              "timeout": 5
+            },
+            "sum_row_seconds": 11.787793,
+            "worker_results_sha256": [
+              "f7f06250ff556dde1be9c62cc676eeeeb1f4d2c71e249277c341abb4d14a460d"
+            ]
+          }
+        ],
+        "status": "Untrusted extracted checker search; zero kernel replay or census-link claims. Imported completed prefixes retain their original driver provenance."
+      },
+      "report_sha256": "159d2caeb1959e3eb48334a9dd5492a42589b372200e6c975f8bc86a194a344c",
+      "run_and_check_wall_seconds": 12.000626,
+      "statuses": {
+        "candidate": 58,
+        "rejected": 1,
+        "timeout": 5
+      },
+      "sum_row_seconds": 11.787793
+    },
+    {
+      "command": [
+        "python3",
+        "four/tools/resume_advanced_sweep.py",
+        "--prior-report",
+        "four/build/wave3/timeout-retry/hist-00d47c334f31/input.json",
+        "--workers",
+        "1",
+        "--input",
+        "four/build/wave3/timeout-retry/hist-00d47c334f31/input.txt",
+        "--stages",
+        "four/build/wave3/timeout-retry/hist-00d47c334f31/stages.json",
+        "--output-dir",
+        "four/build/wave3/timeout-retry/hist-00d47c334f31/pilot64",
+        "--report",
+        "four/build/wave3/timeout-retry/hist-00d47c334f31/pilot64.json",
+        "--sample",
+        "64",
+        "--bound",
+        "4096",
+        "--timeout",
+        "0.5"
+      ],
+      "estimated_full_sum_row_seconds": 244.813,
+      "parameters": {
+        "anchor": 128,
+        "bound": 4096,
+        "extra": 8,
+        "fuel": 256,
+        "history": 1,
+        "mode": "hist",
+        "size": 2
+      },
+      "pilot_rows": 64,
+      "queue_directory": "four/build/wave3/timeout-retry/hist-00d47c334f31",
+      "queue_rows": 1618,
+      "report": {
+        "candidate_rows": 1,
+        "candidate_tsv_sha256": "db63263123eba4a59d615816f85413294a207f986079e131980cd3784871553b",
+        "census_linked_rows": 0,
+        "execution_provenance": {
+          "prefixes": []
+        },
+        "kernel_checked_rows": 0,
+        "manifest": {
+          "both_bounds": true,
+          "bound": 4096,
+          "extraction_sha256": "03eefd26bb45e421b67f25a0c74daf2f45a95bab2a6e942713b3c729f9bd5775",
+          "input_rows": 1618,
+          "input_sha256": "3acdbf56683f6e866b4843b0e8b5e51d38daab50533a2c0574fc8f019c4167bb",
+          "prior_report_sha256": "eec8623cca0ec3cf616a9d328f9beff800c4b93b01dc9d3eb1ed3df6065745a0",
+          "probe_sha256": "a3c1e02a1c8edd98e8a7e00f175e8090add438bd5824090eac3728f80555325b",
+          "selected_rows": 64,
+          "selected_sha256": "279256153243aadbff207dd5a72aa2ed7cff507ab41fe9df7336081fd02dbb84",
+          "selection": "lowest SHA256(machine UTF-8) values",
+          "sources_sha256": {
+            "continuation/prefix-provenance.json": "c198a9b3141a234314e3f8434da8bedcae3cb597be653d0c1d083ed0e93372a7",
+            "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+            "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+            "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+            "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+            "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+            "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+            "theories/Checkers/FiniteNGram.v": "786ba3d650b1ac4ddb2a630a46a5526d4fabc3cdb9207ca2a1576a6d0d3e3697",
+            "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+            "theories/Checkers/NGramHist.v": "5976b6f0267b4cf70f3e96e33ce633484062780aa6e24d83581cb6c9ebee9488",
+            "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+            "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+            "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+            "theories/FiniteCensus.v": "7aacff3e2be77c06239992a0361ca8bbdd13265b9ed26ffd4377e976e7404524",
+            "theories/FiniteRankSearch.v": "e5f380a603f81f42a07c13805062eee79e96b163d75c2f1d09befafda0ccac45",
+            "theories/HistCensus.v": "f6f42a2dfc76fb95f552b1569c414d13e9702a3a04234f0b33c114e3165b9c89",
+            "theories/HistRankSearch.v": "ee92b8f518f520c703adf0e9b58f9e00bb03e693a3df4faf0f167c842886249d",
+            "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+            "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+            "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+            "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+            "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+            "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+            "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+            "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+            "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+            "theories/StateBounds.v": "2892c4dc4dea327dcef826fd35912e3df6ff60436dc1d520811e9729a456d224",
+            "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+            "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+            "tools/ExtractAdvanced.v": "8a0b61c417596ef94102f6e89d9e2bbf6adf685ccdd3422667b2755087072b6a",
+            "tools/advanced_probe.ml": "86383b7f660d0f78647bd02761501da72643515bbc885046f702d7aef72363ed",
+            "tools/advanced_probe_v2.ml": "25729f71f7750f9ac3d73a4628e5870f4e7166992d0e6d6dea15e452b0d4c413",
+            "tools/advanced_sweep.py": "5e0c13795ad71f464301ff3ec48c4af449320146d1d2e6fddd22fba34e20e201",
+            "tools/pipeline_sweep.py": "16de1d015366a4a2ca10adfe0751abd5351cb67df1f8f28dc602926663493f0d",
+            "tools/resume_advanced_sweep.py": "85dc53bb0d65825582af6d85d8fafc37fb06f80cee9ed9d54dc75c020b85c92a"
+          },
+          "stages": [
+            {
+              "anchor": 128,
+              "extra": 8,
+              "fuel": 256,
+              "history": 1,
+              "mode": "hist",
+              "size": 2
+            }
+          ],
+          "timeout_seconds_per_stage_row": 0.5,
+          "workers": 1
+        },
+        "not_accepted_rows": 63,
+        "not_accepted_sha256": "bf0ff04219b962c3d620fefe1522767713b5a9b7a63f09059e343bdf92346e6a",
+        "results": [
+          {
+            "anchor": 128,
+            "extra": 8,
+            "fuel": 256,
+            "history": 1,
+            "mode": "hist",
+            "rows": 64,
+            "size": 2,
+            "stage": 0,
+            "statuses": {
+              "candidate": 1,
+              "rejected": 63
+            },
+            "sum_row_seconds": 9.683582,
+            "worker_results_sha256": [
+              "4f2d2592cf3b232f1c572327ffee7d2a6e8bf9905ef02203b2b080cc595a897a"
+            ]
+          }
+        ],
+        "status": "Untrusted extracted checker search; zero kernel replay or census-link claims. Imported completed prefixes retain their original driver provenance."
+      },
+      "report_sha256": "e717d4bd90e35ea27954e6130f40bd5569ce2516363c734dd8fd754b7e53f345",
+      "run_and_check_wall_seconds": 9.82951,
+      "statuses": {
+        "candidate": 1,
+        "rejected": 63
+      },
+      "sum_row_seconds": 9.683582
+    },
+    {
+      "command": [
+        "python3",
+        "four/tools/pipeline_sweep_v2.py",
+        "--input",
+        "four/build/wave3/timeout-retry/ng-6345df1a5f7b/input.txt",
+        "--stages",
+        "four/build/wave3/timeout-retry/ng-6345df1a5f7b/stages.json",
+        "--output-dir",
+        "four/build/wave3/timeout-retry/ng-6345df1a5f7b/pilot64",
+        "--report",
+        "four/build/wave3/timeout-retry/ng-6345df1a5f7b/pilot64.json",
+        "--sample",
+        "64",
+        "--bound",
+        "4096",
+        "--timeout",
+        "0.5"
+      ],
+      "estimated_full_sum_row_seconds": 240.374,
+      "parameters": {
+        "anchor": 256,
+        "bound": 4096,
+        "extra": 8,
+        "fuel": 512,
+        "history": 0,
+        "mode": "ng",
+        "size": 4
+      },
+      "pilot_rows": 64,
+      "queue_directory": "four/build/wave3/timeout-retry/ng-6345df1a5f7b",
+      "queue_rows": 745,
+      "report": {
+        "candidate_rows": 3,
+        "candidate_tsv_sha256": "44d0ca3c38b2c6fafaeca5b4d759696326cd0db527e6123b71c2d18dfde88eb0",
+        "census_linked_rows": 0,
+        "kernel_checked_rows": 0,
+        "manifest": {
+          "bound": 4096,
+          "extraction_sha256": "7a4632bde4da4bc99da61981970d4a42650e059e46fec310e170bc5ea7a099ac",
+          "input_rows": 745,
+          "input_sha256": "530f873cfc30d7819fe343551d44614863364eedfcb973cd20c40861917c8c43",
+          "probe_sha256": "46d7bcce6a466accbe79ef9efacae2e26ea9d9c06be92f073a3fbe532cb78023",
+          "selected_rows": 64,
+          "selected_sha256": "ff5da357122c749f41dc2006bc57cd6a2c2d1eed7786af24835973c5dc9a9659",
+          "selection": "lowest SHA256(machine UTF-8) values",
+          "sources_sha256": {
+            "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+            "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+            "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+            "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+            "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+            "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+            "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+            "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+            "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+            "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+            "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+            "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+            "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+            "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+            "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+            "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+            "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+            "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+            "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+            "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+            "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+            "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+            "tools/ExtractPipeline.v": "4a403fbe35132db7005e77f055827a8c2d1488b84a468255d2811b4393a32782",
+            "tools/pipeline_probe.ml": "c0e96c80e091b006960e0683e81701d82664f6e2e89a73ad0f5087c79f0ff92c",
+            "tools/pipeline_probe_v2.ml": "3c68e0214ae50f58fb944705863f8d9b29acb60b86e0b1dfac5ca59bab5d948f",
+            "tools/pipeline_sweep.py": "16de1d015366a4a2ca10adfe0751abd5351cb67df1f8f28dc602926663493f0d",
+            "tools/pipeline_sweep_v2.py": "3421ce8a54447dc24de4715f97e27d81a49356d03df0ba86120d59ef5603d706"
+          },
+          "stages": [
+            {
+              "anchor": 256,
+              "extra": 8,
+              "fuel": 512,
+              "mode": "ng",
+              "size": 4
+            }
+          ],
+          "timeout_seconds_per_stage_row": 0.5
+        },
+        "not_accepted_rows": 61,
+        "not_accepted_sha256": "c7542b8c9d0f982b8a8ec0915ff8146150cd16df4274305dd0bd4769598296f5",
+        "results": [
+          {
+            "anchor": 256,
+            "extra": 8,
+            "fuel": 512,
+            "mode": "ng",
+            "results_sha256": "a7597f36ff8e9810594b2dcee153cd3c3e48b256386710d4b4b369df114c50dd",
+            "rows": 64,
+            "size": 4,
+            "stage": 0,
+            "statuses": {
+              "candidate": 3,
+              "rejected": 45,
+              "timeout": 16
+            },
+            "sum_row_seconds": 20.64955
+          }
+        ],
+        "status": "Untrusted extracted checker search; zero kernel replay or census-link claims."
+      },
+      "report_sha256": "2ffe3557666fcda1568431a9ad88ea9965629d7a5f21e6371e3f3c840e108b95",
+      "run_and_check_wall_seconds": 20.798092,
+      "statuses": {
+        "candidate": 3,
+        "rejected": 45,
+        "timeout": 16
+      },
+      "sum_row_seconds": 20.64955
+    },
+    {
+      "command": [
+        "python3",
+        "four/tools/resume_advanced_sweep.py",
+        "--prior-report",
+        "four/build/wave3/timeout-retry/finite-a343c28d2bcf/input.json",
+        "--workers",
+        "1",
+        "--input",
+        "four/build/wave3/timeout-retry/finite-a343c28d2bcf/input.txt",
+        "--stages",
+        "four/build/wave3/timeout-retry/finite-a343c28d2bcf/stages.json",
+        "--output-dir",
+        "four/build/wave3/timeout-retry/finite-a343c28d2bcf/pilot64",
+        "--report",
+        "four/build/wave3/timeout-retry/finite-a343c28d2bcf/pilot64.json",
+        "--sample",
+        "64",
+        "--bound",
+        "4096",
+        "--timeout",
+        "0.5"
+      ],
+      "estimated_full_sum_row_seconds": 495.982,
+      "parameters": {
+        "anchor": 512,
+        "bound": 4096,
+        "extra": 8,
+        "fuel": 512,
+        "history": 0,
+        "mode": "finite",
+        "size": 3
+      },
+      "pilot_rows": 64,
+      "queue_directory": "four/build/wave3/timeout-retry/finite-a343c28d2bcf",
+      "queue_rows": 1999,
+      "report": {
+        "candidate_rows": 4,
+        "candidate_tsv_sha256": "edebbf78eaf3e37bf3d11bd8b3c926a6c18d110c8420a7b7c96bfa1e1c52b04f",
+        "census_linked_rows": 0,
+        "execution_provenance": {
+          "prefixes": []
+        },
+        "kernel_checked_rows": 0,
+        "manifest": {
+          "both_bounds": true,
+          "bound": 4096,
+          "extraction_sha256": "03eefd26bb45e421b67f25a0c74daf2f45a95bab2a6e942713b3c729f9bd5775",
+          "input_rows": 1999,
+          "input_sha256": "097a3d4a5d03515c6c33e0926ad32408391eb680314cfbc9d53220249857ab0a",
+          "prior_report_sha256": "0af8a16ee2f286704af821143a06a0f8b7f66bb7c7ebfe8309a46bd5bb0f6bb3",
+          "probe_sha256": "a3c1e02a1c8edd98e8a7e00f175e8090add438bd5824090eac3728f80555325b",
+          "selected_rows": 64,
+          "selected_sha256": "9eb904cc55f388661dd4934a74888b9ac868bac23adcab599aff50b04a7df810",
+          "selection": "lowest SHA256(machine UTF-8) values",
+          "sources_sha256": {
+            "continuation/prefix-provenance.json": "c198a9b3141a234314e3f8434da8bedcae3cb597be653d0c1d083ed0e93372a7",
+            "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+            "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+            "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+            "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+            "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+            "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+            "theories/Checkers/FiniteNGram.v": "786ba3d650b1ac4ddb2a630a46a5526d4fabc3cdb9207ca2a1576a6d0d3e3697",
+            "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+            "theories/Checkers/NGramHist.v": "5976b6f0267b4cf70f3e96e33ce633484062780aa6e24d83581cb6c9ebee9488",
+            "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+            "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+            "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+            "theories/FiniteCensus.v": "7aacff3e2be77c06239992a0361ca8bbdd13265b9ed26ffd4377e976e7404524",
+            "theories/FiniteRankSearch.v": "e5f380a603f81f42a07c13805062eee79e96b163d75c2f1d09befafda0ccac45",
+            "theories/HistCensus.v": "f6f42a2dfc76fb95f552b1569c414d13e9702a3a04234f0b33c114e3165b9c89",
+            "theories/HistRankSearch.v": "ee92b8f518f520c703adf0e9b58f9e00bb03e693a3df4faf0f167c842886249d",
+            "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+            "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+            "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+            "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+            "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+            "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+            "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+            "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+            "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+            "theories/StateBounds.v": "2892c4dc4dea327dcef826fd35912e3df6ff60436dc1d520811e9729a456d224",
+            "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+            "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+            "tools/ExtractAdvanced.v": "8a0b61c417596ef94102f6e89d9e2bbf6adf685ccdd3422667b2755087072b6a",
+            "tools/advanced_probe.ml": "86383b7f660d0f78647bd02761501da72643515bbc885046f702d7aef72363ed",
+            "tools/advanced_probe_v2.ml": "25729f71f7750f9ac3d73a4628e5870f4e7166992d0e6d6dea15e452b0d4c413",
+            "tools/advanced_sweep.py": "5e0c13795ad71f464301ff3ec48c4af449320146d1d2e6fddd22fba34e20e201",
+            "tools/pipeline_sweep.py": "16de1d015366a4a2ca10adfe0751abd5351cb67df1f8f28dc602926663493f0d",
+            "tools/resume_advanced_sweep.py": "85dc53bb0d65825582af6d85d8fafc37fb06f80cee9ed9d54dc75c020b85c92a"
+          },
+          "stages": [
+            {
+              "anchor": 512,
+              "extra": 8,
+              "fuel": 512,
+              "history": 0,
+              "mode": "finite",
+              "size": 3
+            }
+          ],
+          "timeout_seconds_per_stage_row": 0.5,
+          "workers": 1
+        },
+        "not_accepted_rows": 60,
+        "not_accepted_sha256": "793747136f0d2c3527bae78b85ee1f2f133fbb0eb3c2132e4f5d2233bb948fdf",
+        "results": [
+          {
+            "anchor": 512,
+            "extra": 8,
+            "fuel": 512,
+            "history": 0,
+            "mode": "finite",
+            "rows": 64,
+            "size": 3,
+            "stage": 0,
+            "statuses": {
+              "candidate": 4,
+              "rejected": 54,
+              "timeout": 6
+            },
+            "sum_row_seconds": 15.879353,
+            "worker_results_sha256": [
+              "2d5480c0508e24822818295300c4cf80859f5372cfb433a4bb46de71bab9c034"
+            ]
+          }
+        ],
+        "status": "Untrusted extracted checker search; zero kernel replay or census-link claims. Imported completed prefixes retain their original driver provenance."
+      },
+      "report_sha256": "f93209e16c4cd4396aca65e9a2efac6ef03f8ac332952fb08c25a1c902a6aa8f",
+      "run_and_check_wall_seconds": 16.110195,
+      "statuses": {
+        "candidate": 4,
+        "rejected": 54,
+        "timeout": 6
+      },
+      "sum_row_seconds": 15.879353
+    }
+  ],
+  "source_retry_report_sha256": "654164db408a88b27fa707352743393c658a737866bf8c814a9f8273008f7770",
+  "status": "Untrusted deterministic timeout-retry pilots; no new proof claims. Runtime extrapolations depend on host load and future overlap filtering.",
+  "timeout_seconds_per_row": 0.5
+}

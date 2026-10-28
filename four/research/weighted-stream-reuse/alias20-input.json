@@ -1,0 +1,31 @@
+{
+  "description": "Targets entering separate-table weighted closures; compact references select untrusted certificates, and every target is kernel checked.",
+  "registry_sha256": "2485fd638d2dc02783a767625ca477e347bd138e82a652f5f640caabe70b5cc3",
+  "baseline_survivor_sha256": "5c47342573d0fde98ce0b08a0ebf2cc01bc605b285279446eef614b6b64fb94e",
+  "exclusion_inputs_sha256": {},
+  "selection": {"candidate_cores": 20, "candidate_pairs": 20, "checker_selected_cores": 20, "context_cache_hits": 96, "context_cache_limit": 128, "context_cache_misses": 4, "max_boot": 4096, "native_probe": {"child_cpu_seconds": 1.793142, "extracted_sha256": {"ml": "428f00f47dec1bfd89caa05bafba6b7b9a9e6db12c9b710f834df8f9d765fce1", "mli": "20b1b7c3ad425c3bf10deb0cd2f616224320ecbf114e8ede21766f947be6ed81"}, "kind": "untrusted extracted OCaml with data reader; all successes subsequently replayed in Coq", "parts": 1, "selector_sha256": "c2cf2e320d1aeb3bd7bdaa09661a746ac5ec94bf39b804878ed5e7c5b4a172ab", "wall_seconds": 14.774498976999894}, "pattern_keys": 638, "probe_candidates": 20, "selected_cores": 20, "source_masks": 39, "source_templates": 150, "used_templates": 5},
+  "columns": ["machine", "source_certificate", "permutation", "state_swap", "mirrored", "boot"],
+  "rows": [
+    ["1LB0LA2RB2LA_2RA3RB1LA---",89,"213",true,false,8],
+    ["1LB1LA2RB2LA_2RA3RB1LA---",89,"213",true,false,8],
+    ["1LB1RA2RB2LA_2RA3RB1LA---",89,"213",true,false,4],
+    ["1LB2LA2RB2LA_2RA3RB1LA---",89,"213",true,false,8],
+    ["1LB2RA2RB2LA_2RA3RB1LA---",89,"213",true,false,4],
+    ["1LB2LA3LA3RB_3RA2RB0LA1LA",89,"312",true,false,8],
+    ["1LB2LA3LA3RB_3RA2RB1LA1LA",89,"312",true,false,8],
+    ["1LB2LA3LA3RB_3RA2RB1RA1LA",89,"312",true,false,8],
+    ["1LB2LA3LA3RB_3RA2RB2RB1LA",89,"312",true,false,8],
+    ["1LB2LA3LA3RB_3RA2RB3LA1LA",89,"312",true,false,16],
+    ["1LB2LA3LA3RB_3RA2RB3RA1LA",89,"312",true,false,8],
+    ["1LB2RA3LA3RB_3RA2RB1LA1LA",89,"312",true,false,8],
+    ["1LB2RA3LA3RB_3RA2RB2LB1LA",89,"312",true,false,16],
+    ["1LB2RA3LA3RB_3RA2RB2RB1LA",89,"312",true,false,8],
+    ["1LB2RA3LA3RB_3RA2RB3LA1LA",89,"312",true,false,8],
+    ["1LB2RB3LA3RB_3RA2RB---1LA",89,"312",true,false,4],
+    ["1LB2RB3RB2LA_2RA3LA2RB3LA",100,"231",true,true,8],
+    ["1LB2RB3RB2LA_2RA3LB2RB3LA",100,"231",true,true,8],
+    ["1LB1RB1LA2RB_3RA2LA3LA3RB",117,"321",true,false,16],
+    ["1LB2RB3RB1LA_3RA2LA1RB3LA",127,"321",true,true,8]
+  ],
+  "selection_target_inventory": "build/weighted-tail-native/alias20/targets.txt"
+}

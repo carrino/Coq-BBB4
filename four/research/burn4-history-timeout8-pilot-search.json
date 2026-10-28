@@ -1,0 +1,153 @@
+{
+  "batch": "pilot",
+  "candidate_rows": 5,
+  "candidates": [
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 32,
+      "fuel": 16384,
+      "history": 3,
+      "machine": "1LB2RB1LA2RA_1RB3RA1LB2LB",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 32,
+      "fuel": 16384,
+      "history": 3,
+      "machine": "1LB2LA0RB1LA_3RB2LB1RA0RB",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 32,
+      "fuel": 16384,
+      "history": 5,
+      "machine": "1LB0LA1RB3LB_0RB3RA1RB2LA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 32,
+      "fuel": 16384,
+      "history": 5,
+      "machine": "1LB2LB3RB3RA_1RB3LA1RA1LA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 32,
+      "fuel": 16384,
+      "history": 3,
+      "machine": "1LB2LB3LA1RA_3RB3LA3LB2RB",
+      "mode": "hist",
+      "size": 4
+    }
+  ],
+  "input_sha256": "0d44a3de211dba6e6b32050eac2b362586e790dde6c1ae578919c9ebf91fdd27",
+  "ledger_sha256": {
+    "build/burn4-history-timeout8/pilot/group-00.tsv": "69b4b3ec9e48263c34766c2a58f5d851e6ee668c202c46b316b74b0d67f88b11",
+    "build/burn4-history-timeout8/pilot/group-01.tsv": "2c53234180ee0d66d6bd90f33a26db92e614ec413ffd63a9ba1a816903197251"
+  },
+  "results": [
+    {
+      "machine": "1LB2LA0LB1LA_2RB2LA3RA0RB",
+      "seconds": 8.000047,
+      "status": "timeout"
+    },
+    {
+      "machine": "1LB2RB1LA2RA_1RB3RA1LB2LB",
+      "seconds": 2.460053,
+      "status": "candidate"
+    },
+    {
+      "machine": "1LB0RA0LB2RA_2RB3RA3LA0LA",
+      "seconds": 2.576084,
+      "status": "rejected"
+    },
+    {
+      "machine": "1LB2LA3LA0RB_3RB3RA2RA1RA",
+      "seconds": 8.000129,
+      "status": "timeout"
+    },
+    {
+      "machine": "1LB2LA0RB1LA_3RB2LB1RA0RB",
+      "seconds": 6.108873,
+      "status": "candidate"
+    },
+    {
+      "machine": "1LB2RB2LA0RA_3RB3RA3RB1LA",
+      "seconds": 7.707054,
+      "status": "rejected"
+    },
+    {
+      "machine": "1LB2LA3RA2RB_1RB1RA0RB1LB",
+      "seconds": 8.000045,
+      "status": "timeout"
+    },
+    {
+      "machine": "1LB1LA0RB2LB_3RB3LB3RA2LB",
+      "seconds": 3.367352,
+      "status": "rejected"
+    },
+    {
+      "machine": "1LB2LA3RA2RB_1RB2RA3LB1LB",
+      "seconds": 8.000118,
+      "status": "timeout"
+    },
+    {
+      "machine": "1LB0LA1RB3LB_0RB3RA1RB2LA",
+      "seconds": 2.492831,
+      "status": "candidate"
+    },
+    {
+      "machine": "1LB2LB3RB3RA_1RB3LA1RA1LA",
+      "seconds": 5.604598,
+      "status": "candidate"
+    },
+    {
+      "machine": "1LB2RA3LB2RB_0RB3LB2LB1RA",
+      "seconds": 1.988849,
+      "status": "rejected"
+    },
+    {
+      "machine": "1LB2RA3RB3LA_1RB1RA0LA0LB",
+      "seconds": 8.000057,
+      "status": "timeout"
+    },
+    {
+      "machine": "1LB2LB3LA1RA_3RB3LA3LB2RB",
+      "seconds": 5.824926,
+      "status": "candidate"
+    },
+    {
+      "machine": "1LB1RA1RB2LB_2RB3LB0RB1RA",
+      "seconds": 2.068059,
+      "status": "rejected"
+    },
+    {
+      "machine": "1LB2RB1LA0LB_2RB2RA3LA0RB",
+      "seconds": 2.587481,
+      "status": "rejected"
+    }
+  ],
+  "scope": "Native candidate discovery only; no proof claims.",
+  "selected_rows": 16,
+  "selection_start": 0,
+  "statuses": {
+    "candidate": 5,
+    "rejected": 6,
+    "timeout": 5
+  },
+  "timeout_seconds": 8,
+  "workers": 1
+}

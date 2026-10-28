@@ -1,0 +1,62 @@
+{
+  "baseline_source_sha256": {
+    "build/next-rw/DirectPilot0.v": "acec29c06864e29a451c7ab11d48986c9a184ea6d48c224e0e2c3f20288e0dd5",
+    "build/next-rw/DirectPilot1.v": "5e8acef724d51e89a6f220b3e51590bb07705e8d55ad1c5fa789ae80c89c516b",
+    "build/next-rw/DirectPilot2.v": "63133aa4957f8d5789a1789c5aafa605ed7cba9dfe224c53b18e54cc74b64342"
+  },
+  "coq_timeout": 45,
+  "decision": "Use direct rw_check for the 32-row checkpoint: it was faster on all three representatives. Supplied certificates remain an audited alternative for future larger graphs.",
+  "development_budget_failure": {
+    "cause": "Initial producer unnecessarily searched ranks for absent instruction labels. Changed producer to supply empty ranks for absent labels, as they are not requested by the live check. Final rerun produced all three witnesses in 0.518\u20131.021 seconds.",
+    "machine": "1LB1LB0RB1RA_3RA2LB3LB1RB",
+    "status": "native_timeout",
+    "timeout_seconds": 30
+  },
+  "generator_sha256": {
+    "tools/check_closure_wave.py": "aea6d6247d2049dd6edb0bc9347a095258f74b05b56e57e50c1d701a25b8a134",
+    "tools/check_next_rw.py": "71bda03722455a9cd763b3aed4bb8ce8041800ddad0629da9df343a2e71ce9ac",
+    "tools/next_rw_certificate.v": "698e1aa93dbae28e834e0ce28bb95cf37f429a2a13b6e0f1d0d062077c51a2de",
+    "tools/next_rw_producer.ml": "8344fd21f8e468eab81b26ba13ca7be92c852efbe3da6acbec9a3e5a115bbbb2"
+  },
+  "memory_limit_bytes": 3221225472,
+  "rows": [
+    {
+      "machine": "1LB1LB0RB1RA_3RA2LB3LB1RB",
+      "seconds": 8.25,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1RA0LB0RB_2RA3LA3RA2LA",
+      "seconds": 4.102,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RA3LA1RA_0RB3LB0LA1RA",
+      "seconds": 5.037,
+      "status": "compiled"
+    }
+  ],
+  "scope": "Timing comparison only; this report itself discharges no families.",
+  "selection": "Same three representative rows as the audited supplied-witness pilot.",
+  "supplied_witness_compilation_rows": [
+    {
+      "machine": "1LB1LB0RB1RA_3RA2LB3LB1RB",
+      "nodes": 1349,
+      "seconds": 26.044,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1RA0LB0RB_2RA3LA3RA2LA",
+      "nodes": 791,
+      "seconds": 11.761,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RA3LA1RA_0RB3LB0LA1RA",
+      "nodes": 727,
+      "seconds": 10.737,
+      "status": "compiled"
+    }
+  ],
+  "supplied_witness_report": "research/next-rw-pilot-report.json"
+}

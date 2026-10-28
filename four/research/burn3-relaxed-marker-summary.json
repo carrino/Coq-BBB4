@@ -1,0 +1,106 @@
+{
+  "scope": "Deduplicated state-only inventory of two independently kernel-audited relaxed-marker boards; no instruction claim.",
+  "new_state_families_vs_burn2": 27,
+  "new_instruction_families_vs_burn2": 0,
+  "example_families": 1,
+  "additional_batch_families": 26,
+  "state_bound": 0,
+  "all_in_history694_misses": true,
+  "disjoint_from_history378_candidates": true,
+  "machine_ids": [
+    "1LB0RA0LB2RA_1RB3LB0LA3RA",
+    "1LB0RA0LB2RA_3RB3LA0LA1LB",
+    "1LB0RA0LB2RA_3RB3LB0LA2RA",
+    "1LB0RA2RA3RA_2RB3LA0LB1LB",
+    "1LB1LA1RB2RA_2RB3LB0LB3RA",
+    "1LB1RA0RA3RA_3RB2LB1LA0LB",
+    "1LB1RA2RA2RA_2RB3LB0LB1LA",
+    "1LB2LA0RA0LB_3RB1RA1LB0LA",
+    "1LB2LA0RA0LB_3RB1RA1LB0LB",
+    "1LB2LA0RA0LB_3RB2LB1RA0LB",
+    "1LB2LA0RA0RB_3RB2LB1RA0LB",
+    "1LB2LA0RA2RA_3RB2LB2LA0LB",
+    "1LB2LA0RA3LB_3RB2LB1RA0LB",
+    "1LB2LA0RA3RB_3RB1RA1LB0LB",
+    "1LB2LA0RA3RB_3RB2LB1RA0LB",
+    "1LB2LA3RA0LB_3RB1RA1LB0LA",
+    "1LB2LA3RA0LB_3RB1RA1LB0LB",
+    "1LB2LA3RA0LB_3RB2LB1RA0LB",
+    "1LB2LA3RA0RB_2RB1RA1LB0LB",
+    "1LB2LA3RA0RB_3RB2LB1RA0LB",
+    "1LB2LA3RA2LA_2RB2LB3RA0LB",
+    "1LB2LA3RA3RB_3RB2LB1RA0LB",
+    "1LB2RA0LB0RA_1RB3LB2LA2RA",
+    "1LB2RA1RB1RA_2RB3LB0LB3LA",
+    "1LB2RA2RA1RA_2RB3LB0LB3LA",
+    "1LB2RA2RA3RA_2RB3LA0LB1LB",
+    "1LB2RA3LB1RA_1RB3LA0LB2RA"
+  ],
+  "source_sha256": {
+    "research/burn3-relaxed-marker-checked.json": "66d78b84ffa82e4ec0bec79f074794b88152368ae018242de96d5806d37a6b57",
+    "research/burn3-relaxed-marker-batch-checked.json": "0699ebd2d6d9d517b677d558fbcc7f930d9924c6bdfb9b727fd69fcc5900bdc5",
+    "research/burn2-burndown-summary.json": "0e83fad4c06e7fef4d9d7a1b926a2aa375941e2fd99109ad52f19fb8d1607d05",
+    "build/burn2-burndown/state-remaining.txt": "9c5ce7ae78a64aff3205f173c9a5c21d71c7d102fd6a841586f9f045c6158a6b",
+    "research/burn3-history-search.json": "384c9f6fa534ff9bc7859418c36006b233230d9eada99b65feb6eff1bcc1559f",
+    "build/burn3-history/not-accepted.txt": "63aecb972ca90546cf9132704e9a4bef9bf8e3f773e60a42dd4c6e01a49758e2",
+    "build/burn3-history/candidates.tsv": "403f3b30a6883f6b809a6c9fb3a5bf2ab854295c3b73703426f59ab0669b5d00"
+  },
+  "descriptors": [
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn3RelaxedMarker.Inventory.inventory_exact",
+      "id": "burn3_relaxed_marker",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-relaxed-marker-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3RelaxedMarker",
+          "path": "build/burn3-history-targets/proof"
+        }
+      ],
+      "module": "BBB24Burn3RelaxedMarker.Inventory",
+      "proof_source": "build/burn3-history-targets/proof/Inventory.v",
+      "rows": 1,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn3RelaxedMarkerBatch.Inventory.inventory_exact",
+      "id": "burn3_relaxed_marker_batch",
+      "instruction_bound": null,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn3-relaxed-marker-batch-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn3RelaxedMarker",
+          "path": "build/burn3-history-targets/proof"
+        },
+        {
+          "namespace": "BBB24Burn3RelaxedMarkerBatch",
+          "path": "build/burn3-relaxed-marker-batch/proof"
+        }
+      ],
+      "module": "BBB24Burn3RelaxedMarkerBatch.Inventory",
+      "proof_source": "build/burn3-relaxed-marker-batch/proof/Inventory.v",
+      "rows": 26,
+      "scope": "state",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 0,
+      "was_pending": "was_pending"
+    }
+  ]
+}

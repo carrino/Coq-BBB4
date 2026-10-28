@@ -1,0 +1,13 @@
+{
+  "scope": "Exact completed prefix of a state-only board; no instruction claim.",
+  "full_input": "research/state-closure-deep-input.json",
+  "full_input_sha256": "c9c54a37d9210b5dd576564ecb9e7b1cb973c499ca540e57ceea5e69a1b68a61",
+  "original_output_dir": "build/state-closure-deep",
+  "original_namespace": "BBB24StateDeepClosure",
+  "selected_shards": 46,
+  "full_shards": 110,
+  "selected_rows": 11441,
+  "full_selected_rows": 27277,
+  "state_bound": 4096,
+  "instruction_bound": null
+}

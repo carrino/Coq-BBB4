@@ -1,0 +1,54 @@
+{
+  "scope": "State only; every selected family requires Coq replay. No instruction bound.",
+  "encoding": "Eight base-17 cells, A0 least significant. Code=4*write+2*right+next_B;16 undefined.",
+  "source_report": "research/state-repwl-pilot.json",
+  "source_report_sha256": "93bb1e179972f09dd8b24f45222002c13d3d455d74ed29c604bd8d5571fa2cf1",
+  "source_rows": 139,
+  "selected_rows": 14,
+  "state_bound": 4096,
+  "instruction_bound": null,
+  "groups": [
+{
+  "stage": 0,
+  "certificate": {
+    "anchor": 128,
+    "extra": 2,
+    "fuel": 256,
+    "history": 0,
+    "mode": "rw",
+    "size": 1
+  },
+  "rows": [
+    5788287216, 2838197758, 1782557921, 3930801562, 2788099914
+  ]
+},
+{
+  "stage": 2,
+  "certificate": {
+    "anchor": 4096,
+    "extra": 2,
+    "fuel": 512,
+    "history": 0,
+    "mode": "rw",
+    "size": 1
+  },
+  "rows": [
+    3515451510, 5638880285, 6774023461
+  ]
+},
+{
+  "stage": 3,
+  "certificate": {
+    "anchor": 4096,
+    "extra": 2,
+    "fuel": 512,
+    "history": 0,
+    "mode": "rw",
+    "size": 2
+  },
+  "rows": [
+    5811352272, 3225438973, 3569409085, 4424165311, 3171473459, 6263926935
+  ]
+}
+  ]
+}

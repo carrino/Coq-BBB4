@@ -1,0 +1,22 @@
+{
+  "scope": "One exact state-only relaxed-marker family. No instruction claim.",
+  "rows": [
+    {
+      "machine": "1LB2RA2RA1RA_2RB3LB0LB3LA",
+      "code": 4967611060,
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    }
+  ],
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn3-relaxed-marker/RelaxedMarker.v": "3680893220c7c35aa404445b63d89e0556a44fdd43343635239d935b946e2c0d",
+    "proof-sources/burn3-relaxed-marker/Regression.v": "3afa1eb4feeb861c278a76f4b455184393cb4df431c059915a763dfc1f4c3402",
+    "proof-sources/burn3-relaxed-marker/ExampleBoard.v": "5b6c5503e726288c9b455fdf87831a959c12ea6bf1ff7de517a43c103d8afb5a"
+  }
+}

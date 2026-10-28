@@ -1,0 +1,44 @@
+{
+  "address_space_limit_bytes": 2147483648,
+  "command": [
+    "python3",
+    "four/tools/state_pipeline_sweep.py",
+    "--input",
+    "four/research/burn3-history-input.txt",
+    "--input-manifest",
+    "four/research/burn3-history-input-manifest.json",
+    "--stages",
+    "four/research/burn3-history-stages.json",
+    "--output-dir",
+    "four/build/burn3-history",
+    "--report",
+    "four/research/burn3-history-search.json",
+    "--probe",
+    "four/build/state-pipeline/probe",
+    "--bound",
+    "4096",
+    "--timeout",
+    "2",
+    "--sample",
+    "0"
+  ],
+  "input_rows": 1072,
+  "instruction_bound": null,
+  "maximum_native_row_budget_seconds": 4288,
+  "pilot": {
+    "input_rows": 21,
+    "state_candidates": 9,
+    "total_native_row_seconds": 6.907805,
+    "warning": "The diagnostic pilot is not a random sample."
+  },
+  "prepared_files_sha256": {
+    "research/burn3-history-input-manifest.json": "2232dce2a6f3079ff899afa042aafd123600250137d53fedde0fdfa4dc156903",
+    "research/burn3-history-input.txt": "679b709b2fcce53a6ddee4b536f5836d9d4ba2c9981fec2ca25f48648f0d434d",
+    "research/burn3-history-stages.json": "2ca29d57d56f03d27b023b0b9271d47b89b7ba341d176019aec2779457689520"
+  },
+  "producer_sha256": "5e2003520377d9c8b52e43597f3e5bcec91c26cec513a05602081d7efa6bf46f",
+  "scope": "Untrusted discovery; accepted rows require fresh Coq replay.",
+  "state_bound": 4096,
+  "timeout_seconds_per_stage_row": 2,
+  "workers": 1
+}

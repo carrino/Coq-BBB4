@@ -1,5 +1,5 @@
 {
-  "baseline": "256-step exploratory survey; four separately checked affine families",
+  "baseline": "256-step exploratory survey; four checked affine families linked by frozen-census closeout",
   "families": 611360,
   "raw_table_weight": 39521784,
   "roots": {
@@ -42,8 +42,11 @@
   },
   "state_checked": 4,
   "instruction_checked": 4,
-  "census_linked": 0,
+  "census_linked": 4,
+  "census_residual_predicate": "BBB24.AffineCloseout.bootstrap_affine_pending",
+  "census_coverage_theorem": "BBB24.AffineCloseout.bootstrap_affine_coverage",
+  "census_accounting": "Family completion sets excluded from the refined residual predicate; original census structural counts unchanged.",
   "sample_sha256": "d9d558057dacb8e21c4d02e90a53151af5fca1bf6334120b92bc4c068e16c369",
   "search_csv_sha256": "389618a70ff14ffc0152d579835638b9e795ad4d1000e6e446e6e8adca7c9712",
-  "verified_registry_sha256": "054af06a12163ba66b017885232026e1ce1995bc56b1f6e445e3368ce3bd941d"
+  "verified_registry_sha256": "bfed5f8e1a6bf21f7585adae49627444dbf22e2f74e6bc58785496743ad8a59c"
 }

@@ -1,0 +1,17 @@
+{
+  "status": "untrusted_repaired_phase_templates",
+  "source_replay_true": 450,
+  "indexed_templates": 450,
+  "zero_mask_skipped": 0,
+  "input_sha256": {
+    "four/build/affine-wave/phase-cpu-common/search.tsv": "8047e9ee9de53f58328638ba182ee8e2c930e0d3e2742623eec466287456f284",
+    "four/build/affine-wave/phase-cpu-common/replay.tsv": "fa0a7582cf09749c30e7494790a04d2c84a6ecb5bdb64262df122b0ca1c8a90f"
+  },
+  "index_sha256": "13950416db75669ecb20b0834735d435bbed7cbab88d7344aee7104d16bd362d",
+  "reserved_ids_sha256": "2c691a168c41daa740d21e905c84d461585c6c01378df8a6286714e1e8256e2c",
+  "source_sha256": {
+    "four/tools/affine_phase_seed_bank.py": "fd4994ca9bcd7cded52de64a635c26d59a131fa5ed18d1f4d0b400d6445c0a51",
+    "four/tools/affine_template_bank.py": "f3c020c7902755405c565b794f39f74928dd9bbe24dd493315b8632e8826e522"
+  },
+  "proof_status": "Original recurring masks only select candidates. Repaired sources and every new target require independent checker evidence; no family discharge is claimed."
+}
