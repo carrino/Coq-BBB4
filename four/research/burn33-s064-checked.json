@@ -1,0 +1,121 @@
+{
+  "audit_seconds": 50.089,
+  "checked_instruction_families": 0,
+  "checked_modules": 265,
+  "checked_state_families": 1,
+  "compile_seconds": {
+    "Binary": 1.569,
+    "Board": 1.368,
+    "Core": 0.616,
+    "Example00": 1.118,
+    "Inventory": 0.867,
+    "Regression": 0.416,
+    "Trace": 18.628
+  },
+  "descriptor": {
+    "board": "board",
+    "exact_inventory_theorem": "BBB24Burn33S064.Inventory.inventory_exact",
+    "id": "burn33_s064",
+    "instruction_bound": null,
+    "inventories": [
+      {
+        "format": "rows",
+        "path": "research/burn33-s064-machines.json"
+      }
+    ],
+    "load_paths": [
+      {
+        "namespace": "BBB24Burn33S064",
+        "path": "build/burn33-s064/proof"
+      }
+    ],
+    "module": "BBB24Burn33S064.Inventory",
+    "proof_source": "build/burn33-s064/proof/Inventory.v",
+    "rows": 1,
+    "scope": "state",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "state_bound": 18014398509481984,
+    "was_pending": "was_pending"
+  },
+  "inputs_sha256": {
+    "research/burn33-s064-native.json": "fcac441771e8a3ce714b46e1356ff8987e4d4c87f5fda222dd94686a59ccdc66",
+    "research/burn33-s064-proof-input.json": "5e40827145c30266a72e23cb5ad2d92bc66e1e7ccf9ebfbfd83411ab385ed092"
+  },
+  "inventory_sha256": "5d28c358bcfb7337564fc023163bc02073f5a5f177c8fd48644de6ec24f014b1",
+  "kernel_audit": "Full recursive coqchk including regressions.",
+  "kernel_receipt": "build/burn33-s064/proof/kernel-audit.json",
+  "kernel_receipt_sha256": "e3c144b323030a41458c8c389750926d6c12c2c805cef26ff0788d063d500e97",
+  "object_sha256": {
+    "build/burn33-s064/proof/Binary.vo": "a689d52ed5f04a027173e7020b91f9a81c71814f6f78c14fe0659c84538e5130",
+    "build/burn33-s064/proof/Board.vo": "8d5ca762d3d295a45db15b86aafb1749bb9ffb4171195bcf37692c4dbb1691e6",
+    "build/burn33-s064/proof/Core.vo": "3ed2de3a84a08911c2f3f98a63b361ddc7b8c7d96a81bc343c2535d5705bea2f",
+    "build/burn33-s064/proof/Example00.vo": "81ead85dd6b2a5b64a5d1a24f1bc076fd8b90dc10b0ce1f445f2ae4e9bf1692d",
+    "build/burn33-s064/proof/Inventory.vo": "8509bef707c8e2402d4fcf464dd6eb1d3226a88b032d9c7307367c02ad716ef6",
+    "build/burn33-s064/proof/Regression.vo": "3192fd4582c4d455b1872e2b5b0de1aed8628997d68248e9b5bea7f23cd7d87f",
+    "build/burn33-s064/proof/Trace.vo": "43334335b819a2f3abe158325dca6371243c6ba502930af417ad7086ff6f6227"
+  },
+  "reused_modules": 0,
+  "scope": "Exact complete finite counter state family with binary bound2^54, every completion; permanent B after12762141566885339steps, no instruction claim.",
+  "source_sha256": {
+    "build/burn33-s064/proof/Binary.v": "b2b2edff7760140f87c8f16851de738b4fe77a5fa0c04ad2e7dbe153a2c05529",
+    "build/burn33-s064/proof/Board.v": "7db2e953134e746979f69477adcd4ac7a867f04a14015321690852f3746f748c",
+    "build/burn33-s064/proof/Core.v": "c1124fc2dd7dc680c75dc7a702fa85ac7335382c413d4a89b62a0e56aca930de",
+    "build/burn33-s064/proof/Example00.v": "72f1aab38fdb5d8d19be576a98b2e1f1c80222e1743d9de46c8e1e29da70d4d2",
+    "build/burn33-s064/proof/Inventory.v": "123c24f59913e768855428ca20cdb0298ac8b1e755a1f2f52d5bed8daf3efd5e",
+    "build/burn33-s064/proof/Regression.v": "d677173c197c79683cbd9aba68c29f73f58b86f585c75047dd45096c152c2650",
+    "build/burn33-s064/proof/Trace.v": "9416c2467c42d34ebfb9583f7b3b94fecda976940c86ca3193e716735a483458",
+    "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+    "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+    "theories/BoardManifest.v": "ee34d205828c4980781b16c9f8460209326d5d0f342423bd1b714bcfa6dd82c3",
+    "theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "theories/CensusUnion.v": "d4e178b18b2c8db7538161d74833c1998c0ed3bea8f27ef58b76741049026fab",
+    "theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+    "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+    "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+    "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+    "theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+    "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+    "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+    "theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+    "theories/DualCloseout.v": "927e47c77c537ff99ea06a044df5b74b20d86da291d9e21c96a311addd1978c2",
+    "theories/FamilyTransport.v": "08a9435900fb92864e3741ad9db2c90fecd386cb727cb1b6da2aa42fa1b67a8d",
+    "theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+    "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+    "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+    "theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+    "theories/OrbitCloseout.v": "f7005d5ca6ce0d3e64acdda425704eb31226192fc6bf2ae3eff71eb4be230556",
+    "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+    "theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+    "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+    "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+    "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+    "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+    "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+    "theories/Shadow.v": "6c68cae389ad7b9198dba2bd2d30dc8403bfe6f51c439570dfa4610dd863e160",
+    "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "theories/StateOnlyCloseout.v": "afb65dbfc17f3eaa495a5648e6cf024137ec360d4d573b38a563e685c0dce5d2",
+    "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+    "theories/Symmetry.v": "ff83de1ebfb0f8e210728e383ca1a413ddb99e19879e6caf95fb9822ced127e6",
+    "tools/check_burn33_s064.py": "23a485e24fb0a89b01e47272d659903180bbc9a4870a24b8d67765d2c9533be9",
+    "tools/check_burn33_s064_native.py": "8e17c75db56241654048343fc7784b8079d50b36e4534b3f7393ef1594bf5537",
+    "tools/check_burn9_context_marker.py": "f4338a5701b14ec033b6b151cf413c2bcac76cdcfd02bf714ce2b180fc978612",
+    "tools/check_campaign.py": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+    "tools/check_shadow_links.py": "342b0c36d050f727ad5478af1b68f67d9c3827de984835b0bf6e60b5b657c9ca",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "tools/kernel_audit_cache_v3.py": "0323d125e53534efe41ce5c675ec3189537b6568cbf10fe057e32810835e9e0f"
+  },
+  "template_sha256": {
+    "proof-sources/burn33-s064/Binary.v": "b2b2edff7760140f87c8f16851de738b4fe77a5fa0c04ad2e7dbe153a2c05529",
+    "proof-sources/burn33-s064/Core.v": "c1124fc2dd7dc680c75dc7a702fa85ac7335382c413d4a89b62a0e56aca930de",
+    "proof-sources/burn33-s064/Regression.v": "d677173c197c79683cbd9aba68c29f73f58b86f585c75047dd45096c152c2650",
+    "proof-sources/burn33-s064/Trace.v": "9416c2467c42d34ebfb9583f7b3b94fecda976940c86ca3193e716735a483458"
+  }
+}

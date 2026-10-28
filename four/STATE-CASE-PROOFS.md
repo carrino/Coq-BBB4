@@ -6,6 +6,8 @@ Follow the current [public scoreboard](https://github.com/carrino/Coq-BBB4/issue
 
 The [additional checkpoint](STATE-CASE-PROOFS-ADDITIONAL.md) supplies seven newer cases and the earlier 23 history-marker cases. Run both checkpoints to reproduce all 66 accepted cases at that freeze.
 
+The [recent checkpoint](STATE-CASE-PROOFS-RECENT.md) adds eleven more reviewed families, bringing source replay to 77 of the original 78 at its freeze.
+
 ## Build and audit
 
 Use the repository's tested Coq 8.18.0 / OCaml 4.14.2 toolchain with `coq-native`, GNU make and Python 3; see [toolchain setup](../docs/VERIFYING.md#reproduce-the-complete-targets). From the repository root:

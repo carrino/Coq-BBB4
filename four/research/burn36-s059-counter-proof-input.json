@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 5162112956,
+      "machine": "1LB2LB3RA0RA_2RB3RA2LB3LA"
+    }
+  ],
+  "selection_report": "research/burn36-s059-counter-native.json",
+  "selection_sha256": "e4789435da1e9893fef0af6492ea574d2ff0e5a4ab394254b35c7a5a357e8d99",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn36-s059-counter/BinaryReturns.v": "446858ad95fc659650065b717cba09d9e10c4732ef6e43cc04da4d9b00bca840",
+    "proof-sources/burn36-s059-counter/Regression.v": "061a5f1741877a56e46c7d9ebd6544da7694ec1a8b9687502d4fd5b9d4dd0a0b"
+  }
+}

@@ -140,6 +140,9 @@ checkpoint contains 36 machine families. The
 [additional checkpoint](../four/STATE-CASE-PROOFS-ADDITIONAL.md) adds 30 families;
 run its replay command with `--checkpoint additional` after the initial command
 to reproduce all 66 accepted cases at that freeze. The
+[recent checkpoint](../four/STATE-CASE-PROOFS-RECENT.md), selected with
+`--checkpoint recent`, adds eleven more cases for 77 accepted families.
+The
 [public scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) tracks the
 remaining proof work and census assembly. These individual proofs do not yet
 establish the global upper bound.

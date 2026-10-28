@@ -1,0 +1,63 @@
+{
+  "Q_train_cost": {
+    "constant": 9,
+    "slope": 6
+  },
+  "actual_orbit": {
+    "returns": 32,
+    "total_steps": 9538
+  },
+  "boundary_guard": "Positive train gate requires n>0; unrestricted32/322 words with3132 tail are false.",
+  "context_max_length": 2,
+  "controls": {
+    "Q_train": 3528,
+    "actual_entry": 1,
+    "actual_orbit": 1,
+    "grammar_successors": 942,
+    "identity_controls": 2,
+    "main_returns": 3768,
+    "negative_guards": 2,
+    "normalizers": 19782,
+    "positive_train_gate": 1176,
+    "read_gate": 168,
+    "zero_gate": 168
+  },
+  "entry_prefix_count": 1,
+  "entry_steps": 234,
+  "entry_tree": "G1",
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "grammar_tree_depth": 2,
+  "grammar_trees": 942,
+  "identity_negative_controls": [
+    "1LB2RB1RB2LA_2RB3RA1LA0LB",
+    "1LB2RB1RB2LB_2RB3RA1LA0RB"
+  ],
+  "invariant": "A0 at left blank; right1001010(110)^n word(g), n>0; six base words and four finite recursive wrappers",
+  "metadata_revision": 1,
+  "positive_gate_cost": "9*n+6*a+31, n>0",
+  "prior_remaining_count": 5,
+  "prior_remaining_report": "research/burn39-s076-prior-state-holdouts.txt",
+  "prior_remaining_sha256": "df15cc764bca600e27e6366a445c2e4aba152afa8ba7014ab7eaabcbb48e78a9",
+  "read_gate_cost": {
+    "constant": 34,
+    "slope": 3
+  },
+  "return_cost": "12*n+65+c(g)+6*a(g); normalizer returns (21)^a0r in c steps",
+  "return_parameters": "(n,g)->(n+1,next(g))",
+  "rows": [
+    {
+      "code": 527732110,
+      "machine": "1LB2RB1RB2LB_2RB3RA1LA0LB"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no universal proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn39_s076_native.py": "a46b6ca523017046d46f452aa0cadc0a0da9cf13afcb0fffac8f66534ce7b422",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "wrapper_counter_range": [
+    0,
+    2
+  ]
+}

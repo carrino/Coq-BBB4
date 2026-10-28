@@ -20,8 +20,8 @@ def main():
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--only", help="Replay one package, including its prerequisites")
     selection.add_argument("--group", type=int, choices=(1, 2, 3), help="CI partition")
-    parser.add_argument("--checkpoint", choices=("initial", "additional"), default="initial",
-                        help="Initial 36 cases or the next 30 reviewed cases")
+    parser.add_argument("--checkpoint", choices=("initial", "additional", "recent"), default="initial",
+                        help="Initial, additional, or recent reviewed state cases")
     parser.add_argument("--list", action="store_true", help="List packages without building")
     parser.add_argument("--jobs", type=int, default=2, help="Public-theory make workers")
     parser.add_argument("--timeout", type=int, default=600, help="Per-module driver budget")
@@ -29,10 +29,13 @@ def main():
     args = parser.parse_args()
     if min(args.jobs, args.timeout, args.audit_timeout) < 1:
         parser.error("Budgets and worker count must be positive")
-    manifest_path = (FOUR / "research/state-case-proofs-additional.json"
-                     if args.checkpoint == "additional" else MANIFEST)
+    manifest_path = {
+        "initial": MANIFEST,
+        "additional": FOUR / "research/state-case-proofs-additional.json",
+        "recent": FOUR / "research/state-case-proofs-recent.json",
+    }[args.checkpoint]
     manifest = json.loads(manifest_path.read_text())
-    build = BUILD / "additional" if args.checkpoint == "additional" else BUILD
+    build = BUILD / args.checkpoint if args.checkpoint != "initial" else BUILD
     packages = {p["package"]: p for p in manifest["packages"]}
     if args.only and args.only not in packages:
         parser.error("Unknown package: " + args.only)
@@ -88,6 +91,18 @@ def main():
             return
         if name == "history-marker":
             run(name, [sys.executable, "four/tools/check_burn12_history_marker.py", *budgets])
+        elif name == "original-78-scratch":
+            source = FOUR / "research/state-holdouts-78.txt"
+            data = source.read_bytes()
+            if hashlib.sha256(data).hexdigest() != "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709":
+                raise ValueError("Original 78-machine checkpoint changed")
+            scratch = FOUR / "build/state-priority/after-audited-standalone78.txt"
+            if scratch.exists() and scratch.read_bytes() != data:
+                raise ValueError("Existing native checkpoint differs from the portable original78")
+            scratch.parent.mkdir(parents=True, exist_ok=True)
+            if not scratch.exists():
+                scratch.write_bytes(data)
+            print("Prepared original78 native-check scratch from its frozen portable source.", flush=True)
         elif name == "counter-obligations":
             helper = FOUR / "build/burn18-counter-obligations/proof/CounterObligations.v"
             helper.parent.mkdir(parents=True, exist_ok=True)

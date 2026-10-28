@@ -1,0 +1,108 @@
+{
+  "A_gate_cost": {
+    "constant": 2,
+    "slope": 4
+  },
+  "B_gate_cost": {
+    "constant": 2,
+    "slope": 4
+  },
+  "boundary_guard": "Both left gates require exact nearest-first left support(1102)^n11. The cycle never inspects its arbitrary right suffix.",
+  "context_max_length": 2,
+  "controls": {
+    "A_gate": 336,
+    "B_gate": 336,
+    "actual_entry": 1,
+    "finite_programs": 3528,
+    "identity_controls": 2,
+    "left_scan": 3528,
+    "main_returns": 252,
+    "negative_guards": 2,
+    "phases": 3276,
+    "right_scan": 3528,
+    "rows": 2016
+  },
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "identity_negative_controls": [
+    "1LB2LA2RA1RA_3RB3LA0LB0RB",
+    "1LB2LA2RB1RA_3RB3LB0LB0RB"
+  ],
+  "invariant": "A0, empty left, right (2301)^n 30130031022 r; arbitrary suffix r; blank entry n8 at2758",
+  "main_cost": {
+    "constant": 838,
+    "slope": 130
+  },
+  "metadata_revision": 1,
+  "phase_costs": [
+    {
+      "constant": 10,
+      "slope": 10
+    },
+    {
+      "constant": 10,
+      "slope": 10
+    },
+    {
+      "constant": 36,
+      "slope": 10
+    },
+    {
+      "constant": 120,
+      "slope": 10
+    },
+    {
+      "constant": 136,
+      "slope": 10
+    },
+    {
+      "constant": 20,
+      "slope": 10
+    },
+    {
+      "constant": 20,
+      "slope": 10
+    },
+    {
+      "constant": 46,
+      "slope": 10
+    },
+    {
+      "constant": 104,
+      "slope": 10
+    },
+    {
+      "constant": 30,
+      "slope": 10
+    },
+    {
+      "constant": 30,
+      "slope": 10
+    },
+    {
+      "constant": 56,
+      "slope": 10
+    },
+    {
+      "constant": 220,
+      "slope": 10
+    }
+  ],
+  "prior_remaining_count": 12,
+  "prior_remaining_report": "research/burn31-s036-prior-state-holdouts.txt",
+  "prior_remaining_sha256": "37cfbc7978b7bcb0e4280b7a7d0cd5610049fad1751011dece63bb33f36c5056",
+  "programs_report": "research/burn31-s036-programs.json",
+  "programs_sha256": "223d090a48ae6ffc4c51ba9b7502d0991f202998b48a4b72e809af8e0bb94ecb",
+  "return_parameters": "(n,r) -> (n+3,30030031022300++r)",
+  "rows": [
+    {
+      "code": 1273477485,
+      "machine": "1LB2LA2RB1RA_3RB3LA0LB0RB"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn31_s036_native.py": "f0cbacc2b1b0205d1d1e5800b3de07970970a81b788880a48eedda0d30241fee",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

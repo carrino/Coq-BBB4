@@ -1,0 +1,85 @@
+{
+  "result": "passed",
+  "source_sha256": "5799ccc7ce51cf7c5b3fca568ed2d5a1876565576f2e3659d515da23caf7f73a",
+  "states": 8,
+  "transitions": [
+    [
+      0,
+      4,
+      2,
+      2,
+      1,
+      0,
+      0,
+      4
+    ],
+    [
+      1,
+      0,
+      2,
+      2,
+      2,
+      4,
+      2,
+      4
+    ],
+    [
+      3,
+      2,
+      2,
+      0,
+      6,
+      0,
+      0,
+      0
+    ]
+  ],
+  "accepting": [
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "finite_relation_entries": 28,
+  "all_finite_laws_rechecked": true,
+  "short_language_controls": {
+    "words": 88573,
+    "accepted": 1608
+  },
+  "orbit_controls": 1000,
+  "orbit_last_length": 2035,
+  "reachable": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    6
+  ],
+  "minimal_language_states": 6,
+  "equivalent_state_classes": [
+    [
+      0
+    ],
+    [
+      2
+    ],
+    [
+      3
+    ],
+    [
+      6
+    ],
+    [
+      4
+    ],
+    [
+      1
+    ]
+  ],
+  "scope": "Untrusted candidate regular language for exact statedS070 normalizedG. MustconnecttomachineandformallyproveDFApreservation; zero classificationcredit."
+}
