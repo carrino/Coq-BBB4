@@ -1,0 +1,70 @@
+{
+  "rows": [
+    {
+      "actual_entry_steps": 142,
+      "arbitrary_context_sweeps": 12348,
+      "code": 2842845473,
+      "direct_blank_steps": 2000000,
+      "direct_main_cuts": [
+        {
+          "k": 0,
+          "time": 142
+        },
+        {
+          "k": 1,
+          "time": 1256
+        },
+        {
+          "k": 2,
+          "time": 5462
+        },
+        {
+          "k": 3,
+          "time": 19088
+        },
+        {
+          "k": 4,
+          "time": 61118
+        },
+        {
+          "k": 5,
+          "time": 188504
+        },
+        {
+          "k": 6,
+          "time": 572102
+        },
+        {
+          "k": 7,
+          "time": 1724480
+        }
+      ],
+      "local_conversion_controls": 588,
+      "machine": "1LB2LB1RA2LA_0RB3LB3RB1RA",
+      "native_runtime_formula": "1582*3^k-72k-468; native provenance only, not required by universal existential return proof.",
+      "negative_controls": [
+        "synthetic(a,b)=(1,5) escapes B0 at57",
+        "synthetic(a,b)=(4,2) escapes B0 at79"
+      ],
+      "next_cut_prediction": {
+        "k": 8,
+        "time": 5183342
+      },
+      "pair_controls": 3087,
+      "recursive_family_context_controls": 420,
+      "six_phase_controls": 36,
+      "state_bound": 0,
+      "whole_cycle_controls": 6
+    }
+  ],
+  "selection_report": "research/burn26-s052-counter-native.json",
+  "selection_sha256": "82998bcdf9bee10dd854eca0423a1d421c9634ed25de1681dbb34840f2bfb104",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn26-s052-counter/Core.v": "329d3f28654f3851662a32348edce2546768c191d61353ba8d0676775fc14613",
+    "proof-sources/burn26-s052-counter/Odd.v": "ecc9b72d63201b2fa628bae73c70afb18e440c304162872fbdfa3134f414715b",
+    "proof-sources/burn26-s052-counter/Outer.v": "50ff3e2905215a380868f46a3a2d07fe0fe50a3e14680bc3b753aa42aee4290e",
+    "proof-sources/burn26-s052-counter/Proof.v": "164bf3860e98d647ef1593d86ef8b80091081416b71f7826e7d1f2e6c9c9eabe",
+    "proof-sources/burn26-s052-counter/Regression.v": "e37189fede9fd3ab578cc05418e392c62379a68444afc4e034b29d245634d8c7"
+  }
+}

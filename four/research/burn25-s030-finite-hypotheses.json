@@ -1,0 +1,12 @@
+{
+  "scope": "Finite S030 macro transcript selected before formalization. Native candidate only until checked.",
+  "machine": "1LB2LA1LA2LB_2RB3RA0LB0LA",
+  "phase": "Q(a,w)=A at first symbol of w, left3::2^a; empty w denotes a blank head/right.",
+  "rules": ["Q(a,0r)->Q(1,1^a01r) in a+5", "Q(a,11r)->Q(a+5,r) in6a+18", "Q(a,101r)->Q(a+6,r) in6a+19"],
+  "guards": "a>=0; arbitrary untouched finite right context r. No arbitrary nonblank outer left context.",
+  "bulk_pair": "Q(a,1^(2n)r)->Q(a+5n,r) in n*(6a+3)+15n*n",
+  "selected_finite_candidate": {"macro_edges": 34, "step": 1367354345127, "configuration": "Q(1383582,[1])", "last_A": 1367354345128, "permanent_B_from": 1367354345129},
+  "quiet_suffix": "From Q(a,[1]), one step visits A3 and two steps enter B with the entire tape over{0,2}. Both B transitions stay B on that alphabet.",
+  "state_bound": 2199023255552,
+  "new_instruction": 0
+}

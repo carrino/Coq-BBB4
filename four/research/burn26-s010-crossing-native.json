@@ -1,0 +1,115 @@
+{
+  "A_gate_cost": {
+    "constant": 7,
+    "slope": 16
+  },
+  "B_gate_cost": {
+    "constant": 6,
+    "slope": 16
+  },
+  "boundary_guard": "Finite left terminal33; explicit right blank padding tracks the nine physical head positions.",
+  "context_max_length": 2,
+  "controls": {
+    "A_gate": 336,
+    "B_gate": 336,
+    "actual_entry": 1,
+    "cycles": 336,
+    "finite_context_programs": 16317,
+    "left_scan": 3528,
+    "negative_guards": 3,
+    "phases": 3024,
+    "right_scan": 3528
+  },
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "identity_negative_controls": [
+    "1LB0LB1RB2LB_3RB3RA1RA0LA",
+    "1LB0LB1RB2LA_3RB3RA1RA0LB"
+  ],
+  "invariant": "A0 with left(3311331)^n33 and right0^5; selected blank entry n8 at2079",
+  "main_cost": {
+    "constant": 2076,
+    "slope": 448
+  },
+  "metadata_revision": 1,
+  "phase_costs": [
+    {
+      "constant": 9,
+      "destination": 1,
+      "slope": 16,
+      "word_add": 0
+    },
+    {
+      "constant": 33,
+      "destination": 2,
+      "slope": 32,
+      "word_add": 1
+    },
+    {
+      "constant": 25,
+      "destination": 3,
+      "slope": 32,
+      "word_add": 0
+    },
+    {
+      "constant": 21,
+      "destination": 4,
+      "slope": 16,
+      "word_add": 0
+    },
+    {
+      "constant": 165,
+      "destination": 5,
+      "slope": 80,
+      "word_add": 2
+    },
+    {
+      "constant": 707,
+      "destination": 6,
+      "slope": 240,
+      "word_add": 4
+    },
+    {
+      "constant": 21,
+      "destination": 7,
+      "slope": 16,
+      "word_add": 0
+    },
+    {
+      "constant": 6,
+      "destination": 8,
+      "slope": 0,
+      "word_add": 0
+    },
+    {
+      "constant": 17,
+      "destination": 0,
+      "slope": 16,
+      "word_add": 1
+    }
+  ],
+  "phase_gate_counts": [
+    1,
+    2,
+    2,
+    1,
+    5,
+    15,
+    1,
+    0,
+    1
+  ],
+  "programs_report": "research/burn26-s010-crossing-programs.json",
+  "programs_sha256": "f7d7900c75eea9f21a52a51c34313743aae4499be39202bb0dcf2c0f4f516bb9",
+  "rows": [
+    {
+      "code": 165997576,
+      "machine": "1LB0LB1RB2LA_3RB3RA1RA0LA"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn26_s010_crossing_native.py": "4dc95791d28cb459ea91b8bffdd1489bd5fd8246175df49f691a034510edb0bc",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

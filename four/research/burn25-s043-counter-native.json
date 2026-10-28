@@ -1,0 +1,45 @@
+{
+  "checked_state_families": 0,
+  "rows": [
+    {
+      "actual_entry_parameter": 254,
+      "actual_entry_steps": 100852,
+      "all_three_final_controls": 101,
+      "all_three_first_controls": 101,
+      "arbitrary_context_sweeps": 35763,
+      "code": 760586006,
+      "consume_one_controls": 525,
+      "direct_blank_steps": 1000000,
+      "direct_stable_cuts": [
+        {
+          "n": 254,
+          "time": 100852
+        },
+        {
+          "n": 765,
+          "time": 891892
+        }
+      ],
+      "drain_controls": 3549,
+      "machine": "1LB2LA3RB2LA_2RB2LA3RA0LB",
+      "negative_controls": [
+        "missing01 tail reaches B0 right blank at10",
+        "odd one-run changes tail01 to0001",
+        "even reset two-run changes tail01 to0001"
+      ],
+      "next_stable_cut_prediction": {
+        "n": 2298,
+        "time": 7965166
+      },
+      "odd_reset_controls": 101,
+      "stable_even_run_controls": 33,
+      "stable_return": "M(n)=A0 empty-left/right2^5 1^(2n)01 -> M(3n+3), cost12n^2+66n+84",
+      "state_bound": 0
+    }
+  ],
+  "scope": "Bounded S043 sweep and stable-tail controls; no kernel proof credit.",
+  "source_sha256": {
+    "tools/check_burn25_s043_counter_native.py": "102e279e5c072d912e6c3a99aef697fd80f41980a0573ea176d4d5eb8195f1be",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

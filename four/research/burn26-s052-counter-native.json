@@ -1,0 +1,66 @@
+{
+  "checked_state_families": 0,
+  "rows": [
+    {
+      "actual_entry_steps": 142,
+      "arbitrary_context_sweeps": 12348,
+      "code": 2842845473,
+      "direct_blank_steps": 2000000,
+      "direct_main_cuts": [
+        {
+          "k": 0,
+          "time": 142
+        },
+        {
+          "k": 1,
+          "time": 1256
+        },
+        {
+          "k": 2,
+          "time": 5462
+        },
+        {
+          "k": 3,
+          "time": 19088
+        },
+        {
+          "k": 4,
+          "time": 61118
+        },
+        {
+          "k": 5,
+          "time": 188504
+        },
+        {
+          "k": 6,
+          "time": 572102
+        },
+        {
+          "k": 7,
+          "time": 1724480
+        }
+      ],
+      "local_conversion_controls": 588,
+      "machine": "1LB2LB1RA2LA_0RB3LB3RB1RA",
+      "native_runtime_formula": "1582*3^k-72k-468; native provenance only, not required by universal existential return proof.",
+      "negative_controls": [
+        "synthetic(a,b)=(1,5) escapes B0 at57",
+        "synthetic(a,b)=(4,2) escapes B0 at79"
+      ],
+      "next_cut_prediction": {
+        "k": 8,
+        "time": 5183342
+      },
+      "pair_controls": 3087,
+      "recursive_family_context_controls": 420,
+      "six_phase_controls": 36,
+      "state_bound": 0,
+      "whole_cycle_controls": 6
+    }
+  ],
+  "scope": "Bounded S052 recursive normalizer and six-phase controls; no kernel credit.",
+  "source_sha256": {
+    "tools/check_burn26_s052_counter_native.py": "1a0fc74de905cf198f540e249d3ddb9b1c8a915ea22d69cc5ba1588bc94e0919",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

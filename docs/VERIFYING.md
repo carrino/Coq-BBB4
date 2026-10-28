@@ -136,7 +136,10 @@ build-and-audit command, followed by the extraction regression.
 
 Individual state-based BBB(2,4) holdout proofs have a separate
 [case index and replay command](../four/STATE-CASE-PROOFS.md). That source
-checkpoint contains 36 machine families; the
+checkpoint contains 36 machine families. The
+[additional checkpoint](../four/STATE-CASE-PROOFS-ADDITIONAL.md) adds 30 families;
+run its replay command with `--checkpoint additional` after the initial command
+to reproduce all 66 accepted cases at that freeze. The
 [public scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) tracks the
 remaining proof work and census assembly. These individual proofs do not yet
 establish the global upper bound.

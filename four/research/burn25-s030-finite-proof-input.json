@@ -1,0 +1,22 @@
+{
+  "escape_steps": 1367354345129,
+  "hypotheses": "research/burn25-s030-finite-hypotheses.json",
+  "hypotheses_sha256": "c22a9edfdceff9f0d8e3771db8cf81721b616c37a894a1885747b00c754d67bd",
+  "last_A": 1367354345128,
+  "rows": [
+    {
+      "code": 44979812,
+      "machine": "1LB2LA1LA2LB_2RB3RA0LB0LA"
+    }
+  ],
+  "selection_report": "research/burn25-s030-finite-native.json",
+  "selection_sha256": "e31e4cd9a850d63b28efe26196c96767d42ad23d7cb368ae27a3a0b6fef0d9eb",
+  "state_bound": 2199023255552,
+  "template_sha256": {
+    "proof-sources/burn25-s030-finite/BinaryBridge.v": "5a36556f76f9f8e9928a28a95282bf0662c33e8257ec75171893faee71b41efa",
+    "proof-sources/burn25-s030-finite/Counter.v": "e1fed21ed682089ae740994ac9f43d90e9f938f6b13febac715bd46cb1c69e6c",
+    "proof-sources/burn25-s030-finite/Final.v": "3e14cf30798222b846df87584aa9c577f0f9405cfe8b8ffcc42cba41ee851674",
+    "proof-sources/burn25-s030-finite/Regression.v": "a933ab87fe7844f5b8284a3de6fbe4c202289b3b75f0c068a3ce457ce6cbb096",
+    "proof-sources/burn25-s030-finite/Trace.v": "cac8c4ec029f03c9dba89f1c0e7258527ab9c449783c751027456771a7a117c4"
+  }
+}

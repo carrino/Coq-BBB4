@@ -20,6 +20,8 @@ def main():
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--only", help="Replay one package, including its prerequisites")
     selection.add_argument("--group", type=int, choices=(1, 2, 3), help="CI partition")
+    parser.add_argument("--checkpoint", choices=("initial", "additional"), default="initial",
+                        help="Initial 36 cases or the next 30 reviewed cases")
     parser.add_argument("--list", action="store_true", help="List packages without building")
     parser.add_argument("--jobs", type=int, default=2, help="Public-theory make workers")
     parser.add_argument("--timeout", type=int, default=600, help="Per-module driver budget")
@@ -27,7 +29,10 @@ def main():
     args = parser.parse_args()
     if min(args.jobs, args.timeout, args.audit_timeout) < 1:
         parser.error("Budgets and worker count must be positive")
-    manifest = json.loads(MANIFEST.read_text())
+    manifest_path = (FOUR / "research/state-case-proofs-additional.json"
+                     if args.checkpoint == "additional" else MANIFEST)
+    manifest = json.loads(manifest_path.read_text())
+    build = BUILD / "additional" if args.checkpoint == "additional" else BUILD
     packages = {p["package"]: p for p in manifest["packages"]}
     if args.only and args.only not in packages:
         parser.error("Unknown package: " + args.only)
@@ -48,16 +53,16 @@ def main():
         if shutil.which(tool) is None:
             raise RuntimeError(tool + " missing; activate the Coq toolchain first")
 
-    BUILD.mkdir(parents=True, exist_ok=True)
+    build.mkdir(parents=True, exist_ok=True)
     result = {"scope": manifest["scope"], "selected": [p["package"] for p in selected],
               "status": "running", "commands": []}
-    result_path = BUILD / "result.json"
+    result_path = build / "result.json"
 
     def save():
         result_path.write_text(json.dumps(result, indent=2) + "\n")
 
     def run(label, command):
-        log = BUILD / f"{len(result['commands']):02d}-{label}.log"
+        log = build / f"{len(result['commands']):02d}-{label}.log"
         record = {"label": label, "command": command,
                   "log": str(log.relative_to(ROOT))}
         result["commands"].append(record)

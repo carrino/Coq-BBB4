@@ -1,0 +1,18 @@
+{
+  "entry_step": 1922128,
+  "hypotheses": "research/burn28-s066-frontier-hypotheses.json",
+  "hypotheses_sha256": "8bc250d34f2054a605201536ccab0c768b76a5c83fcd07657429e24d075e6cf6",
+  "rows": [
+    {
+      "code": 4218262960,
+      "machine": "1LB2RA0LB1RB_3RB3LA1LA2RA"
+    }
+  ],
+  "selection_report": "research/burn28-s066-frontier-native.json",
+  "selection_sha256": "3bd5e0001069614a068c3bcff0b3779a0c5b58857903786b68f913f609b1624c",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn28-s066-frontier/Frontier.v": "dffea7d82d5234d162ac4d8c2e8c8ab1d3d579728e800626cbfd10c877c8cd96",
+    "proof-sources/burn28-s066-frontier/Regression.v": "6b4e443785e082a524070644b05b526425622924790e7c0ef518777715953aff"
+  }
+}

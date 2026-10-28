@@ -1,0 +1,17 @@
+{
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "metadata_revision": 1,
+  "rows": [
+    {
+      "code": 165997576,
+      "machine": "1LB0LB1RB2LA_3RB3RA1RA0LA"
+    }
+  ],
+  "selection_report": "research/burn26-s010-crossing-native.json",
+  "selection_sha256": "00f7aef928c50288f2356bfa9d87f7b5d9b9e9731a9d83dd469b5042214d8875",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn26-s010-crossing/Regression.v": "3cf81679cc42804e5731e78248e3c5cdb126d2ab8b6379de93130653bc470b94",
+    "proof-sources/burn26-s010-crossing/WordCycle.v": "11b9b0e43cc3d22d7d761d98e8ca72072838dbfde43021550df04233e587599a"
+  }
+}

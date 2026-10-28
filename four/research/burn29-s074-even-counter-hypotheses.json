@@ -1,0 +1,12 @@
+{
+  "scope": "S074 binary-even cut grammar selected before formalization; finite controls alone carry zero proof credit.",
+  "machine": "1LB2RB0LA1RB_2RB3RA1LA0LB",
+  "main": "C(w)=A0 with leftempty and finite right word w; w binary and has even1-count",
+  "forward_parser": "After3steps from C(w), A reads w with leftwall32. Reading1·0^n·1 adds leftblock3·2^(n+1) and returnsA at remaining right word in n+2steps.",
+  "wall_merge": "A0,left3·2^(a+1)·3·2·l,right r -> A0,left3·2^(a+1)·l,right11r in4a+8steps; arbitrary l,r.",
+  "wall_base": "A0,left3·2^(a+1),right r -> C(0^a·101·r) in a+3steps.",
+  "wall_unwind": "Finite wall blocks unwind to zeros(sum gaps)·101·1^(2k), preserving arbitrary rightcontext. Wall length decreases.",
+  "universal_return": "Every binary-even C(w) has a positive finite return to another binary-even C(w'). Word length decreases during forward parse; wall length decreases during unwind.",
+  "entry": "c0=C(empty), already binary-even; A recurs at cuts and B one step later.",
+  "new_instruction": 0
+}
