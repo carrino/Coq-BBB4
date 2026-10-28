@@ -127,14 +127,14 @@ their combined coverage theorem from compact tracked inputs.
 The [stronger campaign](WAVE3.md) adds weighted recurrence, state-only tiers,
 deeper affine/closure passes, structural marker invariants, and reusable
 recurring suffixes. Together with the [first supplementary round](NEXT_BURNDOWN.md)
-and the [second](BURN2.md), [third](BURN3.md), and [fourth](BURN4.md) checkpoints,
-the audited boards cover **124,892 distinct families for both bounds** and
-**155,842 for the state bound**. In the original 133,185-row cohort, **31,495
-instruction-bound** and **545 state-bound** obligations remain.
+and the later supplements through the [sixth checkpoint](BURN6.md),
+the audited boards cover **124,968 distinct families for both bounds** and
+**155,853 for the state bound**. In the original 133,185-row cohort, **31,419
+instruction-bound** and **534 state-bound** obligations remain.
 `make -C four check-campaign` rebuilds the frozen 113-board checkpoint;
-`make -C four check-burn4-campaign` rebuilds all 30 supplementary boards and
+`make -C four check-burn6-campaign` rebuilds all 41 supplementary boards and
 their coverage theorem. Earlier supplements remain separately reproducible
-with `check-next-campaign`, `check-burn2-campaign`, and `check-burn3-campaign`. The guides distinguish
+with `check-next-campaign` and `check-burn2-campaign` through `check-burn5-campaign`. The guides distinguish
 these proved counts from the earlier **32,629-row search remainder** and the
 current **2,740-ID instruction replay queue**, which has no state obligations.
 

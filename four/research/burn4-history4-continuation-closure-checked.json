@@ -1,0 +1,108 @@
+{
+  "checked_instruction_families": 0,
+  "checked_state_families": 1,
+  "compile_seconds": {
+    "History000": 72.944,
+    "HistoryAll": 1.469,
+    "HistoryInventory": 1.019
+  },
+  "descriptor": {
+    "board": "board",
+    "exact_inventory_theorem": "BBB24Burn4History4Closure.HistoryInventory.inventory_exact",
+    "id": "burn4_history4_continuation_closure",
+    "instruction_bound": null,
+    "inventories": [
+      {
+        "format": "rows",
+        "path": "research/burn4-history4-continuation-closure-machines.json"
+      }
+    ],
+    "load_paths": [
+      {
+        "namespace": "BBB24Burn4History4Closure",
+        "path": "build/burn4-history4-continuation-closure/proof"
+      }
+    ],
+    "module": "BBB24Burn4History4Closure.HistoryInventory",
+    "proof_source": "build/burn4-history4-continuation-closure/proof/HistoryInventory.v",
+    "rows": 1,
+    "scope": "state",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "state_bound": 4096,
+    "was_pending": "was_pending"
+  },
+  "inputs_sha256": {
+    "research/burn4-history4-continuation-closure-proof-input.json": "3d7ead898c870da8022272db3d2c911cf9733d6b7c00a2084856dbd1e8180338",
+    "research/burn4-history4-continuation-closure-search.json": "e52302fa3ec4b57459d976a5b0d6a877a7dcbe2dadfd5dc139b8298d3b33bc78",
+    "research/burn4-history4-continuation-closure-shard-plan.json": "59249d9b8ea98c62c7b9abadc045eb3fbc295bdea38614c071c9c9f5bde0c62b"
+  },
+  "inventory_sha256": "7aea5004c4fb56f31ef704487315d145ace9d0ea36a5a56c1e6fb02ce4f6e300",
+  "kernel_audit": "Full recursive coqchk.",
+  "kernel_receipt": "build/burn4-history4-continuation-closure/proof/kernel-audit.json",
+  "kernel_receipt_sha256": "e636a25b8050d56603d4014e27357c2d88d8d02a1887816d30326551043f4653",
+  "object_sha256": {
+    "build/burn4-history4-continuation-closure/proof/History000.vo": "05ddafbe3c3ee287566b040d09959d9260b534e9b23ab8f6434fd02669b8d6f0",
+    "build/burn4-history4-continuation-closure/proof/HistoryAll.vo": "fc36a9b918284271f33da7d472743c63c0bfcfa05902fa5f1a8ca79aef593cf4",
+    "build/burn4-history4-continuation-closure/proof/HistoryInventory.vo": "8c89734eb586b15a8d13a9709bd7c4d47d11667f27f1047a49ec9e795e013e6f"
+  },
+  "scope": "Exact state-only census bound; no instruction claim.",
+  "source_sha256": {
+    "build/burn4-history4-continuation-closure/proof/History000.v": "0b20cffb2afc4d884d0dcdfc3632c34138266e70bb834b87c0cf3c78d3930a88",
+    "build/burn4-history4-continuation-closure/proof/HistoryAll.v": "e8eb1d8f4c6af989e2cb03fc5624a595fe6d71a58830e8fffbeffc66eddff6b0",
+    "build/burn4-history4-continuation-closure/proof/HistoryInventory.v": "2e770f65d1a7e6df7e382d986d0acc02070ea938f821f23078833bcccdea89ad",
+    "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+    "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+    "theories/BoardManifest.v": "ee34d205828c4980781b16c9f8460209326d5d0f342423bd1b714bcfa6dd82c3",
+    "theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "theories/CensusUnion.v": "d4e178b18b2c8db7538161d74833c1998c0ed3bea8f27ef58b76741049026fab",
+    "theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+    "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+    "theories/Checkers/FiniteNGram.v": "786ba3d650b1ac4ddb2a630a46a5526d4fabc3cdb9207ca2a1576a6d0d3e3697",
+    "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+    "theories/Checkers/NGramHist.v": "5976b6f0267b4cf70f3e96e33ce633484062780aa6e24d83581cb6c9ebee9488",
+    "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+    "theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+    "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+    "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+    "theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+    "theories/DualCloseout.v": "927e47c77c537ff99ea06a044df5b74b20d86da291d9e21c96a311addd1978c2",
+    "theories/FamilyTransport.v": "08a9435900fb92864e3741ad9db2c90fecd386cb727cb1b6da2aa42fa1b67a8d",
+    "theories/FiniteCensus.v": "7aacff3e2be77c06239992a0361ca8bbdd13265b9ed26ffd4377e976e7404524",
+    "theories/FiniteRankSearch.v": "e5f380a603f81f42a07c13805062eee79e96b163d75c2f1d09befafda0ccac45",
+    "theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+    "theories/HistCensus.v": "f6f42a2dfc76fb95f552b1569c414d13e9702a3a04234f0b33c114e3165b9c89",
+    "theories/HistRankSearch.v": "ee92b8f518f520c703adf0e9b58f9e00bb03e693a3df4faf0f167c842886249d",
+    "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+    "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+    "theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+    "theories/OrbitCloseout.v": "f7005d5ca6ce0d3e64acdda425704eb31226192fc6bf2ae3eff71eb4be230556",
+    "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+    "theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+    "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+    "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+    "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+    "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+    "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+    "theories/Shadow.v": "6c68cae389ad7b9198dba2bd2d30dc8403bfe6f51c439570dfa4610dd863e160",
+    "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "theories/StateBounds.v": "2892c4dc4dea327dcef826fd35912e3df6ff60436dc1d520811e9729a456d224",
+    "theories/StateOnlyCloseout.v": "afb65dbfc17f3eaa495a5648e6cf024137ec360d4d573b38a563e685c0dce5d2",
+    "theories/StatePipeline.v": "96345f0cce06443422729d42447338aca2049958ea625faa7d48cd567d0af59f",
+    "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+    "theories/Symmetry.v": "ff83de1ebfb0f8e210728e383ca1a413ddb99e19879e6caf95fb9822ced127e6",
+    "tools/check_burn4_history4_continuation_closure.py": "f2f0b17a4739b789fe80eb10ff20a5c2232a43de9e83ce4358f4fcd007f27cce",
+    "tools/check_campaign.py": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+    "tools/check_shadow_links.py": "342b0c36d050f727ad5478af1b68f67d9c3827de984835b0bf6e60b5b657c9ca",
+    "tools/check_state_pipeline_batch.py": "e0c31fd676748c32d7c986b69b5afb00b24e7fd854fd4028e8e6c8dec34ca691",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e"
+  }
+}

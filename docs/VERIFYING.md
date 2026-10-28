@@ -282,9 +282,22 @@ directories; handwritten proof sources and compact certificates are tracked.
 
 The [fourth checkpoint](../four/BURN4.md) adds 121 state proofs from a marker
 invariant established on entry into B, plus one deeper-history proof. Run
-`make -C four check-burn4-campaign` for the latest 30-board supplement, or
+`make -C four check-burn4-campaign` for the 30-board supplement, or
 `make -C four list-burn4-campaign` to inspect its 29-step build plan. The guide
-includes the exact command for regenerating the latest remaining-family lists.
+includes the exact command for regenerating its remaining-family lists.
+
+The [fifth checkpoint](../four/BURN5.md) adds ternary-counter templates, a
+marker/history composition, and further checked history certificates. Use
+`make -C four check-burn5-campaign` to replay its 35 boards, or
+`make -C four list-burn5-campaign` to inspect the 34-step plan. The counter
+template and composition steps explicitly depend on their earlier proof
+packages; no discovery search is needed for replay.
+
+The [sixth checkpoint](../four/BURN6.md) extends that supplement with checked
+state-swapped entries, conjugacy reuse, paired-digit tail templates and more
+history certificates. Run `make -C four check-burn6-campaign` for the latest
+41-board supplement, or `make -C four list-burn6-campaign` for its 40-step plan.
+The guide includes the exact combined-ledger and remaining-list commands.
 
 The default campaign target produces separate lists of families still lacking
 a checked state bound or instruction bound. Candidate-search counts are

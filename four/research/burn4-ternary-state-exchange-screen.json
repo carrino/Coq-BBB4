@@ -1,0 +1,156 @@
+{
+  "fixed_instruction_ids": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    6
+  ],
+  "image_patterns": 12,
+  "matched_ids": 6,
+  "matches": [
+    {
+      "already_accepted_original": false,
+      "counter_n": 0,
+      "dormant_left_suffix": [],
+      "entry_step": 4,
+      "last_bad_firings_in_prefix": {
+        "4": 0,
+        "7": 2
+      },
+      "machine": "1LB0LA2LB2RA_2RA3LB3RA1RA",
+      "mirror": true,
+      "simulated_steps": 4,
+      "status": "counter_entry",
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "already_accepted_original": false,
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        3
+      ],
+      "entry_step": 4,
+      "last_bad_firings_in_prefix": {
+        "4": 0,
+        "7": 2
+      },
+      "machine": "1LB1LA2LB2RA_2RA3LB3RA1RA",
+      "mirror": true,
+      "simulated_steps": 4,
+      "status": "counter_entry",
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "already_accepted_original": false,
+      "counter_n": 0,
+      "dormant_left_suffix": [],
+      "entry_step": 1,
+      "last_bad_firings_in_prefix": {
+        "4": 0,
+        "7": null
+      },
+      "machine": "1LB1LB---1RA_1RA3RA3LB2RA",
+      "mirror": true,
+      "simulated_steps": 1,
+      "status": "counter_entry",
+      "symbol_map": [
+        0,
+        1,
+        3,
+        2
+      ]
+    },
+    {
+      "already_accepted_original": false,
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        1
+      ],
+      "entry_step": 4,
+      "last_bad_firings_in_prefix": {
+        "4": 0,
+        "7": 2
+      },
+      "machine": "1LB2LA2LB2RA_2RA3LB3RA1RA",
+      "mirror": true,
+      "simulated_steps": 4,
+      "status": "counter_entry",
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "already_accepted_original": false,
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        2
+      ],
+      "entry_step": 4,
+      "last_bad_firings_in_prefix": {
+        "4": 0,
+        "7": 2
+      },
+      "machine": "1LB2LA3RA3LB_3RA2LB1RA2RA",
+      "mirror": true,
+      "simulated_steps": 4,
+      "status": "counter_entry",
+      "symbol_map": [
+        0,
+        3,
+        2,
+        1
+      ]
+    },
+    {
+      "already_accepted_original": false,
+      "counter_n": 1,
+      "dormant_left_suffix": [],
+      "entry_step": 8,
+      "last_bad_firings_in_prefix": {
+        "4": 0,
+        "7": 2
+      },
+      "machine": "1LB2LB2LB2RA_2RA3LB3RA1RA",
+      "mirror": true,
+      "simulated_steps": 8,
+      "status": "counter_entry",
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    }
+  ],
+  "new_counter_entry_ids": 6,
+  "new_ids_still_state_pending": [],
+  "prefix_limit_per_match": 4096,
+  "residual_rows": 31495,
+  "scope": "Untrusted exact table matches and bounded phase-entry checks; no proof claim.",
+  "sources_sha256": {
+    "build/burn3-burndown/both-remaining.txt": "b153563602875c65359bde7630edf03b113e58ba15a1998b5dccd5e20bedcc29",
+    "build/burn3-burndown/state-remaining.txt": "0849fe2a5970e3e6688184794e0a599fded914924517689628c3f34fa1dae76d",
+    "research/burn3-burndown-summary.json": "5b30c3b61d79408446e0a04a0f601b3522a0c41ab7265c7229679c3253e5147b",
+    "research/burn4-ternary-counter-checked.json": "fc693aaaf64521c34837ae0754c0e7b41a84e21ffbedcb0b5f24f940e7266d94",
+    "research/burn4-ternary-counter-machines.json": "7f2e1caeceb4580507d639611af17a7e9367577f610d6adcb8b937e0ab9f7f82",
+    "research/burn4-ternary-counter/Counter.v": "fa4c7446cb5cf6781ba75f598facde825ec1a62a2054bae2e87fab4012fe2c77",
+    "tools/screen_burn4_ternary_state_exchange.py": "04cdeb6c72876cc54052671c8fa79dcc0ebc3294b5963b280fa4bd70468d7afc"
+  },
+  "state_exchange": true,
+  "total_simulated_steps": 25
+}

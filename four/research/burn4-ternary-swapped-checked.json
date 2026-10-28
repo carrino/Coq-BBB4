@@ -1,0 +1,127 @@
+{
+  "audit_seconds": 40.961,
+  "checked_instruction_families": 6,
+  "checked_state_families": 6,
+  "compile_seconds": {
+    "Board": 1.531,
+    "Inventory": 0.816,
+    "Swapped": 1.425
+  },
+  "descriptor": {
+    "board": "board",
+    "exact_inventory_theorem": "BBB24Burn4TernarySwapped.Inventory.inventory_exact",
+    "id": "burn4_ternary_swapped",
+    "instruction_bound": 8,
+    "inventories": [
+      {
+        "format": "rows",
+        "path": "research/burn4-ternary-swapped-machines.json"
+      }
+    ],
+    "load_paths": [
+      {
+        "namespace": "BBB24Burn4Ternary",
+        "path": "build/burn4-ternary-counter/proof"
+      },
+      {
+        "namespace": "BBB24Burn4TernaryTemplate",
+        "path": "build/burn4-ternary-template/proof"
+      },
+      {
+        "namespace": "BBB24Burn4TernarySwapped",
+        "path": "build/burn4-ternary-swapped/proof"
+      }
+    ],
+    "module": "BBB24Burn4TernarySwapped.Inventory",
+    "proof_source": "build/burn4-ternary-swapped/proof/Inventory.v",
+    "rows": 6,
+    "scope": "both",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "state_bound": 0,
+    "was_pending": "was_pending"
+  },
+  "inputs_sha256": {
+    "research/burn4-ternary-swapped-input.json": "51f66f45e4b37e5f56d5751cc78a4b9477f20b5f6206bb5cf8fa34c7a9be836a"
+  },
+  "inventory_sha256": "a9dbfa9f9e5e7fa297b7d02314a651839843717d7791a2ea52886239dcf55620",
+  "kernel_audit": "Full recursive coqchk.",
+  "kernel_receipt": "build/burn4-ternary-swapped/proof/kernel-audit.json",
+  "kernel_receipt_sha256": "d0fd988dc90c5fd0bf63f6b4a4f9b17e630dcc5f8e326be5a7bc469413850bb7",
+  "object_sha256": {
+    "build/burn4-ternary-swapped/proof/Board.vo": "7ec204e3ff6cb35da28a8e242e292e6f427631d234d3fded420200f8e8e18ffa",
+    "build/burn4-ternary-swapped/proof/Inventory.vo": "e3ea559e5d9e592c432ed017406988a46a9277769ddae8addcea6abdebfce0ff",
+    "build/burn4-ternary-swapped/proof/Swapped.vo": "d0e3d75678c2a22dc53bf8467d3f5599a374c5fa87c86fa5c94b277bbc32743a"
+  },
+  "recurrence_theorem": "BBB24Burn4TernarySwapped.Swapped.ts_recurrent",
+  "scope": "Exact state and instruction census bounds; all completions covered.",
+  "source_sha256": {
+    "build/burn4-ternary-counter/proof/Counter.v": "fa4c7446cb5cf6781ba75f598facde825ec1a62a2054bae2e87fab4012fe2c77",
+    "build/burn4-ternary-counter/proof/Tail.v": "0ecb7a9864857421f5c83e32a0481957ae1cd6ad85b45107375ffeb30d9d3182",
+    "build/burn4-ternary-swapped/proof/Board.v": "7956c4e45c17971392fe2a892b27a8a7d112f8ba8d62d242bc692eb9d3debb92",
+    "build/burn4-ternary-swapped/proof/Inventory.v": "accc6e9691097382a826cacf16d9183087cc345c9252d6ecf2427be1ea5ac493",
+    "build/burn4-ternary-swapped/proof/Swapped.v": "dfa9d13ff96064674dc33c65af6428693a010aec03ac6f84d3f11b40aefbd339",
+    "build/burn4-ternary-template/proof/Template.v": "9d9f0a57333dd123ff73eae2f5583b766a25b9b1da29b6178b8bf4896e09e6a4",
+    "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+    "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+    "theories/BoardManifest.v": "ee34d205828c4980781b16c9f8460209326d5d0f342423bd1b714bcfa6dd82c3",
+    "theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "theories/CensusUnion.v": "d4e178b18b2c8db7538161d74833c1998c0ed3bea8f27ef58b76741049026fab",
+    "theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+    "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+    "theories/Checkers/FiniteWall.v": "f58b74f21be0d451628f126099ca3ce57b9f3a310c73aadba4c4013d6e3514db",
+    "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+    "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+    "theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+    "theories/Checkers/WeightedLex.v": "722875929fd5e9b2b11ab08caefe146f04191bcbcf3f704b3265b6996583a3e7",
+    "theories/Checkers/WeightedStack.v": "39105be50c93a9cb47897aa3dc05538d0e7dad0a8d2181cd87891df9e58d8773",
+    "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+    "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+    "theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+    "theories/DualCloseout.v": "927e47c77c537ff99ea06a044df5b74b20d86da291d9e21c96a311addd1978c2",
+    "theories/FamilyTransport.v": "08a9435900fb92864e3741ad9db2c90fecd386cb727cb1b6da2aa42fa1b67a8d",
+    "theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+    "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+    "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+    "theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+    "theories/OrbitCloseout.v": "f7005d5ca6ce0d3e64acdda425704eb31226192fc6bf2ae3eff71eb4be230556",
+    "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+    "theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+    "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+    "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+    "theories/ReadyReuse.v": "b33bcbd95ffe7b65a62126a707f12305c30e2ebbefcdf97c683450689b03eda2",
+    "theories/ReadySwap.v": "37f440073404732dc8c01654f426061ede6b8bce28b9321ffd0c1edebd4591a5",
+    "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+    "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+    "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+    "theories/Shadow.v": "6c68cae389ad7b9198dba2bd2d30dc8403bfe6f51c439570dfa4610dd863e160",
+    "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "theories/StateOnlyCloseout.v": "afb65dbfc17f3eaa495a5648e6cf024137ec360d4d573b38a563e685c0dce5d2",
+    "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+    "theories/Symmetry.v": "ff83de1ebfb0f8e210728e383ca1a413ddb99e19879e6caf95fb9822ced127e6",
+    "theories/WeightedCensus.v": "02e50e571ed7b7aecaa60b2d058477c220b78b43b72b9119b3cce41db5e0b151",
+    "theories/WeightedNGram.v": "f22f844521f23e825aa37f7cc5907382b6ddcc7fea2394309c27d9420930a275",
+    "theories/WeightedReuse.v": "148d7605b97497808374760b2d579a034ac33f62d7fa7f1a95ee7476dd279c0d",
+    "theories/WeightedSuffix.v": "133c53c81237517bce7f6baf327843fed63217a950ba2017f436023b780d2d93",
+    "theories/WeightedTail.v": "b8d2690fdbe9d32205281c9e8af69d4f1b443b3c6c6d686a85f5e42c52846a48",
+    "tools/check_burn4_ternary_swapped.py": "38ee734c80cab5b364677eb24d11ddcaa68507027071cd0a10402a8c8ae774b0",
+    "tools/check_campaign.py": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+    "tools/check_shadow_links.py": "342b0c36d050f727ad5478af1b68f67d9c3827de984835b0bf6e60b5b657c9ca",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "tools/kernel_audit_cache_v3.py": "0323d125e53534efe41ce5c675ec3189537b6568cbf10fe057e32810835e9e0f"
+  },
+  "template_sha256": {
+    "research/burn4-ternary-counter/Counter.v": "fa4c7446cb5cf6781ba75f598facde825ec1a62a2054bae2e87fab4012fe2c77",
+    "research/burn4-ternary-counter/Tail.v": "0ecb7a9864857421f5c83e32a0481957ae1cd6ad85b45107375ffeb30d9d3182",
+    "research/burn4-ternary-swapped/Swapped.v": "dfa9d13ff96064674dc33c65af6428693a010aec03ac6f84d3f11b40aefbd339",
+    "research/burn4-ternary-template/Template.v": "9d9f0a57333dd123ff73eae2f5583b766a25b9b1da29b6178b8bf4896e09e6a4"
+  },
+  "template_theorem": "BBB24Burn4TernarySwapped.Swapped.ts_bounds"
+}

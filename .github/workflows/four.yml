@@ -78,7 +78,7 @@ jobs:
           name: four-supplement-replay
           path: four/build/next-campaign-rebuild/*.log
           retention-days: 7
-  burn4-replay:
+  burn6-replay:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     defaults:
@@ -88,13 +88,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-native-coq
       - name: Replay and audit the expanded supplementary census
-        run: make -C four check-burn4-campaign CAMPAIGN_JOBS=2
+        run: make -C four check-burn6-campaign CAMPAIGN_JOBS=2
       - name: Check expanded census replay integrity guards
-        run: python3 -m unittest discover -s four/tools -p 'test*burn2*.py'
+        run: |
+          python3 -m unittest discover -s four/tools -p 'test*burn2*.py'
+          python3 -m unittest discover -s four/tools -p 'test*burn4*.py'
       - name: Preserve expanded census replay logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: four-burn4-replay
-          path: four/build/burn4-campaign-rebuild/*.log
+          name: four-burn6-replay
+          path: four/build/burn6-campaign-rebuild/*.log
           retention-days: 7

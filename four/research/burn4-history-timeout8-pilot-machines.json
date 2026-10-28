@@ -1,0 +1,19 @@
+{
+  "rows": [
+    {
+      "machine": "1LB2RB1LA2RA_1RB3RA1LB2LB"
+    },
+    {
+      "machine": "1LB2LA0RB1LA_3RB2LB1RA0RB"
+    },
+    {
+      "machine": "1LB0LA1RB3LB_0RB3RA1RB2LA"
+    },
+    {
+      "machine": "1LB2LB3RB3RA_1RB3LA1RA1LA"
+    },
+    {
+      "machine": "1LB2LB3LA1RA_3RB3LA3LB2RB"
+    }
+  ]
+}

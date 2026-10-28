@@ -1,4 +1,4 @@
-.PHONY: all small23-deps check check-affine-batch check-affine-closeout check-closure-batch check-shadow-links check-transport check-wave check-campaign list-campaign check-next-campaign list-next-campaign check-burn2-campaign list-burn2-campaign check-burn3-campaign list-burn3-campaign check-burn4-campaign list-burn4-campaign clean
+.PHONY: all small23-deps check check-affine-batch check-affine-closeout check-closure-batch check-shadow-links check-transport check-wave check-campaign list-campaign check-next-campaign list-next-campaign check-burn2-campaign list-burn2-campaign check-burn3-campaign list-burn3-campaign check-burn4-campaign list-burn4-campaign check-burn5-campaign list-burn5-campaign check-burn6-campaign list-burn6-campaign clean
 CAMPAIGN_JOBS ?= 1
 all: small23-deps Makefile.coq
 	$(MAKE) -f Makefile.coq
@@ -66,5 +66,13 @@ check-burn4-campaign:
 	python3 tools/rebuild_campaign.py --plan research/burn4-campaign-build.json --only burn4-campaign --jobs $(CAMPAIGN_JOBS) --log-dir build/burn4-campaign-rebuild
 list-burn4-campaign:
 	python3 tools/rebuild_campaign.py --plan research/burn4-campaign-build.json --only burn4-campaign --list
+check-burn5-campaign:
+	python3 tools/rebuild_campaign.py --plan research/burn5-campaign-build.json --only burn5-campaign --jobs $(CAMPAIGN_JOBS) --log-dir build/burn5-campaign-rebuild
+list-burn5-campaign:
+	python3 tools/rebuild_campaign.py --plan research/burn5-campaign-build.json --only burn5-campaign --list
+check-burn6-campaign:
+	python3 tools/rebuild_campaign.py --plan research/burn6-campaign-build.json --only burn6-campaign --jobs $(CAMPAIGN_JOBS) --log-dir build/burn6-campaign-rebuild
+list-burn6-campaign:
+	python3 tools/rebuild_campaign.py --plan research/burn6-campaign-build.json --only burn6-campaign --list
 clean: Makefile.coq
 	$(MAKE) -f Makefile.coq clean

@@ -1,0 +1,319 @@
+{
+  "columns": [
+    "machine",
+    "source",
+    "permutation",
+    "mirrored",
+    "destination_boot",
+    "source_boot",
+    "baseline_survivor"
+  ],
+  "output_bound": 8192,
+  "rows": [
+    [
+      "1LB0LA1RB2RA_2RA3LB2LB0RA",
+      "1LB1RA0LB2RA_3RA3LA1LB---",
+      "P312",
+      true,
+      17,
+      18,
+      true
+    ],
+    [
+      "1LB0RB1RB2RA_2RA3LB2LB0RA",
+      "1LB1RA0LB2RA_3RA3LA1LB---",
+      "P312",
+      true,
+      14,
+      18,
+      true
+    ],
+    [
+      "1LB1LA1RB1RB_2RA3LB3LB0RA",
+      "1LB2RA0LB2RA_3RA---3LA3RB",
+      "P312",
+      true,
+      36,
+      61,
+      true
+    ],
+    [
+      "1LB1LA1RB2LB_3RA2LB0RA2LB",
+      "1LB2RA0LB2RA_3RA---3LA3RB",
+      "P321",
+      true,
+      4,
+      3,
+      true
+    ],
+    [
+      "1LB1LA1RB2RA_2RA3LB2LB0RA",
+      "1LB1RA0LB2RA_3RA3LA1LB---",
+      "P312",
+      true,
+      37,
+      33,
+      true
+    ],
+    [
+      "1LB1LA1RB3LB_3RA2LB0RA2LB",
+      "1LB2RA0LB2RA_3RA---3LA3RB",
+      "P321",
+      true,
+      57,
+      47,
+      true
+    ],
+    [
+      "1LB1LA1RB3RB_3RA2LB0RA2LB",
+      "1LB2RA0LB2RA_3RA---3LA3RB",
+      "P321",
+      true,
+      36,
+      61,
+      true
+    ],
+    [
+      "1LB1LB1RB2RA_2RA3LB2LB0RA",
+      "1LB1RA0LB2RA_3RA3LA1LB---",
+      "P312",
+      true,
+      3,
+      2,
+      true
+    ],
+    [
+      "1LB1RA0LA0RB_3RA2RB2LA2LA",
+      "1LB2RB2RB2LA_3RA0LA0RB3LB",
+      "P321",
+      true,
+      25,
+      15,
+      true
+    ],
+    [
+      "1LB2LA0RB1RA_3RA3RB2LB3LA",
+      "1LB1RB1LA3RA_2RA2LB3RB0LA",
+      "P231",
+      true,
+      7,
+      8,
+      true
+    ],
+    [
+      "1LB2LA1RA1RB_2RA3LB2LB2RA",
+      "1LB1RA1LB2RA_3RA3LB3LA1RB",
+      "P312",
+      true,
+      26,
+      26,
+      true
+    ],
+    [
+      "1LB2LB0RB1RA_3RA2LB3LB1RB",
+      "1LB2LA3RA1RA_2RA2LB---0LA",
+      "P231",
+      true,
+      11,
+      21,
+      true
+    ],
+    [
+      "1LB2LB1RB2RA_2RA3LB2LB0RA",
+      "1LB1RA0LB2RA_3RA3LA1LB---",
+      "P312",
+      true,
+      30,
+      33,
+      true
+    ],
+    [
+      "1LB2LB2LA1RB_2RA1LA3RB2LA",
+      "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "P312",
+      true,
+      25,
+      32,
+      true
+    ],
+    [
+      "1LB2RA0RA---_3RA0LA0RB2LA",
+      "1LB2RB0LA0RB_3RA---0LB2LB",
+      "P321",
+      true,
+      6,
+      1,
+      true
+    ],
+    [
+      "1LB2RA3LA1RB_3RA3LA1LA0RA",
+      "1LB0LB1RB2RB_2RA2LA3LB1RB",
+      "P231",
+      true,
+      101,
+      107,
+      true
+    ],
+    [
+      "1LB2RB1LA---_2RA0RB3LA2LB",
+      "1LB2RB1RA0LA_3RA3RB---1LA",
+      "P312",
+      true,
+      43,
+      110,
+      true
+    ],
+    [
+      "1LB2RB1RA0RB_2RA3LB1RB2LB",
+      "1LB2LA3RA1RA_2RA2LB---0LA",
+      "P213",
+      true,
+      54,
+      33,
+      true
+    ],
+    [
+      "1LB2RB1RB2RA_2RA3LB2LB0RA",
+      "1LB1RA0LB2RA_3RA3LA1LB---",
+      "P312",
+      true,
+      32,
+      33,
+      true
+    ],
+    [
+      "1LB2RB3LA2RA_1RA3LA1LB3RB",
+      "1LB2RB2LA1RA_1RA3LA3LB2RB",
+      "P132",
+      true,
+      54,
+      135,
+      true
+    ]
+  ],
+  "scope": "Exact checked transport candidates; discovery is not proof. Reconstruct10sourcecertificates, importpairedtail, check20prefixconjugacies andallcompletions.",
+  "selection": {
+    "destination_bound": 101,
+    "exact_prefix_candidates": 20,
+    "fresh_nonqueued_table_matches": 64,
+    "instruction_residual_rows": 31495,
+    "instruction_residual_sha256": "b153563602875c65359bde7630edf03b113e58ba15a1998b5dccd5e20bedcc29",
+    "scope": "Freshmatchesonly; excludes641queued and816previouslysearched tables. No new stateobligation.",
+    "source_prefix_bound": 135,
+    "state_overlap": 0
+  },
+  "source_bound": 4096,
+  "source_certificates": [
+    {
+      "anchor": 0,
+      "bound": 4096,
+      "extra": 2,
+      "fuel": 5120,
+      "history": 0,
+      "machine": "1LB0LB1RB2RB_2RA2LA3LB1RB",
+      "mode": "rw",
+      "size": 3
+    },
+    {
+      "anchor": 0,
+      "bound": 4096,
+      "extra": 2,
+      "fuel": 5120,
+      "history": 0,
+      "machine": "1LB2RB2LA1RA_1RA3LA3LB2RB",
+      "mode": "rw",
+      "size": 2
+    },
+    {
+      "anchor": 0,
+      "bound": 4096,
+      "extra": 2,
+      "fuel": 5120,
+      "history": 0,
+      "machine": "1LB1RA1LB2RA_3RA3LB3LA1RB",
+      "mode": "rw",
+      "size": 3
+    },
+    {
+      "anchor": 0,
+      "bound": 4096,
+      "extra": 2,
+      "fuel": 5120,
+      "history": 0,
+      "machine": "1LB1RA0LB2RA_3RA3LA1LB---",
+      "mode": "rw",
+      "size": 3
+    },
+    {
+      "anchor": 0,
+      "bound": 4096,
+      "extra": 2,
+      "fuel": 5120,
+      "history": 0,
+      "machine": "1LB2LA3RA1RA_2RA2LB---0LA",
+      "mode": "rw",
+      "size": 3
+    },
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 32,
+      "fuel": 16384,
+      "history": 3,
+      "machine": "1LB2RA0LB2RA_3RA---3LA3RB",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 32,
+      "fuel": 16384,
+      "history": 3,
+      "machine": "1LB2RB2RB2LA_3RA0LA0RB3LB",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 33,
+      "fuel": 8193,
+      "history": 0,
+      "machine": "1LB2RB1RA0LA_3RA3RB---1LA",
+      "mode": "ng",
+      "size": 3
+    },
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 65,
+      "fuel": 8193,
+      "history": 0,
+      "machine": "1LB1RB1LA3RA_2RA2LB3RB0LA",
+      "mode": "ng",
+      "size": 3
+    },
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 32,
+      "fuel": 16384,
+      "history": 3,
+      "machine": "1LB2RB0LA0RB_3RA---0LB2LB",
+      "mode": "hist",
+      "size": 4
+    }
+  ],
+  "source_inputs_sha256": {
+    "research/burn2-capacity-ordinary-certificates.json": "906fbcb97d3f13c6b77e2181483211b2cc12db4fd541e24bb9b70d9e5e857adf",
+    "research/burn2-rw-input.json": "7f8eea74bc14bf13191ad8d52e4dfb464d69e140bc34afeb84b38312bf928909",
+    "research/burn2-state-full-ordinary-input.json": "582fe043e0f408064898b6c7d64c1072bb9219735fbbd70ba1b3ff26cf217a42",
+    "research/burn3-capacity-instruction-input.json": "3d304dbab979bf3b62bd556b1f937afae796b6bd9bb212e090c4c12fc928a061",
+    "research/burn3-history-instruction-proof-input.json": "d4549186f0718cfcee7a6ae2dd1e617d9f4e3e84014ed4c8f5c1c8cad67e6a90"
+  },
+  "source_inventory_sha256": "f3c681460087d0f5d4db5884b2fc4e93745393ba57318f97298adad39d94b01e",
+  "tail_dependency_report": "research/burn3-tail-invariant-checked.json",
+  "tail_dependency_sha256": "6846050e857dd0ea725e9270ca40b1d2ed171bec7b0875e7c5fc954072b1ade5",
+  "tail_source": "1LB2LA1RB3RB_3RA1RB3LA1RA"
+}

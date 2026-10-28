@@ -1,0 +1,18 @@
+{
+  "maximum_rows_per_shard": 4,
+  "native_cost_ledger_sha256": "ffb9e4f7ef313d117bb12da8e1a898511f4b3af6102ca0309a67bbb02b47576e",
+  "producer_sha256": "f2f0b17a4739b789fe80eb10ff20a5c2232a43de9e83ce4358f4fcd007f27cce",
+  "scope": "Proof scheduling only; every selected family is independently checked.",
+  "selected_rows": 1,
+  "shards": [
+    {
+      "native_seconds": 0.759504,
+      "rows": [
+        5113834095
+      ]
+    }
+  ],
+  "slow_rows_get_separate_shards": true,
+  "source_report_sha256": "e52302fa3ec4b57459d976a5b0d6a877a7dcbe2dadfd5dc139b8298d3b33bc78",
+  "target_native_seconds_per_shard": 1.0
+}

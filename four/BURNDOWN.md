@@ -31,11 +31,13 @@ The [first supplementary round](NEXT_BURNDOWN.md) adds 131 instruction families
 and 254 state families to that frozen checkpoint. The [second round](BURN2.md)
 adds another **1,190 instruction bounds** and **1,432 state bounds**, and the
 [third round](BURN3.md) adds **676 instruction bounds** and **405 state bounds**.
-The [fourth checkpoint](BURN4.md) adds another **122 state bounds**. Of the
-133,185 starting families, **101,690 have both bounds checked** and **132,640
-have a state bound checked**, leaving **31,495 instruction-bound** and **545
+The [fourth checkpoint](BURN4.md) adds another **122 state bounds**. The
+[fifth](BURN5.md) adds **13 instruction bounds and seven state bounds**, and
+the [sixth](BURN6.md) adds **63 instruction bounds and four state bounds**. Of the
+133,185 starting families, **101,766 have both bounds checked** and **132,651
+have a state bound checked**, leaving **31,419 instruction-bound** and **534
 state-bound** obligations. The exact union and per-machine lists are recorded
-in [`burn4-burndown-summary.json`](research/burn4-burndown-summary.json).
+in [`burn6-burndown-summary.json`](research/burn6-burndown-summary.json).
 The earlier separate search queue had **32,629** rows, down **75.5%** from the
 starting cohort. The existing replay queue now has **2,740 instruction
 candidates** and no remaining state obligations. Search candidates and
