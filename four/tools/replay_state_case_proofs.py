@@ -70,6 +70,8 @@ def main():
         if process.returncode:
             result["status"] = "failed"
             save()
+            print("\n".join(log.read_text(errors="replace").splitlines()[-60:]),
+                  file=sys.stderr)
             raise RuntimeError(label + " failed; see " + str(log))
         save()
 
@@ -95,8 +97,10 @@ def main():
             package = packages[name]
             for prerequisite in package["prerequisites"]:
                 replay(prerequisite)
-            run(name, [sys.executable, "four/tools/" + package["driver"],
-                       *package["args"], *budgets])
+            driver = package.get("replay_driver", package["driver"])
+            arguments = package.get("replay_args", package["args"])
+            run(name, [sys.executable, "four/tools/" + driver,
+                       *arguments, *budgets])
         completed.add(name)
 
     save()

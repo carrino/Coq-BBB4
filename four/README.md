@@ -65,6 +65,15 @@ The published last-visit index and the repository score differ by one. This
 proof states and checks both numbers explicitly; it does not change the score
 convention used by the previously completed developments.
 
+For the historical sources, [Drozd's February 11, 2022 results post](https://nickdrozd.github.io/2022/02/11/latest-beeping-busy-beaver-results.html)
+reports 205,770,076,433,044,242,247,859. That number matches the last
+configuration in state `A`, before its final `A3 -> 1LB` transition.
+[Ligocki's February 27, 2022 analysis](https://www.sligocki.com/2022/02/27/bbb-search-process.html#chain-recurrence)
+places the ensuing permanent `B0` drift at step
+205,770,076,433,044,242,247,860, with exactly the terminal tape checked here.
+Thus the extra one counts that final transition out of `A`; the two numbers
+refer to adjacent configurations, and both are proved in `Champion.v`.
+
 ## Certified census coverage
 
 `Bootstrap.bootstrap_coverage` proves that every two-state, four-symbol table

@@ -34,6 +34,7 @@ jobs:
           name: state-case-proofs-${{ matrix.group }}
           path: |
             four/build/state-case-proof-replay/
+            four/build/shared-state-case-replay/
             four/build/**/proof/*.log
             four/build/**/proof/*receipt*.json
             four/build/**/proof/kernel-audit*.json

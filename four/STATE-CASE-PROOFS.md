@@ -14,13 +14,15 @@ python3 four/tools/replay_state_case_proofs.py --list
 python3 four/tools/replay_state_case_proofs.py
 ```
 
-The replay command checks the frozen source/input hashes, builds the required public theories, prepares the shared helper modules, and runs each original proof driver. Each driver compiles the exact transition table, universal machine lemmas, regression controls, census-family wrapper and inventory, then recursively audits the result with `coqchk`. Compiled artifacts and audit receipts are generated under `four/build/`; none need to be downloaded. Run packages sequentially to keep memory use predictable.
+The replay command checks the frozen source/input hashes, builds the required public theories, prepares the shared helper modules, and runs each case proof driver. Each driver compiles the exact transition table, universal machine lemmas, regression controls, census-family wrapper and inventory, then recursively audits the result with `coqchk`. Compiled artifacts and audit receipts are generated under `four/build/`; none need to be downloaded. Run packages sequentially to keep memory use predictable.
 
 For one package, use its name from the table:
 
 ```bash
 python3 four/tools/replay_state_case_proofs.py --only burn21-s032-finite
 ```
+
+The frozen historical drivers for next1a, next1b and DoubleZeroRank require workspace-specific compiled-object hashes. For these three cases, the replay command uses a separate portable checker: it verifies the same frozen sources, inputs, generated statements and inventories, then recompiles and recursively audits the current shared dependencies. Historical reports and drivers remain unchanged; no old compiled object is trusted.
 
 The wrapper automatically builds BinaryRank for DoubleZeroRank, the generic HistoryMarker package for next1a/next1b, and CounterObligations for S056. It retains a log for every command and a machine-readable replay result under `four/build/state-case-proof-replay/`. Existing frozen reports are preserved; each driver writes its new audit receipt into its own build directory. A current toolchain on PATH is required.
 

@@ -114,6 +114,11 @@
           "id": "S013",
           "machine": "1LB0RA0LB2RA_1RB3LB2LB1LA"
         }
+      ],
+      "replay_driver": "replay_shared_state_case.py",
+      "replay_args": [
+        "--package",
+        "burn17-double-zero-rank"
       ]
     },
     {
@@ -151,6 +156,11 @@
           "id": "S034",
           "machine": "1LB2LA1RB0RA_2RB1RA3LA3RB"
         }
+      ],
+      "replay_driver": "replay_shared_state_case.py",
+      "replay_args": [
+        "--package",
+        "burn12-history-marker-next1a"
       ]
     },
     {
@@ -172,6 +182,11 @@
           "id": "S060",
           "machine": "1LB2LB3RA0RB_2RB2RA3LA2LA"
         }
+      ],
+      "replay_driver": "replay_shared_state_case.py",
+      "replay_args": [
+        "--package",
+        "burn12-history-marker-next1b"
       ]
     },
     {
@@ -934,6 +949,7 @@
     "four/tools/group_families.py": "904d15a0fd0663858e7526dbc22b15cf7a6dca96d8087af09fd366a6a00acf9f",
     "four/tools/kernel_audit_cache_v3.py": "0323d125e53534efe41ce5c675ec3189537b6568cbf10fe057e32810835e9e0f",
     "four/tools/marker_state_profile_v2.py": "998103d4757e54fd719d6d5bc2a303b27ea3eff36df12eb8e910e3e89185d005",
+    "four/tools/replay_shared_state_case.py": "5727993233c1f8971a1ba0371e1b6814cd55b99246f9ab28efc6c85cbf0dadfb",
     "four/tools/search_burn4_entry_marker.py": "e17ecea3520fb369f517c65c3a64e1c5b7a581042dcbd4aebfd04a5208612985"
   }
 }
