@@ -1,0 +1,16 @@
+{
+  "dependency_report_sha256": "4141e1dd9ec1d212b3a6dae3b0361e3da572e7884ef9efd5de0f2eaee9e12957",
+  "rows": [
+    {
+      "code": 1877685059,
+      "machine": "1LB0RA0LB2RA_1RB3LB2LB1LA"
+    }
+  ],
+  "selection_report": "research/burn17-double-zero-rank-native.json",
+  "selection_sha256": "7f3d6ae52a6ad38079ec4b02282c45d418a565068a22a8e96fa254fd00b3b413",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn17-double-zero-rank/DoubleZeroRank.v": "7a276d8beb906d195babb74d4685d0a210bdfbda8c76f269201cb760717ead9c",
+    "proof-sources/burn17-double-zero-rank/Regression.v": "20674fb7772dedad4e6432358604011819cd9787ceff46dde36aa68b163218a2"
+  }
+}

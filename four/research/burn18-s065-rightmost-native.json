@@ -1,0 +1,47 @@
+{
+  "actual_entry": {
+    "head": 0,
+    "left": [
+      1,
+      0,
+      1
+    ],
+    "step": 7
+  },
+  "excluded_seed": {
+    "head": 2,
+    "left": [
+      0
+    ],
+    "result": [
+      1,
+      [
+        1
+      ],
+      0,
+      []
+    ],
+    "right": [],
+    "state": "A",
+    "steps": 2
+  },
+  "invariant": "Rightmost nonzero of head/right suffix is1or3, or suffixallzero andstateA.",
+  "invariant_steps": 2331,
+  "left_and_right_max_length": 2,
+  "max_return_steps": 14,
+  "nonzero_B_returns": 1323,
+  "rows": [
+    {
+      "code": 1056988197,
+      "machine": "1LB2RA0LB1RA_1RB3LB2LB0RA"
+    }
+  ],
+  "scope": "Bounded invariant and arbitrary-context return controls only; no independent proof credit.",
+  "seconds": 0.007209,
+  "source_sha256": {
+    "tools/check_burn18_s065_rightmost_native.py": "4d313d361a7058f59b20e850beaf4ecae5db1203fdf5fdd82edada6782aeeb60",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "zero_B_returns": 1134,
+  "zero_B_right_context_max_length": 3
+}

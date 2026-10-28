@@ -1,0 +1,44 @@
+{
+  "context_max_length": 2,
+  "controls": {
+    "complete_words": 511,
+    "first_false": 3969,
+    "left_threes": 3969,
+    "overflow": 36,
+    "right_A_twos": 3969,
+    "right_B_twos": 3969
+  },
+  "first_false": "true^n false tail ->true^n true tail, cost16n+16",
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "invariant": "A0, blank right tail, nearest-first left word3 enc(bits)3; false=11,true=33",
+  "max_bits": 8,
+  "max_run": 8,
+  "metadata_revision": 2,
+  "overflow": "true^n ->false^(n+1), cost4n+7",
+  "rejected_target_control": {
+    "codes": [
+      5,
+      1,
+      4,
+      14,
+      15,
+      14,
+      7,
+      9
+    ],
+    "machine": "1LB0LB1LA3RA_3RB3RA1RB2LB",
+    "reason": "A3=3RA is outside the frozen cohort and fails the supported three-step scan"
+  },
+  "rows": [
+    {
+      "code": 3883216726,
+      "machine": "1LB0LB1LA3RB_3RB3RA1RB2LB"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn20_run_sibling_native.py": "96d99255fb9d4e53be61a3b4be2775b7f3d91cec150595207fafbfe20f42557e",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

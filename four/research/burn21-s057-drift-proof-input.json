@@ -1,0 +1,17 @@
+{
+  "computed_prefix_steps": 2333909,
+  "preceding_A_index": 2333908,
+  "rows": [
+    {
+      "code": 4048628613,
+      "machine": "1LB2LB1RB1RA_1RB3LA3RA2LB"
+    }
+  ],
+  "selection_report": "research/burn21-s057-native.json",
+  "selection_sha256": "0919522477d77fa506a4370e64b17621828c29951356d81b45993b4e6e5a7204",
+  "state_bound": 4194304,
+  "template_sha256": {
+    "proof-sources/burn21-s057-drift/Regression.v": "e0e75e266684146d5e24fae0e01619e3d631371c653309c65d7e1be316a96d77",
+    "proof-sources/burn21-s057-drift/RightBlankDrift.v": "7b91d6f6807210fb1cfa118eab4db5c552b7089d569f440a2217e88e6aca92f7"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 5981071874,
+      "machine": "1LB1RB0LB2RA_1RB3LB2LB3RA"
+    }
+  ],
+  "selection_report": "research/burn17-binary-rank-native.json",
+  "selection_sha256": "7e3146fbf76cc4f342998079c5bb15598adfdd3bed56642af491e5a5a28b9d68",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn17-binary-rank/BinaryRank.v": "1b73db4dcac7dc9e25a5c4f0afdc1de843241535b3e76f00fccec14af3bbc096",
+    "proof-sources/burn17-binary-rank/Regression.v": "437455ea41385c0f2ca6d30f88f25b17f0424890c94745f8d7817e224e060200"
+  }
+}

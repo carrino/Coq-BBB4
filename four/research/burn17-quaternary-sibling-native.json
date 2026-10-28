@@ -1,0 +1,30 @@
+{
+  "checksum": "head equals digit sum modulo3",
+  "encoding": [
+    "11",
+    "21",
+    "12",
+    "22"
+  ],
+  "excluded_corner": "all-maximal digits with head1 do not satisfy the overflow rule",
+  "long_gap": "4*carry+4 for digit1",
+  "main_configurations": 21844,
+  "max_digits": 7,
+  "overflow_digits": "1, then digits-1 zeros, then2",
+  "overflow_gap": "4*digits+3",
+  "rows": [
+    {
+      "code": 3201306334,
+      "machine": "1LB2LB0LB1RA_2RB2RA3LB1RB"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "seconds": 0.103144,
+  "short_gap": "4*carry+2 for digits0/2",
+  "simulated_macro_steps": 87369,
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn17_quaternary_sibling_native.py": "eb099e924a24113da541331eefbbd948ddfef7d66d1ca35b8017a5acd93e9983",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

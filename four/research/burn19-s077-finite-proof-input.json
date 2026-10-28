@@ -1,0 +1,18 @@
+{
+  "escape_steps": 2501552,
+  "last_A": 2501551,
+  "rows": [
+    {
+      "code": 2094174823,
+      "machine": "1LB2RB3LA2RA_3RB3LA0LB1LB"
+    }
+  ],
+  "selection_report": "research/burn19-s077-finite-native.json",
+  "selection_sha256": "b75a70d5ec4a5067a56683056d28f73b4262926773840e11173abfb33733f288",
+  "state_bound": 4194304,
+  "template_sha256": {
+    "proof-sources/burn19-s077-finite/FiniteEscape.v": "f452cac7a8790501e8844066e7346aef7ff574f79b3e9b5a8a39343e445bada6",
+    "proof-sources/burn19-s077-finite/FinitePrefix.v": "40fb345f879a411169982e7ba0c68a9dcd2089544120e6eb18d08d821dac3ba7",
+    "proof-sources/burn19-s077-finite/Regression.v": "ffefa732c1a5cb90c3a38be755cda28e8240baf0feca374231d739d140cf830b"
+  }
+}

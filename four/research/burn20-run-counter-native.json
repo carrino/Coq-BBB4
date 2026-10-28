@@ -1,0 +1,28 @@
+{
+  "context_max_length": 2,
+  "controls": {
+    "complete_words": 511,
+    "first_false": 3969,
+    "left_threes": 3969,
+    "overflow": 36,
+    "right_A_twos": 3969,
+    "right_B_twos": 3969
+  },
+  "first_false": "true^n false tail ->true^n true tail, cost24n+22",
+  "invariant": "A0, blank right tail, nearest-first left word3 enc(bits)3; false=11,true=33",
+  "max_bits": 8,
+  "max_run": 8,
+  "overflow": "true^n ->false^(n+1), cost4n+7",
+  "rows": [
+    {
+      "code": 3883151701,
+      "machine": "1LB0LB0LA0RA_3RB3RA1RB2LB"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn20_run_counter_native.py": "0db6937d151b0a5d074d5f495d7d5146d09e046f421516b6a0737460301b106f",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

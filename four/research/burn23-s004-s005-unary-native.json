@@ -1,0 +1,95 @@
+{
+  "actual_blank_steps": 8192,
+  "actual_state_visits": [
+    3796,
+    4396
+  ],
+  "backward_block": [
+    0,
+    0,
+    2,
+    1,
+    2,
+    1,
+    0,
+    2,
+    1
+  ],
+  "block": [
+    0,
+    2,
+    1,
+    0,
+    0,
+    2,
+    1,
+    2,
+    1
+  ],
+  "checked_instruction_families": 0,
+  "checked_state_families": 0,
+  "cycle_controls": 34,
+  "identical_actual_state_position_trajectories": true,
+  "inputs_sha256": {
+    "research/burn23-s004-s005-unary-frontier-source.txt": "1f07b47247419e108daa1026b5cc7d196bdd7a2ea19ecc2492aeb1b9f32c46f5",
+    "research/burn23-s004-s005-unary-native-input.json": "f3ac1db68b1cbb98f55635d2d59f1b2d7932d4307a03ed4c3301029f6af2d7ec"
+  },
+  "negative_boundary_controls": 12,
+  "phase_controls": 136,
+  "phase_observation_sha256": [
+    "f54855d857b89faa018885b531f7ce454297d6d02c0aef23200958ebce5e8c88",
+    "f54855d857b89faa018885b531f7ce454297d6d02c0aef23200958ebce5e8c88"
+  ],
+  "rows": [
+    {
+      "code": 3376288745,
+      "machine": "1LB0LA1LB1RB_3RB3RA0RB2LA"
+    },
+    {
+      "code": 3569389297,
+      "machine": "1LB0LA1LB1RB_3RB3RA2RB2LA"
+    }
+  ],
+  "scope": "Finite native macro and boundary controls only; zero proof credit.",
+  "source_sha256": {
+    "tools/check_burn23_s004_s005_unary_native.py": "9e148612efbdd0f56f7b628bb72915f757be0e18cc4a7f0ce51fb8b1a05a8d87",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "sweep_controls": 1764,
+  "terminal_controls": 168,
+  "terminal_phases": [
+    [],
+    [
+      0,
+      2,
+      1,
+      2,
+      1
+    ],
+    [
+      0,
+      2,
+      1,
+      0,
+      2,
+      1,
+      2,
+      1
+    ],
+    [
+      0,
+      2,
+      1,
+      0,
+      0,
+      2,
+      1,
+      0,
+      0,
+      2,
+      1,
+      2,
+      1
+    ]
+  ]
+}

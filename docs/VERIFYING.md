@@ -134,6 +134,13 @@ build-and-audit command, followed by the extraction regression.
 
 ## Four-symbol champion
 
+Individual state-based BBB(2,4) holdout proofs have a separate
+[case index and replay command](../four/STATE-CASE-PROOFS.md). That source
+checkpoint contains 36 machine families; the
+[public scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) tracks the
+remaining proof work and census assembly. These individual proofs do not yet
+establish the global upper bound.
+
 The isolated `four/` development proves the exact score of
 `1RB2LA1RA1LB_0LB2RB3RB1LA` for both state and instruction quasihalting:
 **205,770,076,433,044,242,247,860**. This establishes two global lower bounds;

@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 4437987042,
+      "machine": "1LB2LB0LB0RB_2RB3RA3LB2RA"
+    }
+  ],
+  "selection_report": "research/burn17-paired-zero-counter-native.json",
+  "selection_sha256": "dd46894874117d74449bbd252f8bf42875a06c0f750b60d1eee7bcc3c5332dfe",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn17-paired-zero-counter/PairedZero.v": "3d44a7e6e6f9366774b686dbf11049f8f695d11f75e88ee36a6e7c1600b6f594",
+    "proof-sources/burn17-paired-zero-counter/Regression.v": "e09653376b4da72930dded90a69b9c635749bdb51ece28d7b8369c030dab61c6"
+  }
+}

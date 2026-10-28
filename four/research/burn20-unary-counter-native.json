@@ -1,0 +1,41 @@
+{
+  "context_max_length": 2,
+  "controls": {
+    "A_threes": 3528,
+    "B_threes": 3528,
+    "B_twos": 3528,
+    "drain": 1250,
+    "finish": 168,
+    "iteration": 1250,
+    "main_returns": 16,
+    "phase": 7056
+  },
+  "drain_cost": {
+    "k_linear": 5,
+    "k_squared": 2,
+    "m_times_k": 4
+  },
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "invariant": "A0 with nearest-first left word2 1^(2n)2 and blank right tail",
+  "main_cost": {
+    "constant": 7,
+    "linear": 12,
+    "quadratic": 8
+  },
+  "main_cost_formula": "8n^2+12n+7",
+  "max_main": 15,
+  "metadata_revision": 1,
+  "rows": [
+    {
+      "code": 3201318625,
+      "machine": "1LB0LB2RA2LA_2RB2RA3LB1RB"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn20_unary_counter_native.py": "0607610bf85e9915298de3b875d72f27ff45c0944d011998853dd242fea10f58",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "terminal_rule": "one left1 is consumed, one right3 is added, terminal0/1 toggles; empty left run finishes only with terminal0"
+}
