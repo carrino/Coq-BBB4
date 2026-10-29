@@ -1,0 +1,82 @@
+{
+  "bundles": [
+    {
+      "bytes": 47301,
+      "path": "research/ordinary-tail-templates/pools007_011/contexts-0000.json",
+      "rows": 128,
+      "sha256": "90ee5a898f15f560063d6508dfb7303d9e5013e41238e633bd6e74481f4e00ef"
+    },
+    {
+      "bytes": 48593,
+      "path": "research/ordinary-tail-templates/pools007_011/contexts-0001.json",
+      "rows": 128,
+      "sha256": "04bbe1e090b604496566cec249c5228d17a28943c8fb914ca9158c329e3a3e85"
+    },
+    {
+      "bytes": 43933,
+      "path": "research/ordinary-tail-templates/pools007_011/contexts-0002.json",
+      "rows": 128,
+      "sha256": "86ac5678d429bed61cfafb5fcede89ebcd6f3a140b0a3edae9144b1e3a1b449a"
+    },
+    {
+      "bytes": 44033,
+      "path": "research/ordinary-tail-templates/pools007_011/contexts-0003.json",
+      "rows": 128,
+      "sha256": "c7001c0b634ad1b1023b1b116fa42e1c8a5b672e689b60def52609aaf717cb6b"
+    },
+    {
+      "bytes": 45257,
+      "path": "research/ordinary-tail-templates/pools007_011/contexts-0004.json",
+      "rows": 128,
+      "sha256": "1acccd733eb09d538bb090d4500bca1eb48d6ff53624f95f795d8f8cbc7e90c9"
+    },
+    {
+      "bytes": 43325,
+      "path": "research/ordinary-tail-templates/pools007_011/contexts-0005.json",
+      "rows": 128,
+      "sha256": "a90fc9b2aafc46d42d3627bd68537f129e5f1bee9e2dd784dee0a5b2f113dda9"
+    },
+    {
+      "bytes": 47757,
+      "path": "research/ordinary-tail-templates/pools007_011/contexts-0006.json",
+      "rows": 128,
+      "sha256": "6f84159938733e4e2aab7b7fc47d1871842e20c97b62a2db57b967949405dd69"
+    }
+  ],
+  "format": "BBB24 compact weighted certificates v2",
+  "kinds": {
+    "weighted": 896
+  },
+  "rows": 896,
+  "source": {
+    "binary_sha256": "25b36f797ba11891ebe48e6e475716d43921748515e0fc2295dadfa7c2b46d3c",
+    "event_sha256": "b5e4f4793d74d0fad08801d097ad2e9526a4d17f77b9702fd71a88ffe4711d4e",
+    "inputs_sha256": {
+      "build/weighted-v2/weighted_v2.cmi": "6ca16bf007ac03bd3d48e9f773c78a6b0116c2cd87114db5c0ebef128c976aaf",
+      "build/weighted-v2/weighted_v2.cmx": "5869b0f1f245e42b1f42406ab714a33140ac4e2c453316811b466b71d76baf3a",
+      "build/weighted-v2/weighted_v2.ml": "5d2885caa838d1d7a67ee072747ffee8d4ae2c63022b3765ec17f830eda8435c",
+      "build/weighted-v2/weighted_v2.mli": "0b5bd739b37148bbeaf1ee954881ec5c9f97f5739b2ca566ba817cc01dacaafd",
+      "build/weighted-v2/weighted_v2.o": "6e81412929ae030e8e398cb377001537c116dd3332fce1f0b9d3adf1bceb69fc",
+      "research/weighted-full-snapshots/batch007/certificates-0000.json": "fb5dbb2f550bf5dbe6082955c665048130eccedea456ce32eeb4cf71d40557cd",
+      "research/weighted-full-snapshots/batch007/certificates-0001.json": "8e32fac80e40517c0a13302507659623218f8d2983df626ffe4aae30bb880b68",
+      "research/weighted-full-snapshots/batch008/certificates-0000.json": "9b36e32fad080c692abfd179c29b57380e21b732de34dc11a75175a691973a3c",
+      "research/weighted-full-snapshots/batch008/certificates-0001.json": "1bf53acee67ecc13f4ad2594cff07303aa7e64a04910c9f749733a1a3d943f6f",
+      "research/weighted-full-snapshots/batch009/certificates-0000.json": "b1292ff668a94505f8a10a805e97a23b46b2c4536411babc633f36af7ec5cd11",
+      "research/weighted-full-snapshots/batch009/certificates-0001.json": "02ca57b11d16b561ae9f2f3077788ff28677ebde786a6a3f1127165203995546",
+      "research/weighted-full-snapshots/batch010/certificates-0000.json": "b39f497e58d5211939d1486a39b359051c4a5f795dbfcc137201069d4ced8452",
+      "research/weighted-full-snapshots/batch010/certificates-0001.json": "b72c5d735d69f51e672eabff064ebcb087bcae26a36f98539c1a1e4bcf6e2edf",
+      "research/weighted-full-snapshots/batch011/certificates-0000.json": "36c23ca525234e96d992cd0294cdc9593542ce32eeecf1cbe140ddabedf4ece2",
+      "research/weighted-full-snapshots/batch011/certificates-0001.json": "d5c244de633561029ccd9c91e00f3b15e2a9a0a904414bb90cefbe869d24c581",
+      "research/weighted-stream-reuse/pools007_011.json": "cefda114cb2ddde9c03cec165040b247f19134a1cc120bccf92470314a4371d1",
+      "tools/ordinary_template_graphs.ml": "8d5fbc8b13308aabd4b887f7002733fc53ebb4c5e9dad373907b8aa87a5072e1",
+      "tools/ordinary_template_pool.py": "52fe9f8e4a0bf364d8b5d4b4d2c2b2d3c9bbf91123b072ea232b703cc5a0d125"
+    },
+    "max_nodes": 2048,
+    "ordinary_inputs": 896,
+    "status_counts": {
+      "closed": 896
+    },
+    "timeout_seconds": 1.0
+  },
+  "status": "Untrusted ordinary closure templates, with empty explicit certificates; all rankings and target boots require Coq replay."
+}

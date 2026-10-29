@@ -1,0 +1,50 @@
+{
+  "native_report": "research/burn17-history-next-native.json",
+  "native_sha256": "d9b2a4a3411c0b33ea11adc5bed15f3da4dbf4e7bab2931caa2ba5228364dffc",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 6454180786,
+      "fuel": 131072,
+      "history": 19,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LA1RB0RA_2RB1RA3LA3RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    }
+  ],
+  "scope": "Exact cost-ordered singleton of two independently validated h18/h19 proposals.",
+  "selected": [
+    {
+      "distinct_edges": 365,
+      "distinct_history_cells": 224,
+      "edges": 459,
+      "graph_path": "build/burn17-history-next-refinement/graph-16-h19-w2.json",
+      "graph_sha256": "2ce9630c485d2845d74c7b9b403641cee6c0340399bb4178660f048493f0b4a3",
+      "history": 19,
+      "machine": "1LB2LA1RB0RA_2RB1RA3LA3RB",
+      "maximum_encoded_cell": 653205144799142346,
+      "maximum_encoded_cell_bits": 60,
+      "maximum_possible_encoded_cell": 658812288346769699,
+      "nodes": 322,
+      "width": 2
+    }
+  ],
+  "selected_range": [
+    0,
+    1
+  ],
+  "sort_key": [
+    "nodes",
+    "history",
+    "width",
+    "machine"
+  ]
+}

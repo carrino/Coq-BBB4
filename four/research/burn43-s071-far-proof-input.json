@@ -1,0 +1,45 @@
+{
+  "frozen_checkpoint": "research/state-holdouts-78.txt",
+  "frozen_checkpoint_index": 70,
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "generated_data_sha256": "60d0873c8710825c68dbfa75e0f3a9fbcad595c074a507b24a7150ba191248cf",
+  "metadata_revision": 1,
+  "microtraces_file": "research/burn43-s071-far-microtraces.json",
+  "microtraces_sha256": "2eefdae4985c181edeb9de47192e65107bdf0b50802b890ed5a9d34e5d2bc542",
+  "prior_remaining_file": "research/burn43-s071-far-prior-remaining.txt",
+  "prior_remaining_sha256": "a1c8eee7e8611762691169da73af0a3ed43d1a59ee25bc1376c131ef734f02f4",
+  "provenance": {
+    "native_profile": "RngsModSummary(2,1,4,8,2)",
+    "native_program_orientation": "canonical original, mirrored false",
+    "role": "Untrusted certificate provenance; all proof obligations are checked in Coq.",
+    "upstream_commit": "7157fe57a9c39edb3dcecc28036f09c3405a683a",
+    "upstream_repository": "https://github.com/nickdrozd/busy-beaver-stuff"
+  },
+  "rows": [
+    {
+      "code": 2480798428,
+      "machine": "1LB2RA3LA2RB_0RB3LB0LA1RA"
+    }
+  ],
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn43-s071-far/ActualClosed.v": "1028ebcb4af9f7816c8f17f7735bd7dbc6bf87f8bc63e75c9921e87f7d69e3e4",
+    "proof-sources/burn43-s071-far/ActualNoSpinout.v": "e159afe32cbc0598072f7f44366d3cb3e27f5c776fc3afcb8ecbbc6ac77ba47e",
+    "proof-sources/burn43-s071-far/BlockMicro.v": "21bfc3a00c008daf6f7c40bb8fc03a6ca7997e26fb15b995be7e510d3ffa741d",
+    "proof-sources/burn43-s071-far/CheckActual.v": "09592d414919ff4fe98d1e1cd9c7c88fda2b82196ba311d4a4b55c9370596002",
+    "proof-sources/burn43-s071-far/Checker.v": "c85942a86009ec6d54774efac7a9e66351e383625b68217f73c6765bdf9702a6",
+    "proof-sources/burn43-s071-far/CheckerSound.v": "8859a143cd24be5c371b54b63d2a98a9ad74e2f8e0823d25aa1d875707d4198a",
+    "proof-sources/burn43-s071-far/DataSchema.v": "88712c0784fa3212f4ddd237762793f16608e937fafd9133d660ca346ba742ff",
+    "proof-sources/burn43-s071-far/FARForward.v": "2ea264e0ed42c6d6aa0e07332f60ff8b9ed7186ea19d610d10687f2d22511680",
+    "proof-sources/burn43-s071-far/LocalTable.v": "23e64881b15f68248c1d52ef85caad7dbb6083841e4f758e61aec9545996ac69",
+    "proof-sources/burn43-s071-far/MacroBridge.v": "e8b025cda131e289f3a1fc698c5057643841e647408adc7ea9a2403baf82f3d3",
+    "proof-sources/burn43-s071-far/NoSpinout.v": "49198c03fcb93fd726d408f52637b2a0e09f639ff4115beff08fb284c86f3314",
+    "proof-sources/burn43-s071-far/Programs.v": "98c651f31f7aa5e93f11eff3511302ce5f2e503f959a4a84b313873a7a83473f",
+    "proof-sources/burn43-s071-far/Progress.v": "36866944f7f22007878c177bd27acaf511dd92e38008329aa96e6ed225bf6480",
+    "proof-sources/burn43-s071-far/SafeCover.v": "9154e8526d9cfb1112fb5ba856850848dd808726bad52ce0576b1922edd6b02a",
+    "proof-sources/burn43-s071-far/Sparse.v": "cae78174010cb2a04b133e3c8b9e41abbdf867486513139cec8560c5313f2c39",
+    "proof-sources/burn43-s071-far/ZeroBridge.v": "86306b15e0b7e2bf23933b0761ffe7727c31994280ec50e32a2ec1ca63d4a56f"
+  },
+  "witness_file": "research/burn43-s071-far-witness.json",
+  "witness_sha256": "4d46c690dc0278af170837f5648bc141752f675ef5450c36d8f1bf20160f9259"
+}

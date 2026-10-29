@@ -1,0 +1,26 @@
+{
+  "anchor": 4096,
+  "bound": 4096,
+  "machine": "1LB2RB3RB2RA_3RB3LA0LB1LB",
+  "probe_sha256": "d3d1bfaa017b9a640f3b4780a8b9bacb221bc6372eaae6736815b72090cf23bf",
+  "results": [
+    {
+      "change": "history_only",
+      "fuel": 16384,
+      "history": 4,
+      "native_seconds": 0.060615,
+      "status": "candidate"
+    },
+    {
+      "change": "fuel_only",
+      "fuel": 32768,
+      "history": 3,
+      "native_seconds": 2.48024,
+      "status": "rejected"
+    }
+  ],
+  "rounds": 32,
+  "scope": "Untrusted one-family parameter controls; no additional proof or ledger claim.",
+  "timeout_per_row": 3,
+  "width": 4
+}

@@ -1,0 +1,17 @@
+{
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "metadata_revision": 1,
+  "rows": [
+    {
+      "code": 3201318625,
+      "machine": "1LB0LB2RA2LA_2RB2RA3LB1RB"
+    }
+  ],
+  "selection_report": "research/burn20-unary-counter-native.json",
+  "selection_sha256": "a7b51c48f8d390ab17cfb52516c917edb376ad12e9ff08d31bbd4701474f3c37",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn20-unary-counter/Regression.v": "d340554b46e678971d967600b77d2c4ab6040b3461a892ba557df40191ed08fa",
+    "proof-sources/burn20-unary-counter/UnaryCounter.v": "b1c67f1e730f194a6a0ee3a053edffd5c924c6d1c4052339cb7e92776e1dc834"
+  }
+}

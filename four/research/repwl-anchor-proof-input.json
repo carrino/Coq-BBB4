@@ -1,0 +1,42 @@
+{
+  "columns": [
+    "machine",
+    "mode",
+    "bound",
+    "size",
+    "anchor",
+    "fuel",
+    "extra",
+    "history"
+  ],
+  "excluded_ledgers_sha256": {},
+  "rows": [
+    [
+      "1LB1LB0RB1RA_3RA2LB3LB1RB",
+      "rw",
+      4096,
+      3,
+      1024,
+      5120,
+      2,
+      0
+    ]
+  ],
+  "search_sources": [
+    {
+      "candidate_rows": 1,
+      "candidate_tsv_sha256": "d0115f1a28c3a06d43814ceab8145d27dcf69dd2c698d93b1fe811c0305ade41",
+      "report": "four/research/repwl-anchor-pilot64.json",
+      "report_sha256": "aa8c91a8931a9e31a87df22d12976aa820558cd73f43197926b811a1ac8e98b0"
+    }
+  ],
+  "selected_rows": 1,
+  "selection": "The sole new anchor-pilot candidate, using its fastest observed successful stage (anchor1024). Ordinary uncut checker replay is required.",
+  "selection_evidence": {
+    "cohort": "four/research/repwl-threshold3-cohort.json",
+    "cohort_sha256": "c1c189a38c6be48052316ea870cdc2624aec081938c87bd442edc80f540a9a26",
+    "cpu_seconds": 0.602602,
+    "log_sha256": "9f66751876021536629e7f788d477442abf6693eeeb37df5e4528eb26e79098a",
+    "stage": 5
+  }
+}

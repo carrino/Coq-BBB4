@@ -1,0 +1,29 @@
+{
+  "status": "Complete untrusted CPU-bounded search",
+  "input_rows": 1024,
+  "candidate_rows": 53,
+  "not_accepted_rows": 971,
+  "prefix_rows_reused": 0,
+  "this_run_statuses": {
+    "undecided": 849,
+    "cpu_budget": 122,
+    "irules": 53
+  },
+  "this_run_wall_seconds": 349.3813513779969,
+  "parameters": {
+    "input_sha256": "c8c88816992b34b5b3111c8cde96312b37a79ba13daf9822d4f18961fc0021d6",
+    "binary_sha256": "524f318096eec7d3529c460644dd49e36452f60f94bac21166c3f30a093be25a",
+    "cpu_seconds": 0.25,
+    "steps": 16384,
+    "tape_cells": 65536,
+    "source_sha256": "25aadbe1403d476d72d2a399d788a1d582a1c887d8a851ed13992290fab4c622",
+    "prefix_search_sha256": null
+  },
+  "search_csv_sha256": "63b5efd4d935174f83785c33f823a0024ecd649d90fcd0ef00d2ea442f7b90d4",
+  "timing_tsv_sha256": "fcd8addf783825d88451795f2a2f4c81e20dd11dc49da14c1f51535437c21ea2",
+  "candidate_sha256": "9e1ea4d887f90140d9f7e61aef7503f13c6cdb710b1d6fde3a2007c19b795832",
+  "not_accepted_sha256": "d99f5242afd25f4050e4eb51cbcd266fbbb17e9faa18005e29f51d77e7635d54",
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "proof_accounting": "Every candidate still requires extracted replay and a separately audited Coq bundle."
+}

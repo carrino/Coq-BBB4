@@ -1,0 +1,21 @@
+{
+  "format": "BBB24 weighted capacity followup certificates v1",
+  "status": "Untrusted witnesses; separate Coq replay and census membership required.",
+  "source": {
+    "diagnostic": "One case in a64-row later-boot sample of the complete weighted/RW candidate complement.",
+    "input_sha256": "f1319e3039ea904d0c183fb26830dd9525dc982d20b97bdd2b042e337d246717",
+    "search_report_sha256": "9dca75d5a8ebba7f35c09c3906ca1cf76d5813705a4e52010c6f4d3913ada589"
+  },
+  "rows": 1,
+  "kinds": {
+    "weighted": 1
+  },
+  "bundles": [
+    {
+      "path": "research/weighted-capacity-followup-certificates.json",
+      "rows": 1,
+      "bytes": 1229,
+      "sha256": "02f3800b61c27b2e5f89abbcd6a880614f5606be1a0652f6319f2ebbd2ea555d"
+    }
+  ]
+}

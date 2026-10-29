@@ -1,0 +1,20 @@
+{
+  "baseline_state_families": 667,
+  "entry_proved": 121,
+  "machines": [
+    "1LB1LA2RA3RB_2RB3RA0LB0LA"
+  ],
+  "overlap_entry": 0,
+  "overlap_refinement": 0,
+  "refinement_proved": 1,
+  "residual_state_families": 545,
+  "scope": "Exact next-wave candidate selection; proof credit requires separate kernel audit.",
+  "source_sha256": {
+    "research/burn4-entry-marker-checked.json": "f69dde15a0a37b32646fc9bb5d550ba62a4f1176df97ee7dfb216ea6a46768aa",
+    "research/burn4-entry-marker-machines.json": "32e52a5aae9a7c3835a560e58cd1a3daef53ed6dd4454a91cbc16d319839d6be",
+    "research/burn4-history-input-manifest.json": "35d20e97593cebfd8002a4b59007a967d55b22186d162552b18fb60b6204470b",
+    "research/burn4-history-input.txt": "68cb79c438fe81efecb8823338dc06d6dd106b3da3beed5432e9b243e2971de8",
+    "research/burn4-history-refinement-pilot-checked.json": "ebeef28e7379f96578b0c389ed9aaf919374179b52c28a1bbb743c11cf12a265",
+    "research/burn4-history-refinement-pilot-machines.json": "dced6456a48653e03b868b3a10ac75db5dee05fbe06153cde283961d719a0c24"
+  }
+}

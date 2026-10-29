@@ -1,0 +1,319 @@
+{
+  "machine": "1LB2RA1LA1LA_1RB1RA3LB---",
+  "anchor": 3932963,
+  "undefined_cell": 7,
+  "state_bound": 3932964,
+  "children": [
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        0
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        1
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        2,
+        1
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        2
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        3
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        4
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        5
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        2,
+        1
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        6
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        7
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        8
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        9
+      ],
+      "marker_mask": 2,
+      "kind": "trail",
+      "weights": null
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        10
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        11
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        12
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        13
+      ],
+      "marker_mask": 2,
+      "kind": "trail",
+      "weights": null
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        14
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "codes": [
+        5,
+        10,
+        4,
+        4,
+        7,
+        6,
+        13,
+        15
+      ],
+      "marker_mask": 2,
+      "kind": "potential",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "accounting": "One original partial family, sixteen defined children, one separate halting choice; state only."
+}

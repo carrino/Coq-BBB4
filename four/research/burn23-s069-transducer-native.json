@@ -1,0 +1,33 @@
+{
+  "B_nonzero_return_controls": 46101,
+  "B_zero_nonblank_right_return_controls": 10160,
+  "actual_blank_steps": 4096,
+  "actual_state_visits": [
+    3747,
+    349
+  ],
+  "admitted_one_step_controls": 81915,
+  "all_one_step_controls": 122936,
+  "checked_instruction_families": 0,
+  "checked_state_families": 0,
+  "inputs_sha256": {
+    "research/burn23-s069-transducer-frontier-source.txt": "74cc8658ff767fb152f36ae9f885dfdff9f393e45cb9f74c199ba56464dfe050",
+    "research/burn23-s069-transducer-native-input.json": "bd71628158bef24dbcc78d48cc4f30f5a42e66cf21c1c4d64d0080cd71d0a6ae"
+  },
+  "invariant": "Left word is over {1,2}, right word has no zero, and the four-state crossing fold over head::right exits A.",
+  "left_algebra_cases": 20,
+  "maximum_observed_control_return": 14,
+  "negative_boundary_controls": 12,
+  "right_algebra_cases": 8,
+  "rows": [
+    {
+      "code": 2789553601,
+      "machine": "1LB2RA1LA1RB_2RB2LB3LB1RA"
+    }
+  ],
+  "scope": "Finite algebra and native controls only; zero proof credit.",
+  "source_sha256": {
+    "tools/check_burn23_s069_transducer_native.py": "d6440cec5f41ec43e5688c58f5dbc199007832557e3ff2d4f3f8b636cdf010e0",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

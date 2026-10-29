@@ -1,0 +1,218 @@
+{
+  "input_file": "build/advanced/full/not-accepted.txt",
+  "input_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+  "method": "Each stage independently checks all512 rows. New-to-prior counts follow listed order; timings on prior survivors are computed from the same per-row logs.",
+  "reproduction": {
+    "finite_hist_rw": "four/build/advanced/probe MODE 4096 SIZE ANCHOR FUEL EXTRA HISTORY 0.1 INPUT",
+    "ng": "four/build/pipeline/probe ng 4096 SIZE ANCHOR FUEL EXTRA 0.1 INPUT"
+  },
+  "selected_rows": 512,
+  "selected_sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649",
+  "selection": "512 lowest SHA256(machine UTF-8) values from the frozen133185-survivor inventory",
+  "source_manifests": {
+    "advanced_report_sha256": "0837baeb0d0906029fdba3fb0aea1084c015b82ed12b71e68d379bc5e0627101",
+    "pipeline_report_sha256": "c1e2cc512761c5d77c4d1cedb8e665b3f8e8ae9d41e13f986268e4ff1aba1669"
+  },
+  "stages": [
+    {
+      "anchor": 256,
+      "extra": 8,
+      "fuel": 256,
+      "history": 0,
+      "input_sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649",
+      "mode": "finite",
+      "new_to_prior_stages": 21,
+      "probe_sha256": "1b9026450734d034a5026d407cff121fba7cb49179761c739754f73af6ea1079",
+      "results_sha256": "974d863bf715a1802bdedda6a6695404bb28a3940baa18085f4c91f7666ef7f9",
+      "rows": 512,
+      "seconds_on_prior_survivors": 1.6324400000000001,
+      "size": 3,
+      "statuses": {
+        "candidate": 21,
+        "rejected": 490,
+        "timeout": 1
+      },
+      "sum_row_seconds": 1.6324400000000001,
+      "tag": "fn3-256-256-r8",
+      "timeout": 0.1
+    },
+    {
+      "anchor": 128,
+      "extra": 8,
+      "fuel": 256,
+      "history": 1,
+      "input_sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649",
+      "mode": "hist",
+      "new_to_prior_stages": 25,
+      "probe_sha256": "1b9026450734d034a5026d407cff121fba7cb49179761c739754f73af6ea1079",
+      "results_sha256": "2f28fc24d196d77520ba6556bb6e3924b10f215cefd812bad560820d45d81752",
+      "rows": 512,
+      "seconds_on_prior_survivors": 4.652897,
+      "size": 2,
+      "statuses": {
+        "candidate": 31,
+        "rejected": 473,
+        "timeout": 8
+      },
+      "sum_row_seconds": 4.924991,
+      "tag": "hn2-128-256-r8",
+      "timeout": 0.1
+    },
+    {
+      "anchor": 256,
+      "extra": 8,
+      "fuel": 256,
+      "history": 1,
+      "input_sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649",
+      "mode": "hist",
+      "new_to_prior_stages": 23,
+      "probe_sha256": "1b9026450734d034a5026d407cff121fba7cb49179761c739754f73af6ea1079",
+      "results_sha256": "890582bb0b0ce96141e81fa787196bdeed9bb7231fffe8811a4bc3b6680b1ca4",
+      "rows": 512,
+      "seconds_on_prior_survivors": 3.798868,
+      "size": 3,
+      "statuses": {
+        "candidate": 43,
+        "rejected": 460,
+        "timeout": 9
+      },
+      "sum_row_seconds": 4.557759,
+      "tag": "hn3-256-256-r8",
+      "timeout": 0.1
+    },
+    {
+      "anchor": 128,
+      "extra": 2,
+      "fuel": 512,
+      "history": 0,
+      "input_sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649",
+      "mode": "rw",
+      "new_to_prior_stages": 96,
+      "probe_sha256": "1b9026450734d034a5026d407cff121fba7cb49179761c739754f73af6ea1079",
+      "results_sha256": "be4c4934b86746c4737f8a99b14abce3847bab921a8fd93cbe0102849eb8d7b8",
+      "rows": 512,
+      "seconds_on_prior_survivors": 9.640286,
+      "size": 2,
+      "statuses": {
+        "candidate": 111,
+        "rejected": 371,
+        "timeout": 30
+      },
+      "sum_row_seconds": 11.336107,
+      "tag": "rw2-128-512-t2",
+      "timeout": 0.1
+    },
+    {
+      "anchor": 512,
+      "extra": 8,
+      "fuel": 512,
+      "history": 0,
+      "input_sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649",
+      "mode": "finite",
+      "new_to_prior_stages": 8,
+      "probe_sha256": "1b9026450734d034a5026d407cff121fba7cb49179761c739754f73af6ea1079",
+      "results_sha256": "11dd920336f189b0016d1c9b72344f2834a6aee6ef6cc44a89331107ba133df8",
+      "rows": 512,
+      "seconds_on_prior_survivors": 1.664958,
+      "size": 3,
+      "statuses": {
+        "candidate": 29,
+        "rejected": 478,
+        "timeout": 5
+      },
+      "sum_row_seconds": 2.51229,
+      "tag": "fn3-512-512-r8",
+      "timeout": 0.1
+    },
+    {
+      "anchor": 256,
+      "extra": 8,
+      "fuel": 512,
+      "history": 1,
+      "input_sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649",
+      "mode": "hist",
+      "new_to_prior_stages": 4,
+      "probe_sha256": "1b9026450734d034a5026d407cff121fba7cb49179761c739754f73af6ea1079",
+      "results_sha256": "2b8241c5f32dac40e49ddc811b647e7c1c732d88c0c6a4a5627b302adbd84589",
+      "rows": 512,
+      "seconds_on_prior_survivors": 6.283064,
+      "size": 2,
+      "statuses": {
+        "candidate": 39,
+        "rejected": 433,
+        "timeout": 40
+      },
+      "sum_row_seconds": 10.747713000000001,
+      "tag": "hn2-256-512-r8",
+      "timeout": 0.1
+    },
+    {
+      "anchor": 256,
+      "extra": 8,
+      "fuel": 512,
+      "history": 0,
+      "input_sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649",
+      "mode": "ng",
+      "new_to_prior_stages": 8,
+      "probe_sha256": "bce6119cc698a55c66d82ab309145a03e5bd686c98dc9f85dfb36d85491a636f",
+      "results_sha256": "48c287b0a6a5585e49e863e57048506613282f0196f95c81a24615ce2f04f204",
+      "rows": 512,
+      "seconds_on_prior_survivors": 2.522721,
+      "size": 4,
+      "statuses": {
+        "candidate": 55,
+        "rejected": 444,
+        "timeout": 13
+      },
+      "sum_row_seconds": 3.594903,
+      "tag": "ng4-256-512-r8",
+      "timeout": 0.1
+    },
+    {
+      "anchor": 128,
+      "extra": 2,
+      "fuel": 512,
+      "history": 0,
+      "input_sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649",
+      "mode": "rw",
+      "new_to_prior_stages": 4,
+      "probe_sha256": "1b9026450734d034a5026d407cff121fba7cb49179761c739754f73af6ea1079",
+      "results_sha256": "87617e478fe702d1762a2368d2a76538f8543043e0a67ac14f228892c11b59fc",
+      "rows": 512,
+      "seconds_on_prior_survivors": 1.42201,
+      "size": 3,
+      "statuses": {
+        "candidate": 19,
+        "rejected": 482,
+        "timeout": 11
+      },
+      "sum_row_seconds": 3.168043,
+      "tag": "rw3-128-512-t2",
+      "timeout": 0.1
+    },
+    {
+      "anchor": 256,
+      "extra": 3,
+      "fuel": 512,
+      "history": 0,
+      "input_sha256": "ebda31a676b67ace28d3cdfe2eb39fdaed670cbf3b0e45fb12e39fbd51d06649",
+      "mode": "rw",
+      "new_to_prior_stages": 9,
+      "probe_sha256": "1b9026450734d034a5026d407cff121fba7cb49179761c739754f73af6ea1079",
+      "results_sha256": "ac21a8ad5a154300f3bb3305ed1f92e6c3730f184d4ba9fb888c8c44d64db3de",
+      "rows": 512,
+      "seconds_on_prior_survivors": 1.640191,
+      "size": 2,
+      "statuses": {
+        "candidate": 40,
+        "rejected": 400,
+        "timeout": 72
+      },
+      "sum_row_seconds": 10.699581,
+      "tag": "rw2-256-512-t3",
+      "timeout": 0.1
+    }
+  ],
+  "status": "Untrusted exploratory checker comparison; no kernel proof or census discharge claims.",
+  "timeout_seconds_per_stage_row": 0.1
+}

@@ -1,0 +1,1378 @@
+{
+  "candidate_rows": 121,
+  "control_rows": 12,
+  "input_rows": 667,
+  "parameters": {
+    "nonblank_marker_masks": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14
+    ],
+    "other_weights": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "state_bound": 0,
+    "weight0": 0,
+    "workers": 1
+  },
+  "rejection_counts": {
+    "capacity_inequalities": 8,
+    "entry_or_B_marker_preservation": 474,
+    "other_state_uniform_reachability": 1,
+    "partial_table": 63
+  },
+  "rows": [
+    {
+      "code": 44966807,
+      "machine": "1LB2LA2RA1RA_2RB3RA0LB0LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2504169858,
+      "machine": "1LB2RA3LB2LA_2RB3LA0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 766255336,
+      "machine": "1LB2LB3RA1RA_2RB3LA3RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 2505587335,
+      "machine": "1LB1RA1LB2LA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2505586400,
+      "machine": "1LB0RA0RA2LA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2505585890,
+      "machine": "1LB1RA0LA2LA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 546491338,
+      "machine": "1LB2LA3LA0RA_3RB2RA1LB0LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 423022174,
+      "machine": "1LB2LB2RA3RA_3RB2LA0LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 2096641098,
+      "machine": "1LB2LA3LA0RA_2RB3RA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 4967619730,
+      "machine": "1LB2RA1RA2LA_2RB3LB0LB3LA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2096700343,
+      "machine": "1LB2LA3LB3RA_2RB3RA0LB1LB",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 2096694563,
+      "machine": "1LB2LA2RA3LB_2RB3RA0LB1LB",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 3325919972,
+      "machine": "1LB2RA0RA1RA_1RB3LB0LB2LA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 4556183724,
+      "machine": "1LB2RA0LA1RA_3RB3LA0LB2RB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 670050262,
+      "machine": "1LB0LA0RA2LB_3RB3LA2RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 4145868137,
+      "machine": "1LB2LA3LA2RA_3RB3LA0LB2RA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2093859762,
+      "machine": "1LB2LA2RA3RA_2RB3LA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 2505558180,
+      "machine": "1LB2LA1RA0RA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 3735213332,
+      "machine": "1LB2RA1RA3RA_2RB3LA0LB2LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "code": 5788282303,
+      "machine": "1LB2LA1RA1LB_2RB3LB0LB3RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 5789678751,
+      "machine": "1LB2LA2RA0LA_2RB3RA0LB3RA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2505587556,
+      "machine": "1LB0RA1RA2LA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 42166397,
+      "machine": "1LB2LA2RA3RA_2RB3LA0LB0LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 420124082,
+      "machine": "1LB2LB3LA0RA_3RB1RA0LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 4969023658,
+      "machine": "1LB2LA0RA1LB_2RB3RA0LB3LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2096697164,
+      "machine": "1LB2LA0RA3RA_2RB3RA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 44937329,
+      "machine": "1LB2LA2RA0LA_2RB3RA0LB0LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 766589420,
+      "machine": "1LB2LB3RA1RA_3RB3LA3RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 5789701004,
+      "machine": "1LB2LA0RA1LB_2RB3RA0LB3RA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 779053548,
+      "machine": "1LB0LA3RA2RA_2RB1LA3RB0LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 779072044,
+      "machine": "1LB0LA2RA3RA_2RB1LA3RB0LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 714472316,
+      "machine": "1LB2LB3RA1RA_0RB2RA3LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 2505568006,
+      "machine": "1LB2LA1RA1LA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 428683106,
+      "machine": "1LB2LB3RA2RA_3RB3LA0LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 540851231,
+      "machine": "1LB2LB3LA2RA_3RB1RA1LB0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 42166295,
+      "machine": "1LB0RA2RA3RA_2RB3LA0LB0LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2096630694,
+      "machine": "1LB2LA2RA0LA_2RB3RA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 857479903,
+      "machine": "1LB2LA3RA2RA_3RB2LA0LB0RA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 1267150442,
+      "machine": "1LB2RA3RA2RA_1RB2LA0LB0RB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 865636928,
+      "machine": "1LB2LA0RA1LB_2RB3RA0LB0RA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 5788288372,
+      "machine": "1LB2LA2RA1RA_2RB3LB0LB3RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 36468371,
+      "machine": "1LB0RA3RA2RA_2RB2LA0LB0LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 452796994,
+      "machine": "1LB2RA0LA1RA_3RB3LA0LB0LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 4550525597,
+      "machine": "1LB1LB1RA2RA_3RB2LA0LB2RB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 4552699506,
+      "machine": "1LB2LA3RA2RA_1RB2RA0LB2RB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 4547685645,
+      "machine": "1LB2LA1LB2RA_3RB1RA0LB2RB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 546511007,
+      "machine": "1LB2LB3LA1RA_3RB2RA1LB0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 573488868,
+      "machine": "1LB2LB3RA1RA_3RB3LA1RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 4969001405,
+      "machine": "1LB2LA2RA0LA_2RB3RA0LB3LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2096628382,
+      "machine": "1LB2LA0RA0LA_2RB3RA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 766607916,
+      "machine": "1LB2LB2RA2RA_3RB3LA3RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 715140484,
+      "machine": "1LB2LB3RA1RA_2RB2RA3LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 5788258894,
+      "machine": "1LB2LA2RA0LA_2RB3LB0LB3RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 5788283459,
+      "machine": "1LB2LA2RA1LB_2RB3LB0LB3RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2505597484,
+      "machine": "1LB2LA1RA2RA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 5786902906,
+      "machine": "1LB2LA2RA3LB_2RB3LA0LB3RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 781911758,
+      "machine": "1LB0LA2RA3RA_2RB1RA3RB0LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 2096660172,
+      "machine": "1LB2LA2RA1RA_2RB3RA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 766605604,
+      "machine": "1LB2LB0RA2RA_3RB3LA3RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 665759326,
+      "machine": "1LB2LA3LA0RA_3RB2LB2RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 569209067,
+      "machine": "1LB2LB3LA0RA_3RB2LB1RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 569228719,
+      "machine": "1LB2LB3LA1RA_3RB2LB1RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 562109782,
+      "machine": "1LB2LB3LA0RA_3RB1LA1RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 4967608714,
+      "machine": "1LB2LA0RA1RA_2RB3LB0LB3LA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 425861888,
+      "machine": "1LB2LB2RA3RA_3RB2RA0LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 1684911434,
+      "machine": "1LB1RA2RA2LA_2RB3LB0LB1LA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 520989366,
+      "machine": "1LB1RA0LA3RA_3RB2LB1LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 3324873503,
+      "machine": "1LB2RA0RA3RA_2RB3LA0LB2LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 709441387,
+      "machine": "1LB2LA3RA0RA_2RB1RA3LA0LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 2505588712,
+      "machine": "1LB0RA2RA2LA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 420182460,
+      "machine": "1LB2LB2RA3RA_3RB1RA0LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 613224634,
+      "machine": "1LB2LB3LA0RA_3RB1RA2LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 2088494664,
+      "machine": "1LB0RA2RA2RA_3RB2LA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 564949496,
+      "machine": "1LB2LB3LA0RA_3RB1RA1RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 420123504,
+      "machine": "1LB2LB2RA0RA_3RB1RA0LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 44961894,
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB0LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 3326277040,
+      "machine": "1LB0RA3RA2RA_2RB3LB0LB2LA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2505586978,
+      "machine": "1LB0RA1LA2LA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2096692251,
+      "machine": "1LB2LA0RA3LB_2RB3RA0LB1LB",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 5789689155,
+      "machine": "1LB2LA3LA0RA_2RB3RA0LB3RA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 4550504296,
+      "machine": "1LB2RA0LA1RA_3RB2LA0LB2RB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2096657860,
+      "machine": "1LB2LA0RA1RA_2RB3RA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 665755824,
+      "machine": "1LB1RA0LA0RA_3RB2LB2RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 2096699476,
+      "machine": "1LB2LA2RA3RA_2RB3RA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 5789742620,
+      "machine": "1LB2LA2RA3LB_2RB3RA0LB3RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 569268023,
+      "machine": "1LB2LB3LA3RA_3RB2LB1RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 520933946,
+      "machine": "1LB2RA3LA0RA_3RB2LB1LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 540811927,
+      "machine": "1LB2LB3LA0RA_3RB1RA1LB0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 425863044,
+      "machine": "1LB2LB3RA3RA_3RB2RA0LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 4969025970,
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB3LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 42166431,
+      "machine": "1LB2RA2RA3RA_2RB3LA0LB0LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 715474568,
+      "machine": "1LB2LB3RA1RA_3RB2RA3LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 5788269298,
+      "machine": "1LB2LA3LA0RA_2RB3LB0LB3RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2498515284,
+      "machine": "1LB2RA3RA3LB_2RB2LA0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 5788298096,
+      "machine": "1LB0RA2RA2LA_2RB3LB0LB3RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 565008452,
+      "machine": "1LB2LB3LA3RA_3RB1RA1RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 766585952,
+      "machine": "1LB2LB0RA1RA_3RB3LA3RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 540870883,
+      "machine": "1LB2LB3LA3RA_3RB1RA1LB0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 5789703316,
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB3RA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 670039144,
+      "machine": "1LB2LB3RA1RA_3RB3LA2RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 44959582,
+      "machine": "1LB2LA0RA1LB_2RB3RA0LB0LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 5788322763,
+      "machine": "1LB2LA2RA3LB_2RB3LB0LB3RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 45001198,
+      "machine": "1LB2LA2RA3LB_2RB3RA0LB0LA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 2096652947,
+      "machine": "1LB2LA0RA1LB_2RB3RA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 45006111,
+      "machine": "1LB2LA2RA3RA_2RB3RA0LB0LA",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 4544847240,
+      "machine": "1LB0LA2RA2RA_3RB1LA0LB2RB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 562168738,
+      "machine": "1LB2LB3LA3RA_3RB1LA1RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 2505586468,
+      "machine": "1LB1RA0RA2LA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 4147287994,
+      "machine": "1LB2LA3LA2RA_3RB3LB0LB2RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "code": 425830098,
+      "machine": "1LB2LB0RA2LA_3RB2RA0LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 766609072,
+      "machine": "1LB2LB3RA2RA_3RB3LA3RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 476308572,
+      "machine": "1LB2LB2RA3RA_1RB3LA0RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 763729459,
+      "machine": "1LB2LA3LA0RA_3RB2RA3RA0LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 520989434,
+      "machine": "1LB2RA0LA3RA_3RB2LB1LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 573154784,
+      "machine": "1LB2LB3RA1RA_2RB3LA1RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 2096655259,
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB1LB",
+      "marker_mask": 2,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "code": 420183038,
+      "machine": "1LB2LB3LA3RA_3RB1RA0LA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 766588264,
+      "machine": "1LB2LB2RA1RA_3RB3LA3RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 665814780,
+      "machine": "1LB1RA0LA3RA_3RB2LB2RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 573485400,
+      "machine": "1LB2LB0RA1RA_3RB3LA1RA0LB",
+      "marker_mask": 6,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "code": 2505588780,
+      "machine": "1LB1RA2RA2LA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ]
+    }
+  ],
+  "scope": "Untrusted finite predicate search; candidates are not kernel discharges.",
+  "source_sha256": {
+    "proof-sources/burn4-entry-marker/EntryMarker.v": "6b819687ec14be712026f99e9a95c1f85a3ca848516c25cb40642267880a5bd2",
+    "proof-sources/burn4-entry-marker/EntryRegression.v": "2adcc6519f969b421f07cb24948de07355be53de37b29064c089236af7eb9de2",
+    "research/burn4-history-input-manifest.json": "35d20e97593cebfd8002a4b59007a967d55b22186d162552b18fb60b6204470b",
+    "research/burn4-history-input.txt": "68cb79c438fe81efecb8823338dc06d6dd106b3da3beed5432e9b243e2971de8",
+    "theories/MarkerPotential.v": "c4a00d9e14c9d50556cfc55a718636b02d6b23dab91cf5f72de882ba121ae6a5",
+    "theories/MarkerState.v": "4d17bbc6793f5e1a175781104627cd58f42cef72f7526350367c4769f42e02f9",
+    "theories/OneStateReach.v": "412e37f661f7583e2685b910d077c2c1eb734840e2264db10f1700616f5d037b",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "tools/marker_state_profile_v2.py": "998103d4757e54fd719d6d5bc2a303b27ea3eff36df12eb8e910e3e89185d005",
+    "tools/search_burn4_entry_marker.py": "e17ecea3520fb369f517c65c3a64e1c5b7a581042dcbd4aebfd04a5208612985"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "format": "BBB24 weighted capacity followup certificates v1",
+  "status": "Untrusted witnesses; separate Coq replay and census membership required.",
+  "source": {
+    "diagnostic": "Selected from512 disjoint post-weighted/RW misses; existing audited affine IDs omitted.",
+    "input_sha256": "6cef12e6159fe44422a28ed3c89dc75ed0859c01f9dd057ed463af3b502e6652",
+    "search_report_sha256": "5c745668ec398c10c9200d6134b1758e31f1ba2c879cc87b2393bd550c5b6abd",
+    "affine_inventory_sha256": "8bb02a403f377f76e4a305ff0906d5a639659d7211d27113e9b5b28618886048",
+    "affine_overlap_omitted": [
+      "1LB2LA1RA0LB_2RA3LB3RB1LB",
+      "1LB2RB0RA0LB_2RA3RB1LB1LA",
+      "1LB2LA1RA1RA_3RA3RB1LB2LB",
+      "1LB2RA3RB1LA_2RA3RB3LA0LA"
+    ]
+  },
+  "rows": 12,
+  "kinds": {
+    "weighted": 12
+  },
+  "bundles": [
+    {
+      "path": "research/weighted-capacity-followup512-certificates.json",
+      "rows": 12,
+      "bytes": 8795,
+      "sha256": "9d3ece605daab97ca155292bbafe5f9e20f67a71f9dba529ce15e8c4b50e541e"
+    }
+  ]
+}

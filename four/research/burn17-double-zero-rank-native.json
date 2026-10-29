@@ -1,0 +1,29 @@
+{
+  "boundary": "B scans the nearest of two zero cells; terminal1 on the right",
+  "context_max_length": 2,
+  "decrement": "0^k2 -> 2^k0, binary value decreases by exactly1",
+  "decrement_cost": "4*k+8",
+  "drains": 255,
+  "finish_cost": "3*length+7",
+  "includes_empty_bits": true,
+  "local_macros": 7056,
+  "max_bits": 7,
+  "negative_controls": [
+    "changed outer zero",
+    "absent terminal1"
+  ],
+  "rows": [
+    {
+      "code": 1877685059,
+      "machine": "1LB0RA0LB2RA_1RB3LB2LB1LA"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "seconds": 0.089495,
+  "simulated_macro_steps": 272219,
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn17_double_zero_rank_native.py": "0fcab0cecba71c2cd10e3fed4d10694ed7e522a03c334ffba23b3654aac131d1",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

@@ -1,0 +1,704 @@
+{
+  "rows": [
+    {
+      "coalesced": true,
+      "destination_boot": 82,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA0LB3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 12,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        3,
+        [
+          1
+        ]
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 16,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA0RA3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 16,
+      "source_configuration": [
+        0,
+        [
+          3
+        ],
+        1,
+        [
+          2,
+          2,
+          2
+        ]
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 28,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA1LB3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 12,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        3,
+        [
+          1
+        ]
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 16,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA1RA3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 20,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA2LA3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 61,
+      "dormant_left_suffix": [
+        1,
+        1,
+        1,
+        3
+      ],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA2LB3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 28,
+      "dormant_left_suffix": [
+        1,
+        3
+      ],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA2RA3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 28,
+      "dormant_left_suffix": [
+        1,
+        3
+      ],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA2RB3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 18,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA3LA3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 24,
+      "dormant_left_suffix": [
+        1,
+        1
+      ],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA3LB3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 20,
+      "dormant_left_suffix": [
+        3,
+        3
+      ],
+      "excluded_other_agent": false,
+      "machine": "1LB2LA1RB3RB_3RA3RB3LA1RA",
+      "mirror": false,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 37,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LB0LB1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 40,
+      "source_configuration": [
+        0,
+        [
+          3
+        ],
+        1,
+        [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 147,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LB0RA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 12,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        3,
+        [
+          1
+        ]
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 35,
+      "dormant_left_suffix": [
+        3,
+        1,
+        1,
+        3
+      ],
+      "excluded_other_agent": false,
+      "machine": "1LB2LB1LA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 43,
+      "dormant_left_suffix": [
+        1,
+        1,
+        3,
+        1
+      ],
+      "excluded_other_agent": false,
+      "machine": "1LB2LB1RA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 31,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LB1RB1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 12,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        3,
+        [
+          1
+        ]
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 25,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": true,
+      "machine": "1LB2LB2LA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 32,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 24,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LB2LB1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 13,
+      "source_configuration": [
+        0,
+        [
+          1,
+          1,
+          1,
+          3
+        ],
+        1,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 55,
+      "dormant_left_suffix": [
+        1,
+        1,
+        1,
+        3
+      ],
+      "excluded_other_agent": false,
+      "machine": "1LB2LB3LA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 55,
+      "dormant_left_suffix": [
+        1,
+        1,
+        1,
+        3
+      ],
+      "excluded_other_agent": false,
+      "machine": "1LB2LB3LB1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 59,
+      "dormant_left_suffix": [
+        1,
+        1,
+        1,
+        3
+      ],
+      "excluded_other_agent": false,
+      "machine": "1LB2LB3RA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": true,
+      "destination_boot": 39,
+      "dormant_left_suffix": [],
+      "excluded_other_agent": false,
+      "machine": "1LB2LB3RB1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "source_boot": 12,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        3,
+        [
+          1
+        ]
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "template": "paired_digit_tail"
+    },
+    {
+      "coalesced": false,
+      "excluded_other_agent": false,
+      "machine": "1LB2RB0RA3RB_1RA2LB3LB0LB",
+      "mirror": true,
+      "source": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "template": "pair_capacity"
+    }
+  ],
+  "scope": "Untrusted bounded selection; source-invariant transfer and concrete entries require Coq replay.",
+  "source_prefix_limit": 4096,
+  "sources_sha256": {
+    "research/burn5-handwritten-template-screen.json": "04d97f5591b5cf04bad820cda38c44dc1d453cb95c80d2d7244bc0d3160f282e",
+    "tools/prepare_burn5_tail_template.py": "3462554169343e0695a0d08c1aa7acc438332bdb0f235bc1a3e33b9ed9cdf71f",
+    "tools/screen_burn5_handwritten_templates.py": "a24ba80be43203db105501081e2d5c69b151766f3b316b2d9b42928d079cf8e8"
+  },
+  "target_prefix_limit": 4096
+}

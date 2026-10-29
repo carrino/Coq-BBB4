@@ -1,0 +1,39 @@
+{
+  "bundles": [
+    {
+      "bytes": 599298,
+      "path": "research/weighted-full-snapshots/batch024/certificates-0000.json",
+      "rows": 512,
+      "sha256": "669c55ef33f80b462c262225415868d72e03ce29cf383e1739b451473688cec5"
+    },
+    {
+      "bytes": 198281,
+      "path": "research/weighted-full-snapshots/batch024/certificates-0001.json",
+      "rows": 158,
+      "sha256": "417c9d8c354e329266b1f61f8edc326ac2585da1b0114b75e8ffc72c2dddc0c3"
+    }
+  ],
+  "format": "BBB24 compact weighted certificates v2",
+  "kinds": {
+    "ordinary": 180,
+    "weighted": 490
+  },
+  "rows": 670,
+  "source": {
+    "campaign_manifest_sha256": "daf0939c36a29229f9a754688a4a1af09e19e1480b57e4823642a949b8354bfe",
+    "input_range": [
+      49152,
+      51200
+    ],
+    "input_rows": 59627,
+    "input_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+    "ledger_prefix_rows": 51200,
+    "ledger_prefix_sha256": "004baed70f2ab3090fa535de328dbc0fce361a5b64bc2bc94382af8c3e2b46da",
+    "previous_registry": {
+      "path": "research/weighted-full-snapshots/batch023/registry.json",
+      "sha256": "4a229d3874fff68f0ed350a72af3c8cefaf69190e30c3224de49392845b30f2f"
+    },
+    "snapshot_tool_sha256": "192349de533373d31522aabd2951d464869c6329f893c21721a5b543f82de525"
+  },
+  "status": "Untrusted candidates; kernel replay and census discharge required."
+}

@@ -1,0 +1,469 @@
+{
+  "scope": "Exact state-only history suffix; supplied certificates still require kernel replay.",
+  "prefix_input": "research/state-history-prefix-input.json",
+  "prefix_input_sha256": "6c415bf5cb2636e21c9211f0c1081615d4733f75f8d3e36909c2d050b8c89d7d",
+  "assignment_input": "research/state-work-assignment.json",
+  "assignment_input_sha256": "9380973b8ce499c1729508a48aa775ad68242107e89304309d48c14b4a87b2d4",
+  "preserved_exported_chunks": 33,
+  "supplied_rows": 3525,
+  "deferred_checked_both": 63,
+  "deferred_queued_both": 425,
+  "full_input": "research/state-closure-history-input.json",
+  "full_input_sha256": "8a0fa9e1450c6b65a9722e480ff7792528eeb1c91922cb379f04e2020727aba3",
+  "full_candidate_rows": 5702,
+  "prefix_rows": 1689,
+  "tail_rows": 4013,
+  "state_bound": 4096,
+  "instruction_bound": null,
+  "bundle_rows": 64,
+  "bundles": [
+    {
+      "file": "research/state-history-tail/bundle000.json",
+      "sha256": "d172771d575db0409414c536469219e63b28e3778594f60ed3d980fa5416b622",
+      "original_chunk": 0,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle001.json",
+      "sha256": "27484bfb82d195a9b776d47bbc1274053abd25c9d008d540d1e36e51d085214b",
+      "original_chunk": 1,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle002.json",
+      "sha256": "743719bc2e908f9956cb8e11e040f5e43547f8e581e7844803def880d47b1eb5",
+      "original_chunk": 2,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle003.json",
+      "sha256": "5980faf6bfa573c0825321d7a5c83e2c6d6e398e4e59b2ac37878d691731f7f5",
+      "original_chunk": 3,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle004.json",
+      "sha256": "402b4113d82a3ed5a4fc258fc4f2a621ce595f9139873ec952fc9877f50d8eba",
+      "original_chunk": 4,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle005.json",
+      "sha256": "b76ed4bd1ceac9e3b8ad4a1d56b2ef5d14690839d1ccc550dc46a1329980acee",
+      "original_chunk": 5,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle006.json",
+      "sha256": "b4b1aa99ff03fe356a7c484900245a96bf55a25294e883bfa93c5097bc535fdd",
+      "original_chunk": 6,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle007.json",
+      "sha256": "0795080aa22948280e2c558c14eee46843999658d893f6fb91674643ebe00455",
+      "original_chunk": 7,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle008.json",
+      "sha256": "7677d515fd7ae2548f72f97d5bd3a821541a7a62f0a1f12014028377aa23db88",
+      "original_chunk": 8,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle009.json",
+      "sha256": "e3b1532b4c43af61f75c8f839b97136eb3060f4857353f3d4bfd6861b55c82ee",
+      "original_chunk": 9,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle010.json",
+      "sha256": "cc59dd663f29f09d15803ddf4c4a43388f84dd25ac530b7afa3395113c5ebb08",
+      "original_chunk": 10,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle011.json",
+      "sha256": "3987df07691d294e427a519a58033997e0cf7ea810e4b39d9bd6d93dffec05d6",
+      "original_chunk": 11,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle012.json",
+      "sha256": "9a4fce7ba338dfb263771b178ae66b62055dc21c55a75f29946fadf33b923823",
+      "original_chunk": 12,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle013.json",
+      "sha256": "9d999f8b47a6f3f2eea528543d3abb4ecdb18d123538ff8ad4f64924ba267d15",
+      "original_chunk": 13,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle014.json",
+      "sha256": "16590e77fd622a2621887a4607bf896c670b90fb7dcf40c8aa3069a9f57ad8b3",
+      "original_chunk": 14,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle015.json",
+      "sha256": "c8b1c4a7570bb962e0a757bf42df02a21704fb133856b72c1dd3daf9199ad7d7",
+      "original_chunk": 15,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle016.json",
+      "sha256": "7a5613f3bc3890cc93b59a84986153bb93a4b20fe00199475a9a481c6a00a1ac",
+      "original_chunk": 16,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle017.json",
+      "sha256": "80c679637076e80f432b7424908787ac4eb7f44615ec30064d1f1daaa250c457",
+      "original_chunk": 17,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle018.json",
+      "sha256": "ee038404b07642c755e82d1eac2cad7b9cd199c4a9cf9f8a5b876c540bf57cb0",
+      "original_chunk": 18,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle019.json",
+      "sha256": "88e58b3112dce62280c875057d801db3278718f07982c3765858055594b5a91a",
+      "original_chunk": 19,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle020.json",
+      "sha256": "2a446b4b32109660b635e2e0743105f6b8382db68491591762c0eacb131ad172",
+      "original_chunk": 20,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle021.json",
+      "sha256": "4cf6ce1ca1c98385c195001c6a0b9d15597b7c91c4ded2b16bb48cdf10162d75",
+      "original_chunk": 21,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle022.json",
+      "sha256": "e3efaa7c1778b7de7bc1442f19171bdaac9ac09b5eb29e660651d4ec8c15fe27",
+      "original_chunk": 22,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle023.json",
+      "sha256": "38cc15f493fc00176e1b504d0a4884f4460809bef1bff0e1e6fa7b58757eb984",
+      "original_chunk": 23,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle024.json",
+      "sha256": "fa62d99e9dc2714df79e16ca334efd838e1fb5cf870830070f64da409707e56c",
+      "original_chunk": 24,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle025.json",
+      "sha256": "c74c7d540923a76a051a228782c59cec6cd95d705b9ab01b8b67081e3b70a65e",
+      "original_chunk": 25,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle026.json",
+      "sha256": "3a8317d5dbaa455577ffa4f21de5c0b482ae127fb369977906ad11c3b199a7ff",
+      "original_chunk": 26,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle027.json",
+      "sha256": "c3f29ef4cfcba16339ba04514361d6bd6cbd65ae11b6a49ee1a5d206924430a2",
+      "original_chunk": 27,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle028.json",
+      "sha256": "a5e79f929e3e6bb229456bd9aceadd0b3138f7cbd55a998597eeb49cb86ca4a7",
+      "original_chunk": 28,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle029.json",
+      "sha256": "b73111dd665ea85a21b61c5ac4dbb9080e1346c217b844779bc56a12a825358a",
+      "original_chunk": 29,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle030.json",
+      "sha256": "2b8a5a8a0704c5ae7e2be07d517a7bea1c176bdf74513d3cb0fdc5538676ee66",
+      "original_chunk": 30,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle031.json",
+      "sha256": "289d1c0020a5d4326489e5717cb74c6c4f03de7e7b53d00c2823849dce5ef473",
+      "original_chunk": 31,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle032.json",
+      "sha256": "109af91d26e6782cac6ad08f88142e4f55b0ea01e7a57e062da737e88bd8dcbb",
+      "original_chunk": 32,
+      "stage": 3,
+      "rows": 64
+    },
+    {
+      "file": "research/state-history-tail/bundle033.json",
+      "sha256": "5ccec485b1542fef4e5415707fb9d60dfe85987d97249b52dca21da4b29eb140",
+      "original_chunk": 33,
+      "stage": 3,
+      "rows": 49
+    },
+    {
+      "file": "research/state-history-tail/bundle034.json",
+      "sha256": "48f226a847187f45c7f32e7da3b047692c5d96bcc714b64774552cdd06da8436",
+      "original_chunk": 34,
+      "stage": 3,
+      "rows": 56
+    },
+    {
+      "file": "research/state-history-tail/bundle035.json",
+      "sha256": "18a91cb547d677680965f456a2c4c2352cf01a67b6885d7c2e2f5287a9e13e20",
+      "original_chunk": 35,
+      "stage": 3,
+      "rows": 41
+    },
+    {
+      "file": "research/state-history-tail/bundle036.json",
+      "sha256": "0d2f821bd0b6ef820312593748622ac8b6eec54aa38aa4db55f9fc1fb99db712",
+      "original_chunk": 36,
+      "stage": 3,
+      "rows": 47
+    },
+    {
+      "file": "research/state-history-tail/bundle037.json",
+      "sha256": "b8a82d6c1e26dffee4c0e811f2e9e334679870c8ef872c15380665e92a0a050b",
+      "original_chunk": 37,
+      "stage": 3,
+      "rows": 63
+    },
+    {
+      "file": "research/state-history-tail/bundle038.json",
+      "sha256": "5a86992d7c90b555de7323c09bf49d93897db7bc2451a0ec634a50a598be6171",
+      "original_chunk": 38,
+      "stage": 3,
+      "rows": 52
+    },
+    {
+      "file": "research/state-history-tail/bundle039.json",
+      "sha256": "e01193dc403058bf546c024a430a5511adc3cb4cc3d079f2a8e7b33bfddf90fc",
+      "original_chunk": 39,
+      "stage": 3,
+      "rows": 45
+    },
+    {
+      "file": "research/state-history-tail/bundle040.json",
+      "sha256": "94ed2e2323bddb92aa47ab6b2d8ac9513bc4851cc83fa442461f2dc6e96b62bb",
+      "original_chunk": 40,
+      "stage": 3,
+      "rows": 54
+    },
+    {
+      "file": "research/state-history-tail/bundle041.json",
+      "sha256": "de0b434bd05cbaf37f08ddd75749b034727032e1297898a38f3c989b6ba2b94c",
+      "original_chunk": 41,
+      "stage": 3,
+      "rows": 60
+    },
+    {
+      "file": "research/state-history-tail/bundle042.json",
+      "sha256": "4ca5489d8a287f12e61872c13fdbd32a034ddc612c5fe3652b185bd5aa9720fa",
+      "original_chunk": 42,
+      "stage": 3,
+      "rows": 63
+    },
+    {
+      "file": "research/state-history-tail/bundle043.json",
+      "sha256": "706fa64a0b2fe83c2ac1aca8001a8a36b37f4926efa3f4d90c1907a41c544a9f",
+      "original_chunk": 43,
+      "stage": 3,
+      "rows": 50
+    },
+    {
+      "file": "research/state-history-tail/bundle044.json",
+      "sha256": "e9722c1577042c8c2196792bc28a1b62de4a3869eae4d7eabb54eef98586f4bd",
+      "original_chunk": 44,
+      "stage": 3,
+      "rows": 56
+    },
+    {
+      "file": "research/state-history-tail/bundle045.json",
+      "sha256": "995b681f6801d0da0e17fba60baf03fbb5aa658198e6155ac15fd68d8ad02fdf",
+      "original_chunk": 45,
+      "stage": 3,
+      "rows": 52
+    },
+    {
+      "file": "research/state-history-tail/bundle046.json",
+      "sha256": "b2aa161100b0c5f2bc78d8900952b0ca92a831a0488e0c887ff46b8590303f44",
+      "original_chunk": 46,
+      "stage": 3,
+      "rows": 49
+    },
+    {
+      "file": "research/state-history-tail/bundle047.json",
+      "sha256": "b39c81dc867efee5829f532f267e42eef58c7a32c3e2f41b92349b2c92e617e5",
+      "original_chunk": 47,
+      "stage": 3,
+      "rows": 54
+    },
+    {
+      "file": "research/state-history-tail/bundle048.json",
+      "sha256": "b3d67166bc5a753cda8c971977dd5475fdcee68f56c46602571d9b78768c2f59",
+      "original_chunk": 48,
+      "stage": 3,
+      "rows": 17
+    },
+    {
+      "file": "research/state-history-tail/bundle049.json",
+      "sha256": "c4ff12bd16968b0f7e86f54b70c2b89a29f9e092940553cd19fb6d8f3e23678e",
+      "original_chunk": 49,
+      "stage": 4,
+      "rows": 39
+    },
+    {
+      "file": "research/state-history-tail/bundle050.json",
+      "sha256": "b43d3e6c09d442914a257ac90fc62abc4d55528c5af7061cbc6911089018acec",
+      "original_chunk": 50,
+      "stage": 4,
+      "rows": 54
+    },
+    {
+      "file": "research/state-history-tail/bundle051.json",
+      "sha256": "497d89744ab69716efca410c425b6db04918f7bb611aaacdc0c539de741d31b0",
+      "original_chunk": 51,
+      "stage": 4,
+      "rows": 45
+    },
+    {
+      "file": "research/state-history-tail/bundle052.json",
+      "sha256": "15fcc08596a2baed768ef40541380f42f6e41d624239f126ff0246ed981d521b",
+      "original_chunk": 52,
+      "stage": 4,
+      "rows": 48
+    },
+    {
+      "file": "research/state-history-tail/bundle053.json",
+      "sha256": "4b1af754e8ef351227783d677473289de2113e7ddb4719d45b460f3754da53f8",
+      "original_chunk": 53,
+      "stage": 4,
+      "rows": 51
+    },
+    {
+      "file": "research/state-history-tail/bundle054.json",
+      "sha256": "451008b202b648dfc1e1cf137feffdf132947838b24d6a76d4cefc7885786f76",
+      "original_chunk": 54,
+      "stage": 4,
+      "rows": 52
+    },
+    {
+      "file": "research/state-history-tail/bundle055.json",
+      "sha256": "ba9232435930d7dc54e0c8c93ae2c718db23514cbdf12b964839b0b957965fcc",
+      "original_chunk": 55,
+      "stage": 4,
+      "rows": 50
+    },
+    {
+      "file": "research/state-history-tail/bundle056.json",
+      "sha256": "4c10443116bab90513cea0aa4889fc38e59b313e1a59314811ad8230eb7b2e7a",
+      "original_chunk": 56,
+      "stage": 4,
+      "rows": 55
+    },
+    {
+      "file": "research/state-history-tail/bundle057.json",
+      "sha256": "d49fc113e98517bff4da6ef62699f55d6531421cbf252608f38c9e96bf63ed3f",
+      "original_chunk": 57,
+      "stage": 4,
+      "rows": 34
+    },
+    {
+      "file": "research/state-history-tail/bundle058.json",
+      "sha256": "7c7db31cf6c546aa82ac64bd82b672ec4dea2eab981e942f77a1f79b0b86260a",
+      "original_chunk": 58,
+      "stage": 5,
+      "rows": 34
+    },
+    {
+      "file": "research/state-history-tail/bundle059.json",
+      "sha256": "bf12511b8e1768cc8e3d3b93834d9e8a581283bb31e2193ce86f4a5b6e1b155e",
+      "original_chunk": 59,
+      "stage": 5,
+      "rows": 33
+    },
+    {
+      "file": "research/state-history-tail/bundle060.json",
+      "sha256": "97501eba9973b96ccdb6b1bb8f397b154b4b29ba8af20fac9764bc5ffbfc270a",
+      "original_chunk": 60,
+      "stage": 5,
+      "rows": 16
+    },
+    {
+      "file": "research/state-history-tail/bundle061.json",
+      "sha256": "29e4a1b4c4775e69b914f99c1c415557ded6d4db423a225a704c6232f0a2714e",
+      "original_chunk": 61,
+      "stage": 5,
+      "rows": 32
+    },
+    {
+      "file": "research/state-history-tail/bundle062.json",
+      "sha256": "b02fb15cb604d585cf6acd38896e12fc548b89e2c6402edce2751aafae049dd3",
+      "original_chunk": 62,
+      "stage": 5,
+      "rows": 44
+    },
+    {
+      "file": "research/state-history-tail/bundle063.json",
+      "sha256": "334861db3533069b944a87fd3101f630a0787dca56b9e077036a1cdbee8789b0",
+      "original_chunk": 63,
+      "stage": 5,
+      "rows": 18
+    }
+  ]
+}

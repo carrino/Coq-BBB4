@@ -1,0 +1,26 @@
+{
+  "scope": "State only; every selected family requires Coq replay. No instruction bound.",
+  "encoding": "Eight base-17 cells, A0 least significant. Code=4*write+2*right+next_B;16 undefined.",
+  "source_report": "research/burn4-history-refinement-pilot-search.json",
+  "source_report_sha256": "780f10015a60026f82111a140ea1ac800f39cdf908da41543d8c43b0b79c58a2",
+  "source_rows": 16,
+  "selected_rows": 1,
+  "state_bound": 4096,
+  "instruction_bound": null,
+  "groups": [
+{
+  "stage": 1,
+  "certificate": {
+    "anchor": 4096,
+    "extra": 32,
+    "fuel": 32768,
+    "history": 4,
+    "mode": "hist",
+    "size": 4
+  },
+  "rows": [
+    2094175690
+  ]
+}
+  ]
+}

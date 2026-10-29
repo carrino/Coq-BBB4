@@ -1,0 +1,42 @@
+{
+  "status": "untrusted_static_child_selection",
+  "partial_families": 355,
+  "undefined_count_histogram": {
+    "1": 349,
+    "2": 5,
+    "3": 1
+  },
+  "proposed_defined_child_histogram": {
+    "0": 72,
+    "5": 2,
+    "6": 18,
+    "7": 1,
+    "8": 3,
+    "12": 1,
+    "14": 1,
+    "15": 66,
+    "16": 185
+  },
+  "all_defined_proposed": 185,
+  "selected_for_late_prefix": 184,
+  "separate_halting_choices": 349,
+  "input_sha256": {
+    "four/build/state-pipeline/history-full/not-accepted.txt": "64a3ec63b8887e30712342738265c272a019ed7d649681ca47dcad4863f7fd78",
+    "four/research/branch-frontier.json": "a5c2799e311c9d4713cae0239003078b822bfd1e113b360e1772ec37941ad608"
+  },
+  "source_sha256": {
+    "four/tools/profile_partial_state_children.py": "6a1a58534d903e61166dee36acd17a3e5a06f93d22a54779fa634f6590ca9c0b",
+    "four/tools/marker_state_profile_v2.py": "998103d4757e54fd719d6d5bc2a303b27ea3eff36df12eb8e910e3e89185d005",
+    "four/tools/marker_state_potential_profile.py": "8586f8b564b3b7f764385cd647a6bec6b79cff8f4bac4897ebf1bcde1e1dd5ca",
+    "four/tools/marker_state_trail_profile.py": "53351b50731bd3232dd6438be368a9b8d993da3fb9a787c9928ec8b823b0662e",
+    "four/tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "selection_sha256": {
+    "four/build/state-partial-walk/input.txt": "68499ac8dded03f67efcbd06c78ac3efa98f4206e50e677389c4c5921d15b68a",
+    "four/build/state-partial-walk/allchildren-184.txt": "1a288dea0d6e4d7c76b79889fb0425b33f4981c4c7b970257adf6a1bc99ca046",
+    "four/build/state-partial-walk/static-children.json": "6928d4e217d8055f2bb93e2ad2ad4eca05983366628e2c33483de02e07eb4e14"
+  },
+  "kernel_checked": 0,
+  "census_linked": 0,
+  "accounting": "Original partial families. Every defined child is only an untrusted recurrence proposal; the None halting choice is separate and no parent is discharged here."
+}

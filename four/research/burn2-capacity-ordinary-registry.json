@@ -1,0 +1,13 @@
+{
+  "bundles": [
+    {
+      "bytes": 440,
+      "path": "research/burn2-capacity-ordinary-certificates.json",
+      "rows": 7,
+      "sha256": "906fbcb97d3f13c6b77e2181483211b2cc12db4fd541e24bb9b70d9e5e857adf"
+    }
+  ],
+  "format": "BBB24 targeted capacity refinement v1",
+  "rows": 7,
+  "status": "Untrusted witnesses; separate Coq replay required."
+}

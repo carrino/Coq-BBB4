@@ -1,0 +1,488 @@
+{
+  "controls": {
+    "binary_B": 1274,
+    "blank": 13,
+    "bulk": 2457,
+    "exposed_after2": 13,
+    "missing_sentinel_negative": 1,
+    "onezeroone": 273,
+    "pair": 273,
+    "zero": 273
+  },
+  "direct_prefix_checkpoints": [
+    {
+      "nonzero_cells": 2,
+      "position": 1,
+      "state": 0,
+      "step": 3,
+      "word_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "nonzero_cells": 4,
+      "position": -1,
+      "state": 0,
+      "step": 9,
+      "word_sha256": "85f90dfea1d8027e1463e5ca971a250110a20df0119d204a74220bc63516d15b"
+    },
+    {
+      "nonzero_cells": 8,
+      "position": 2,
+      "state": 0,
+      "step": 34,
+      "word_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "nonzero_cells": 10,
+      "position": -6,
+      "state": 0,
+      "step": 46,
+      "word_sha256": "01d03ceb902bad84ff20b508aab698bd30f56b10b4bba13d222432f733847304"
+    },
+    {
+      "nonzero_cells": 19,
+      "position": 0,
+      "state": 0,
+      "step": 208,
+      "word_sha256": "85f90dfea1d8027e1463e5ca971a250110a20df0119d204a74220bc63516d15b"
+    },
+    {
+      "nonzero_cells": 23,
+      "position": 3,
+      "state": 0,
+      "step": 323,
+      "word_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "nonzero_cells": 25,
+      "position": -20,
+      "state": 0,
+      "step": 350,
+      "word_sha256": "42e1f894452a167a109cbcdd56435b6529cff04e1cc44e26b19fda819efd0708"
+    },
+    {
+      "nonzero_cells": 58,
+      "position": 2,
+      "state": 0,
+      "step": 2264,
+      "word_sha256": "b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2"
+    },
+    {
+      "nonzero_cells": 60,
+      "position": -55,
+      "state": 0,
+      "step": 2325,
+      "word_sha256": "8add738ce0c4fd4af7433051ba07c07c72d611686943590f778843a908f2ffe2"
+    },
+    {
+      "nonzero_cells": 144,
+      "position": 1,
+      "state": 0,
+      "step": 14337,
+      "word_sha256": "fbb59ed10e9cd4ff45a12c5bb92cbd80df984ba1fe60f26a30febf218e2f0f5e"
+    },
+    {
+      "nonzero_cells": 146,
+      "position": -141,
+      "state": 0,
+      "step": 14483,
+      "word_sha256": "5a43a80ed103e488464e81b56ecf767491891c84ef538e4adeeb89fcdb198bc7"
+    },
+    {
+      "nonzero_cells": 356,
+      "position": -1,
+      "state": 0,
+      "step": 88613,
+      "word_sha256": "4bd22da7d13bbe6f159914f6b38fd1c4530e84b50112eeabd69b999b7218e4c3"
+    },
+    {
+      "nonzero_cells": 360,
+      "position": 2,
+      "state": 0,
+      "step": 90738,
+      "word_sha256": "9dcf97a184f32623d11a73124ceb99a5709b083721e878a16d78f596718ba7b2"
+    },
+    {
+      "nonzero_cells": 363,
+      "position": 4,
+      "state": 0,
+      "step": 92898,
+      "word_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "direct_prefix_steps": 92898,
+  "escape_steps": 1367354345129,
+  "final_Q": {
+    "a": 1383582,
+    "step": 1367354345127,
+    "word": [
+      1
+    ]
+  },
+  "last_A": 1367354345128,
+  "macro_edges": 34,
+  "macro_trace": [
+    {
+      "a": 1,
+      "c": 0,
+      "duration": 6,
+      "m": 0,
+      "round": 0,
+      "rule": "zero_or_blank",
+      "sentinel": false,
+      "step": 3
+    },
+    {
+      "a": 1,
+      "c": 1,
+      "duration": 25,
+      "m": 1,
+      "round": 1,
+      "rule": "onezeroone",
+      "sentinel": true,
+      "step": 9
+    },
+    {
+      "a": 7,
+      "c": 0,
+      "duration": 12,
+      "m": 0,
+      "round": 2,
+      "rule": "zero_or_blank",
+      "sentinel": false,
+      "step": 34
+    },
+    {
+      "a": 1,
+      "c": 1,
+      "duration": 162,
+      "m": 7,
+      "round": 3,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 46
+    },
+    {
+      "a": 16,
+      "c": 1,
+      "duration": 115,
+      "m": 1,
+      "round": 4,
+      "rule": "onezeroone",
+      "sentinel": true,
+      "step": 208
+    },
+    {
+      "a": 22,
+      "c": 0,
+      "duration": 27,
+      "m": 0,
+      "round": 5,
+      "rule": "zero_or_blank",
+      "sentinel": false,
+      "step": 323
+    },
+    {
+      "a": 1,
+      "c": 1,
+      "duration": 1914,
+      "m": 22,
+      "round": 6,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 350
+    },
+    {
+      "a": 56,
+      "c": 1,
+      "duration": 61,
+      "m": 0,
+      "round": 7,
+      "rule": "zero_or_blank",
+      "sentinel": true,
+      "step": 2264
+    },
+    {
+      "a": 1,
+      "c": 2,
+      "duration": 12012,
+      "m": 56,
+      "round": 8,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 2325
+    },
+    {
+      "a": 141,
+      "c": 2,
+      "duration": 146,
+      "m": 0,
+      "round": 9,
+      "rule": "zero_or_blank",
+      "sentinel": true,
+      "step": 14337
+    },
+    {
+      "a": 1,
+      "c": 3,
+      "duration": 74130,
+      "m": 141,
+      "round": 10,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 14483
+    },
+    {
+      "a": 351,
+      "c": 3,
+      "duration": 2125,
+      "m": 1,
+      "round": 11,
+      "rule": "onezeroone",
+      "sentinel": true,
+      "step": 88613
+    },
+    {
+      "a": 357,
+      "c": 0,
+      "duration": 2160,
+      "m": 2,
+      "round": 12,
+      "rule": "bulk_pair",
+      "sentinel": false,
+      "step": 90738
+    },
+    {
+      "a": 362,
+      "c": 0,
+      "duration": 367,
+      "m": 0,
+      "round": 13,
+      "rule": "zero_or_blank",
+      "sentinel": false,
+      "step": 92898
+    },
+    {
+      "a": 1,
+      "c": 1,
+      "duration": 493044,
+      "m": 362,
+      "round": 14,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 93265
+    },
+    {
+      "a": 906,
+      "c": 1,
+      "duration": 911,
+      "m": 0,
+      "round": 15,
+      "rule": "zero_or_blank",
+      "sentinel": true,
+      "step": 586309
+    },
+    {
+      "a": 1,
+      "c": 2,
+      "duration": 3082212,
+      "m": 906,
+      "round": 16,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 587220
+    },
+    {
+      "a": 2266,
+      "c": 2,
+      "duration": 2271,
+      "m": 0,
+      "round": 17,
+      "rule": "zero_or_blank",
+      "sentinel": true,
+      "step": 3669432
+    },
+    {
+      "a": 1,
+      "c": 3,
+      "duration": 19265532,
+      "m": 2266,
+      "round": 18,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 3671703
+    },
+    {
+      "a": 5666,
+      "c": 3,
+      "duration": 5671,
+      "m": 0,
+      "round": 19,
+      "rule": "zero_or_blank",
+      "sentinel": true,
+      "step": 22937235
+    },
+    {
+      "a": 1,
+      "c": 4,
+      "duration": 120413832,
+      "m": 5666,
+      "round": 20,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 22942906
+    },
+    {
+      "a": 14166,
+      "c": 4,
+      "duration": 14171,
+      "m": 0,
+      "round": 21,
+      "rule": "zero_or_blank",
+      "sentinel": true,
+      "step": 143356738
+    },
+    {
+      "a": 1,
+      "c": 5,
+      "duration": 752597082,
+      "m": 14166,
+      "round": 22,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 143370909
+    },
+    {
+      "a": 35416,
+      "c": 5,
+      "duration": 35421,
+      "m": 0,
+      "round": 23,
+      "rule": "zero_or_blank",
+      "sentinel": true,
+      "step": 895967991
+    },
+    {
+      "a": 1,
+      "c": 6,
+      "duration": 4703758332,
+      "m": 35416,
+      "round": 24,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 896003412
+    },
+    {
+      "a": 88541,
+      "c": 6,
+      "duration": 88546,
+      "m": 0,
+      "round": 25,
+      "rule": "zero_or_blank",
+      "sentinel": true,
+      "step": 5599761744
+    },
+    {
+      "a": 1,
+      "c": 7,
+      "duration": 29397891930,
+      "m": 88541,
+      "round": 26,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 5599850290
+    },
+    {
+      "a": 221351,
+      "c": 7,
+      "duration": 1328125,
+      "m": 1,
+      "round": 27,
+      "rule": "onezeroone",
+      "sentinel": true,
+      "step": 34997742220
+    },
+    {
+      "a": 221357,
+      "c": 0,
+      "duration": 3984570,
+      "m": 6,
+      "round": 28,
+      "rule": "bulk_pair",
+      "sentinel": false,
+      "step": 34999070345
+    },
+    {
+      "a": 221372,
+      "c": 0,
+      "duration": 221377,
+      "m": 0,
+      "round": 29,
+      "rule": "zero_or_blank",
+      "sentinel": false,
+      "step": 35003054915
+    },
+    {
+      "a": 1,
+      "c": 1,
+      "duration": 183771855114,
+      "m": 221372,
+      "round": 30,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 35003276292
+    },
+    {
+      "a": 553431,
+      "c": 1,
+      "duration": 553436,
+      "m": 0,
+      "round": 31,
+      "rule": "zero_or_blank",
+      "sentinel": true,
+      "step": 218775131406
+    },
+    {
+      "a": 1,
+      "c": 2,
+      "duration": 1148570358810,
+      "m": 553431,
+      "round": 32,
+      "rule": "bulk_pair",
+      "sentinel": true,
+      "step": 218775684842
+    },
+    {
+      "a": 1383576,
+      "c": 2,
+      "duration": 8301475,
+      "m": 1,
+      "round": 33,
+      "rule": "onezeroone",
+      "sentinel": true,
+      "step": 1367346043652
+    },
+    {
+      "a": 1383582,
+      "c": 0,
+      "m": 1,
+      "round": 34,
+      "sentinel": false,
+      "step": 1367354345127
+    }
+  ],
+  "permanent_B_reason": "After two further steps the whole tape is over{0,2}; B0/B2 preserve that alphabet and stay B.",
+  "proof_method": "Universal finite scan programs,34 binary-count macro instantiations, and an infinite binary-tape B invariant. Symbolic repeats/counts remain opaque.",
+  "rows": [
+    {
+      "code": 44979812,
+      "machine": "1LB2LA1LA2LB_2RB3RA0LB0LA"
+    }
+  ],
+  "scope": "Native compressed transcript and direct sparse prefix/context/boundary controls only. No proof credit.",
+  "seconds": 0.591991,
+  "source_sha256": {
+    "tools/check_burn25_s030_finite_native.py": "1001ffa70a0a1af578e5e0f398428b37f5b7ced36a445e68be568235c0a9acf7",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "total_controls": 4577
+}

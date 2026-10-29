@@ -1,0 +1,11 @@
+{
+  "actual_blank_steps": 8192,
+  "context_maximum_length": 2,
+  "frontier_sha256": "1f07b47247419e108daa1026b5cc7d196bdd7a2ea19ecc2492aeb1b9f32c46f5",
+  "frontier_source": "research/burn23-s004-s005-unary-frontier-source.txt",
+  "machines": [
+    "1LB0LA1LB1RB_3RB3RA0RB2LA",
+    "1LB0LA1LB1RB_3RB3RA2RB2LA"
+  ],
+  "maximum_block_count": 16
+}

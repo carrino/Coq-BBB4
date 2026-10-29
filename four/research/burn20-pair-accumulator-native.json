@@ -1,0 +1,86 @@
+{
+  "boundary_guard": "Both physical block lengths are positive; restoration requires a nonempty pair word.",
+  "context_max_length": 2,
+  "controls": {
+    "A2_scan": 2646,
+    "A3_scan": 2646,
+    "B0_scan": 2646,
+    "B1_scan": 2646,
+    "B2_scan": 2646,
+    "B_pair_scan": 2646,
+    "actual_entry": 1,
+    "drain": 150,
+    "erase": 2646,
+    "finish": 25,
+    "increment_tag1": 882,
+    "increment_tag2": 882,
+    "loop": 125,
+    "main_returns": 64,
+    "negative_guards": 4,
+    "restore": 126,
+    "start": 882,
+    "support": 441
+  },
+  "finish_cost": {
+    "constant": 27,
+    "first": 8,
+    "second": 5
+  },
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "identity_negative_controls": [
+    "1LB2RB0LA2RB_1RB3LB2LB2RA",
+    "1LB2RB0LA2RA_1RB3LA2LB2RA"
+  ],
+  "increment_cost": {
+    "constant": 24,
+    "first": 8,
+    "second": 4
+  },
+  "invariant": "A0, blank right tail, nearest-first left word2^(a+1)1(12)^(b+1), a,b natural",
+  "main_cost": {
+    "constant": 51,
+    "first": 40,
+    "first_squared": 6,
+    "mixed": 8,
+    "second": 16,
+    "second_squared": 0
+  },
+  "main_return": {
+    "first_add": 3,
+    "second": "a+b+1"
+  },
+  "metadata_revision": 1,
+  "physical_cost": {
+    "constant": 9,
+    "first": 20,
+    "first_squared": 6,
+    "mixed": 8,
+    "second": 8,
+    "second_squared": 0
+  },
+  "physical_return": {
+    "first_add": 3,
+    "second": "a+b"
+  },
+  "restore_cost": {
+    "constant": 5,
+    "slope": 8
+  },
+  "rows": [
+    {
+      "code": 4339716961,
+      "machine": "1LB2RB0LA2RA_1RB3LB2LB2RA"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn20_pair_accumulator_native.py": "c70389c2fb6ac35ae31882e50cea6f4f88b75c76d637b79c2d47690e685e96c6",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "start_cost": {
+    "constant": 7,
+    "first": 1,
+    "second": 8
+  }
+}

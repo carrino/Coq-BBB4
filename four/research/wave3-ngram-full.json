@@ -1,0 +1,74 @@
+{
+  "candidate_rows": 14808,
+  "candidate_tsv_sha256": "3c2a7e9beb4ef38ef9639051e7e6335dee3d1eafeb4fbf1ac8f28ffe5cea1b06",
+  "census_linked_rows": 0,
+  "kernel_checked_rows": 0,
+  "manifest": {
+    "bound": 4096,
+    "extraction_sha256": "7a4632bde4da4bc99da61981970d4a42650e059e46fec310e170bc5ea7a099ac",
+    "input_rows": 133185,
+    "input_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+    "probe_sha256": "bce6119cc698a55c66d82ab309145a03e5bd686c98dc9f85dfb36d85491a636f",
+    "selected_rows": 133185,
+    "selected_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+    "selection": "all rows, ordered by SHA256(machine UTF-8)",
+    "sources_sha256": {
+      "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+      "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+      "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+      "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+      "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+      "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+      "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+      "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+      "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+      "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+      "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+      "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+      "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+      "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+      "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+      "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+      "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+      "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+      "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+      "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+      "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+      "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+      "tools/ExtractPipeline.v": "4a403fbe35132db7005e77f055827a8c2d1488b84a468255d2811b4393a32782",
+      "tools/pipeline_probe.ml": "c0e96c80e091b006960e0683e81701d82664f6e2e89a73ad0f5087c79f0ff92c",
+      "tools/pipeline_sweep.py": "16de1d015366a4a2ca10adfe0751abd5351cb67df1f8f28dc602926663493f0d"
+    },
+    "stages": [
+      {
+        "anchor": 256,
+        "extra": 8,
+        "fuel": 512,
+        "mode": "ng",
+        "size": 4
+      }
+    ],
+    "timeout_seconds_per_stage_row": 0.1
+  },
+  "not_accepted_rows": 118377,
+  "not_accepted_sha256": "f641eb7aed4c68cb8471cd3fdc57f560a75cae3226022e64cfc7173677630d87",
+  "results": [
+    {
+      "anchor": 256,
+      "extra": 8,
+      "fuel": 512,
+      "mode": "ng",
+      "results_sha256": "5bcdba69c3ad6603a36e2e0f83c87436788924e6ba70d89bf153f343c6548db2",
+      "rows": 133185,
+      "size": 4,
+      "stage": 0,
+      "statuses": {
+        "candidate": 14808,
+        "rejected": 116442,
+        "timeout": 1935
+      },
+      "sum_row_seconds": 819.291272
+    }
+  ],
+  "status": "Untrusted extracted checker search; zero kernel replay or census-link claims."
+}

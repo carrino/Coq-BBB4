@@ -1,0 +1,19 @@
+{
+  "rows": [
+    {
+      "code": 5824131308,
+      "machine": "1LB2LA0RA2LB_3RB1LA0RB3RA"
+    },
+    {
+      "code": 5824132464,
+      "machine": "1LB2LA1RA2LB_3RB1LA0RB3RA"
+    }
+  ],
+  "selection_report": "research/burn18-cut-siblings-native.json",
+  "selection_sha256": "eca2b894e1bc1dc694842916c54ab60a2ca07427a99828e02ce14212fa0073f3",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn18-cut-siblings/CutSiblings.v": "4ea9246c077143d8a997b4459125009a73130a2319c4523b1f13230957b3f60a",
+    "proof-sources/burn18-cut-siblings/Regression.v": "24af82c0aca37bf513a8cd780a717ac030422bdccb983ca1e0d8d9927474a5cd"
+  }
+}

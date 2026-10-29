@@ -1,0 +1,42 @@
+{
+  "selection": "Lowest machine SHA256 hashes after excluding recorded proved IDs; first successful search source wins",
+  "search_sources": [
+    {
+      "report": "four/research/repwl-cpu-pilot64.json",
+      "report_sha256": "21ca61c2faf3a315da84c57bed95523338ab682158293774d51410b2a9bed816",
+      "candidate_tsv_sha256": "fa06d357efd9d268bdab43d88b8bceadcfaeba81ecc36d49589de0937e1f8610",
+      "candidate_rows": 17
+    }
+  ],
+  "excluded_ledgers_sha256": {},
+  "columns": [
+    "machine",
+    "mode",
+    "bound",
+    "size",
+    "anchor",
+    "fuel",
+    "extra",
+    "history"
+  ],
+  "selected_rows": 17,
+  "rows": [
+    ["1LB1LB---2RA_1RA3LB3RB1RB", "rw", 4096, 2, 0, 5120, 2, 0],
+    ["1LB0RB1LA3LA_2RB3RA3LA0LB", "rw", 4096, 3, 0, 5120, 2, 0],
+    ["1LB2RA3RA2LB_0RB1RA2LA1LB", "rw", 4096, 3, 0, 5120, 2, 0],
+    ["1LB1RA2RB2LA_1RA3LB0LB1LB", "rw", 4096, 2, 0, 5120, 2, 0],
+    ["1LB1RA2LB2RA_1RA3LB3RB0LA", "rw", 4096, 2, 0, 5120, 2, 0],
+    ["1LB2RB3LB1RA_1RA0LA2LA2LB", "rw", 4096, 2, 0, 5120, 2, 0],
+    ["1LB2LB3RA1RA_1RB1RA2RA1LA", "rw", 4096, 2, 0, 5120, 2, 0],
+    ["1LB2RA1LA0LA_3RB1RA2LB0LA", "rw", 4096, 2, 0, 5120, 2, 0],
+    ["1LB2RB3RB0LA_1RA2LA0RB3LB", "rw", 4096, 3, 0, 5120, 2, 0],
+    ["1LB2LA1RA3RA_3RB2LB3RB1RA", "rw", 4096, 2, 0, 5120, 2, 0],
+    ["1LB2RB1LB2RA_3RA1RA0LA3LB", "rw", 4096, 3, 0, 5120, 2, 0],
+    ["1LB2RB2LB0RB_1RA3LB2LA0LA", "rw", 4096, 3, 0, 5120, 2, 0],
+    ["1LB2LB3RA2RB_0RA2RA0LB3LA", "rw", 4096, 3, 0, 5120, 2, 0],
+    ["1LB1RA3LA2RB_2RA3RB1LB2LA", "rw", 4096, 2, 0, 5120, 2, 0],
+    ["1LB2LB3RA2RB_3RB1LA1RA1RB", "rw", 4096, 3, 0, 5120, 2, 0],
+    ["1LB2LB3RB2RA_1RA3LB3LA1RB", "rw", 4096, 2, 0, 5120, 2, 0],
+    ["1LB2RA3RA0LA_1RB1RA2LA1LB", "rw", 4096, 3, 0, 5120, 2, 0]
+  ]
+}

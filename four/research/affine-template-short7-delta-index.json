@@ -1,0 +1,12 @@
+{
+  "status": "untrusted_template_index",
+  "targets": 7231,
+  "used_templates": 875,
+  "target_template_pairs": 14955,
+  "inputs_sha256": {
+    "build/affine-template-short7-delta/neighbors.json": "d52298e60d89cd223531e6fca68cdc19ecafd4f8d937470589128f69b9607d09",
+    "build/affine-template-short7-delta/relax.json": "ed8d154bffc0fa2171a213b13c41d8c7088ddda4d5067e2e4df8c708d7d8eb69"
+  },
+  "index_sha256": "ab89f62990dc3440e6a4ca90b3f7b2cc8a1140d09b0265e05274b12d17f78131",
+  "builder_sha256": "6143912b7ec744bbad4a4612261934432f881866070f29d3eaf304741e6ecbd7"
+}

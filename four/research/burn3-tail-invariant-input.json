@@ -1,0 +1,34 @@
+{
+  "bundle": {
+    "bytes": 1265,
+    "path": "research/burn3-tail-invariant-certificates.json",
+    "rows": 1,
+    "sha256": "c532bda58ec6194aa1ae3f63c26fcf4ace66088a7c53025daaec7e70e29139da"
+  },
+  "format": "BBB24 isolated paired-digit invariant plus seven-target weighted recurrence v1",
+  "instruction_bound": 10,
+  "last_firing_configuration_step": 9,
+  "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+  "quiet_from": 10,
+  "quiet_instruction": [
+    1,
+    1
+  ],
+  "selected_rows": 1,
+  "selection_provenance": {
+    "scope": "Historical discovery provenance only; replay uses the compact bundle and theorem sources.",
+    "source": "build/burn2-capacity/row-014/variants.jsonl",
+    "source_sha256": "33f86ec47bbf11047e33beafd5744c0f314a1fab3ca5489d2740e068a48891fe",
+    "variant_index": 0
+  },
+  "state_bound": 0,
+  "targets": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    6,
+    7
+  ]
+}

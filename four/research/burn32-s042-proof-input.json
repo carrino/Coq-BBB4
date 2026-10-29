@@ -1,0 +1,22 @@
+{
+  "blank_entry_steps": 12565,
+  "hypotheses": "research/burn32-s042-hypotheses.json",
+  "hypotheses_sha256": "6ba16eb0c54274ed6dcbc56260e65f6de0a37e1e0eaef64d0231d57b4383ac4f",
+  "initial_parameter": 42,
+  "rows": [
+    {
+      "code": 352418879,
+      "machine": "1LB2LA3RB2LA_0RB2RA3RA0LA"
+    }
+  ],
+  "selection_report": "research/burn32-s042-native.json",
+  "selection_sha256": "72525317957aaea488ca6de9ac4167c6876c2672ccd8a3fe719f72fb7d7ebafb",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn32-s042/Counter.v": "2b978c5559ebdf0fcf4915ad5fb9d41e47d79ae537bc206f53393d9565ef669e",
+    "proof-sources/burn32-s042/Final.v": "e1b70c47afccb3b6ca7a5d65838b7ffe5f423a1023e34b929872c6f28771f7b0",
+    "proof-sources/burn32-s042/Programs.v": "98fc0bcc8235158ac62e862c5592aa28a75c58b8b3222e617db93e33d3acefd9",
+    "proof-sources/burn32-s042/Regression.v": "bdef71b38294c5edf2724518cebd2f27b3a78332ff704f4bc3715337a01c0c8a",
+    "proof-sources/burn32-s042/Symbolic.v": "4f96331ff7b948947b5721f003aa406c972380a37b3ae23dacdf23a4fb9b79be"
+  }
+}

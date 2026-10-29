@@ -1,0 +1,127 @@
+{
+  "status": "Kernel-audited equivalent checker and paired regression; no new census families counted.",
+  "samples": [
+    [
+      "1LB2LA1RA0RB_2RA3LB1LA0LB",
+      219,
+      "213",
+      true,
+      true,
+      8
+    ],
+    [
+      "1LB2LA3RB0RB_2RA3LB3LA1RA",
+      410,
+      "231",
+      true,
+      true,
+      8
+    ],
+    [
+      "1LB2RA3RA1RB_2RA0RA0LA3LB",
+      631,
+      "213",
+      true,
+      true,
+      1
+    ]
+  ],
+  "inputs_sha256": {
+    "research/weighted-stream-reuse/pools001_006.json": "6fca232dcc1385758702ea21689da23d097ab28dd28b2521b19d9a0aad2f98bd",
+    "research/weighted-full-snapshots/batch001/certificates-0000.json": "55f1c5ea5e1851de00d4f0631dc846da4c3680f114f69adbb5f96aa4fb90e2c8",
+    "research/weighted-full-snapshots/batch001/certificates-0001.json": "617bc1e53cee5e06c4a8f7a0e9de53cc93c79df31d8ca04e033d4c07f48aef4e",
+    "research/weighted-full-snapshots/batch002/certificates-0000.json": "1b0e557daab0d3177eda7a7a2506b639ae122b6afa65f8860e1820a9a8a43319",
+    "research/weighted-full-snapshots/batch002/certificates-0001.json": "65a2070549a19589c2c07c714340150e6a331ef79a0e906930a0097fb6c23a0f",
+    "research/weighted-full-snapshots/batch003/certificates-0000.json": "336271dad0821be55c38031b82195b2b141b48cddec515df14d6f82e5e552be9",
+    "research/weighted-full-snapshots/batch003/certificates-0001.json": "20a70211763bc695ff831f474eb199b66b0a9c01498fabefca43c983f58be65b",
+    "research/weighted-full-snapshots/batch004/certificates-0000.json": "14412c60de2016df6c220aef334b8941002a820d703f2a0adb46fdbd3a4610d9",
+    "research/weighted-full-snapshots/batch004/certificates-0001.json": "fb5558340693d533ce3b96e3cc8a7d89afcf72f2861c566560f3411274c71e40",
+    "research/weighted-full-snapshots/batch005/certificates-0000.json": "15647f1c62321054db459ce85fe369eb90222963e8945fb6b4a1a0b65e27df48",
+    "research/weighted-full-snapshots/batch005/certificates-0001.json": "06ad564d0f4469381182df99ff3594aff4bd4e4a73cc9967bd7e33cdd75ab9ee",
+    "research/weighted-full-snapshots/batch006/certificates-0000.json": "bf787ecffd4c9b1e36a9cd987524b0e48e9716ccafca29ba47577e632de9c64b",
+    "research/weighted-full-snapshots/batch006/certificates-0001.json": "30b17ce2ebdd051e2965086989e8a8b4fd5068d9c08e2c7a8095ca89ce0d4ff6",
+    "tools/check_weighted_stream_reuse.py": "869bb432de31dc16d12678a165ede15dc4ea793ba2d60b950f2b648341ca8626",
+    "tools/weighted_render_v3.py": "5988c284b17a5e653dfbe6d15f1c3083fd94a32fa0daa3b8745c215d6afbcc98",
+    "tools/weighted_render_v4.py": "8cce618311b0d70bb67074cfdffaa939a517d88fe7c54cf1e275441b6a3e5d9f",
+    "theories/WeightedTail.v": "b8d2690fdbe9d32205281c9e8af69d4f1b443b3c6c6d686a85f5e42c52846a48",
+    "tools/check_weighted_stream_reuse_v5.py": "fbf535042670a93f31d4a8de86eba56324f12a6f509232a32d2b65df57a158ab",
+    "tools/weighted_tail_native.py": "388f9c25be33d51da20ee86fcecac0a9782de8b6fd1d0c51db162038543204e5",
+    "tools/ExtractWeightedTail.v": "11ab4b79b91d59ecbe482930ccf75d354a04788ee79b8192cbfe54ad99ebed23",
+    "tools/check_weighted_stream_reuse_v6.py": "2031115ae2b9c7d9d4945fcd01a24772568c4858be89db73ab3e048c21d6344b",
+    "tools/weighted_tail_data.py": "defbca7c1c770e5962c02685d941dab3150297df4448fc07e05b0e920a80fb15",
+    "tools/weighted_tail_selector.ml": "3f7e3d1e36e88977efdfb3602af953574710943e2a587f1973d17d8b31daa0f8",
+    "tools/check_weighted_stream_reuse_v7.py": "412e8c44f8ce56bff625f5d172669458b8bc019a86ff4b289a202707ae7fdf50",
+    "tools/weighted_transform_v2.py": "c7f3938876b426f89c4bf10257827b2c206128b072ea4eee5475d0fecd7708b3",
+    "tools/check_weighted_stream_reuse_v8.py": "6d651bef5f288c820f0d7c0fce9c4113b5a59b5143faa6274ef0531d22520083",
+    "theories/FastWall.v": "814fa07c16fd4da6d80c22889902ecd5b53bab8e539cf1ccab6c4588f337abfc",
+    "research/weighted-stream-reuse/pools001_006-input.json": "6e02dc1aef0b2c3c0246ee9961f5efe43f8995661d23b8c678787bc88cdae4f6",
+    "tools/check_fast_wall.py": "9968417274f4ad93cb24da23f8174295981e2a469e7376ad631c1587db583a02",
+    "tools/check_weighted_stream_reuse_v9.py": "4e401785027d38b304745343b49cdefe6756a951268b8d0337156f9fb29adb93",
+    "theories/FastWallRegression.v": "3522223241738dd0048f5f8cad29d36fa647a57ce51a97536fa0be09b149c044"
+  },
+  "proof_source_sha256": {
+    "Old219.v": "570371d7738aa8f04135453491b8c7c46adb6625cb0ecdbca28a2bb33c3990ca",
+    "Fast219.v": "c3a40c50fcc920a1e8e2234277cfc0ef1ba65c09b21259cd055afed1e10f323f",
+    "Old410.v": "28b5fa55e69a1a81fc7b6b697365fafff2a34509a7a190eabb2242490e597c2e",
+    "Fast410.v": "38988fb7922a10ce1bd09f2864527e7d00e25c319b54270881f6103f647a8b8e",
+    "Old631.v": "7efb6019e663a0c6a9252fe6b12d4551bda54417f6a8dd721660b406907225e3",
+    "Fast631.v": "256be3155fe168f6f48767ef90b9bbe744cf7e9267dd5f31c09d2c5ea5330e4d",
+    "BenchmarkAll.v": "f04fe2047ffee437c821251a3053131cc3a0d687f43f47af8a78c89e18a4d7ec"
+  },
+  "validation": "coqc plus incremental coqchk",
+  "timing": [
+    {
+      "source": 219,
+      "kind": "Old",
+      "status": 0,
+      "cpu_seconds": 9.861308,
+      "wall_seconds": 54.66357968199736
+    },
+    {
+      "source": 219,
+      "kind": "Fast",
+      "status": 0,
+      "cpu_seconds": 4.079263,
+      "wall_seconds": 34.03578745799314
+    },
+    {
+      "source": 410,
+      "kind": "Old",
+      "status": 0,
+      "cpu_seconds": 7.262784999999999,
+      "wall_seconds": 45.59831761499663
+    },
+    {
+      "source": 410,
+      "kind": "Fast",
+      "status": 0,
+      "cpu_seconds": 5.459916,
+      "wall_seconds": 26.100570162998338
+    },
+    {
+      "source": 631,
+      "kind": "Old",
+      "status": 0,
+      "cpu_seconds": 3.000030999999998,
+      "wall_seconds": 16.936374219003483
+    },
+    {
+      "source": 631,
+      "kind": "Fast",
+      "status": 0,
+      "cpu_seconds": 2.8843740000000007,
+      "wall_seconds": 25.472396318000392
+    }
+  ],
+  "audit_receipt": "build/fast-wall/benchmark-audit.json",
+  "audit_receipt_sha256": "17abc3da7d73653b1449e430b05f88b5593ff6188525f0bca07da7b299c068c5",
+  "module": "BBB24.FastWall",
+  "equality_theorems": [
+    "fast_wall_check_eq",
+    "fast_wt_ready_eq",
+    "fast_wt_hybrid_check_eq",
+    "fast_wc_graph_check_eq",
+    "fast_weighted_suffix_check_eq"
+  ],
+  "assumptions": "Equality theorems are closed under the global context."
+}

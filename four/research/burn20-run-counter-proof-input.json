@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 3883151701,
+      "machine": "1LB0LB0LA0RA_3RB3RA1RB2LB"
+    }
+  ],
+  "selection_report": "research/burn20-run-counter-native.json",
+  "selection_sha256": "6ed31415eabdec4b94b349155e57da88998d5fbd39dbc527f8a2d30aed7eb10b",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn20-run-counter/Regression.v": "d065de58df2a76fbae2c9837c739bca72b2d0854dc61ac5063749eb63f368fce",
+    "proof-sources/burn20-run-counter/RunCounter.v": "f82ad52be7682418c79c568ceeb40d24a8dec5b2c81668a2593773304bf8d5f1"
+  }
+}

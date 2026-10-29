@@ -1,0 +1,351 @@
+{
+  "controls": {
+    "B_after_one": 85,
+    "positive_returns": 1105,
+    "prefix_negative": 1,
+    "rightblank_negative": 1,
+    "slide_both_contexts": 1785
+  },
+  "entry_head": 0,
+  "entry_rightblank": true,
+  "entry_state": 0,
+  "entry_step": 1922128,
+  "frontier_step": 11,
+  "left_prefix": [
+    2,
+    2,
+    1,
+    1
+  ],
+  "points": [
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1514,
+      "nonzero_span": [
+        -1504,
+        9
+      ],
+      "position": 10,
+      "step": 1922128
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1515,
+      "nonzero_span": [
+        -1504,
+        10
+      ],
+      "position": 11,
+      "step": 1922139
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1516,
+      "nonzero_span": [
+        -1504,
+        11
+      ],
+      "position": 12,
+      "step": 1922150
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1517,
+      "nonzero_span": [
+        -1504,
+        12
+      ],
+      "position": 13,
+      "step": 1922161
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1518,
+      "nonzero_span": [
+        -1504,
+        13
+      ],
+      "position": 14,
+      "step": 1922172
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1519,
+      "nonzero_span": [
+        -1504,
+        14
+      ],
+      "position": 15,
+      "step": 1922183
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1520,
+      "nonzero_span": [
+        -1504,
+        15
+      ],
+      "position": 16,
+      "step": 1922194
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1521,
+      "nonzero_span": [
+        -1504,
+        16
+      ],
+      "position": 17,
+      "step": 1922205
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1522,
+      "nonzero_span": [
+        -1504,
+        17
+      ],
+      "position": 18,
+      "step": 1922216
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1523,
+      "nonzero_span": [
+        -1504,
+        18
+      ],
+      "position": 19,
+      "step": 1922227
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1524,
+      "nonzero_span": [
+        -1504,
+        19
+      ],
+      "position": 20,
+      "step": 1922238
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1525,
+      "nonzero_span": [
+        -1504,
+        20
+      ],
+      "position": 21,
+      "step": 1922249
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1526,
+      "nonzero_span": [
+        -1504,
+        21
+      ],
+      "position": 22,
+      "step": 1922260
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1527,
+      "nonzero_span": [
+        -1504,
+        22
+      ],
+      "position": 23,
+      "step": 1922271
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1528,
+      "nonzero_span": [
+        -1504,
+        23
+      ],
+      "position": 24,
+      "step": 1922282
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1529,
+      "nonzero_span": [
+        -1504,
+        24
+      ],
+      "position": 25,
+      "step": 1922293
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1530,
+      "nonzero_span": [
+        -1504,
+        25
+      ],
+      "position": 26,
+      "step": 1922304
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1531,
+      "nonzero_span": [
+        -1504,
+        26
+      ],
+      "position": 27,
+      "step": 1922315
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1532,
+      "nonzero_span": [
+        -1504,
+        27
+      ],
+      "position": 28,
+      "step": 1922326
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1533,
+      "nonzero_span": [
+        -1504,
+        28
+      ],
+      "position": 29,
+      "step": 1922337
+    },
+    {
+      "left_prefix": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "nonzero_cells": 1534,
+      "nonzero_span": [
+        -1504,
+        29
+      ],
+      "position": 30,
+      "step": 1922348
+    }
+  ],
+  "proof_method": "Coq checks only the finite prefix predicate; universal11-step return proves both-state recurrence with arbitrary left tail.",
+  "rows": [
+    {
+      "code": 4218262960,
+      "machine": "1LB2RA0LB1RB_3RB3LA1LA2RA"
+    }
+  ],
+  "scope": "Independent sparse original prefix and finite sliding-frontier context controls only; zero proof credit.",
+  "seconds": 0.270556,
+  "source_sha256": {
+    "tools/check_burn28_s066_frontier_native.py": "ac9aac39e7da2ce5f68507dc9a50d9629c643bb8586c0b292b63486b626efb43",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "total_controls": 2977
+}

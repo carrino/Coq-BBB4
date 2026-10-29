@@ -1,0 +1,25 @@
+{
+  "context_max_length": 2,
+  "decrement": "0^k2 -> 2^k0, binary value decreases by exactly1",
+  "decrement_cost": "2 when k=0, otherwise4*k+6",
+  "drains": 254,
+  "excluded_corner": "the empty bit block immediately enters blank-right B",
+  "finish": "a nonempty zero block before terminal1 becomes a2 block with head3",
+  "finish_cost": "3*length+4",
+  "local_macros": 7056,
+  "max_bits": 7,
+  "rows": [
+    {
+      "code": 5981071874,
+      "machine": "1LB1RB0LB2RA_1RB3LB2LB3RA"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "seconds": 0.072042,
+  "simulated_macro_steps": 219196,
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn17_binary_rank_native.py": "d0c11f3e6aeed4d95500265454fe0e54e8066e7a5408a418933205a404f2ad26",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

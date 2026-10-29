@@ -1,0 +1,58 @@
+{
+  "description": "Target boots into already proved weighted source tails; no source ranks are recomputed.",
+  "source_registries": [
+    "research/weighted-full-snapshots/batch004/registry.json",
+    "research/weighted-full-snapshots/batch005/registry.json"
+  ],
+  "selection_sha256": "4d5b138c729bf1605e730f562a8b90e852db210ef7fe2d698a3c945546a7323a",
+  "columns": [
+    "machine",
+    "source_certificate",
+    "permutation",
+    "state_swap",
+    "mirrored",
+    "boot"
+  ],
+  "rows": [
+    [
+      "1LB1LB---3RA_1RA3LB3LB2RA",
+      245,
+      "132",
+      true,
+      true,
+      16
+    ],
+    [
+      "1LB2LB2LB3RA_2RA3LB3LB1RA",
+      245,
+      "231",
+      true,
+      true,
+      16
+    ],
+    [
+      "1LB2LB1RA0RA_3RA1LA1LB3RB",
+      283,
+      "312",
+      true,
+      false,
+      16
+    ],
+    [
+      "1LB0LB2LA2RB_3RA1LA3RB3RB",
+      555,
+      "321",
+      true,
+      true,
+      8
+    ],
+    [
+      "1LB2LA3RB2RB_3RA1RB1LA1LA",
+      944,
+      "312",
+      true,
+      false,
+      8
+    ]
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "rows": [
+    {
+      "code": 3376288745,
+      "machine": "1LB0LA1LB1RB_3RB3RA0RB2LA"
+    },
+    {
+      "code": 3569389297,
+      "machine": "1LB0LA1LB1RB_3RB3RA2RB2LA"
+    }
+  ],
+  "selection_report": "research/burn23-s004-s005-unary-native.json",
+  "selection_sha256": "74b08a00092e95c030781d19bfd0138ce835aadd0526a0dea1ae9ad3fe78e8cc",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn23-s004-s005-unary/Regression.v": "b5d660c24238a53eae5d7100742224b13d42d6648eee1f00a0110850bc13c1e2",
+    "proof-sources/burn23-s004-s005-unary/UnaryPhases.v": "24deef53b40737d3367ea0a1aa8a7acf4ec766f3121e36b7a0be22d199de26a3"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "scope": "Scheduling only. Proof reductions require independently audited board and exact inventory evidence; the frozen campaign counts remain unchanged.",
+  "baseline_commit": "f3601564faebf43eb759ac27fb6daab078c6581e",
+  "baseline": {
+    "research/campaign-final-input.json": "7227b3323a2e1db49f26a2788cc7526895e0480bf075260a385ae89114b8375e",
+    "research/campaign-final-summary.json": "e3b29cf0416c9a93f0c6831f68040074b6016939aa1b486dbd361923996c5e89",
+    "research/campaign-next-summary.json": "e3d3801a541606338dbe9ea0d35262ec217ae55e3f5e63c81ef7172659802858"
+  },
+  "queue_sha256": "69f5ae95e09705f20f1a289881d563fa20a371be3e8e2f57008cb26350e83b29",
+  "starting_cohort_residual": {
+    "both": 33492,
+    "state": 2758
+  },
+  "assigned_replay_queues": [
+    {
+      "queue": "repeated_word",
+      "rows": 2833,
+      "both_obligations": 2833,
+      "state_obligations": 125,
+      "machine_text_sha256": "366d7c0ca871f6fb4b810806f8ce55ffd6e1adfe308b270976ddac2666b323f1"
+    },
+    {
+      "queue": "timeout_recovery",
+      "rows": 1519,
+      "both_obligations": 1519,
+      "state_obligations": 296,
+      "machine_text_sha256": "a08b691bef3a3ddd46a5197a917bb896c8f1eb730129cc40040006bca4a8b9b4"
+    },
+    {
+      "queue": "weighted_state",
+      "rows": 240,
+      "both_obligations": 0,
+      "state_obligations": 240,
+      "machine_text_sha256": "6749305419d48f1a7f2bae56253a5778ef8b6daeae4c98602ea78a613c49a0ad"
+    }
+  ],
+  "replay_union_rows": 4592,
+  "resource_policy": "One worker per replay/search agent on the shared 4-CPU/16-GiB host. Bounded timeouts; no concurrent full campaign audit.",
+  "additional_tasks": [
+    {
+      "task": "capacity_and_portfolio",
+      "selection": "Exclude every assigned replay ID and prior diagnostic inputs before a deterministic bounded pilot.",
+      "proof_scope": "Both bounds only after certificate replay and exact inventory/pending checks."
+    },
+    {
+      "task": "champion_census",
+      "machine": "1LB2RA1LA1RB_0RB2LB3LB1RA",
+      "selection": "Register the separately proved exact champion in a new census board, preserving the historical generic-solver control.",
+      "proof_scope": "Both bounds at the exact champion score; no global upper-bound claim."
+    },
+    {
+      "task": "independent_review",
+      "selection": "Review all new source/object-bound audits, inventories, completion scope, and deduplicated proof deltas."
+    }
+  ]
+}

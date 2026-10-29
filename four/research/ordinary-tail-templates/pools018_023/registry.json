@@ -1,0 +1,96 @@
+{
+  "bundles": [
+    {
+      "bytes": 46137,
+      "path": "research/ordinary-tail-templates/pools018_023/contexts-0000.json",
+      "rows": 128,
+      "sha256": "4211f649b988f2c8b81abe2cdba7e9d10b3e31f7c6a4185cde6cd9e02cb60389"
+    },
+    {
+      "bytes": 43037,
+      "path": "research/ordinary-tail-templates/pools018_023/contexts-0001.json",
+      "rows": 128,
+      "sha256": "67c035d19e851f992557b9a858a737f0f0d00f776ab3358a4573a6e9eb6c5795"
+    },
+    {
+      "bytes": 49381,
+      "path": "research/ordinary-tail-templates/pools018_023/contexts-0002.json",
+      "rows": 128,
+      "sha256": "a07233c6377dd5955bdad91d7364fbedc37c84da048a9313c02a19bc95b7f99f"
+    },
+    {
+      "bytes": 47945,
+      "path": "research/ordinary-tail-templates/pools018_023/contexts-0003.json",
+      "rows": 128,
+      "sha256": "cfb70d9d0cebfeb40734f6799858d93a3077c2d94c710f651cf7ea9b20e858bd"
+    },
+    {
+      "bytes": 44129,
+      "path": "research/ordinary-tail-templates/pools018_023/contexts-0004.json",
+      "rows": 128,
+      "sha256": "48e76440dc4536b450e011e2578a752fe56474e68a035caaca1bed86d7869cf4"
+    },
+    {
+      "bytes": 46637,
+      "path": "research/ordinary-tail-templates/pools018_023/contexts-0005.json",
+      "rows": 128,
+      "sha256": "5cf28a5f736683c56eac94b97b016480f6f394cacccf9239fa7adfd6902569c8"
+    },
+    {
+      "bytes": 42545,
+      "path": "research/ordinary-tail-templates/pools018_023/contexts-0006.json",
+      "rows": 128,
+      "sha256": "8fd9cee8b9b6424432599e244e0877668f219c02f954adc4dad54786ccded8b1"
+    },
+    {
+      "bytes": 45185,
+      "path": "research/ordinary-tail-templates/pools018_023/contexts-0007.json",
+      "rows": 128,
+      "sha256": "fc718379d8288c7c7f7e091326177b906feb50fd101204d17bd7317c949612d0"
+    },
+    {
+      "bytes": 25936,
+      "path": "research/ordinary-tail-templates/pools018_023/contexts-0008.json",
+      "rows": 74,
+      "sha256": "7cc9b0671d56e2413c93a562fd04d41edd44a0f6be2e18cdda8c02e5e6c44277"
+    }
+  ],
+  "format": "BBB24 compact weighted certificates v2",
+  "kinds": {
+    "weighted": 1098
+  },
+  "rows": 1098,
+  "source": {
+    "binary_sha256": "25b36f797ba11891ebe48e6e475716d43921748515e0fc2295dadfa7c2b46d3c",
+    "event_sha256": "50a55e5c8b688adb300d67dfc6de4418f9fec72779bddcfb2f163b646599dbd0",
+    "inputs_sha256": {
+      "build/weighted-v2/weighted_v2.cmi": "6ca16bf007ac03bd3d48e9f773c78a6b0116c2cd87114db5c0ebef128c976aaf",
+      "build/weighted-v2/weighted_v2.cmx": "5869b0f1f245e42b1f42406ab714a33140ac4e2c453316811b466b71d76baf3a",
+      "build/weighted-v2/weighted_v2.ml": "5d2885caa838d1d7a67ee072747ffee8d4ae2c63022b3765ec17f830eda8435c",
+      "build/weighted-v2/weighted_v2.mli": "0b5bd739b37148bbeaf1ee954881ec5c9f97f5739b2ca566ba817cc01dacaafd",
+      "build/weighted-v2/weighted_v2.o": "6e81412929ae030e8e398cb377001537c116dd3332fce1f0b9d3adf1bceb69fc",
+      "research/weighted-full-snapshots/batch018/certificates-0000.json": "77d3ec838f3a32928e8aff8397ddec42e847420d736f25710ba8f7d0f356b27c",
+      "research/weighted-full-snapshots/batch018/certificates-0001.json": "ba2c3a0b94bb09d51f56b2122f92fc71dcb854fb0a5b12d2446a98f4e8533815",
+      "research/weighted-full-snapshots/batch019/certificates-0000.json": "a81922797168349d29ff2ae4747ad41b67f49c46082ddc7895e135239a6b941b",
+      "research/weighted-full-snapshots/batch019/certificates-0001.json": "7095f2b047183d044e34009eb672c58b5bfd54c93063689f145613dc97477db2",
+      "research/weighted-full-snapshots/batch020/certificates-0000.json": "1e3774d4f5244a3f8beb3b6310feaf7f3fcfb3d43d9de4edb1f07aee987a70f8",
+      "research/weighted-full-snapshots/batch020/certificates-0001.json": "b5c35f91d4bf1e1f6bb3b01ccfbfd2b389394c02ab6900b509eff9347e108f13",
+      "research/weighted-full-snapshots/batch021/certificates-0000.json": "cfd202d28636edaafd34f7296fe12561150646bda672af3ffd0a745b91084819",
+      "research/weighted-full-snapshots/batch021/certificates-0001.json": "7c28c6b9efc9714bebaabac273fd1359f104fa1c6e0a98b3ef8dcd7295badee2",
+      "research/weighted-full-snapshots/batch022/certificates-0000.json": "3feb13a295f0783ca14946f9e458ce13ba7982ca0ab0db3dc8892256af4cad0a",
+      "research/weighted-full-snapshots/batch022/certificates-0001.json": "642bc281192f5721194adf471c5e6939f5de45029ff03a01016a0529c913cc52",
+      "research/weighted-full-snapshots/batch023/certificates-0000.json": "21a316426ab1509f43ed514ac959920848fae1841a21d7665ca8f10713deec31",
+      "research/weighted-full-snapshots/batch023/certificates-0001.json": "c11a6eddf582372f89cf5b826a8ff36249220f6084e06318f9bb7b451f6032a2",
+      "research/weighted-stream-reuse/pools018_023.json": "b6c6d0ddd1b6d1922bbb298710e1306fa62ec984145663049dac48a3d1c9812f",
+      "tools/ordinary_template_graphs.ml": "8d5fbc8b13308aabd4b887f7002733fc53ebb4c5e9dad373907b8aa87a5072e1",
+      "tools/ordinary_template_pool.py": "52fe9f8e4a0bf364d8b5d4b4d2c2b2d3c9bbf91123b072ea232b703cc5a0d125"
+    },
+    "max_nodes": 2048,
+    "ordinary_inputs": 1098,
+    "status_counts": {
+      "closed": 1098
+    },
+    "timeout_seconds": 1.0
+  },
+  "status": "Untrusted ordinary closure templates, with empty explicit certificates; all rankings and target boots require Coq replay."
+}

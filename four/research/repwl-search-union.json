@@ -1,0 +1,48 @@
+{
+  "additional_candidate_rows": 18,
+  "additional_inputs": [
+    {
+      "input": "four/research/repwl-cpu-pilot64-proof-input.json",
+      "rows": 17,
+      "sha256": "f7fc36947c32af4ec009be21711d3402621b9a6bbe01a9db5f232bada72a260a"
+    },
+    {
+      "input": "four/research/repwl-anchor-proof-input.json",
+      "rows": 1,
+      "sha256": "b38a262b831776083eff8e1fbd40dd5de60d2160b80202101da05242b7f25f76"
+    }
+  ],
+  "additional_machine_ids": [
+    "1LB1LB0RB1RA_3RA2LB3LB1RB",
+    "1LB1LB---2RA_1RA3LB3RB1RB",
+    "1LB0RB1LA3LA_2RB3RA3LA0LB",
+    "1LB2RA3RA2LB_0RB1RA2LA1LB",
+    "1LB1RA2RB2LA_1RA3LB0LB1LB",
+    "1LB1RA2LB2RA_1RA3LB3RB0LA",
+    "1LB2RB3LB1RA_1RA0LA2LA2LB",
+    "1LB2LB3RA1RA_1RB1RA2RA1LA",
+    "1LB2RA1LA0LA_3RB1RA2LB0LA",
+    "1LB2RB3RB0LA_1RA2LA0RB3LB",
+    "1LB2LA1RA3RA_3RB2LB3RB1RA",
+    "1LB2RB1LB2RA_3RA1RA0LA3LB",
+    "1LB2RB2LB0RB_1RA3LB2LA0LA",
+    "1LB2LB3RA2RB_0RA2RA0LB3LA",
+    "1LB1RA3LA2RB_2RA3RB1LB2LA",
+    "1LB2LB3RA2RB_3RB1LA1RA1RB",
+    "1LB2LB3RB2RA_1RA3LB3LA1RB",
+    "1LB2RA3RA0LA_1RB1RA2LA1LB"
+  ],
+  "base_report": "four/research/repwl-stream-full.json",
+  "base_report_sha256": "a398bfd09b8ed92948632a01b5ce9ad1aba1801ec1b46168a1b5a6d18ac5d2dc",
+  "base_residual_sha256": "f5a2b444646b7de036889fd348cd3788d9c371606e14a5e58a9626cc95ba2d6e",
+  "candidate_rows": 4176,
+  "census_linked_rows": 0,
+  "construction": "Preserve the base residual order and remove the 18 distinct machine IDs from the two recorded replay inputs.",
+  "full_stream_candidate_rows": 4158,
+  "input_rows": 36805,
+  "kernel_checked_rows": 0,
+  "not_accepted_path": "four/build/wave3/repwl-full/after-pilots.txt",
+  "not_accepted_rows": 32629,
+  "not_accepted_sha256": "36bc0f278cbb684df3fc1829742667ea67fe525927457618eb8d6f4eeb18748b",
+  "status": "Union of untrusted RW search candidates; independent kernel replay remains required. This is a search residual, not a certified census remainder."
+}

@@ -1,0 +1,101 @@
+{
+  "format": "BBB24 swapped ternary template v1",
+  "instruction_bound": 8,
+  "rows": [
+    {
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        0
+      ],
+      "entry_step": 4,
+      "machine": "1LB0LA2LB2RA_2RA3LB3RA1RA",
+      "mirror": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        3
+      ],
+      "entry_step": 4,
+      "machine": "1LB1LA2LB2RA_2RA3LB3RA1RA",
+      "mirror": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "counter_n": 0,
+      "dormant_left_suffix": [],
+      "entry_step": 1,
+      "machine": "1LB1LB---1RA_1RA3RA3LB2RA",
+      "mirror": true,
+      "symbol_map": [
+        0,
+        1,
+        3,
+        2
+      ]
+    },
+    {
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        1
+      ],
+      "entry_step": 4,
+      "machine": "1LB2LA2LB2RA_2RA3LB3RA1RA",
+      "mirror": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        2
+      ],
+      "entry_step": 4,
+      "machine": "1LB2LA3RA3LB_3RA2LB1RA2RA",
+      "mirror": true,
+      "symbol_map": [
+        0,
+        3,
+        2,
+        1
+      ]
+    },
+    {
+      "counter_n": 1,
+      "dormant_left_suffix": [],
+      "entry_step": 8,
+      "machine": "1LB2LB2LB2RA_2RA3LB3RA1RA",
+      "mirror": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    }
+  ],
+  "selection_provenance": {
+    "path": "research/burn4-ternary-state-exchange-screen.json",
+    "scope": "Historical discovery only; replay checks concrete entry before state exchange.",
+    "sha256": "110826bbd1be8dd41ab906635c4b96e3603ea3e615107022d38998bdf9890919"
+  },
+  "state_bound": 0,
+  "template_sha256": {
+    "research/burn4-ternary-swapped/Swapped.v": "dfa9d13ff96064674dc33c65af6428693a010aec03ac6f84d3f11b40aefbd339"
+  }
+}

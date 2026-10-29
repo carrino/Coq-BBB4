@@ -1,0 +1,33 @@
+{
+  "maximum_rows_per_shard": 4,
+  "native_cost_ledger_sha256": "24974963a0fd100de08db4a2bd9f542e56cd89d52ba19b5cb0a60667d8b47cec",
+  "producer_sha256": "7701a7d0bcf2299ee04eb57a7821e67921431346452668b017914933cf0ea293",
+  "scope": "Proof scheduling only; every selected family is independently checked.",
+  "selected_rows": 6,
+  "shards": [
+    {
+      "native_seconds": 0.032264,
+      "rows": [
+        4266508875
+      ]
+    },
+    {
+      "native_seconds": 2.055848,
+      "rows": [
+        2650374635
+      ]
+    },
+    {
+      "native_seconds": 0.210063,
+      "rows": [
+        3346179994,
+        1819808304,
+        4401826206,
+        5202222688
+      ]
+    }
+  ],
+  "slow_rows_get_separate_shards": true,
+  "source_report_sha256": "9244481e367a9003d79f1a518c864557bbda00107c240f4ed7f1ced8edd081a3",
+  "target_native_seconds_per_shard": 1.0
+}

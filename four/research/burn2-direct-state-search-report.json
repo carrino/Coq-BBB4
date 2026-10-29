@@ -1,0 +1,703 @@
+{
+  "candidate_methods": {},
+  "candidates": 0,
+  "component_types": {},
+  "counts": {},
+  "guarded_binary_attempted": false,
+  "per_machine": [
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 95,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 95,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB0LB0LB0RA_2RB2RA3LA2RA",
+      "seconds": 0.043
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 150,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 150,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2RB1LA1LB_2RB2RA3LA0RB",
+      "seconds": 0.024
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 164,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 164,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2RB3RB1LA_1RB3RA---3LA",
+      "seconds": 0.026
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 212,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 212,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LA3RB1RA_3RB3LA0RA2LA",
+      "seconds": 0.025
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 212,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 212,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LB2LB1RA_1RB2RA3LB2RB",
+      "seconds": 0.07
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 216,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 216,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB0LB1RB3LB_3RB1LA0LB2RB",
+      "seconds": 0.051
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 216,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 216,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LB1RB0LB_2RB1LA3RB0LB",
+      "seconds": 0.063
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 224,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 224,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB---0LA2LB_3RB1LA2RB3RB",
+      "seconds": 0.038
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 246,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 246,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LB1RB2RB_2RB1LA3RB0LB",
+      "seconds": 0.064
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 246,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 246,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2RB2LB1RB_2RB1LA3RB0LB",
+      "seconds": 0.075
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 261,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 261,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB0LA3RA2RA_2RB1LA3RB0LB",
+      "seconds": 0.054
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 276,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 276,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LA3RB1LA_0RB1RA3RA3RB",
+      "seconds": 0.057
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 283,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 283,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB1RA1LB2LA_2RB3LB0LB1RA",
+      "seconds": 0.057
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 307,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 307,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB1RA1RA2LB_2RB3LB0LB1RA",
+      "seconds": 0.056
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 323,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 323,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB0LA0LB2RB_3RB1LA0LB3RA",
+      "seconds": 0.048
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 331,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 331,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB0LB1LA1RB_3RB2RA3RA3LA",
+      "seconds": 0.034
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 343,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 343,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2RB0LA1RB_2RB3RA1LA0LB",
+      "seconds": 0.054
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 349,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 349,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LB3RA1RA_3RB2LA1RB3LA",
+      "seconds": 0.045
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 359,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 359,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2RB2RB2LB_0RB3RA0LA2LA",
+      "seconds": 0.031
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 363,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 363,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB0LA0LB3RA_3RB1LA2RA2RB",
+      "seconds": 0.027
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 364,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 364,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB0RB0LA0RA_1RB2RA3LA2LA",
+      "seconds": 0.033
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 368,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 368,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2RB0LA0LB_3RB1LA3RA2RA",
+      "seconds": 0.062
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 430,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 430,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB0LA",
+      "seconds": 0.053
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 448,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 448,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LB0LA2LA_1RB3RA2RB3LA",
+      "seconds": 0.05
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 459,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 459,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LB3LB1RA_3RB2LB1RA0LB",
+      "seconds": 0.072
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 460,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 460,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LA0LA2LB_3RB1LA2RB1RA",
+      "seconds": 0.05
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 473,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 473,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LA3RA2RA_1RB2RA0LB2RB",
+      "seconds": 0.069
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 475,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 475,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB0LB0RA2RA_1RB3RA3RA2LA",
+      "seconds": 0.035
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 480,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 480,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB0RA---3RA_3RB2RA0LA0LB",
+      "seconds": 0.06
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 480,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 480,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2RA0LB1RA_1RB3LA2RB3RB",
+      "seconds": 0.061
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 481,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 481,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LA2RA3LB_2RB3RA0LB3RA",
+      "seconds": 0.085
+    },
+    {
+      "attempts": [
+        {
+          "mirror": 0,
+          "nodes": 492,
+          "state_methods": [
+            "failed"
+          ]
+        },
+        {
+          "mirror": 1,
+          "nodes": 492,
+          "state_methods": [
+            "failed"
+          ]
+        }
+      ],
+      "candidate": false,
+      "machine": "1LB2LA0RA3RB_3RB1RA1LB0LB",
+      "seconds": 0.08
+    }
+  ],
+  "rows": 32,
+  "scope": "Untrusted direct-state search; dedicated Coq replay required.",
+  "sources_sha256": {
+    "four/build/burn2-state/graph-snapshots/chunk-0464.jsonl": "7e520d4c8e069e77a9010602836bfa6bc335807c790b17a0372b9fb47ca2bc6b",
+    "four/build/burn2-state/graph-snapshots/chunk-0480.jsonl": "4e5b30af06334264addcb89331eeabda903695ebe5fb3c171b3050c522b7a5c4",
+    "four/build/burn2-state/graph-snapshots/chunk-0496.jsonl": "224c9958be96843296ecdaad2fae263b89b41e9564ae2fd714d277aee16c4bd2",
+    "four/build/burn2-state/graph-snapshots/chunk-0512.jsonl": "3bf313c9069287af9f5a94e7bbac000af6b9fef54aedc745704b1b99e39dde7e",
+    "four/build/burn2-state/graph-snapshots/chunk-0528.jsonl": "6f0b0ea92b77416e957e056fc8cd42b0e7717267b9dea42b4563faae6e200223",
+    "four/build/burn2-state/graph-snapshots/chunk-0544.jsonl": "6afebe3ec822b118ba27dc222966dc8620f15a481cfa6aa0bbc5fdfdfe1ead9a",
+    "four/build/burn2-state/graph-snapshots/chunk-0576.jsonl": "bbd6a05c2bd0a8aa01ce3ab5c28b34edcaa7accd9be9750829b61b2a6c9e8515",
+    "four/build/burn2-state/graph-snapshots/chunk-0592.jsonl": "085e920dd1c2832a0bdd548735f322fb44b79ec8d2e653f4c106a2b2ccbfa1b5",
+    "four/build/burn2-state/graph-snapshots/chunk-0608.jsonl": "9e7432deae8a86602ed157c77387231d150b35602b299090fd7d39b92f0d795a",
+    "four/build/burn2-state/graph-snapshots/chunk-0624.jsonl": "64b91ca12c1b4502933fd0ce3d0ad755a80b155ab7f4ca4057c60bb2361121a4",
+    "four/build/burn2-state/graph-snapshots/chunk-0640.jsonl": "8583b9daad9596a9ce52c27d3953d68bf9a94548be0727a10732a9df502dfe19",
+    "four/build/burn2-state/graph-snapshots/chunk-0656.jsonl": "6eb7d2203e88b7ddf12f69d68674dd42ef048f8552780b579763c5bc25bb33af",
+    "four/build/burn2-state/graph-snapshots/chunk-0672.jsonl": "bb8b70fe9a7e89ccd77552d8af1f86d9017fa0ffb9d279402d2d7c225ba4a6e3",
+    "four/build/burn2-state/state-capacity-pilot-input.json": "72708d001a6cc3ab815ab75f30c60a6e27144576a57e1d16ef4b902d9e986023",
+    "four/tools/search_burn2_direct_state.py": "23b5187ea1fd47884aa8a86ad3e54b87aa40e577ea2d0898a56423a853982659",
+    "four/tools/weighted_search.py": "783d099f855fa6db1f9c62b33b32161b300c558674a0e5894d4dd6f54cbb4b99",
+    "four/tools/weighted_search_v2.py": "0035b8fb5337864205139fc08fca93a86eae3172e0ae6bac378c64a468be1259",
+    "tools/multisymbol/weighted_certificates.py": "88aea51027ce507af14156a25f5edbc9c80c1a952e26d9f6096fadd569aba9bf"
+  }
+}

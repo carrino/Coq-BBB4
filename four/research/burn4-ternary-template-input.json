@@ -1,0 +1,67 @@
+{
+  "format": "BBB24 six-transition ternary template v1",
+  "instruction_bound": 7,
+  "rows": [
+    {
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        0
+      ],
+      "entry_step": 3,
+      "machine": "1LB2LB3LB2RA_0RB1RA1LB---"
+    },
+    {
+      "counter_n": 1,
+      "dormant_left_suffix": [],
+      "entry_step": 7,
+      "machine": "1LB2LB3LB2RA_1RA1RA1LB---"
+    },
+    {
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        1
+      ],
+      "entry_step": 3,
+      "machine": "1LB2LB3LB2RA_1RB1RA1LB---"
+    },
+    {
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        2
+      ],
+      "entry_step": 3,
+      "machine": "1LB2LB3LB2RA_2RB1RA1LB---"
+    },
+    {
+      "counter_n": 1,
+      "dormant_left_suffix": [],
+      "entry_step": 7,
+      "machine": "1LB2LB3LB2RA_3RA1RA1LB1RA"
+    },
+    {
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        3
+      ],
+      "entry_step": 7,
+      "machine": "1LB2LB3LB2RA_3RA1RA1LB3RB"
+    },
+    {
+      "counter_n": 0,
+      "dormant_left_suffix": [
+        3
+      ],
+      "entry_step": 3,
+      "machine": "1LB2LB3LB2RA_3RB1RA1LB---"
+    }
+  ],
+  "selection_provenance": {
+    "path": "research/burn4-ternary-template-screen.json",
+    "scope": "Historical discovery only; replay checks all entries and bounds in Coq.",
+    "sha256": "d37092481faffedf52b779e39769ef78b79032dd2702dd428644c99968094b37"
+  },
+  "state_bound": 0,
+  "template_sha256": {
+    "research/burn4-ternary-template/Template.v": "9d9f0a57333dd123ff73eae2f5583b766a25b9b1da29b6178b8bf4896e09e6a4"
+  }
+}

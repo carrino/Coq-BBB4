@@ -1,0 +1,96 @@
+{
+  "bundles": [
+    {
+      "bytes": 45253,
+      "path": "research/ordinary-tail-templates/pools012_017/contexts-0000.json",
+      "rows": 128,
+      "sha256": "24ecc4d3bbb09534da906b7eea1b1567bb61dc5cc9f2c2a858eb26a498e3c599"
+    },
+    {
+      "bytes": 44621,
+      "path": "research/ordinary-tail-templates/pools012_017/contexts-0001.json",
+      "rows": 128,
+      "sha256": "41619c06362317d21d0a188eca21211f55dcee227501919adb5598adcb2b9cef"
+    },
+    {
+      "bytes": 47437,
+      "path": "research/ordinary-tail-templates/pools012_017/contexts-0002.json",
+      "rows": 128,
+      "sha256": "0d4781e643c2c4858c55822398e8c0c191e0ae8426295b5fab3afd73978ae10d"
+    },
+    {
+      "bytes": 50605,
+      "path": "research/ordinary-tail-templates/pools012_017/contexts-0003.json",
+      "rows": 128,
+      "sha256": "c4bb9a8d6d08c5ffb1104a56bb4127d2bbc7843a3897f06d4c83a4ec9b5e9d9f"
+    },
+    {
+      "bytes": 46917,
+      "path": "research/ordinary-tail-templates/pools012_017/contexts-0004.json",
+      "rows": 128,
+      "sha256": "d33982a5c55a24752283f4137f6b75beb402dd3a0bb6cdf8046fc0af332bff08"
+    },
+    {
+      "bytes": 44921,
+      "path": "research/ordinary-tail-templates/pools012_017/contexts-0005.json",
+      "rows": 128,
+      "sha256": "33999411d35455f20abaa7c607ba6b64b7712f0d9451cf30626b74c6273c30ba"
+    },
+    {
+      "bytes": 45065,
+      "path": "research/ordinary-tail-templates/pools012_017/contexts-0006.json",
+      "rows": 128,
+      "sha256": "f30346472b6b24719e6ee6e4ac7951c4ea66b060a6452446fa753401c096aa9c"
+    },
+    {
+      "bytes": 48237,
+      "path": "research/ordinary-tail-templates/pools012_017/contexts-0007.json",
+      "rows": 128,
+      "sha256": "1eb991969d42e9a398ef3e3f3e13492d79177050e92ecc10f822f20eb1b2b2d3"
+    },
+    {
+      "bytes": 24743,
+      "path": "research/ordinary-tail-templates/pools012_017/contexts-0008.json",
+      "rows": 66,
+      "sha256": "288003a104f0fa33d41397dce545636620461083000d76281a3b434d228af9ea"
+    }
+  ],
+  "format": "BBB24 compact weighted certificates v2",
+  "kinds": {
+    "weighted": 1090
+  },
+  "rows": 1090,
+  "source": {
+    "binary_sha256": "25b36f797ba11891ebe48e6e475716d43921748515e0fc2295dadfa7c2b46d3c",
+    "event_sha256": "02093bfeacaf0958d2198480b6fecff3f2c80bb29674a9dcc293eef21ca935f1",
+    "inputs_sha256": {
+      "build/weighted-v2/weighted_v2.cmi": "6ca16bf007ac03bd3d48e9f773c78a6b0116c2cd87114db5c0ebef128c976aaf",
+      "build/weighted-v2/weighted_v2.cmx": "5869b0f1f245e42b1f42406ab714a33140ac4e2c453316811b466b71d76baf3a",
+      "build/weighted-v2/weighted_v2.ml": "5d2885caa838d1d7a67ee072747ffee8d4ae2c63022b3765ec17f830eda8435c",
+      "build/weighted-v2/weighted_v2.mli": "0b5bd739b37148bbeaf1ee954881ec5c9f97f5739b2ca566ba817cc01dacaafd",
+      "build/weighted-v2/weighted_v2.o": "6e81412929ae030e8e398cb377001537c116dd3332fce1f0b9d3adf1bceb69fc",
+      "research/weighted-full-snapshots/batch012/certificates-0000.json": "f6b74f1071e305454e3267b6086f25f8e8ca1184450d16f6bdfa947c78a0a11c",
+      "research/weighted-full-snapshots/batch012/certificates-0001.json": "9023dc9c9242ed030d813fdd4209dbac52cc9083208054d3c8c2fb4eac43898e",
+      "research/weighted-full-snapshots/batch013/certificates-0000.json": "7e0fbb755f8f49088462c90189a8a30836006c2289a5683abc7796610735624c",
+      "research/weighted-full-snapshots/batch013/certificates-0001.json": "be1a9e640cb3c71ec6a07a472ab830a4697bdf6358f0170c39dd07dece168abf",
+      "research/weighted-full-snapshots/batch014/certificates-0000.json": "121290190951701ef8235df173de2d721677c4abd334afb783a5eecb42c01794",
+      "research/weighted-full-snapshots/batch014/certificates-0001.json": "d11ba035a88c498d8be1e0b60d6e931483dd991250b4bd973e2c35d6ddd7923c",
+      "research/weighted-full-snapshots/batch015/certificates-0000.json": "d99183fd472d7f22b6777b2d95072de82ad36f63ddae0aec629f0c868137a9a9",
+      "research/weighted-full-snapshots/batch015/certificates-0001.json": "6b4b07957429ca78d7b12ddc01cc150d269583e9c507e7887443ec4638e1e623",
+      "research/weighted-full-snapshots/batch016/certificates-0000.json": "8cb50a5196209bdc1a0fcdecb587b6a98e0a9ab3b0aa6637f4d9cc1e29974a21",
+      "research/weighted-full-snapshots/batch016/certificates-0001.json": "acfedcfbb12408baf7cf3fc62db95d81e9ee2f1d1bb5d4eddbad08c8ee8bd1d2",
+      "research/weighted-full-snapshots/batch017/certificates-0000.json": "b21daec4d45109b2dcd446e49ca5dd0c922bc32beb522c23634f48fdf612e94a",
+      "research/weighted-full-snapshots/batch017/certificates-0001.json": "b824432543fd8188ebeade1d58ddf6d135d023dd9427e8ee3a0036fef322902f",
+      "research/weighted-stream-reuse/pools012_017.json": "3db3d39b9c2549531cca000644cdb4e5180f9bac351a1033f8c8f1b2094b83ec",
+      "tools/ordinary_template_graphs.ml": "8d5fbc8b13308aabd4b887f7002733fc53ebb4c5e9dad373907b8aa87a5072e1",
+      "tools/ordinary_template_pool.py": "52fe9f8e4a0bf364d8b5d4b4d2c2b2d3c9bbf91123b072ea232b703cc5a0d125"
+    },
+    "max_nodes": 2048,
+    "ordinary_inputs": 1090,
+    "status_counts": {
+      "closed": 1090
+    },
+    "timeout_seconds": 1.0
+  },
+  "status": "Untrusted ordinary closure templates, with empty explicit certificates; all rankings and target boots require Coq replay."
+}

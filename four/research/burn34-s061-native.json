@@ -1,0 +1,48 @@
+{
+  "actual_orbit": {
+    "total_steps": 35055,
+    "two_return_cycles": 64
+  },
+  "boundary_guard": "Only matching-parity grammar words are asserted; arbitrary binary words may escape in B3.",
+  "context_max_length": 2,
+  "controls": {
+    "actual_entry": 1,
+    "actual_orbit": 1,
+    "double_normalizers": 3570,
+    "even_normalizers": 3570,
+    "even_returns": 680,
+    "identity_controls": 2,
+    "negative_guards": 2,
+    "odd_normalizers": 3570,
+    "odd_returns": 680,
+    "two_return_cycles": 680
+  },
+  "entry_steps": 5,
+  "even_return_cost": "4*(2*j+2)+ec(e)+dc(e)+3",
+  "even_trees": 170,
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "grammar_tree_depth": 3,
+  "identity_negative_controls": [
+    "1LB2LA3RA1RA_3RB2LA1RA3LB",
+    "1LB2LB3RA1RA_3RB2LA1RA3RB"
+  ],
+  "invariant": "A0 right blank; left 3^(2*j+1) O(o) or 3^(2*j+2) E(e), mutually recursive finite grammar trees",
+  "metadata_revision": 1,
+  "odd_return_cost": "4*(2*j+1)+oc(o)+4",
+  "odd_trees": 170,
+  "prior_remaining_count": 8,
+  "prior_remaining_report": "research/burn34-s061-prior-state-holdouts.txt",
+  "prior_remaining_sha256": "a65c1f9c62a2acf0a991d5daaa7afddc8d7fb9316b6154e86946346889cec91e",
+  "rows": [
+    {
+      "code": 5491873516,
+      "machine": "1LB2LB3RA1RA_3RB2LA1RA3LB"
+    }
+  ],
+  "scope": "Finite synthetic grammar controls only; no universal proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn34_s061_native.py": "239e1ff452ed75b1464a1501004f3fb41104e5bb3f2e6cf63f5ea9a448a74af2",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

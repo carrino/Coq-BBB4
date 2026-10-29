@@ -1,0 +1,456 @@
+{
+  "rows": [
+    {
+      "arbitrary_context_checks": 19551,
+      "block_controls": 650,
+      "code": 4957683026,
+      "direct_cuts": 18,
+      "direct_last_cut": 655885,
+      "drift_time": 1012664081,
+      "machine": "1LB2LB3RA2LA_2RB1RA0LB3LA",
+      "mixed_controls": 125,
+      "negative_controls": [
+        "remainder2 is permanent B drift, not a recurrent counter"
+      ],
+      "state_bound": 4294967296,
+      "transcript": [
+        {
+          "after": [
+            "L",
+            0,
+            16,
+            204
+          ],
+          "before": [
+            "X",
+            6,
+            0,
+            45
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "M",
+            1,
+            16,
+            209
+          ],
+          "before": [
+            "L",
+            0,
+            16,
+            204
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            6,
+            15,
+            306
+          ],
+          "before": [
+            "M",
+            1,
+            16,
+            209
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            21,
+            3,
+            621
+          ],
+          "before": [
+            "X",
+            6,
+            15,
+            306
+          ],
+          "count": 3,
+          "kind": "bulk4"
+        },
+        {
+          "after": [
+            "M",
+            25,
+            1,
+            808
+          ],
+          "before": [
+            "X",
+            21,
+            3,
+            621
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            6,
+            48,
+            2237
+          ],
+          "before": [
+            "M",
+            25,
+            1,
+            808
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            66,
+            0,
+            5657
+          ],
+          "before": [
+            "X",
+            6,
+            48,
+            2237
+          ],
+          "count": 12,
+          "kind": "bulk4"
+        },
+        {
+          "after": [
+            "L",
+            0,
+            136,
+            15176
+          ],
+          "before": [
+            "X",
+            66,
+            0,
+            5657
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "M",
+            1,
+            136,
+            15181
+          ],
+          "before": [
+            "L",
+            0,
+            136,
+            15176
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            6,
+            135,
+            15758
+          ],
+          "before": [
+            "M",
+            1,
+            136,
+            15181
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            171,
+            3,
+            39023
+          ],
+          "before": [
+            "X",
+            6,
+            135,
+            15758
+          ],
+          "count": 33,
+          "kind": "bulk4"
+        },
+        {
+          "after": [
+            "M",
+            175,
+            1,
+            40410
+          ],
+          "before": [
+            "X",
+            171,
+            3,
+            39023
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            6,
+            348,
+            102739
+          ],
+          "before": [
+            "M",
+            175,
+            1,
+            40410
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            441,
+            0,
+            258034
+          ],
+          "before": [
+            "X",
+            6,
+            348,
+            102739
+          ],
+          "count": 87,
+          "kind": "bulk4"
+        },
+        {
+          "after": [
+            "L",
+            0,
+            886,
+            652303
+          ],
+          "before": [
+            "X",
+            441,
+            0,
+            258034
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "M",
+            1,
+            886,
+            652308
+          ],
+          "before": [
+            "L",
+            0,
+            886,
+            652303
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            6,
+            885,
+            655885
+          ],
+          "before": [
+            "M",
+            1,
+            886,
+            652308
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            1111,
+            1,
+            1642650
+          ],
+          "before": [
+            "X",
+            6,
+            885,
+            655885
+          ],
+          "count": 221,
+          "kind": "bulk4"
+        },
+        {
+          "after": [
+            "X",
+            4,
+            2224,
+            4126873
+          ],
+          "before": [
+            "X",
+            1111,
+            1,
+            1642650
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            2784,
+            0,
+            10325717
+          ],
+          "before": [
+            "X",
+            4,
+            2224,
+            4126873
+          ],
+          "count": 556,
+          "kind": "bulk4"
+        },
+        {
+          "after": [
+            "L",
+            0,
+            5572,
+            25860452
+          ],
+          "before": [
+            "X",
+            2784,
+            0,
+            10325717
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "M",
+            1,
+            5572,
+            25860457
+          ],
+          "before": [
+            "L",
+            0,
+            5572,
+            25860452
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            6,
+            5571,
+            25882778
+          ],
+          "before": [
+            "M",
+            1,
+            5572,
+            25860457
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            6966,
+            3,
+            64698698
+          ],
+          "before": [
+            "X",
+            6,
+            5571,
+            25882778
+          ],
+          "count": 1392,
+          "kind": "bulk4"
+        },
+        {
+          "after": [
+            "M",
+            6970,
+            1,
+            64754445
+          ],
+          "before": [
+            "X",
+            6966,
+            3,
+            64698698
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            6,
+            13938,
+            161958094
+          ],
+          "before": [
+            "M",
+            6970,
+            1,
+            64754445
+          ],
+          "kind": "boundary"
+        },
+        {
+          "after": [
+            "X",
+            17426,
+            2,
+            404879994
+          ],
+          "before": [
+            "X",
+            6,
+            13938,
+            161958094
+          ],
+          "count": 3484,
+          "kind": "bulk4"
+        },
+        {
+          "after": [
+            "B",
+            0,
+            34861,
+            1012664081
+          ],
+          "before": [
+            "X",
+            17426,
+            2,
+            404879994
+          ],
+          "kind": "drift"
+        }
+      ]
+    }
+  ],
+  "selection_report": "research/burn19-finite-counter-native.json",
+  "selection_sha256": "cae659d7693705cb1b793b84cb5c2cb22f9f011504c472cec755864417bbc5c6",
+  "state_bound": 4294967296,
+  "template_sha256": {
+    "proof-sources/burn19-finite-counter/FiniteCounter.v": "2e0e11ff6870709528745b46d7b2be4dc454e88b0de8fd7ff1e856f4f2164e71",
+    "proof-sources/burn19-finite-counter/Regression.v": "c04a3727dca5c0cf2f7439080790516a3230b39efb1b017d3a9c99bb2759d5b2",
+    "proof-sources/burn19-finite-counter/Trace.v": "e0f3f3e5c4280dca5e06b1d9179dd0b50e051c74a7b5faa75cd7d826789f3b26"
+  }
+}

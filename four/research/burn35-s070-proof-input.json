@@ -1,0 +1,77 @@
+{
+  "rows": [
+    {
+      "DFA_states": 8,
+      "actual_entry_steps": 35,
+      "arbitrary_context_scanner_controls": 25389,
+      "code": 4013446348,
+      "contribution": "Root synthesized and independently validated the frozen8-state DFA; remaining_state_solver proved its finite laws, universal scanner translation and full state recurrence in Coq.",
+      "direct_blank_steps": 1000000,
+      "direct_main_cuts": 1278,
+      "direct_normalized_cycles": 637,
+      "finite_transition_controls": 84,
+      "independent_model_check_sha256": "2a5e3378c853bc65872142e40fb451fe5a49d1934f0ecd88976c17871d6396b3",
+      "last_direct_normalized_cut": {
+        "length": 1303,
+        "time": 995895
+      },
+      "machine": "1LB2RA1RA0RA_2RB1LA3LB2LB",
+      "main_word_controls": 3054,
+      "model_sha256": "5799ccc7ce51cf7c5b3fca568ed2d5a1876565576f2e3659d515da23caf7f73a",
+      "negative_controls": {
+        "empty_G_rejected": true,
+        "final_scanner_rejected": true,
+        "twos_G_rejected": true,
+        "weak_marker_sequence": [
+          [
+            2,
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            2,
+            0,
+            2,
+            2,
+            1,
+            1
+          ],
+          [
+            2,
+            1,
+            0,
+            0,
+            0,
+            2,
+            2
+          ],
+          [
+            2,
+            0,
+            2,
+            2,
+            1,
+            0,
+            2,
+            2
+          ]
+        ]
+      },
+      "outer_phase_controls": 206,
+      "prefix_relation_entries": 28,
+      "rejected_main_words": 226,
+      "state_bound": 0
+    }
+  ],
+  "selection_report": "research/burn35-s070-native.json",
+  "selection_sha256": "f18422cb2b186d0890a160b6672a3e6c0599647b6535cf4a359800fa9fa76c35",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn35-s070/Core.v": "b3a2e0f0cde858bcb58c4327a20df1a7fcdc7fd98a88e04f993940eecbd3b796",
+    "proof-sources/burn35-s070/Grammar.v": "cf7a5be7bcf351be097ca79ddb7588e1bcbb525ec0e3ac5cae89d16256880143",
+    "proof-sources/burn35-s070/Regression.v": "8fdbd0c4158882380ce38d9c5f4014af6fc596119440d5f68f468fec3a872abf",
+    "proof-sources/burn35-s070/Return.v": "bb95950f59975e5929c4e1c74ca99d9ed506d75eb9e24d2074eb40a30e4a14b5"
+  }
+}

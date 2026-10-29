@@ -122,6 +122,19 @@ clean:
 proof: proof-all
 .PHONY: proof
 
+# The completed (2,4) equality theorem. This fails until the global Value.v
+# exists; a successful checkpoint replay alone cannot claim the exact value.
+proof-2-4:
+	@python3 four/tools/report_state_value.py --check-source
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) -C four proof PROOF_JOBS=$(BUILD_JOBS)
+
+# Current public theories/regressions and reviewed standalone state cases.
+proof-2-4-checkpoint:
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) -C four proof-checkpoint PROOF_JOBS=$(BUILD_JOBS)
+.PHONY: proof-2-4 proof-2-4-checkpoint
+
 # The census certification: the per-subtree queue enumerations
 # (parallel; each Qed is one native_compute walk) + the assembled
 # theorem.  Needs native_compute: eval $(opam env --switch=census).

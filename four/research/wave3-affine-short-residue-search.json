@@ -1,0 +1,119 @@
+{
+  "scope": "Untrusted residue/composite-return repair of short-cell native replay failures",
+  "eligible_rows": 6946,
+  "selection_cap": 4096,
+  "searched_rows": 128,
+  "unsearched_eligible_rows": 6818,
+  "search_statuses": {
+    "replay_false": 106,
+    "timeout": 21,
+    "repaired_candidate": 1
+  },
+  "native_replay_statuses": {
+    "replay_true": 1
+  },
+  "parameters": {
+    "bound": 4096,
+    "cfuel": 4096,
+    "fuel": 8192,
+    "cpu_seconds": 0.1,
+    "moduli": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      1
+    ],
+    "maximum_return_power": 4
+  },
+  "source_sha256": "224efe12b864760932e76320ed937bab6084b3554dd222a567e02f4bc08110bd",
+  "search_tsv_sha256": "9cc9fbdb395ea17ad268d4b3d423f1f745d5788333a2cc0a3f58d143cf1db7a3",
+  "replay_tsv_sha256": "33d8aec3c746a9c2474197323efe385ae9fd4a479250575453984dabb67190e0",
+  "provenance": {
+    "cohort_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+    "source_native_ledger_sha256": "92f1ef739392d2a46d7bfe43bae372e48a1bfa902eeae682fc2ba0a80120a8aa",
+    "prior_residue_ledger_sha256": "911655e7089601b7a29b2464e9a9dcc2bec11f7ce10074c0bc037cd59a119ad9",
+    "closure_remaining_sha256": "c82a62be6185b49e858f8af2d3cb97bb098beca11d7f2fda3c91c6d3dd0119af",
+    "rw_candidate_sha256": "18de4d04fd0105a15df8ef1f8022640324f99930872d9819c54f41477b8ae215",
+    "weighted_snapshot_archives": [
+      {
+        "path": "four/build/affine-wave/short-residue/weighted-snapshots/index-07b879abe05d3feac16873fdfeb7a457d41f4e5c6a4e7ec555af7a13ea927ec0.json",
+        "sha256": "07b879abe05d3feac16873fdfeb7a457d41f4e5c6a4e7ec555af7a13ea927ec0"
+      }
+    ],
+    "weighted_registries_sha256": {
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch000/registry.json": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch001/registry.json": "b9827823268e3cb7f998236fc54751fc422d9a1c13d5fc50b90f1943710d61b0",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch002/registry.json": "cdd63241fae57dd1a04976eece09c1693baafc466e2572363171c8fdd92cd18c",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch003/registry.json": "335b0dc9e826b4cfab93b0f6b92e4bc76cb8a9714ef1622f00b08f5853b1ae9b",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch004/registry.json": "b930c41fd2f02610a1752c70f9e48b03ca48d10752a5f4e61b0de5dad14424d3",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch005/registry.json": "48af4db801bce17832829fd34758130dce69fca86545c46aef2998228b88bebe",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch006/registry.json": "e6abd1a8d9b7551ebb85ebe317458a59605e33a4f86bba31691e33e2ecc83a81",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch007/registry.json": "4746b5273010a09dfbcaa752be1a77767a9001620fe993d978529bcd8c9ddcda",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch008/registry.json": "b0e1d0edad4f5f62508ce20ba77c70163bea244974b9ea9e51e07e8fce5de713",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch009/registry.json": "bdfa3cc756dd2faa4f655119a2ca6b5d31b04db685567ad9a0aa61031e036093",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch010/registry.json": "4a0a0ff1ebe434085110381f36bf43218c70a2e04dde25b1fb3d8e01167bdee4",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch011/registry.json": "388f417408e0c9fefe05b81e36204d1d42371506aac5074058425058bcc11099",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch012/registry.json": "71be3b4f85f3a54b3eafaeeb3f4b5e9ee1827ef0a90449a1a540e57ddeaea540",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch013/registry.json": "11825a6657c25e4d560d9fa6d47a32a559aba0f452cb2aa1673f046da526dbde",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch014/registry.json": "b2cbad3331d7fd632c8c17e791bdba3dcce46dec15fe80d7c3eff1fdc7313616",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch015/registry.json": "f1bb69d045a921374a880c2b42a993839a0d07e27fceb275a8c65c6465d9c106",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch016/registry.json": "83065f59e4930de266de18d8aba752a755e6901f6610042bff923f22f4518586",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch017/registry.json": "96a20aef1c74dd89888969d49280014df069604f8c0d762ab2de8b82aec605ea",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch018/registry.json": "f639b60a3b886e2416f2c60b5e325e77c473ab6221113c538f59f70ad31bcf04",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch019/registry.json": "c1f6c6f1e9a110d2c5c2138a81c1ef988ed85f6dec6b4741850cee990b36dc21",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch020/registry.json": "91ef942aeda7202835e91abe0393d0d4841d5966a9f64e345bf2a3155068f020",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch021/registry.json": "f8965a77b939e9e12cb75963e7d53d79bd6b6496b2794928c2450c9fc613a278",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch022/registry.json": "ad99e29e71b7e742788e200d7c6a15dd54e85b4867affc73d060190c723a90bd",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch023/registry.json": "4a229d3874fff68f0ed350a72af3c8cefaf69190e30c3224de49392845b30f2f",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch024/registry.json": "832278c6d26e26c385d08cdd270460989505b95bb8873076766513147693ec7a",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch025/registry.json": "9888fd030c133424e33ec1e447e66b04051aa379ddc16ff576f0dd6a3d8764d9",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch026/registry.json": "11ec299dce30717c8ed4214ce0bb7ddcad870c1946b833a085f6bcf67c98b0a2",
+      "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch027/registry.json": "92eac86184796de0abff454703cc0e08e3fa4449b0bab5a700d29bd8a0319626"
+    },
+    "excluded_inventory_sha256": {
+      "four/research/wave3-affine-bulk4096a-certs.json": "63b8e9b7527d6be4074a00eeca6986a3982bd99cb993e4ce6914286614b44cdf",
+      "four/research/wave3-affine-bulk4096b-certs.json": "8e514092b0666adc66eedbeb6babc0c0078e3e17e0338b1c728cd505b94414d6",
+      "four/research/wave3-affine-bulk4096c-certs.json": "ed9411960268e2382c43090a37b4d3eba5365eab5b249c44dd1e423b65a76b65",
+      "four/research/wave3-affine-deep16384-certs.json": "2446fcf57d2e98c166a4b8fc8fb4aa8a6a126b01bd9ea2a7c83318aa51167d95",
+      "four/research/wave3-affine-latepilot16384-certs.json": "e18aeed897564b8218517fce8f5ab7d193f7da10392447113fb981a704fd167d",
+      "four/research/wave3-affine-phase-cpu-repair-certs.json": "f50f59fd33748074e161e4ac42c8d47de1ed34f84aabc3ab53a2cc9dba383e47",
+      "four/research/wave3-affine-pilot-certs.json": "86a1d89c65e00f42adc08f6f01c9d2ea3ff2411cb10c660f4c1683b040d1aece",
+      "four/research/wave3-affine-residue-pilot-certs.json": "5e04f99d03bc64678f2b1682f6b8c3b08aa9f936f9ee5603cabca0fd43e75822",
+      "four/research/wave3-affine-residue-repair-certs.json": "09da7b4d5e398d63a7a4219c62d25d36134eef7b4b79e0f9ffd029b4db15ed69",
+      "four/research/wave3-affine-short-cell-prefix1024-certs.json": "2d9d5aa1dd55b282d2e76e2614965c169bcda7717c3a92b90d57bacf79b5ab80",
+      "four/research/wave3-affine-short-cell250-certs.json": "389089bfeed753b5b501b542156c3bef9c30336ce08d4555faba9a33396bb947",
+      "four/research/affine-template-final-input.json": "dc9d71cf05e20af5db84a7add278a9a65be601fcea12efafb7e550135daa7ab8",
+      "four/research/affine-template-late6-input.json": "e71d956b942b316ea9ee91a76dc9f8666e22c4b1617694d9c3b9c575e8384ca9",
+      "four/research/affine-template-neighbors-input.json": "ab52c74e2c52260f50a54b2f6863c6c4346487e6ac2f969162f3c1aeb2b963c9",
+      "four/research/affine-template-prefix7-input.json": "ac7a0f2cbb5bf7e2644b5e969e19c7492e965affbc67593d37810efa3a835198",
+      "four/research/affine-template-refresh-input.json": "cd3aa9fffb4852ccca3bfc53b48b2b52a3fb3a690659f9690e5c6d33c04a0c8b",
+      "four/research/affine-template-refresh49-input.json": "64bc700b763018e88c4538a679d22e4dcd6fbec404a328a7fb1dd0876a76e6b7",
+      "four/research/affine-template-relaxed511-input.json": "22c57c3cfc7ec2977dfc8ec0fd2e7ac7f982150f8c4ed0cd310370099349b535",
+      "four/research/affine-template-short-input.json": "6d039ef57904af668ceb6972813f640ce6d0306d7517245f5e063fd06aa089b1",
+      "four/research/affine-template-short-neighbor129-input.json": "c7b4c4fa1ed2d8d8223d0b21c1055d7fa09a45a5a4a7b7a54400486696c9234c",
+      "four/research/affine-template12-input.json": "41f076688a5c35ca6b57b5d2a3208e1e6232bf1372ecad12eff84848b4a83c62",
+      "four/research/affine-template181-input.json": "3725924076ed67e91c4bf8210ae582280ddfc48e98e00d144bfe866c2546419f",
+      "four/research/affine-template245-input.json": "a6a38f6ffdcc46b927544fae0725cd6eb12cf96bb595470e2a8bece34a2e0b12",
+      "four/research/affine-template427-input.json": "e6e30a575e1ae0bb59e68f3ad027d5a87975de4eb57c600fd939c2680a745d94"
+    },
+    "selection_status": "Native positive, proof, and queued-candidate inventories are excluded only to avoid duplicate search work. Excluded cases are not claimed proved.",
+    "selection": "Lowest machine SHA256 among eligible native replay failures; at most 4096 inputs, with a 128-row pilot before extending if at least four repairs pass."
+  },
+  "search_commands": [
+    [
+      "four/build/affine-wave/extracted/affine_residue_probe",
+      "4096",
+      "4096",
+      "8192",
+      "0.1",
+      "four/build/affine-wave/short-residue/pilot-input.txt",
+      "four/build/affine-wave/short-residue/certs"
+    ]
+  ],
+  "elapsed_seconds": 10.328,
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0
+}

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "kind": "standalone-exact-champion-board",
+  "boards": [
+    {
+      "id": "ChampionCensusNext",
+      "scope": "both",
+      "module": "BBB24.ChampionCensusNext",
+      "board": "champion_census_board",
+      "sound": "champion_census_board_sound",
+      "small_sound": "champion_census_board_sound",
+      "was_pending": "champion_census_board_pending",
+      "rows": 1,
+      "state_bound": 205770076433044242247860,
+      "instruction_bound": 205770076433044242247860,
+      "state_bound_term": "scoreN",
+      "instruction_bound_term": "scoreN",
+      "load_paths": [],
+      "inventories": [
+        {
+          "path": "research/next-champion-inventory.json",
+          "format": "packed17",
+          "order": "input"
+        }
+      ]
+    }
+  ],
+  "exact_theorem": "BBB24.ChampionCensusNext.canonical_champion_completion_exact",
+  "inventory_theorem": "BBB24.ChampionCensusNext.champion_census_inventory_exact",
+  "integration": "Independent exact board; frozen check_campaign.py rejects the champion control. A future aggregator must explicitly admit this exact board and preserve the bound as the opaque binary scoreN. No historical campaign or queue count is changed by this descriptor."
+}

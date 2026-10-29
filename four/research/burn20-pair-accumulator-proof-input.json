@@ -1,0 +1,17 @@
+{
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "metadata_revision": 1,
+  "rows": [
+    {
+      "code": 4339716961,
+      "machine": "1LB2RB0LA2RA_1RB3LB2LB2RA"
+    }
+  ],
+  "selection_report": "research/burn20-pair-accumulator-native.json",
+  "selection_sha256": "8281aafef2670a5fda2277232392450548791338e438af2522da8649642404f3",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn20-pair-accumulator/PairAccumulator.v": "24e1fbcb8ffb2a969416ca25b91d845d8b7aa793c5a575b84793a81fd56d7e84",
+    "proof-sources/burn20-pair-accumulator/Regression.v": "edc72dc7ff42a90affb0b1dcfddad86c1cee324699bac14825cfbc037d4ba526"
+  }
+}

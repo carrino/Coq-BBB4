@@ -1,0 +1,6 @@
+[
+  {"mode":"finite","size":2,"anchor":128,"fuel":128,"extra":4,"history":0},
+  {"mode":"finite","size":3,"anchor":128,"fuel":256,"extra":4,"history":0},
+  {"mode":"hist","size":2,"anchor":128,"fuel":256,"extra":4,"history":1},
+  {"mode":"hist","size":3,"anchor":128,"fuel":512,"extra":4,"history":1}
+]

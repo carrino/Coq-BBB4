@@ -1,0 +1,72 @@
+{
+  "scope": "Checked affine families from a declared search wave; no raw-table weight recomputation",
+  "coq_version": "The Coq Proof Assistant, version 8.18.0",
+  "input_sha256": "41f076688a5c35ca6b57b5d2a3208e1e6232bf1372ecad12eff84848b4a83c62",
+  "provenance": {
+    "builder_source_sha256": "63b9df1d08746ba5205a282a4e6e53886af0b1e5901b16e3d4be66b4de2b7074",
+    "cohort_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+    "description": "Hash-ordered extracted replay successes, excluding the declared inventories. First supplied successful certificate wins when a machine has multiple trials. Every selected certificate still requires Coq proof and census-membership checks.",
+    "eligible_unique_machines": 12,
+    "excluded_inventory_sha256": {},
+    "replay_inputs_sha256": {
+      "four/build/affine-template-fullmask/late65536/replay.tsv": "0bdc1586abce1152a80fb38204aea3a75062c745f62dbc3694b25835b99056cb",
+      "four/build/affine-template-infer/full/replay.tsv": "e985356bec1c0a1e502f69354b930aa9353e17a4c492d87490b5b00a1a156946"
+    },
+    "selection_limit": null
+  },
+  "checked_families": 12,
+  "census_linked_families": 12,
+  "parameters": {
+    "bound": 65536,
+    "cfuel": 4096,
+    "fuel": 8192
+  },
+  "module": "BBB24AffineWave.TemplateInfer12.All",
+  "board": "BBB24AffineWave.TemplateInfer12.All.affine_wave_board",
+  "coverage_theorem": "BBB24AffineWave.TemplateInfer12.All.bootstrap_affine_wave_coverage",
+  "discharge_theorem": "BBB24AffineWave.TemplateInfer12.All.affine_wave_families_discharged",
+  "source_sha256": {
+    "four/theories/AffineWave.v": "5c05df683fa1c541e1cfd26dc556a5b51ce0c9f668534299a6ed2987c6ade243",
+    "four/theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "four/theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "four/theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "four/theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "four/theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "four/theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+    "four/theories/Checkers/IRules/AnchorVisits.v": "31ef865db0325c9c88e175b9b47e6cb0f8f6e973441102d40b6e24392f3d203e",
+    "four/theories/Checkers/IRules/AnchorVisitsTr.v": "fe10b6bcc6034a6a36ba8937d0e7c6b2105b8b7709b93a13d484fd31e8e700bb",
+    "four/theories/Checkers/IRules/Engine.v": "033381227df15549d0e22d7a86685024330850d17c48e00b897dfec028d33f4a",
+    "four/theories/Checkers/IRules/EngineK.v": "81f3b209df5622cb1dd0e86fdf4cd6318b025607d51b6037161ff3098dbb2861",
+    "four/theories/Checkers/IRules/EngineKS.v": "f0f22468099337a9ba8f84fccf5c75f7f83d6269a4d94fea75ba03913c85eea4",
+    "four/theories/Checkers/IRules/Expr.v": "5349ffc2280ac01a41881dab19c1994e39b111a7adf538944fe7a70c05ce8fc0",
+    "four/theories/Checkers/IRules/Meta.v": "8983aabd2e4a8fd9cdc56518fd459fc261eb692f2b59f58499169386ba1f2891",
+    "four/theories/Checkers/IRules/MetaBlk.v": "df2aff275196e5d08625f6749297de2c2e1258bcb1ef3330d3f9275f0da96ca5",
+    "four/theories/Checkers/IRules/MetaBlkPfx.v": "c10335aa3925fcd1b05c9f5c960586b96945913e67170e50aa889ab8e69b92bd",
+    "four/theories/Checkers/IRules/MetaTr.v": "5c56958a36bd7cc3e35c8d86d5694a2b6ad6d5e3b51868b517da27af0ac4675d",
+    "four/theories/Checkers/IRules/RLE.v": "bebfe28a82636dfa515e32daf7796a7f3c1e684f6849bede8b243e9745c04067",
+    "four/theories/Checkers/IRules/Rules.v": "95729efbb2a80ca4cba9891a452284561eaa1dcd943de1265b11ae90c773242f",
+    "four/theories/Checkers/IRules/RulesBlk.v": "54d1a182c40afa0c6375386b5fdd7a9ae17165954ea190a1921f72d8cc69730b",
+    "four/theories/Checkers/IRules/RulesBlkPfx.v": "e3131991f3b7bc8495f0beb0a477149424d74b15447adf0003da77ba48046f26",
+    "four/theories/Checkers/IRules/RulesK.v": "246ee98ddd42a0cc0f59c19beff114a854675fef13ad28fce43e85e1992f755e",
+    "four/theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+    "four/theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "four/theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+    "four/theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+    "four/theories/IRuleCensus.v": "06fe811d1524a50dcce6af5bcd4bb88af43fa8ccf5abfce62c54e1fc93da7bf7",
+    "four/theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+    "four/theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+    "four/theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "four/theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "four/theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "four/theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+    "four/tools/check_affine_wave.py": "58e44938e44a4eac898922116b44fafb27f7250b10ddaf3607bf61de3e7a0bac",
+    "four/tools/generate_affine.py": "00b739f3f67a4200b3b777b22893961c8d8b3c06e445cf7f141e561efb99d5d2",
+    "four/tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "tools/gen_irulesblkpfx_certs.py": "88e4c34378eed688dad9d1d797a743906f197d6774118ff51e3d4bd30c197ecf"
+  },
+  "shard_sha256": {
+    "Part0000.v": "3d117017f4ac31a347c40eac7de7a871fb515b9b257550c379df8e84aa7f9591",
+    "All.v": "3adead551eaad58be9596e5363584bd67c42e90b8a6873db696a656ef9f36ef7"
+  },
+  "validation": "Batch VM proofs of affine checks and original pending membership; recursive coqchk"
+}

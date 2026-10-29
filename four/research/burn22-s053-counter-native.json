@@ -1,0 +1,87 @@
+{
+  "checked_state_families": 0,
+  "rows": [
+    {
+      "actual_entry_steps": 51,
+      "arbitrary_context_sweeps": 18522,
+      "capped_base_controls": 42,
+      "code": 2843513641,
+      "direct_cuts": [
+        {
+          "a": 3,
+          "b": 3,
+          "time": 51
+        },
+        {
+          "a": 4,
+          "b": 6,
+          "time": 152
+        },
+        {
+          "a": 2,
+          "b": 11,
+          "time": 267
+        },
+        {
+          "a": 6,
+          "b": 18,
+          "time": 990
+        },
+        {
+          "a": 4,
+          "b": 23,
+          "time": 1261
+        },
+        {
+          "a": 8,
+          "b": 88,
+          "time": 17312
+        },
+        {
+          "a": 3,
+          "b": 97,
+          "time": 19005
+        },
+        {
+          "a": 4,
+          "b": 194,
+          "time": 76446
+        },
+        {
+          "a": 2,
+          "b": 199,
+          "time": 78817
+        },
+        {
+          "a": 6,
+          "b": 394,
+          "time": 316044
+        },
+        {
+          "a": 4,
+          "b": 399,
+          "time": 320827
+        }
+      ],
+      "machine": "1LB2LB1RA2LA_2RB3LB3RB1RA",
+      "negative_controls": [
+        "arbitrary1/3word31 reaches B0 right blank",
+        "changed paired right boundary"
+      ],
+      "next_cut_prediction": {
+        "a": 8,
+        "b": 1592,
+        "time": 5099294
+      },
+      "normalizer_controls": 294,
+      "outer_induction_controls": 100,
+      "pair_iteration_controls": 3087,
+      "state_bound": 0
+    }
+  ],
+  "scope": "Bounded S053 sweep, odd-normalizer, base-case and outer-induction controls; no kernel credit.",
+  "source_sha256": {
+    "tools/check_burn22_s053_counter_native.py": "3738fce3e1207d762c171ab1428727bf2adf64dcbcba4107ff1e99b60a5a2a67",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

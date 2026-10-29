@@ -1,0 +1,32 @@
+{
+  "status": "Complete extracted replay; not kernel proof evidence",
+  "input_rows": 133185,
+  "search_candidates": 82974,
+  "search_misses": 50211,
+  "replay_statuses": {
+    "replay_false": 20396,
+    "replay_true": 62560,
+    "unsupported": 18
+  },
+  "accepted_rows": 62560,
+  "not_accepted_rows": 70625,
+  "elapsed_seconds": 207.89560807599628,
+  "row_seconds": 207.005686,
+  "replay_tsv_sha256": "3d3221456ecdcdc95c1a1e4ffa8f9743d522def4c83e515ffe88709d573f8213",
+  "accepted_sha256": "960d56fc09b5dec83f57df13d20d16b3d7a0ca23c4f607cdfe4a8230d49ea2fa",
+  "not_accepted_sha256": "0b78a48133381ccd729112c9f0dbdb32ed48f26b79b7e05fc0b61abab2d5c379",
+  "parameters": {
+    "input_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+    "search_csv_sha256": "62ab82ddc24a1697fec78bffc74f865f3bd600295b9ba19418c876da582bcc57",
+    "probe_binary_sha256": "67dda6324671636a663f143567dd49648e80966f8b8289fc23e6a79b261afee2",
+    "probe_input_sha256": "b58783bc46556d916418b1201346c0fb6d420628becf6e4743f2e3d4d1213aac",
+    "bound": 4096,
+    "cfuel": 4096,
+    "fuel": 8192,
+    "timeout": 30
+  },
+  "collector_source_sha256": "f26e9340b63a6d40f1fd9a51be9952c5b03cc564ee58d657feef255a97db9a3b",
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "proof_accounting": "Only separately audited Coq bundles discharge families."
+}

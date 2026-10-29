@@ -1,0 +1,13 @@
+{
+  "checkpoint_stride": 65536,
+  "machine": "1LB2LB1RB1RA_1RB3LA3RA2LB",
+  "scope": "Independent Python replay only; zero proof credit.",
+  "source_sha256": {
+    "research/burn21-s057-source-probe.cpp": "c7b1d5b81f3285c153663ec426413153fb518c4c52384b74477cf05af863dcb1",
+    "research/burn21-s057-source-result.json": "aece093302d71f0706f99363c74ad034b212bf518a777fc6eaf2f97a9cfbaff8",
+    "tools/check_burn21_s057_native.py": "4ad601211dfe14c12807c2f59e3e70d3a3ea559512ee30afeb8185c05198d068",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "state_bound": 4194304,
+  "steps": 2333909
+}

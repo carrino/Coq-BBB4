@@ -1,0 +1,363 @@
+{
+  "machine": "1LB0RA0LB2RB_3RB3LA1RA1RA",
+  "metadata_revision": 1,
+  "normalizer_parent_sha256": "4b43d3e48f8ea0fd874c2d357c7741dc0650213944537d03e16f682c5ebf57cf",
+  "programs": [
+    {
+      "left": "13312",
+      "name": "CA",
+      "right": "",
+      "source_kind": "cut",
+      "steps": 120,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "031313133031"
+    },
+    {
+      "left": "13313312",
+      "name": "CD",
+      "right": "",
+      "source_kind": "cut",
+      "steps": 183,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "031313313333031"
+    },
+    {
+      "left": "",
+      "name": "toK",
+      "right": "133031",
+      "source_kind": "at",
+      "steps": 3,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "0333031"
+    },
+    {
+      "left": "13312",
+      "name": "KA",
+      "right": "0333031",
+      "source_kind": "back",
+      "steps": 29,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "031313333031"
+    },
+    {
+      "left": "012",
+      "name": "KB",
+      "right": "0333031",
+      "source_kind": "back",
+      "steps": 37,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "0313133131"
+    },
+    {
+      "left": "13313312",
+      "name": "KD",
+      "right": "0333031",
+      "source_kind": "back",
+      "steps": 98,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "031313313303131"
+    },
+    {
+      "left": "",
+      "name": "toM",
+      "right": "333031",
+      "source_kind": "at",
+      "steps": 9,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "0303131"
+    },
+    {
+      "left": "13312",
+      "name": "MA",
+      "right": "0303131",
+      "source_kind": "back",
+      "steps": 29,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "031313303131"
+    },
+    {
+      "left": "012",
+      "name": "MB",
+      "right": "0303131",
+      "source_kind": "back",
+      "steps": 69,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "0313133133"
+    },
+    {
+      "left": "13313312",
+      "name": "MD",
+      "right": "0303131",
+      "source_kind": "back",
+      "steps": 94,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "031313313313131"
+    },
+    {
+      "left": "13312",
+      "name": "HA",
+      "right": "03131",
+      "source_kind": "back",
+      "steps": 29,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "0313133131"
+    },
+    {
+      "left": "012",
+      "name": "HB",
+      "right": "03131",
+      "source_kind": "back",
+      "steps": 10,
+      "target_kind": "cut",
+      "target_left": "13313312",
+      "target_right": ""
+    },
+    {
+      "left": "13313312",
+      "name": "HD",
+      "right": "03131",
+      "source_kind": "back",
+      "steps": 46,
+      "target_kind": "cut",
+      "target_left": "1331213312312",
+      "target_right": ""
+    },
+    {
+      "left": "13312",
+      "name": "LA",
+      "right": "03031",
+      "source_kind": "back",
+      "steps": 29,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "0313133031"
+    },
+    {
+      "left": "012",
+      "name": "LB",
+      "right": "03031",
+      "source_kind": "back",
+      "steps": 14,
+      "target_kind": "cut",
+      "target_left": "13312312",
+      "target_right": ""
+    },
+    {
+      "left": "13313312",
+      "name": "LD",
+      "right": "03031",
+      "source_kind": "back",
+      "steps": 94,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "0313133133131"
+    },
+    {
+      "left": "",
+      "name": "RLD",
+      "right": "3133131",
+      "source_kind": "at",
+      "steps": 12,
+      "target_kind": "cut",
+      "target_left": "13312012",
+      "target_right": ""
+    },
+    {
+      "left": "1213312",
+      "name": "C12A",
+      "right": "",
+      "source_kind": "cut",
+      "steps": 32,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "03131331"
+    },
+    {
+      "left": "1213313312",
+      "name": "C12D",
+      "right": "",
+      "source_kind": "cut",
+      "steps": 43,
+      "target_kind": "cut",
+      "target_left": "01213312312",
+      "target_right": ""
+    },
+    {
+      "left": "012",
+      "name": "CBL",
+      "right": "",
+      "source_kind": "cut",
+      "steps": 10,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "03031"
+    },
+    {
+      "left": "13312",
+      "name": "oneA",
+      "right": "1",
+      "source_kind": "atpref",
+      "steps": 32,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "0313133"
+    },
+    {
+      "left": "012",
+      "name": "oneB",
+      "right": "1",
+      "source_kind": "atpref",
+      "steps": 6,
+      "target_kind": "cut",
+      "target_left": "13312",
+      "target_right": ""
+    },
+    {
+      "left": "13313312",
+      "name": "oneD",
+      "right": "1",
+      "source_kind": "atpref",
+      "steps": 42,
+      "target_kind": "cut",
+      "target_left": "1213312312",
+      "target_right": ""
+    },
+    {
+      "left": "",
+      "name": "RB5",
+      "right": "3133",
+      "source_kind": "at",
+      "steps": 5,
+      "target_kind": "cut",
+      "target_left": "12012",
+      "target_right": ""
+    },
+    {
+      "left": "",
+      "name": "RD56",
+      "right": "313313131",
+      "source_kind": "at",
+      "steps": 56,
+      "target_kind": "cut",
+      "target_left": "1213313312",
+      "target_right": ""
+    },
+    {
+      "left": "",
+      "name": "RC81",
+      "right": "313333031",
+      "source_kind": "at",
+      "steps": 81,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "0313133133"
+    },
+    {
+      "left": "",
+      "name": "KD115",
+      "right": "313303131",
+      "source_kind": "at",
+      "steps": 115,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "03131331331"
+    },
+    {
+      "left": "",
+      "name": "KD6",
+      "right": "31331",
+      "source_kind": "at",
+      "steps": 6,
+      "target_kind": "cut",
+      "target_left": "012012",
+      "target_right": ""
+    },
+    {
+      "left": "",
+      "name": "MA5",
+      "right": "303131",
+      "source_kind": "at",
+      "steps": 5,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "0313131"
+    },
+    {
+      "left": "",
+      "name": "pair3",
+      "right": "31",
+      "source_kind": "at",
+      "steps": 3,
+      "target_kind": "cut",
+      "target_left": "012",
+      "target_right": ""
+    },
+    {
+      "left": "",
+      "name": "three2",
+      "right": "3",
+      "source_kind": "at",
+      "steps": 2,
+      "target_kind": "cut",
+      "target_left": "12",
+      "target_right": ""
+    },
+    {
+      "left": "12012",
+      "name": "headerB44",
+      "right": "",
+      "source_kind": "cut",
+      "steps": 44,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "03131331"
+    },
+    {
+      "left": "",
+      "name": "RL5",
+      "right": "3031",
+      "source_kind": "at",
+      "steps": 5,
+      "target_kind": "back",
+      "target_left": "",
+      "target_right": "03131"
+    },
+    {
+      "left": "",
+      "name": "last9",
+      "right": "3131",
+      "source_kind": "at",
+      "steps": 9,
+      "target_kind": "cut",
+      "target_left": "13312",
+      "target_right": ""
+    }
+  ],
+  "table": [
+    5,
+    2,
+    1,
+    11,
+    15,
+    12,
+    6,
+    6
+  ],
+  "tokens": [
+    "13312",
+    "012",
+    "312",
+    "13313312"
+  ]
+}

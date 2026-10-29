@@ -1,0 +1,101 @@
+{
+  "canonical_cores": 1227,
+  "baseline_search_survivors": 152,
+  "symbol_images_included": false,
+  "selection": {
+    "baseline_search_survivors": 133185,
+    "baseline_survivor_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+    "canonical_cores": 273969,
+    "directly_covered_canonical_cores": 17039,
+    "fuel": 4096,
+    "representative_sha256": "273939e7e2d282d555adea6c7729ee5de7be9d10fd8badf47627676e03d4d744",
+    "table_candidates": 3299,
+    "table_candidates_in_survivors": 504
+  },
+  "source_board_entries": 23994,
+  "source_distinct_ids": 23979,
+  "max_destination_boot": 268,
+  "max_source_boot": 283,
+  "descriptor": {
+    "module": "BBB24ConjugateR000.ConjugateAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 131072,
+    "proof_source": "build/conjugate/r000/ConjugateAll.v",
+    "load_paths": [
+      {
+        "path": "build/affine-batch",
+        "namespace": "BBB24Batch"
+      },
+      {
+        "path": "build/affine-closeout",
+        "namespace": "BBB24AffineCloseout"
+      },
+      {
+        "path": "build/closure-batch",
+        "namespace": "BBB24ClosureBatch"
+      },
+      {
+        "path": "build/family-transport",
+        "namespace": "BBB24Transport"
+      },
+      {
+        "path": "build/weighted/pilot-kernel",
+        "namespace": "BBB24Weighted"
+      },
+      {
+        "path": "build/late-cycle-proofs",
+        "namespace": "BBB24LateCycles"
+      },
+      {
+        "path": "build/conjugate/r000",
+        "namespace": "BBB24ConjugateR000"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/conjugate-input-r000.json",
+        "format": "json_columns"
+      }
+    ],
+    "audited_report": "research/conjugate-r000-summary.json"
+  },
+  "validation": "coqc plus incremental coqchk",
+  "audit_receipt": "build/conjugate/r000/audit-000001.json",
+  "audit_receipt_sha256": "8d4d23aa70ef1b0715e5927c07bd8a6ce3ce26c1a692e986c3ba171eba9273fa",
+  "inputs": {
+    "research/conjugate-sources-r000.json": "22c1f207d1ec9362060653186ab2dae228bed7a000a00da02782d0430dd69aae",
+    "research/family-transport-input.json": "86a68d4b07844e830f2bb27684002d67311ecec297da5d81fa67b58189e544a6",
+    "build/family-transport/FamilyTransportCloseout.v": "e7c366572838abc938f7c9bdd91d4ff487065a65a25ec1cac2fcb7916bd602f7",
+    "research/family-transport-summary.json": "fd9a7a467bc8f5e10243864abfb18585a4ddf6899e734b7e6f04032974ff4708",
+    "research/weighted-pilot-machines.json": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333",
+    "build/weighted/pilot-kernel/WeightedCloseout.v": "437a4c662c5cce129edde81e38b85b6a9d6f6b6295e39aebdc045c5b972de342",
+    "research/weighted-pilot-closeout.json": "1f2175177ac7b67ba1d01127fe607b175208007ec38e771f794dd2af10028f03",
+    "research/late-cycles-full65536.json": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab",
+    "build/late-cycle-proofs/full65536/NonHalt.v": "3332e14440be42f5245a13faa04f1d8efe083d6f6fd38a1ac918f3fff2e6293d",
+    "research/late-cycles-full65536-sources.json": "e1f35ccfb5aa179c7583dc488320d794a6d77010392cceb5654dce2d8cf37d5f",
+    "research/conjugate-input-r000.json": "460dc14b801a82d6e03bcee9d158d6cb75c42a703b137256d418c34b03700e5f",
+    "tools/check_conjugate_batch.py": "7512556387943c24a8df979731435c72a9ddd5e6236151dc952cbbe8dbeff0a5",
+    "tools/conjugate_probe.cpp": "642c773b20d6b4bd8fbee81e2a356b9bd6fc3dba883147951fb54fa3bba20a4e",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e"
+  },
+  "ledger_sha256": "7e57947a314676babe33bbcd5465bc55579d0f4a3ac12d9d8479efe27d782611",
+  "proof_source_sha256": {
+    "Sources.v": "aa328d131abde6334f255cd877b1fd92414bb3235fc7816d3a6abbb8bf53ffe3",
+    "Rows0000.v": "579054036f1a9d023badba4674209fd8caffd84b7fa5d2f2b44cff91731133c3",
+    "Rows0001.v": "ad83b063cc962be932ca1b30c542682bb4d021ebfaf2b000a6b6fb7e1957f9e7",
+    "Rows0002.v": "3aaf757b5fa3abaae32ec0f10c9c2e21123028f4bbde4fde49428e70c77b3b33",
+    "Rows0003.v": "d965026dda7a4267554de58ae5e66a9222ce6aa0c7a2609da4b6fb6f2ffdbb65",
+    "Rows0004.v": "2c24371b5bd1e4084fcfbb9080829cb83c0885bb2b05c2088dba2852c5707449",
+    "Rows0005.v": "62d76fe007b4dd262d23961dd874caef3562620a8e79876d817d41de1f6b2e4d",
+    "Rows0006.v": "73b778bb8f1446d9e72bae859abdd69e97097add2d3d99b76882746f0c284896",
+    "Rows0007.v": "777acd781e06efb4f7bd60ed6952f976ef79ec2edb7e119aa587c05269d3c9f6",
+    "Rows0008.v": "49375be43b53601d70d997fadfea48d8eb836f5278758745d36b6611d0f27d6c",
+    "Rows0009.v": "539908ceda9254753af187b7a41027c62469cef408fba4e3b0dbccbd7f2fd85a",
+    "ConjugateAll.v": "b88c7280983ddc8a85c1a71034699666299fa8a49335aa80d5bd8128f92a4e0b"
+  },
+  "audit_cache_note": "Local receipts pin source, object, runtime and transitive dependencies. A final recursive combined audit is required before publishing a new census total."
+}

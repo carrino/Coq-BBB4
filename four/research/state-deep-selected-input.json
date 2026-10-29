@@ -1,0 +1,16 @@
+{
+  "scope": "Scheduling partition only; queued BOTH exclusions are not proof evidence.",
+  "prefix_input": "research/state-deep-prefix-input.json",
+  "prefix_input_sha256": "5fb69d7ecdd6f161e3b74588aaae0887de6ec7ec550ed85da010e0381173eee8",
+  "assignment_input": "research/state-work-assignment.json",
+  "assignment_input_sha256": "9380973b8ce499c1729508a48aa775ad68242107e89304309d48c14b4a87b2d4",
+  "full_input": "research/state-closure-deep-input.json",
+  "full_input_sha256": "c9c54a37d9210b5dd576564ecb9e7b1cb973c499ca540e57ceea5e69a1b68a61",
+  "full_candidate_rows": 27277,
+  "prefix_rows": 11441,
+  "selected_rows": 6376,
+  "deferred_checked_both": 1214,
+  "deferred_queued_both": 8246,
+  "state_bound": 4096,
+  "instruction_bound": null
+}

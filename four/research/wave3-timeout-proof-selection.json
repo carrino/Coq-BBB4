@@ -1,0 +1,19 @@
+{
+  "assignment_snapshot_sha256": "659a548a2d4ff4021ee51fbc8260d6401a4ac117f5f3492832281fe893d0d540",
+  "candidate_rows": 2382,
+  "checked_excluded_rows": 0,
+  "compressed_bytes": 18775,
+  "exclusion_ledger_sha256": "c320ad4eace60da3bb073044831b08eaee8e6b429ae8ef976bad481d814f8e7e",
+  "mode_counts": {
+    "finite": 136,
+    "hist": 53,
+    "ng": 28,
+    "rw": 1967
+  },
+  "proof_input": "four/research/wave3-timeout-proof-input.json",
+  "proof_input_sha256": "b209160df46bded0ee5b7de83252e5097ed332f3faf9f000948ffe4ab44a33b6",
+  "queued_only_excluded_rows": 198,
+  "selected_rows": 2184,
+  "status": "Prepared replay queue, not a kernel proof. Excluded queued obligations are recorded separately from audited boards.",
+  "weighted_queued_snapshot_count": 8
+}

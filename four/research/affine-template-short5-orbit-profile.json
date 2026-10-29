@@ -1,0 +1,30 @@
+{
+  "status": "untrusted_orbit_template_proposals",
+  "source_templates": 245,
+  "transformations_per_source": 24,
+  "transformed_template_attempts": 5880,
+  "indexed_proposals": 4584,
+  "distinct_masks": 26,
+  "target_families": 59627,
+  "table_compatible_targets": 1883,
+  "uncapped_proposals": 2860,
+  "capped_proposals": 2860,
+  "cap_per_target": 24,
+  "compatible_mask_size_histogram": {
+    "5": 260,
+    "6": 714,
+    "7": 1038
+  },
+  "input_sha256": {
+    "base_index": "77cc9710fae1bbed8aa469367484222b1fb30e80d5c967bfb4cce3e912ad0326",
+    "targets": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+    "index": "fc2fe52509c860b83bdc5189a94d2b67b51a1f0cf76d5c272f9d844bf8ff32d2"
+  },
+  "source_sha256": {
+    "four/tools/affine_template_orbits.py": "4c14340905ddee752bbeb31734a049b16763f62f37a509c07938214d3d95cb8d",
+    "four/tools/generate_affine.py": "00b739f3f67a4200b3b777b22893961c8d8b3c06e445cf7f141e561efb99d5d2",
+    "four/tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "tools/gen_irulesblkpfx_certs.py": "88e4c34378eed688dad9d1d797a743906f197d6774118ff51e3d4bd30c197ecf"
+  },
+  "proof_status": "No proof claim. State swaps apply to proposed suffix templates; actual target A-start and all recurrence claims are checked independently."
+}

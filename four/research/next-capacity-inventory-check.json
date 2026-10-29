@@ -1,0 +1,97 @@
+{
+  "boards": [
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24NextCapacityInventory.Capacity.inventory_exact",
+      "id": "next_capacity",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-capacity-capacity-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextCapacity",
+          "path": "build/next-capacity/capacity-proof"
+        },
+        {
+          "namespace": "BBB24NextPortfolio",
+          "path": "build/next-capacity/portfolio-proof"
+        },
+        {
+          "namespace": "BBB24NextCapacityInventory",
+          "path": "build/next-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24NextCapacityInventory.Capacity",
+      "proof_source": "build/next-capacity/inventory-proof/Capacity.v",
+      "rows": 1,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24NextCapacityInventory.Portfolio.inventory_exact",
+      "id": "next_portfolio",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/next-capacity-portfolio-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24NextCapacity",
+          "path": "build/next-capacity/capacity-proof"
+        },
+        {
+          "namespace": "BBB24NextPortfolio",
+          "path": "build/next-capacity/portfolio-proof"
+        },
+        {
+          "namespace": "BBB24NextCapacityInventory",
+          "path": "build/next-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24NextCapacityInventory.Portfolio",
+      "proof_source": "build/next-capacity/inventory-proof/Portfolio.v",
+      "rows": 4,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    }
+  ],
+  "compile_seconds": {
+    "Capacity": 1.079,
+    "Portfolio": 0.974
+  },
+  "exact_inventory_checked_families": 5,
+  "inputs_sha256": {
+    "research/next-capacity-capacity-check.json": "9bb53879a5527cbfe6460cc14ab3368a6dab873114b522a3d9cb3f07124e4457",
+    "research/next-capacity-capacity-checked-machines.json": "6ce33ecfae9e4e7378ded21830b691c751599cd1105a772c14a6f519edd11b52",
+    "research/next-capacity-portfolio-check.json": "0e877aad84f1afdb658782476db9de4baedf07718877b392d7ce81a7618227f2",
+    "research/next-capacity-portfolio-checked-machines.json": "5f2d6a476ffcc21c481f526dda68d0e41efccc81b8c6c521c6d9c72daf866b4f",
+    "tools/check_campaign.py": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+    "tools/check_next_capacity_inventory.py": "8d908d0bf26bd584e827b597374552da7c76453dda5b77a81ad752f650c30964",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e"
+  },
+  "kernel_audit": "Full recursive coqchk, no dependency-skipping flags.",
+  "kernel_audit_seconds": 52.531,
+  "kernel_receipt": "build/next-capacity/inventory-proof/kernel-audit.json",
+  "kernel_receipt_sha256": "c061bf3e9992cb0c1085a2c27ab9fd9e7da541f949efedfe9fd4a07f584a739e",
+  "resource_limits": {
+    "address_space_bytes": 2147483648,
+    "audit_timeout_seconds": 900,
+    "compile_timeout_seconds": 300,
+    "workers": 1
+  },
+  "scope": "Exact BOTH board inventories, bounds and pending-family linkage."
+}

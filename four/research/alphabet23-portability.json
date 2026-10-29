@@ -1,0 +1,22 @@
+{
+  "correction": "Descriptor flags changed from absolute workspace paths to repository-relative paths. Proof sources, compiled proof objects, generated source, and successful recursive audit log are unchanged.",
+  "previous_report_sha256": "1c7e46403e5e8811613674e24592dc7a7552105f68ae1dfe578c14d1c46a0718",
+  "previous_driver_sha256": "7e454bfe333114bd7ecbf8ecc75652c14b9da070b2e102bcad1584545cabad9e",
+  "preserved_sha256": {
+    "four/theories/AlphabetReduction.v": "2b7a06fb989c777eb9c48f8cc14792726ccbdffc0cf76d6e474d6ffbe8887705",
+    "four/theories/AlphabetReduction.vo": "db79951ba46edd2223e6f46065930329fb8e5e13464bdcbae6da4ff030005eb2",
+    "four/theories/Alphabet23.v": "2e05cf6b9ca57dad4e4442098e79d833f4bca1dce03126211b1fb5f6864671b7",
+    "four/theories/Alphabet23.vo": "e3dcbbb16c592a7f14518bf48d86277ac0d6b0fbd6bbdf5c44a584f056ff0724",
+    "four/build/alphabet23/AlphabetBoard.v": "34cd644348a8a3d68ef1d7932b9a55d558a860419ec8e5ea2034ac50e8f4aab8",
+    "four/build/alphabet23/AlphabetBoard.vo": "a1cc0dd93f532be3139015fd3c9624f9133aa18975609ab6f021f2c5b89c7361",
+    "four/build/alphabet23/coqchk.log": "0ace48b0376cacc9e4964a41ba341cfae2ac817049873e599a06ba947f531d59"
+  },
+  "default_other_checkout_validation": "Source regeneration and coqc recompilation from a separate physical checkout produced byte-identical .v/.vo files and matching source/report hashes. Original successful recursive audit retained; no duplicate SmallBB recursive audit run.",
+  "corrected_driver_sha256": "1845a1aca4775703096fd4e82ef9da9ea93a8489e357495318e3f2b81b2e6d69",
+  "corrected_report_sha256": "e9111da4adaf2456941d9c74da59afe86b9c71fe795cd6c1df622d90694b9dcc",
+  "recompiled_proof_object_sha256": {
+    "four/theories/AlphabetReduction.vo": "db79951ba46edd2223e6f46065930329fb8e5e13464bdcbae6da4ff030005eb2",
+    "four/theories/Alphabet23.vo": "e3dcbbb16c592a7f14518bf48d86277ac0d6b0fbd6bbdf5c44a584f056ff0724",
+    "four/build/alphabet23/AlphabetBoard.vo": "a1cc0dd93f532be3139015fd3c9624f9133aa18975609ab6f021f2c5b89c7361"
+  }
+}

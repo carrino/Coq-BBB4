@@ -1,0 +1,348 @@
+{
+  "scope": "Combined checked boards; state-only claims remain separate from instruction claims.",
+  "cohort": {
+    "path": "research/campaign-cohort.json",
+    "format": "packed17",
+    "rows": 133185,
+    "machine_text_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7"
+  },
+  "boards": [
+    {
+      "id": "Wave2",
+      "module": "BBB24Transport.FamilyTransportCloseout",
+      "board": "transport_board",
+      "sound": "transport_board_sound",
+      "small_sound": "transport_board_small_sound",
+      "was_pending": "transport_board_was_pending",
+      "state_bound": 4097,
+      "instruction_bound": 4097,
+      "scope": "both",
+      "rows": 11336,
+      "inventories": [
+        {
+          "path": "research/family-transport-input.json",
+          "format": "transport",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-batch",
+          "namespace": "BBB24Batch"
+        },
+        {
+          "path": "build/affine-closeout",
+          "namespace": "BBB24AffineCloseout"
+        },
+        {
+          "path": "build/closure-batch",
+          "namespace": "BBB24ClosureBatch"
+        },
+        {
+          "path": "build/family-transport",
+          "namespace": "BBB24Transport"
+        }
+      ]
+    },
+    {
+      "id": "AffinePilot",
+      "module": "BBB24AffineWave.Pilot.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 400,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-pilot-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "AffineBulkA",
+      "module": "BBB24AffineWave.Bulk4096A.All",
+      "board": "affine_wave_board",
+      "sound": "affine_wave_board_sound",
+      "small_sound": "affine_wave_board_small_sound",
+      "was_pending": "affine_wave_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 8192,
+      "inventories": [
+        {
+          "path": "research/wave3-affine-bulk4096a-certs.json",
+          "format": "affine",
+          "order": "sha256"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ]
+    },
+    {
+      "id": "LateCycles",
+      "module": "BBB24LateCycles.full65536.All",
+      "board": "late_cycle_board",
+      "sound": "late_cycle_board_sound",
+      "small_sound": "late_cycle_board_small_sound",
+      "was_pending": "late_cycle_board_was_pending",
+      "state_bound": 65537,
+      "instruction_bound": 65537,
+      "scope": "both",
+      "rows": 12549,
+      "inventories": [
+        {
+          "path": "research/late-cycles-full65536.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/late-cycle-proofs",
+          "namespace": "BBB24LateCycles"
+        }
+      ]
+    },
+    {
+      "id": "ExtraCycles",
+      "module": "BBB24LateCycles.extra262144.All",
+      "board": "late_cycle_board",
+      "sound": "late_cycle_board_sound",
+      "small_sound": "late_cycle_board_small_sound",
+      "was_pending": "late_cycle_board_was_pending",
+      "state_bound": 262145,
+      "instruction_bound": 262145,
+      "scope": "both",
+      "rows": 54,
+      "inventories": [
+        {
+          "path": "research/late-cycles-extra262144.json",
+          "format": "columns",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/late-cycle-proofs",
+          "namespace": "BBB24LateCycles"
+        }
+      ]
+    },
+    {
+      "id": "WeightedPilot",
+      "module": "BBB24Weighted.WeightedCloseout",
+      "board": "weighted_board",
+      "sound": "weighted_board_sound",
+      "small_sound": "weighted_board_small_sound",
+      "was_pending": "weighted_board_was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 110,
+      "inventories": [
+        {
+          "path": "research/weighted-pilot-machines.json",
+          "format": "rows"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Weighted",
+          "path": "build/weighted/pilot-kernel"
+        }
+      ]
+    },
+    {
+      "id": "Conjugate",
+      "module": "BBB24ConjugateR000.ConjugateAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 131072,
+      "instruction_bound": 131072,
+      "scope": "both",
+      "rows": 1227,
+      "inventories": [
+        {
+          "path": "research/conjugate-input-r000.json",
+          "format": "columns"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-batch",
+          "namespace": "BBB24Batch"
+        },
+        {
+          "path": "build/affine-closeout",
+          "namespace": "BBB24AffineCloseout"
+        },
+        {
+          "path": "build/closure-batch",
+          "namespace": "BBB24ClosureBatch"
+        },
+        {
+          "path": "build/family-transport",
+          "namespace": "BBB24Transport"
+        },
+        {
+          "path": "build/weighted/pilot-kernel",
+          "namespace": "BBB24Weighted"
+        },
+        {
+          "path": "build/late-cycle-proofs",
+          "namespace": "BBB24LateCycles"
+        },
+        {
+          "path": "build/conjugate/r000",
+          "namespace": "BBB24ConjugateR000"
+        }
+      ]
+    },
+    {
+      "id": "WeightedReuse",
+      "module": "BBB24WeightedReuse.WeightedReuseAll",
+      "board": "board",
+      "sound": "sound",
+      "small_sound": "small_sound",
+      "was_pending": "was_pending",
+      "state_bound": 4096,
+      "instruction_bound": 4096,
+      "scope": "both",
+      "rows": 421,
+      "inventories": [
+        {
+          "path": "research/weighted-reuse-input.json",
+          "format": "columns"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/weighted-reuse",
+          "namespace": "BBB24WeightedReuse"
+        }
+      ]
+    },
+    {
+      "id": "Alphabet23",
+      "module": "BBB24Alphabet.AlphabetBoard",
+      "board": "closed_alphabet_board",
+      "sound": "closed_alphabet_board_sound",
+      "small_sound": "closed_alphabet_board_small_sound",
+      "was_pending": "closed_alphabet_board_was_pending",
+      "state_bound": 59,
+      "instruction_bound": 67,
+      "scope": "both",
+      "rows": 221,
+      "inventories": [
+        {
+          "path": "research/alphabet23-families.json",
+          "format": "rows",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "../small/theories",
+          "namespace": "SmallBB"
+        },
+        {
+          "path": "build/alphabet23",
+          "namespace": "BBB24Alphabet"
+        }
+      ]
+    },
+    {
+      "id": "StateReach",
+      "module": "BBB24StateReach.StateReachAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_zero",
+      "was_pending": "state_board_pending",
+      "state_bound": 0,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 83194,
+      "inventories": [
+        {
+          "path": "research/one-state-reach-input.json",
+          "format": "packed16",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/one-state-reach",
+          "namespace": "BBB24StateReach"
+        }
+      ]
+    },
+    {
+      "id": "StateClosure",
+      "module": "BBB24StateClosure.StateClosureAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 9853,
+      "inventories": [
+        {
+          "path": "research/state-closure-input.json",
+          "format": "packed17_groups",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-closure",
+          "namespace": "BBB24StateClosure"
+        }
+      ]
+    },
+    {
+      "id": "StateRW",
+      "module": "BBB24StateRWPilot.StateRWAll",
+      "board": "state_board",
+      "sound": "state_board_bound",
+      "small_sound": "state_board_small",
+      "was_pending": "state_board_pending",
+      "state_bound": 4096,
+      "instruction_bound": null,
+      "scope": "state",
+      "rows": 14,
+      "inventories": [
+        {
+          "path": "research/state-repwl-pilot-input.json",
+          "format": "packed17_groups",
+          "order": "input"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/state-repwl-pilot",
+          "namespace": "BBB24StateRWPilot"
+        }
+      ]
+    }
+  ]
+}

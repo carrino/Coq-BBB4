@@ -1,0 +1,49 @@
+{
+  "rows": [
+    {
+      "actual_entry_steps": 32,
+      "arbitrary_context_checks": 24717,
+      "bounce": false,
+      "code": 3928607508,
+      "initial_main": {
+        "ds": [
+          1
+        ],
+        "k": 2
+      },
+      "machine": "1LB2RA0RA1RA_3RB3LA2LB2LB",
+      "main_returns": 9555,
+      "negative_controls": [
+        "zero sweep with right-boundary0",
+        "empty carry with nonblank left extension"
+      ],
+      "zero_cost": 3
+    },
+    {
+      "actual_entry_steps": 34,
+      "arbitrary_context_checks": 24717,
+      "bounce": true,
+      "code": 4749284854,
+      "initial_main": {
+        "ds": [
+          1
+        ],
+        "k": 2
+      },
+      "machine": "1LB2RA0RA1RA_3RB3LA2LB2RB",
+      "main_returns": 9555,
+      "negative_controls": [
+        "zero sweep with right-boundary0",
+        "empty carry with nonblank left extension"
+      ],
+      "zero_cost": 5
+    }
+  ],
+  "selection_report": "research/burn18-paired-carry-native.json",
+  "selection_sha256": "3121a5c406474ed77f0dfeb90aa54e9b38f200e4ff029e62ebae4e5b03d78fd1",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn18-paired-carry/PairedCarry.v": "cc802987e7e396822342693ee3effc121aa0eb0ae1f43b91c30d32ff420776cc",
+    "proof-sources/burn18-paired-carry/Regression.v": "82356918369934f22c7fbe68517d9392fe11a94f0ad2679924a57848c0f393a4"
+  }
+}

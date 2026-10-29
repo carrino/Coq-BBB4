@@ -1,0 +1,6 @@
+[
+  {"mode":"rw","size":1,"anchor":128,"fuel":256,"extra":2,"history":0},
+  {"mode":"rw","size":2,"anchor":128,"fuel":256,"extra":2,"history":0},
+  {"mode":"rw","size":1,"anchor":4096,"fuel":512,"extra":2,"history":0},
+  {"mode":"rw","size":2,"anchor":4096,"fuel":512,"extra":2,"history":0}
+]

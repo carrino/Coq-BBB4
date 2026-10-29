@@ -1,0 +1,34 @@
+{
+  "status": "Exploratory grouping only; no new bounds or census discharges",
+  "input_families": 611360,
+  "symmetry_representatives": 284541,
+  "roots": {
+    "blank": {
+      "input_families": 63426,
+      "representatives": 10572,
+      "orbit_size_histogram": {
+        "3": 2,
+        "6": 10570
+      },
+      "input_sha256": "4e7a25f1b57086896e77b2e0fa686be8d207cac4dedf3f70ab3ea1a5206867ee"
+    },
+    "nonblank": {
+      "input_families": 547934,
+      "representatives": 273969,
+      "orbit_size_histogram": {
+        "1": 4,
+        "2": 273965
+      },
+      "input_sha256": "8599abad2aa4238e53eb8bc5ac406178d9d21cd9da56804d3c93572016dd1de9"
+    }
+  },
+  "candidate_blank_prefix_shadows": 10572,
+  "unmatched_blank_representatives": 0,
+  "avoid_templates": {
+    "complete_representatives": 256806,
+    "machine_target_pairs": 513612,
+    "distinct_templates": 210,
+    "largest_template_pair_count": 94210
+  },
+  "proof_status": "Symbol transport, shadow timing/prefix obligations, and avoid-template lemmas still need BBB24 coverage integration"
+}

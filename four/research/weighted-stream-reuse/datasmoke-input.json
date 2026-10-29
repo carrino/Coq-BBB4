@@ -1,0 +1,19 @@
+{
+  "description": "Targets entering separate-table weighted closures; compact references select untrusted certificates, and every target is kernel checked.",
+  "registry_sha256": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58",
+  "baseline_survivor_sha256": "e4a2cfb65ff219ac4ef68ec22f95eab57458b22282e3dc5066e4768cc8120cb5",
+  "exclusion_inputs_sha256": {},
+  "selection": {"candidate_cores": 30, "candidate_pairs": 150, "checker_selected_cores": 8, "context_cache_hits": 675, "context_cache_limit": 128, "context_cache_misses": 5, "max_boot": 4096, "native_probe": {"child_cpu_seconds": 1.5749079999999998, "extracted_sha256": {"ml": "428f00f47dec1bfd89caa05bafba6b7b9a9e6db12c9b710f834df8f9d765fce1", "mli": "20b1b7c3ad425c3bf10deb0cd2f616224320ecbf114e8ede21766f947be6ed81"}, "kind": "untrusted extracted OCaml with data reader; all successes subsequently replayed in Coq", "parts": 1, "selector_sha256": "c2cf2e320d1aeb3bd7bdaa09661a746ac5ec94bf39b804878ed5e7c5b4a172ab", "wall_seconds": 9.862356354999065}, "pattern_keys": 1514, "probe_candidates": 8, "selected_cores": 30, "source_masks": 49, "source_templates": 394, "used_templates": 1},
+  "columns": ["machine", "source_certificate", "permutation", "state_swap", "mirrored", "boot"],
+  "rows": [
+    ["1LB0LA0RB2RA_2RA3LB1RB1RB",37,"123",false,false,16],
+    ["1LB0LA1RA2RA_2RA3LB1RB1RB",37,"123",false,false,16],
+    ["1LB0LA1RB2RA_2RA3LB1RB1RB",37,"123",false,false,8],
+    ["1LB0LA2LB2RA_2RA3LB1RB1RB",37,"123",false,false,8],
+    ["1LB0LA2RA2RA_2RA3LB1RB1RB",37,"123",false,false,8],
+    ["1LB0LA2RB2RA_2RA3LB1RB1RB",37,"123",false,false,8],
+    ["1LB0LA3LB2RA_2RA3LB1RB1RB",37,"123",false,false,8],
+    ["1LB0LA3RA2RA_2RA3LB1RB1RB",37,"123",false,false,8]
+  ],
+  "selection_target_inventory": "build/weighted-tail-benchmark/targets.txt"
+}

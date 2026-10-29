@@ -1,0 +1,47 @@
+{
+  "rows": [
+    {
+      "actual_entry_parameter": 254,
+      "actual_entry_steps": 100852,
+      "all_three_final_controls": 101,
+      "all_three_first_controls": 101,
+      "arbitrary_context_sweeps": 35763,
+      "code": 760586006,
+      "consume_one_controls": 525,
+      "direct_blank_steps": 1000000,
+      "direct_stable_cuts": [
+        {
+          "n": 254,
+          "time": 100852
+        },
+        {
+          "n": 765,
+          "time": 891892
+        }
+      ],
+      "drain_controls": 3549,
+      "machine": "1LB2LA3RB2LA_2RB2LA3RA0LB",
+      "negative_controls": [
+        "missing01 tail reaches B0 right blank at10",
+        "odd one-run changes tail01 to0001",
+        "even reset two-run changes tail01 to0001"
+      ],
+      "next_stable_cut_prediction": {
+        "n": 2298,
+        "time": 7965166
+      },
+      "odd_reset_controls": 101,
+      "stable_even_run_controls": 33,
+      "stable_return": "M(n)=A0 empty-left/right2^5 1^(2n)01 -> M(3n+3), cost12n^2+66n+84",
+      "state_bound": 0
+    }
+  ],
+  "selection_report": "research/burn25-s043-counter-native.json",
+  "selection_sha256": "da9faff238a96dacfd868ecc8262b2e8b22dfb80aec10786f0259e3b0d958f70",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn25-s043-counter/Core.v": "5cefbaf0796e74e28a021c3e6367d3bd626cfd80fba1335b1188c0d6107a9aca",
+    "proof-sources/burn25-s043-counter/Regression.v": "ee06bd25c53ac6b6213554c70c133e6a06646b07ef28df9ca4fc099e1965c2d1",
+    "proof-sources/burn25-s043-counter/Return.v": "aa30b78be884426f2532859e082a577bfb9c64999425e5c03ad175504cf316f8"
+  }
+}

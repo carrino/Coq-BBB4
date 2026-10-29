@@ -1,0 +1,97 @@
+{
+  "bundles": [
+    {
+      "bytes": 2185,
+      "path": "research/burn3-capacity-state-certificates.json",
+      "rows": 5,
+      "sha256": "73e7e643cbfe32e834a19e7ee2aedaa138a18f5e4720c0d8e0a0d6cf19770dbd"
+    }
+  ],
+  "format": "BBB24 compact weighted certificates v2",
+  "rows": 5,
+  "scope": "State-only; no instruction-bound claim.",
+  "selection": {
+    "method": "One present ordinary-ranked instruction per state in one shared closed graph; no capacity witnesses or new theorem.",
+    "scope": "Untrusted certificate extraction; no proof claim until kernel replay.",
+    "selected": [
+      {
+        "anchor": 4096,
+        "capacity_index": 22,
+        "machine": "1LB1LB---2RA_1RB3LB1RA0RA",
+        "mirror": 0,
+        "nodes": 114,
+        "state_choices": [
+          1,
+          1
+        ],
+        "variant_index": 0,
+        "width": 2
+      },
+      {
+        "anchor": 4096,
+        "capacity_index": 25,
+        "machine": "1LB2LA1RA2LB_3RB3LB1RA0RA",
+        "mirror": 0,
+        "nodes": 79,
+        "state_choices": [
+          2,
+          0
+        ],
+        "variant_index": 0,
+        "width": 2
+      },
+      {
+        "anchor": 4096,
+        "capacity_index": 27,
+        "machine": "1LB2LB2LA0RA_1RB3LA3RA0RA",
+        "mirror": 0,
+        "nodes": 194,
+        "state_choices": [
+          0,
+          0
+        ],
+        "variant_index": 0,
+        "width": 2
+      },
+      {
+        "anchor": 4096,
+        "capacity_index": 32,
+        "machine": "1LB2RA3LB1LB_0RB3LB2LA3RA",
+        "mirror": 0,
+        "nodes": 118,
+        "state_choices": [
+          1,
+          0
+        ],
+        "variant_index": 0,
+        "width": 2
+      },
+      {
+        "anchor": 4096,
+        "capacity_index": 37,
+        "machine": "1LB1RB---3LA_3RA2LB3RB2LA",
+        "mirror": 0,
+        "nodes": 86,
+        "state_choices": [
+          1,
+          2
+        ],
+        "variant_index": 0,
+        "width": 2
+      }
+    ],
+    "selected_rows": 5,
+    "sources_sha256": {
+      "build/burn2-capacity/row-022/variants.jsonl": "6b228c3e08708edcfe5d62b9f24e4029f855ae769dc703a53969cab1e9f67d9f",
+      "build/burn2-capacity/row-025/variants.jsonl": "cc891d9eee6aecd1b8e8676df30374b668557235a04ee9d01863d9008d0ba8fe",
+      "build/burn2-capacity/row-027/variants.jsonl": "91471d5f7195af4f2104fc2baf1825290a4afec0f22f6473a9204d3bce2565a7",
+      "build/burn2-capacity/row-032/variants.jsonl": "1cee311daeba7828925d54689a5be8450d8f30ba5a0408d1ef252d1d5ac725e2",
+      "build/burn2-capacity/row-037/variants.jsonl": "ae3f7a6836f625ab9ef22c465d9a21a2ffa8cae00bb49911681243e43ee93f7a",
+      "build/next-burndown/state-remaining.txt": "80eb3390d632f8e48ae60ff4255b0faa06d971539e3ff9101ca4946d751d61bb",
+      "research/burn2-capacity-manifest.json": "2cff9bc019b1c4b03ec4baf9a76730ad1f15b4b8e0297d6a856096ca369641f4",
+      "research/burn2-capacity-summary.json": "47c2df364d20c344360ede9d5d81c7c84e64986a1ec7866f396c8fc01cdadfaa",
+      "tools/select_burn3_capacity_states.py": "83fa7d6b946c572dd41b8e0832a33d94bafe2973ab5c913895fc116ffc95e42d",
+      "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a"
+    }
+  }
+}

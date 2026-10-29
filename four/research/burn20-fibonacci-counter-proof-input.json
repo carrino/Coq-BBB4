@@ -1,0 +1,17 @@
+{
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "metadata_revision": 1,
+  "rows": [
+    {
+      "code": 4435521821,
+      "machine": "1LB1RA1LB2RB_3RB3LA3LB2RA"
+    }
+  ],
+  "selection_report": "research/burn20-fibonacci-counter-native.json",
+  "selection_sha256": "e20f138cf7aaceaaf41f807f8582462d22e2be0febea0c616d4c218b19f83d37",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn20-fibonacci-counter/FibonacciCounter.v": "8b321e6c5698eaa7aec2e567c37f3fe587e2f20c1ff90247fdc2f7d6e945b003",
+    "proof-sources/burn20-fibonacci-counter/Regression.v": "f00b4f0e81c9b29b30808e7d3a980fe49e6e116ac6fb83f05fe5a259a1efa66b"
+  }
+}

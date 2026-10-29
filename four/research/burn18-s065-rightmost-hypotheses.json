@@ -1,0 +1,27 @@
+{
+  "scope": "Selected before formalization; bounded evidence only, no proof credit.",
+  "machine": "1LB2RA0LB1RA_1RB3LB2LB0RA",
+  "hypothesis": "A0 blank-right, left2^a1^b0 1^c with a,b>=0,c>=1. Return A0orA1 with samegrammar; A1one-stepadds2 and returnsA0.",
+  "actual_entry": {
+    "step": 7,
+    "a": 0,
+    "b": 1,
+    "c": 1
+  },
+  "native_parameter_screen": {
+    "a": "0..5",
+    "b": "0..5",
+    "c": "1..6",
+    "checked": 216,
+    "failures": 0
+  },
+  "remaining": "Universal termination/rank for the moving-zero interior; fixed-boundary BinaryRank cannot be applied directly.",
+  "alternate": "S069notselected; short boundarytrace less regular.",
+  "refined_before_formalization": {
+    "selected": "Rightmost nonzero symbol of head/right suffix is1or3, or suffix entirelyzero and stateA.",
+    "preservation": "All8transitions appearclosed. B1 preserves marker1bywriting3left; A1/A3mayremove finalmarker onlywhilemovingrightinA.",
+    "return_argument": "B on1/2/3 reachesA by inductiononleftlength; B0 with visible right nonzero eventually reachesnonzero. InvariantthereforeensuresreturntoA; independent uniformAepisodechecker suppliesBrecurrence.",
+    "negative": "IsolatedA2 with blankrightsuffix is excluded; it canerase final2 and enterblankrightB0drift.",
+    "scope": "Universal invariantandreturnproof replacesunresolvedthreeblockcountdownrank; firstgrammargrid onlyprovenance."
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "proof_source": "theories/AffineExamples.v",
+  "proof_source_sha256": "e4debee169261bad0838ab2ff6b3c92377630dca0eb0204a264cdad30bb305cc",
+  "checked_commit": "97e9193964c0e3a9c86758da190c137f10a8afe8",
+  "validation": "Coq 8.18 build and recursive coqchk; only functional extensionality",
+  "state_bound": 4096,
+  "instruction_bound": 4096,
+  "machines": [
+    "0LB0LA---2RB_3RA1LB1RB1LB",
+    "0LB1LB2RA0RB_3RA3RB1LA2LB",
+    "0LB2RA3RB2LA_1RA2RA3LB2RB",
+    "0LB3RB0LA1RB_3RA3LB0LA2LB"
+  ],
+  "census_closeout": {
+    "source_sha256": {
+      "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+      "theories/AffineCloseout.v": "c6f7f2ea459ff0773b99e8a80663b7522aa80bb4775f436f3e0c50f1a2263e40"
+    },
+    "coverage_theorem": "BBB24.AffineCloseout.bootstrap_affine_coverage",
+    "discharge_theorem": "BBB24.AffineCloseout.affine_families_discharged",
+    "residual_predicate": "BBB24.AffineCloseout.bootstrap_affine_pending",
+    "machines": [
+      "0LB0LA---2RB_3RA1LB1RB1LB",
+      "0LB1LB2RA0RB_3RA3RB1LA2LB",
+      "0LB2RA3RB2LA_1RA2RA3LB2RB",
+      "0LB3RB0LA1RB_3RA3LB0LA2LB"
+    ],
+    "validation": "Coq 8.18 compilation and recursive coqchk of Closeout/AffineCloseout; only existing functional extensionality in affine and bootstrap dependencies.",
+    "accounting": "Excludes these families and all completions from the refined residual; does not recompute the original bootstrap structural counts."
+  }
+}

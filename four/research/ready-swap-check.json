@@ -1,0 +1,17 @@
+{
+  "status": "Kernel-audited generic state-exchanged source-tail transport and positive/negative regression.",
+  "theorems": [
+    "ready_swap_sound",
+    "ready_mixed_sound",
+    "ready_mixed_batch_sound"
+  ],
+  "source_sha256": {
+    "theories/ReadySwap.v": "37f440073404732dc8c01654f426061ede6b8bce28b9321ffd0c1edebd4591a5",
+    "theories/ReadySwapRegression.v": "cd0277622c2ae81628264deca588c3aa7d2a49fb853bb0a82f4421f3adab4235"
+  },
+  "audit_receipt": "build/ready-swap/audit.json",
+  "audit_receipt_sha256": "f8ac7ae4356095260469f2f5c5823e2e53e0fc084847d905c94d4d88743841c5",
+  "audit_kind": "incremental",
+  "assumptions": "existing FunctionalExtensionality.functional_extensionality_dep",
+  "census_claim": "This generic theorem report adds no concrete family count; imported-source target boards await their own or combined transitive audit."
+}

@@ -1,0 +1,20 @@
+{
+  "escape_steps": 67093892759901295,
+  "last_A": 67093892759901294,
+  "rows": [
+    {
+      "code": 1684925051,
+      "machine": "1LB2LA1RA2RB_2RB3LB0LB1LA"
+    }
+  ],
+  "selection_report": "research/burn21-s032-finite-native.json",
+  "selection_sha256": "bd444878da76eaf8ae54425e040da7cfbf942379330be9a966bcd5c85de39515",
+  "state_bound": 72057594037927936,
+  "template_sha256": {
+    "proof-sources/burn21-s032-finite/BinaryBridge.v": "a2ce4ab9d2e0a8d36a942901dd5e7f05aaeb4e1fbeb65affdbd1d7f79ff99d3a",
+    "proof-sources/burn21-s032-finite/CutMacros.v": "19808cea5f0f9e4d573f1780936f3182b78309c44e96ad92d75ba88cf9a79193",
+    "proof-sources/burn21-s032-finite/Final.v": "fdafb6cd52d5b223999536084a41cb7299b18646fb5c3026b704b8d21b97b7fa",
+    "proof-sources/burn21-s032-finite/Regression.v": "189fe96581ceeb71d9bec0f6ec549fcd9b086cd035272cedfcdf15159a0e94b7",
+    "proof-sources/burn21-s032-finite/Trace.v": "8208019d799608be4112e879931e40b5efa5a17939fe956deadcf32813b74417"
+  }
+}

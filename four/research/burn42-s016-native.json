@@ -1,0 +1,51 @@
+{
+  "KD_continuation": "313303131",
+  "KD_wrong_continuation_negative": "313103131",
+  "actual_orbit": {
+    "returns": 16,
+    "total_steps": 46089
+  },
+  "context_max_length": 2,
+  "controls": {
+    "actual_entry": 1,
+    "actual_orbit": 1,
+    "all_variant_normalizers": 21483,
+    "guarded_returns": 682,
+    "identity_controls": 2,
+    "negative_guards": 2,
+    "programs": 714
+  },
+  "entry_steps": 56,
+  "entry_tokens": [
+    0,
+    1
+  ],
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "identity_negative_controls": [
+    "1LB0RA0LB2RB_3RB3LA0RA1RA",
+    "1LB0RA0LB2RB_3RB3LA0LB1RA"
+  ],
+  "invariant": "A0 right blank; nearest-first left enc(a::ts)3 or enc(d::ts)3, arbitrary finite token ts",
+  "maximum_token_length": 4,
+  "metadata_revision": 1,
+  "normalizer_local_copy": "proof-sources/burn42-s016/Normalizer.v",
+  "normalizer_parent_sha256": "4b43d3e48f8ea0fd874c2d357c7741dc0650213944537d03e16f682c5ebf57cf",
+  "prior_remaining_count": 3,
+  "prior_remaining_report": "research/burn42-s016-prior-state-holdouts.txt",
+  "prior_remaining_sha256": "6301f5c089f62b34c5bc45a5e6bc81636b3615c723e9133af529a026ba22a28a",
+  "programs_report": "research/burn42-s016-programs.json",
+  "programs_sha256": "50ea9c5cd976fde8ab1e86f26a54e185760c17ab9e4f79c88305c8f9f0e04d4f",
+  "return_claim": "For every guarded word, some positive finite return is guarded; all-variant shared F normalization is universal in Coq.",
+  "rows": [
+    {
+      "code": 2625202922,
+      "machine": "1LB0RA0LB2RB_3RB3LA1RA1RA"
+    }
+  ],
+  "scope": "Finite controls only; no universal proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn42_s016_native.py": "87d4385757d98003fbe90a22d111805472d1a87acc7754818c67b024fc5af9c9",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

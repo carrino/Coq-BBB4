@@ -1,0 +1,17 @@
+{
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "metadata_revision": 1,
+  "rows": [
+    {
+      "code": 2356480420,
+      "machine": "1LB2LA3RA0RB_2RB2RA3LA1LB"
+    }
+  ],
+  "selection_report": "research/burn27-s040-word-cycle-native.json",
+  "selection_sha256": "32514306b2b3c16a96f7b1f1eb15826df66870b3f15e6fa3ca37377d2c01db93",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn27-s040-word-cycle/Regression.v": "10e4f7ebfd0eb618fed2b2e7db3e5113694c2ce6f4f5573aad128d24c8084214",
+    "proof-sources/burn27-s040-word-cycle/WordCycle.v": "78664cb20df7af28dcd1738b53038116fe48c0390baa20cfeb8e23336392c569"
+  }
+}

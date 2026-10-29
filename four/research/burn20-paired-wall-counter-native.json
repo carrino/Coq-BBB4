@@ -1,0 +1,50 @@
+{
+  "boundary_guard": "after the left11 prefix, the wall head is0 or3; arbitrary1 invalidates the right32 macro",
+  "context_max_length": 2,
+  "controls": {
+    "L_scan": 1344,
+    "R32_scan": 1344,
+    "R58_scan": 1344,
+    "even_phase": 168,
+    "even_phase1": 168,
+    "even_phase2": 168,
+    "even_turn": 21,
+    "four_phase": 168,
+    "guarded32": 882,
+    "guarded58": 882,
+    "guarded_even_finish1": 882,
+    "guarded_even_finish2": 882,
+    "guarded_odd_finish": 882,
+    "left20": 441,
+    "main_returns": 16,
+    "odd_phase": 168,
+    "odd_turn": 21
+  },
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "invariant": "A0, blank right tail, nearest-first left word1^4 (30)^(4n+2)0",
+  "main_cost": {
+    "constant": 577,
+    "slope": 416
+  },
+  "metadata_revision": 1,
+  "odd_phase_cost": {
+    "constant": 63,
+    "slope": 52
+  },
+  "positive_even_phase_cost": {
+    "constant": 285,
+    "slope": 156
+  },
+  "rows": [
+    {
+      "code": 1563126307,
+      "machine": "1LB2LB1LA1RA_3RB3LA3LB0RB"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn20_paired_wall_counter_native.py": "d04ce47e667a98793e594dc74a93715d5b840331d82487c16e9dc4842a1acd32",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

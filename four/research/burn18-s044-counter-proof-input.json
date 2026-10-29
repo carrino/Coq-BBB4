@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 4425208329,
+      "machine": "1LB2LB0LB0RB_2RB1LB3LB2RA"
+    }
+  ],
+  "selection_report": "research/burn18-s044-counter-native.json",
+  "selection_sha256": "6fdd9a2fc19dab2c0cb45b75e2dce7f0c3837669dd3b2cc2619778974cf32b18",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn18-s044-counter/Regression.v": "bdb8ae830edf6d2d5c78f2393d948ddcf87aa8ef0bcc4b04162947c0e09e37fe",
+    "proof-sources/burn18-s044-counter/S044Counter.v": "5638e547ce325c56b2b9675054ad77258ac4538fe9625f98f59077b5eed1fcb5"
+  }
+}

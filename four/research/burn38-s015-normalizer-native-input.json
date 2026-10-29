@@ -1,0 +1,10 @@
+{
+  "frontier_sha256": "df15cc764bca600e27e6366a445c2e4aba152afa8ba7014ab7eaabcbb48e78a9",
+  "frontier_source": "research/burn38-s015-normalizer-frontier.txt",
+  "machines": [
+    "1LB0RA0LB2RB_3RB3LA0LB1RA",
+    "1LB0RA0LB2RB_3RB3LA0RA1RA",
+    "1LB0RA0LB2RB_3RB3LA1RA1RA"
+  ],
+  "maximum_token_length": 4
+}

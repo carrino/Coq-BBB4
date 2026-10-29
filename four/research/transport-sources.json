@@ -1,0 +1,62 @@
+{
+  "description": "Ordered checked proof boards used as sources for family transport. Inventory rows select witnesses; Coq verifies each table relation against the named board.",
+  "loadpaths": [
+    [
+      "build/affine-batch",
+      "BBB24Batch"
+    ],
+    [
+      "build/affine-closeout",
+      "BBB24AffineCloseout"
+    ],
+    [
+      "build/closure-batch",
+      "BBB24ClosureBatch"
+    ]
+  ],
+  "sources": [
+    {
+      "module": "BBB24AffineCloseout.AffineCloseoutBatch",
+      "board": "sample_board",
+      "nonhalt": "sample_board_nonhalt",
+      "small_sound": "sample_board_small_sound",
+      "proof_source": "build/affine-closeout/AffineCloseoutBatch.v",
+      "machine_inputs": [
+        {
+          "path": "research/affine-batch.tsv",
+          "format": "checked_affine_tsv"
+        },
+        {
+          "path": "research/pipeline-examples.json",
+          "format": "json_rows"
+        }
+      ]
+    },
+    {
+      "module": "BBB24.AdvancedExamples",
+      "board": "advanced_pilot_board",
+      "nonhalt": "advanced_pilot_nonhalt",
+      "small_sound": "advanced_pilot_small_sound",
+      "proof_source": "theories/AdvancedExamples.v",
+      "machine_inputs": [
+        {
+          "path": "research/advanced-examples.json",
+          "format": "json_rows"
+        }
+      ]
+    },
+    {
+      "module": "BBB24ClosureBatch.ClosureBatchAll",
+      "board": "closure_batch_board",
+      "nonhalt": "closure_batch_board_nonhalt",
+      "small_sound": "closure_batch_board_small_sound",
+      "proof_source": "build/closure-batch/ClosureBatchAll.v",
+      "machine_inputs": [
+        {
+          "path": "research/closure-batch-input.json",
+          "format": "json_columns"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "artifacts_sha256": {
+    "Weighted00000.receipt.json": "2e541213245328905b82345c275e4210cf714d8bff4c12526ca3c093989891d2",
+    "Weighted00000.v": "fa8eb6d82e2c3e8a06e68e3c48015dd8e6912ef730674589c8dfebdb71b16920",
+    "Weighted00000.vo": "125d64ea1361f915b3a84e5332d38023734779687dd0c35096758efe6e8fc926",
+    "Weighted00001.receipt.json": "354eaf4c3d4ca9947eebe1ffe061d95f2a55b6f56450697f0445397b11fb44e3",
+    "Weighted00001.v": "0eaf7858aafd033b13d3a1c4b6cfebf44739fecccffa3bc7550278cb49d54296",
+    "Weighted00001.vo": "5c20cc0ad18a7fb917dfe5e0230798cd4d901c671571cd1f9339b85c4c9f04bf",
+    "Weighted00002.receipt.json": "92a7105bf358b5806437e0ecdc4361a7658e8f6c928a9ccb78c4f18339102f28",
+    "Weighted00002.v": "88b2059fd7e609abe405083be2982573d0bd823c58d3aa5358d00afbecb49d1c",
+    "Weighted00002.vo": "0d21552e6901af9477828d565006a3b6ee77875a767498068a1749e4206b665e",
+    "Weighted00003.receipt.json": "de0e37fad74e4ea306ec2cd159c717822f302c68a8f1f3fbeedb59aeb3e1d9b5",
+    "Weighted00003.v": "4c566bfd2672bfbc38d1173e04de2f90179a334f469dbeba4ca3a81183ae33d5",
+    "Weighted00003.vo": "398a6ba821f3f1a0f90f781110922a9e8a680be7f983569f228526fd75271092",
+    "Weighted00004.receipt.json": "5359b96015126fce259ad65f42406cb8c49c44439d84d3036ac4d6201ad40711",
+    "Weighted00004.v": "9b478df0014d42947bf3614bdf23f30ea23b3b82a80092d7a7a55921ac21d1f0",
+    "Weighted00004.vo": "a7694b5c8f180894fc2a8cdf4f17c1025ffe85f3e60d88bc2b51cc69a9db7321",
+    "Weighted00005.receipt.json": "e0ceee5e28673e3813ea9ee2b0caed0723e33127962f6773194d36a03d71c49b",
+    "Weighted00005.v": "3ded00ced76f8b4567b7b6e3f071f5d1f0d24d0873bcb648b4cad7a0b6959835",
+    "Weighted00005.vo": "d3fb33e57febe086e94f0fbe90d4524ae58004c03f6bf8cb79421344d1ead43b",
+    "Weighted00006.receipt.json": "ebac730782ff37782ce579ed41e2deaba70486ddad2b08ece50d2389e6180136",
+    "Weighted00006.v": "c2ecad4898f724f9909c8a21550b05daab1f35d523ca5f59aa4c60124666d317",
+    "Weighted00006.vo": "182bd5508f736a212ad79fb1adc0bc4114f65b07e8e5e7960e0f77cdbf7950fb",
+    "Weighted00007.receipt.json": "cf99837f09feb477d0a2dddd0c0db3efe8b32b9211b6174c0f3bbfdc93a3f2e2",
+    "Weighted00007.v": "a4c2dbd6f65783641320a5d3e45a72245a58e286393c2095448af111991a357b",
+    "Weighted00007.vo": "bbdbf8b39febf7874111f0243317f821aa63d93dbabeb45b6fda98dedcfbe0aa",
+    "Weighted00008.receipt.json": "a8fd55a02577d937b0bf4eafdd2ea7470d68ecffee8939eff296dfea02376078",
+    "Weighted00008.v": "c0a1f9365a4f8565b7fd26ae2c93a27b3b5cc0b65ad77e7e05860dd381011643",
+    "Weighted00008.vo": "8dc17f58c8d4690879499c854186321fb7efcc13db290bff96fdf442d4298ad6",
+    "WeightedAll.v": "c3740a0c1e0e031b30422d4e7a8c294d87e058f67731a0a376e0807c70228c7f",
+    "WeightedAll.vo": "1e55ca25728c377183b799613f75ffc1e1a2731e272c7ce27a00e24507a20682",
+    "manifest.json": "1bf0a20c6bbe6b83d7eb61934f1c2de6c77f730f185cccfed38db717b3a232a2"
+  },
+  "census_linked": 9,
+  "counts": {
+    "coq_checked": 9
+  },
+  "descriptor": {
+    "board": "weighted_board",
+    "discharged": "weighted_families_discharged",
+    "load_paths": [
+      {
+        "namespace": "BBB24WeightedPortfolioFollowup512",
+        "path": "build/weighted-followup512/portfolio-proof"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "format": "json_rows",
+        "path": "research/weighted-portfolio-followup512-machines.json"
+      }
+    ],
+    "module": "BBB24WeightedPortfolioFollowup512.WeightedAll",
+    "nonhalt": "weighted_board_nonhalt",
+    "proof_source": "build/weighted-followup512/portfolio-proof/WeightedAll.v",
+    "small_sound": "weighted_board_small_sound",
+    "sound": "weighted_board_sound",
+    "was_pending": "weighted_board_was_pending"
+  },
+  "inventory_sha256": "3b52984cdb62010f3df6c8a9f07ec7a381894b8159c9c8d9028c1893c7a0602c",
+  "manifest": {
+    "batch_size": 1,
+    "coq_version": "The Coq Proof Assistant, version 8.18.0",
+    "instruction_bound": 4096,
+    "namespace": "BBB24WeightedPortfolioFollowup512",
+    "registry_sha256": "c2fb0d80406271a6bf1ade2dcf7ffa5cb78b965268b0d7124dd02ca60c695828",
+    "rows": 9,
+    "sources_sha256": {
+      "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+      "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+      "theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+      "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+      "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+      "theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+      "theories/CensusUnion.v": "d4e178b18b2c8db7538161d74833c1998c0ed3bea8f27ef58b76741049026fab",
+      "theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+      "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+      "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+      "theories/Checkers/FiniteWall.v": "f58b74f21be0d451628f126099ca3ce57b9f3a310c73aadba4c4013d6e3514db",
+      "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+      "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+      "theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+      "theories/Checkers/WeightedLex.v": "722875929fd5e9b2b11ab08caefe146f04191bcbcf3f704b3265b6996583a3e7",
+      "theories/Checkers/WeightedStack.v": "39105be50c93a9cb47897aa3dc05538d0e7dad0a8d2181cd87891df9e58d8773",
+      "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+      "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+      "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+      "theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+      "theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+      "theories/InstructionPortfolio.v": "7a62813017b0d209370f8753f721a21567e31d97d59268c3d511cd1db8290849",
+      "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+      "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+      "theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+      "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+      "theories/NGramRegression.v": "c1ddef61f0d26dd8f07429a5b173fe7ee6a49504bcdce30d5c0f43dfbef69332",
+      "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+      "theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+      "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+      "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+      "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+      "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+      "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+      "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+      "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+      "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+      "theories/WeightedCensus.v": "02e50e571ed7b7aecaa60b2d058477c220b78b43b72b9119b3cce41db5e0b151",
+      "theories/WeightedNGram.v": "f22f844521f23e825aa37f7cc5907382b6ddcc7fea2394309c27d9420930a275",
+      "theories/WeightedRegression.v": "cb42f0c31f57a037c7411af9cc8ed8a71f859ef7a2397c17acb44b93a6fcffb9",
+      "tools/check_shadow_links.py": "342b0c36d050f727ad5478af1b68f67d9c3827de984835b0bf6e60b5b657c9ca",
+      "tools/check_weighted_portfolio.py": "b19fe7b5e95fbd4f7abca03370d65454ec35b59e0f2641491496d083df32ba75",
+      "tools/check_weighted_v2.py": "72f83a55c1ae2695f80e4de947f8cfbc0b7514d11d9b583050117f2518b9e52f",
+      "tools/check_weighted_v3.py": "169ad387b19daef3a110db5a10c073aed69855b7701492c941cee2ce5b649bdb",
+      "tools/check_weighted_v4.py": "3025872c05a693b04e58009869b7e567e60fd809428732223e9488cd9a0d2ef6",
+      "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+      "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+      "tools/weighted_portfolio_render.py": "9d1caa600cbe5458153200642dde3664aa00c925b9f0e4d885e5f2392b9b3d96",
+      "tools/weighted_render.py": "e203d1d2964cece3f053f7cf9b2184931ad5cc3bb525d2f2a52699cc716d166f",
+      "tools/weighted_render_v3.py": "5988c284b17a5e653dfbe6d15f1c3083fd94a32fa0daa3b8745c215d6afbcc98",
+      "tools/weighted_render_v4.py": "8cce618311b0d70bb67074cfdffaa939a517d88fe7c54cf1e275441b6a3e5d9f"
+    },
+    "state_bound": 4096
+  },
+  "results": [
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA2LA3RB_3RA3LA1RB2RB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2LA0LB_3RA2RB3RB1LA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2RB1LA_2RA1RB3LA3RB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LB0LB_3RA0RA1LA2RB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA2RB2LB_3RA3RB0RA1LA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1RB2LB_2RA3RB1LB1LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB1LA3LA_1RA2LA3RB2RB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RA2RB_3RA0RB3LA2LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA2RB_0RA3LB3LA0RA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    }
+  ],
+  "validation": "coqc vm_compute for bounds and actual pending membership, plus recursive coqchk"
+}

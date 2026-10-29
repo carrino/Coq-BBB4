@@ -1,0 +1,28 @@
+{
+  "bundles": [
+    {
+      "bytes": 223393,
+      "path": "research/next-weighted-state-certificates.json",
+      "rows": 240,
+      "sha256": "58c65b91c71a805f599fb041db2b5f933528d70b6ebcef229bc23d989478b094"
+    }
+  ],
+  "format": "BBB24 compact weighted certificates v2",
+  "ordering": "Increasing graph node count, then lexicographic machine ID.",
+  "rows": 240,
+  "scope": "State-only; no instruction-bound claim.",
+  "selection": {
+    "exclusive_state_only_rows": 240,
+    "queue_source": "weighted.state_search",
+    "source_sha256": {
+      "build/campaign-next/queued.tsv": "69f5ae95e09705f20f1a289881d563fa20a371be3e8e2f57008cb26350e83b29",
+      "research/campaign-next-summary.json": "e3d3801a541606338dbe9ea0d35262ec217ae55e3f5e63c81ef7172659802858",
+      "research/weighted-state-search-input.json": "98a207d9c6dee09ecb5a16bfc75ffe602685331ae793ab2c5f79dad1ff0856f5",
+      "research/weighted-state-search/certificates-0000.json": "53c0affc1f2a447c107082852a1dc35d513de5892cc0aec1615665748cf81658",
+      "research/weighted-state-search/certificates-0001.json": "59a807e90962621fbe881274408977709d6555857570e3ca17c1a8338c8ed5f0",
+      "research/weighted-state-search/certificates-0002.json": "c858adcefa67d5712e1dcf9fab8be39701fcb067da9ff8cf85c71a4b69fc5fd3",
+      "tools/select_next_weighted_state.py": "cc215420a4939c39b47f01a8fb144a64571ecf36ef971ee117bc6313b4f20866"
+    }
+  },
+  "status": "Untrusted candidates; kernel replay and exact inventory required."
+}

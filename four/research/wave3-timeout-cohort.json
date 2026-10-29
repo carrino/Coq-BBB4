@@ -1,0 +1,227 @@
+{
+  "all_timeouts_sha256": "18a3734971860de02c8bc932c291c2e070edb8f1ae90538027193f6ba65c405c",
+  "eligible_rows": 55971,
+  "eligible_sha256": "78e0f125cde30bd05e2aeaa894e68fa8992758d66914223eb99842b8543a3588",
+  "exclusions": [
+    {
+      "candidate_rows": 18294,
+      "newly_excluded_rows": 3656,
+      "path": "four/build/wave3/closure-v2/candidates.tsv",
+      "sha256": "a6c80962808c49874191c95264f8ac03556eef058a3896a5762ae7f662f3a290"
+    }
+  ],
+  "generator_sha256": "a33605d3a19eaa210769fa72095a29d9de698e4d970a1125f552e10a88f0cccb",
+  "pipeline_helpers_sha256": "16de1d015366a4a2ca10adfe0751abd5351cb67df1f8f28dc602926663493f0d",
+  "queued_attempts": 6675,
+  "queues": [
+    {
+      "directory": "four/build/wave3/timeout-retry/rw-92a37020abe3",
+      "eligible_cohort_sha256": "78e0f125cde30bd05e2aeaa894e68fa8992758d66914223eb99842b8543a3588",
+      "exclusions": [
+        {
+          "candidate_rows": 18294,
+          "newly_excluded_rows": 3656,
+          "path": "four/build/wave3/closure-v2/candidates.tsv",
+          "sha256": "a6c80962808c49874191c95264f8ac03556eef058a3896a5762ae7f662f3a290"
+        }
+      ],
+      "not_accepted_rows": 3,
+      "not_accepted_sha256": "a349c065a1ac4d79d4f8860d38432feb5947b7323d5b06cc21a134337f9e1bf7",
+      "parameters": {
+        "anchor": 128,
+        "bound": 4096,
+        "extra": 2,
+        "fuel": 256,
+        "history": 0,
+        "mode": "rw",
+        "size": 2
+      },
+      "source_cohort_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+      "status": "Search retry cohort: surviving timeouts, not proof claims."
+    },
+    {
+      "directory": "four/build/wave3/timeout-retry/rw-0766382d2c16",
+      "eligible_cohort_sha256": "78e0f125cde30bd05e2aeaa894e68fa8992758d66914223eb99842b8543a3588",
+      "exclusions": [
+        {
+          "candidate_rows": 18294,
+          "newly_excluded_rows": 3656,
+          "path": "four/build/wave3/closure-v2/candidates.tsv",
+          "sha256": "a6c80962808c49874191c95264f8ac03556eef058a3896a5762ae7f662f3a290"
+        }
+      ],
+      "not_accepted_rows": 2310,
+      "not_accepted_sha256": "79fa38b594b798e8000510056b640ec8e9a134598acb3538139c15b892bf8a79",
+      "parameters": {
+        "anchor": 128,
+        "bound": 4096,
+        "extra": 2,
+        "fuel": 512,
+        "history": 0,
+        "mode": "rw",
+        "size": 2
+      },
+      "source_cohort_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+      "status": "Search retry cohort: surviving timeouts, not proof claims."
+    },
+    {
+      "directory": "four/build/wave3/timeout-retry/hist-00d47c334f31",
+      "eligible_cohort_sha256": "78e0f125cde30bd05e2aeaa894e68fa8992758d66914223eb99842b8543a3588",
+      "exclusions": [
+        {
+          "candidate_rows": 18294,
+          "newly_excluded_rows": 3656,
+          "path": "four/build/wave3/closure-v2/candidates.tsv",
+          "sha256": "a6c80962808c49874191c95264f8ac03556eef058a3896a5762ae7f662f3a290"
+        }
+      ],
+      "not_accepted_rows": 1618,
+      "not_accepted_sha256": "3acdbf56683f6e866b4843b0e8b5e51d38daab50533a2c0574fc8f019c4167bb",
+      "parameters": {
+        "anchor": 128,
+        "bound": 4096,
+        "extra": 8,
+        "fuel": 256,
+        "history": 1,
+        "mode": "hist",
+        "size": 2
+      },
+      "source_cohort_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+      "status": "Search retry cohort: surviving timeouts, not proof claims."
+    },
+    {
+      "directory": "four/build/wave3/timeout-retry/ng-6345df1a5f7b",
+      "eligible_cohort_sha256": "78e0f125cde30bd05e2aeaa894e68fa8992758d66914223eb99842b8543a3588",
+      "exclusions": [
+        {
+          "candidate_rows": 18294,
+          "newly_excluded_rows": 3656,
+          "path": "four/build/wave3/closure-v2/candidates.tsv",
+          "sha256": "a6c80962808c49874191c95264f8ac03556eef058a3896a5762ae7f662f3a290"
+        }
+      ],
+      "not_accepted_rows": 745,
+      "not_accepted_sha256": "530f873cfc30d7819fe343551d44614863364eedfcb973cd20c40861917c8c43",
+      "parameters": {
+        "anchor": 256,
+        "bound": 4096,
+        "extra": 8,
+        "fuel": 512,
+        "history": 0,
+        "mode": "ng",
+        "size": 4
+      },
+      "source_cohort_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+      "status": "Search retry cohort: surviving timeouts, not proof claims."
+    },
+    {
+      "directory": "four/build/wave3/timeout-retry/finite-a343c28d2bcf",
+      "eligible_cohort_sha256": "78e0f125cde30bd05e2aeaa894e68fa8992758d66914223eb99842b8543a3588",
+      "exclusions": [
+        {
+          "candidate_rows": 18294,
+          "newly_excluded_rows": 3656,
+          "path": "four/build/wave3/closure-v2/candidates.tsv",
+          "sha256": "a6c80962808c49874191c95264f8ac03556eef058a3896a5762ae7f662f3a290"
+        }
+      ],
+      "not_accepted_rows": 1999,
+      "not_accepted_sha256": "097a3d4a5d03515c6c33e0926ad32408391eb680314cfbc9d53220249857ab0a",
+      "parameters": {
+        "anchor": 512,
+        "bound": 4096,
+        "extra": 8,
+        "fuel": 512,
+        "history": 0,
+        "mode": "finite",
+        "size": 3
+      },
+      "source_cohort_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+      "status": "Search retry cohort: surviving timeouts, not proof claims."
+    }
+  ],
+  "source_cohort_path": "four/build/weighted-v2/full-cohort.txt",
+  "source_cohort_rows": 59627,
+  "source_cohort_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+  "sources": [
+    {
+      "manifest_sha256": "19058497ab8214df07df3bd1449a5e45dfa74ac2f83a636ddfdea48d8541da14",
+      "run_dir": "four/build/advanced/full",
+      "stages": [
+        {
+          "log_sha256": {
+            "stage-00-worker-00.tsv": "9cbe1df270f744e5b5985521418df83b05163816671bb2c546ab2c326d131b87",
+            "stage-00-worker-01.tsv": "6cd4104a1d478d1262fbe2038cedbac193f42a7516e4d5b185d800a57cfa7f29"
+          },
+          "rows": 180177,
+          "stage": 0,
+          "surviving_timeouts": 0
+        },
+        {
+          "log_sha256": {
+            "stage-01-worker-00.tsv": "d7775446298da1be4217f10588eb95c6ddb3d674c7077c57867164354bbd7451",
+            "stage-01-worker-01.tsv": "5b7af7bba51a49700c9133bd2dfdd1e2167e7208d9eed43f4dfb068dcaf0c068"
+          },
+          "rows": 179032,
+          "stage": 1,
+          "surviving_timeouts": 0
+        },
+        {
+          "log_sha256": {
+            "stage-02-worker-00.tsv": "9aa544124768db1f35138d9a1f0cb7deea335896c180c2297f5d86caffe731c1",
+            "stage-02-worker-01.tsv": "f1472f166dba49095b4e5aaa943f7b5294e724fca3ec9d77699f93ba65cf613c"
+          },
+          "rows": 176412,
+          "stage": 2,
+          "surviving_timeouts": 3
+        }
+      ]
+    },
+    {
+      "manifest_sha256": "e236bf8e0655ffeebeb362a3ac8ae2d3b4848ab0a9152c328008497ef1219231",
+      "run_dir": "four/build/wave3/ngram-full",
+      "stages": [
+        {
+          "log_sha256": {
+            "stage-00.tsv": "5bcdba69c3ad6603a36e2e0f83c87436788924e6ba70d89bf153f343c6548db2"
+          },
+          "rows": 133185,
+          "stage": 0,
+          "surviving_timeouts": 745
+        }
+      ]
+    },
+    {
+      "manifest_sha256": "d47495ecb0b1e38b08cdceb55c5f6a9bf621e245e82a3d75c552b1966cf3ef80",
+      "run_dir": "four/build/wave3/closure-v2",
+      "stages": [
+        {
+          "log_sha256": {
+            "stage-00-worker-00.tsv": "7d636d81b086a377ee8d94c762ef0d681c02b78c6e2af835209d6d5d550ee82b"
+          },
+          "rows": 118377,
+          "stage": 0,
+          "surviving_timeouts": 2310
+        },
+        {
+          "log_sha256": {
+            "stage-01-worker-00.tsv": "8b55ad4553cbd96e927fef2af64380d88ff77f9fe18a6e1a30cd6ac3e6ca9fca"
+          },
+          "rows": 106221,
+          "stage": 1,
+          "surviving_timeouts": 1999
+        },
+        {
+          "log_sha256": {
+            "stage-02-worker-00.tsv": "404e5563f1f838fe69591d260a5096951331e3c07ae744994d8f37b79ac82c49"
+          },
+          "rows": 102889,
+          "stage": 2,
+          "surviving_timeouts": 1618
+        }
+      ]
+    }
+  ],
+  "status": "Frozen timeout retry queues for search only; no new proof claims.",
+  "unique_timeout_rows": 5785
+}

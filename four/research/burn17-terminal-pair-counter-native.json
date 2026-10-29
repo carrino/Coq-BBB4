@@ -1,0 +1,37 @@
+{
+  "arbitrary_context_macros": 42336,
+  "arbitrary_context_max_length": 2,
+  "checksum": "binary prefix value plus2^prefix_length times terminal value, modulo3",
+  "encoding": [
+    "12",
+    "22"
+  ],
+  "excluded_corner": "all-maximal prefix with terminal21 never has checksum2",
+  "increment_cost": "4*carry+2",
+  "main_configurations": 6141,
+  "max_prefix_digits": 10,
+  "outer_macros": 54,
+  "rows": [
+    {
+      "code": 2790658142,
+      "machine": "1LB2LB0LB2RB_1RB2RA3LB1RA"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "seconds": 0.245565,
+  "simulated_main_steps": 36789,
+  "source_sha256": {
+    "tools/check_burn17_terminal_pair_counter_native.py": "392b2bc24029b2b39e281687c0145dcc84fbd66062239325b43a6d60c8f1102e",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "terminal_forms": [
+    "11",
+    "21",
+    "2"
+  ],
+  "terminal_values": [
+    2,
+    0,
+    1
+  ]
+}

@@ -1,0 +1,2423 @@
+{
+  "clusters": {
+    "both_states_recent_long_excursions": 11,
+    "both_states_recent_short_excursions": 21
+  },
+  "input_sha256": "72708d001a6cc3ab815ab75f30c60a6e27144576a57e1d16ef4b902d9e986023",
+  "maximum_steps_per_machine": 1000000,
+  "observation_points": [
+    4096,
+    65536,
+    1000000
+  ],
+  "producer_sha256": "33264d85b396226260244783dad1f8a2d1582432559c64891f46b166e86e4be5",
+  "rows": [
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB0LB0LB0RA_2RB2RA3LA2RA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -82,
+          "last_state_visit": [
+            4096,
+            4095
+          ],
+          "longest_same_state_run_in_interval": [
+            2,
+            3
+          ],
+          "nonblank_cells": 58,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2001,
+            2095
+          ],
+          "visits_including_initial": [
+            2002,
+            2095
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -186,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            2,
+            3
+          ],
+          "nonblank_cells": 307,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            30570,
+            30870
+          ],
+          "visits_including_initial": [
+            32572,
+            32965
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -1380,
+          "last_state_visit": [
+            1000000,
+            999999
+          ],
+          "longest_same_state_run_in_interval": [
+            2,
+            3
+          ],
+          "nonblank_cells": 893,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            466641,
+            467823
+          ],
+          "visits_including_initial": [
+            499213,
+            500788
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB2RB1LA1LB_2RB2RA3LA0RB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -90,
+          "last_state_visit": [
+            4096,
+            4058
+          ],
+          "longest_same_state_run_in_interval": [
+            53,
+            2
+          ],
+          "nonblank_cells": 112,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2915,
+            1181
+          ],
+          "visits_including_initial": [
+            2916,
+            1181
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -340,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            220,
+            2
+          ],
+          "nonblank_cells": 448,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            45563,
+            15877
+          ],
+          "visits_including_initial": [
+            48479,
+            17058
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -512,
+          "last_state_visit": [
+            1000000,
+            999999
+          ],
+          "longest_same_state_run_in_interval": [
+            864,
+            2
+          ],
+          "nonblank_cells": 1737,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            698640,
+            235824
+          ],
+          "visits_including_initial": [
+            747119,
+            252882
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2RB3RB1LA_1RB3RA---3LA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            4095,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            15,
+            2
+          ],
+          "nonblank_cells": 17,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2715,
+            1381
+          ],
+          "visits_including_initial": [
+            2716,
+            1381
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -6,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            23,
+            2
+          ],
+          "nonblank_cells": 25,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            40955,
+            20485
+          ],
+          "visits_including_initial": [
+            43671,
+            21866
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            999999,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            31,
+            2
+          ],
+          "nonblank_cells": 33,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            622967,
+            311497
+          ],
+          "visits_including_initial": [
+            666638,
+            333363
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2LA3RB1RA_3RB3LA0RA2LA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 30,
+          "last_state_visit": [
+            4096,
+            4095
+          ],
+          "longest_same_state_run_in_interval": [
+            8,
+            2
+          ],
+          "nonblank_cells": 80,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2856,
+            1240
+          ],
+          "visits_including_initial": [
+            2857,
+            1240
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 64,
+          "last_state_visit": [
+            65536,
+            65535
+          ],
+          "longest_same_state_run_in_interval": [
+            7,
+            2
+          ],
+          "nonblank_cells": 337,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            42978,
+            18462
+          ],
+          "visits_including_initial": [
+            45835,
+            19702
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -486,
+          "last_state_visit": [
+            999999,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            7,
+            2
+          ],
+          "nonblank_cells": 1507,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            654042,
+            280422
+          ],
+          "visits_including_initial": [
+            699877,
+            300124
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2LB2LB1RA_1RB2RA3LB2RB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 4,
+          "last_state_visit": [
+            4094,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            12,
+            33
+          ],
+          "nonblank_cells": 13,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2014,
+            2082
+          ],
+          "visits_including_initial": [
+            2015,
+            2082
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 8,
+          "last_state_visit": [
+            65536,
+            65535
+          ],
+          "longest_same_state_run_in_interval": [
+            16,
+            45
+          ],
+          "nonblank_cells": 17,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            30694,
+            30746
+          ],
+          "visits_including_initial": [
+            32709,
+            32828
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 10,
+          "last_state_visit": [
+            1000000,
+            999999
+          ],
+          "longest_same_state_run_in_interval": [
+            20,
+            57
+          ],
+          "nonblank_cells": 21,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            467197,
+            467267
+          ],
+          "visits_including_initial": [
+            499906,
+            500095
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB0LB1RB3LB_3RB1LA0LB2RB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            4093,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            19
+          ],
+          "nonblank_cells": 10,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            883,
+            3213
+          ],
+          "visits_including_initial": [
+            884,
+            3213
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            65527,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            27
+          ],
+          "nonblank_cells": 15,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            13167,
+            48273
+          ],
+          "visits_including_initial": [
+            14051,
+            51486
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            999999,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            35
+          ],
+          "nonblank_cells": 19,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            200245,
+            734219
+          ],
+          "visits_including_initial": [
+            214296,
+            785705
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2LB1RB0LB_2RB1LA3RB0LB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            4095,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            19
+          ],
+          "nonblank_cells": 11,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            884,
+            3212
+          ],
+          "visits_including_initial": [
+            885,
+            3212
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            65529,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            27
+          ],
+          "nonblank_cells": 14,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            13167,
+            48273
+          ],
+          "visits_including_initial": [
+            14052,
+            51485
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            999989,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            35
+          ],
+          "nonblank_cells": 19,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            200244,
+            734220
+          ],
+          "visits_including_initial": [
+            214296,
+            785705
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB---0LA2LB_3RB1LA2RB3RB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            4091,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            10,
+            12
+          ],
+          "nonblank_cells": 12,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            1363,
+            2733
+          ],
+          "visits_including_initial": [
+            1364,
+            2733
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            65533,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            14,
+            16
+          ],
+          "nonblank_cells": 16,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            20479,
+            40961
+          ],
+          "visits_including_initial": [
+            21843,
+            43694
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            999997,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            18,
+            20
+          ],
+          "nonblank_cells": 20,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            311488,
+            622976
+          ],
+          "visits_including_initial": [
+            333331,
+            666670
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2LB1RB2RB_2RB1LA3RB0LB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            4095,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            17
+          ],
+          "nonblank_cells": 10,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            1236,
+            2860
+          ],
+          "visits_including_initial": [
+            1237,
+            2860
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            25
+          ],
+          "nonblank_cells": 14,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            18436,
+            43004
+          ],
+          "visits_including_initial": [
+            19673,
+            45864
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            999999,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            33
+          ],
+          "nonblank_cells": 18,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            280342,
+            654122
+          ],
+          "visits_including_initial": [
+            300015,
+            699986
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2RB2LB1RB_2RB1LA3RB0LB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            4095,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            17
+          ],
+          "nonblank_cells": 10,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            1236,
+            2860
+          ],
+          "visits_including_initial": [
+            1237,
+            2860
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            25
+          ],
+          "nonblank_cells": 14,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            18436,
+            43004
+          ],
+          "visits_including_initial": [
+            19673,
+            45864
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            999997,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            33
+          ],
+          "nonblank_cells": 17,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            280341,
+            654123
+          ],
+          "visits_including_initial": [
+            300014,
+            699987
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB0LA3RA2RA_2RB1LA3RB0LB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            4090,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            4,
+            18
+          ],
+          "nonblank_cells": 10,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2056,
+            2040
+          ],
+          "visits_including_initial": [
+            2057,
+            2040
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            65536,
+            65534
+          ],
+          "longest_same_state_run_in_interval": [
+            4,
+            26
+          ],
+          "nonblank_cells": 14,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            30726,
+            30714
+          ],
+          "visits_including_initial": [
+            32783,
+            32754
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            999998,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            4,
+            32
+          ],
+          "nonblank_cells": 16,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            467242,
+            467222
+          ],
+          "visits_including_initial": [
+            500025,
+            499976
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB2LA3RB1LA_0RB1RA3RA3RB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            4095,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            65,
+            2
+          ],
+          "nonblank_cells": 72,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            3003,
+            1093
+          ],
+          "visits_including_initial": [
+            3004,
+            1093
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -6,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            257,
+            2
+          ],
+          "nonblank_cells": 268,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            45886,
+            15554
+          ],
+          "visits_including_initial": [
+            48890,
+            16647
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -18,
+          "last_state_visit": [
+            999999,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            1003,
+            2
+          ],
+          "nonblank_cells": 1016,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            700104,
+            234360
+          ],
+          "visits_including_initial": [
+            748994,
+            251007
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB1RA1LB2LA_2RB3LB0LB1RA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -18,
+          "last_state_visit": [
+            3991,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            7,
+            122
+          ],
+          "nonblank_cells": 50,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            219,
+            3877
+          ],
+          "visits_including_initial": [
+            220,
+            3877
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -202,
+          "last_state_visit": [
+            65231,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            9,
+            506
+          ],
+          "nonblank_cells": 60,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            762,
+            60678
+          ],
+          "visits_including_initial": [
+            982,
+            64555
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -942,
+          "last_state_visit": [
+            998947,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            11,
+            1994
+          ],
+          "nonblank_cells": 66,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            2972,
+            931492
+          ],
+          "visits_including_initial": [
+            3954,
+            996047
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB1RA1RA2LB_2RB3LB0LB1RA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -42,
+          "last_state_visit": [
+            4011,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            6,
+            123
+          ],
+          "nonblank_cells": 27,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            116,
+            3980
+          ],
+          "visits_including_initial": [
+            117,
+            3980
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -230,
+          "last_state_visit": [
+            65255,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            8,
+            507
+          ],
+          "nonblank_cells": 33,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            382,
+            61058
+          ],
+          "visits_including_initial": [
+            499,
+            65038
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -974,
+          "last_state_visit": [
+            998975,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            10,
+            1995
+          ],
+          "nonblank_cells": 35,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            1488,
+            932976
+          ],
+          "visits_including_initial": [
+            1987,
+            998014
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB0LA0LB2RB_3RB1LA0LB3RA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            4094,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            2,
+            17
+          ],
+          "nonblank_cells": 10,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            1706,
+            2390
+          ],
+          "visits_including_initial": [
+            1707,
+            2390
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            2,
+            25
+          ],
+          "nonblank_cells": 13,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            25600,
+            35840
+          ],
+          "visits_including_initial": [
+            27307,
+            38230
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -4,
+          "last_state_visit": [
+            999997,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            2,
+            33
+          ],
+          "nonblank_cells": 15,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            389358,
+            545106
+          ],
+          "visits_including_initial": [
+            416665,
+            583336
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB0LB1LA1RB_3RB2RA3RA3LA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            4095,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            2,
+            3
+          ],
+          "nonblank_cells": 20,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2035,
+            2061
+          ],
+          "visits_including_initial": [
+            2036,
+            2061
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            2,
+            3
+          ],
+          "nonblank_cells": 32,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            30712,
+            30728
+          ],
+          "visits_including_initial": [
+            32748,
+            32789
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            999998,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            2,
+            3
+          ],
+          "nonblank_cells": 44,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            467224,
+            467240
+          ],
+          "visits_including_initial": [
+            499972,
+            500029
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2RB0LA1RB_2RB3RA1LA0LB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -186,
+          "last_state_visit": [
+            4094,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            7,
+            7
+          ],
+          "nonblank_cells": 188,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            1714,
+            2382
+          ],
+          "visits_including_initial": [
+            1715,
+            2382
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -2034,
+          "last_state_visit": [
+            65536,
+            65535
+          ],
+          "longest_same_state_run_in_interval": [
+            10,
+            10
+          ],
+          "nonblank_cells": 2051,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            25932,
+            35508
+          ],
+          "visits_including_initial": [
+            27647,
+            37890
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -20824,
+          "last_state_visit": [
+            999999,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            14,
+            14
+          ],
+          "nonblank_cells": 21001,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            396397,
+            538067
+          ],
+          "visits_including_initial": [
+            424044,
+            575957
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB2LB3RA1RA_3RB2LA1RB3LA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 4,
+          "last_state_visit": [
+            4096,
+            4090
+          ],
+          "longest_same_state_run_in_interval": [
+            66,
+            3
+          ],
+          "nonblank_cells": 71,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            3064,
+            1032
+          ],
+          "visits_including_initial": [
+            3065,
+            1032
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 4,
+          "last_state_visit": [
+            65536,
+            65530
+          ],
+          "longest_same_state_run_in_interval": [
+            259,
+            2
+          ],
+          "nonblank_cells": 267,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            46078,
+            15362
+          ],
+          "visits_including_initial": [
+            49143,
+            16394
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 20,
+          "last_state_visit": [
+            1000000,
+            999978
+          ],
+          "longest_same_state_run_in_interval": [
+            1004,
+            2
+          ],
+          "nonblank_cells": 1013,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            700851,
+            233613
+          ],
+          "visits_including_initial": [
+            749994,
+            250007
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2RB2RB2LB_0RB3RA0LA2LA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -26,
+          "last_state_visit": [
+            4093,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            3
+          ],
+          "nonblank_cells": 50,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            1622,
+            2474
+          ],
+          "visits_including_initial": [
+            1623,
+            2474
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 4,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            3
+          ],
+          "nonblank_cells": 194,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            24179,
+            37261
+          ],
+          "visits_including_initial": [
+            25802,
+            39735
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -492,
+          "last_state_visit": [
+            1000000,
+            999999
+          ],
+          "longest_same_state_run_in_interval": [
+            1,
+            3
+          ],
+          "nonblank_cells": 756,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            367281,
+            567183
+          ],
+          "visits_including_initial": [
+            393083,
+            606918
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB0LA0LB3RA_3RB1LA2RA2RB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            4096,
+            4092
+          ],
+          "longest_same_state_run_in_interval": [
+            4,
+            10
+          ],
+          "nonblank_cells": 9,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2049,
+            2047
+          ],
+          "visits_including_initial": [
+            2050,
+            2047
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            65536,
+            65534
+          ],
+          "longest_same_state_run_in_interval": [
+            4,
+            14
+          ],
+          "nonblank_cells": 14,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            30719,
+            30721
+          ],
+          "visits_including_initial": [
+            32769,
+            32768
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            999999,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            4,
+            17
+          ],
+          "nonblank_cells": 16,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            467232,
+            467232
+          ],
+          "visits_including_initial": [
+            500001,
+            500000
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB0RB0LA0RA_1RB2RA3LA2LA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -16,
+          "last_state_visit": [
+            4096,
+            4095
+          ],
+          "longest_same_state_run_in_interval": [
+            3,
+            3
+          ],
+          "nonblank_cells": 53,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2034,
+            2062
+          ],
+          "visits_including_initial": [
+            2035,
+            2062
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -96,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            3,
+            3
+          ],
+          "nonblank_cells": 215,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            30679,
+            30761
+          ],
+          "visits_including_initial": [
+            32714,
+            32823
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -84,
+          "last_state_visit": [
+            1000000,
+            999998
+          ],
+          "longest_same_state_run_in_interval": [
+            3,
+            3
+          ],
+          "nonblank_cells": 768,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            467074,
+            467390
+          ],
+          "visits_including_initial": [
+            499788,
+            500213
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2RB0LA0LB_3RB1LA3RA2RA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            4096,
+            4095
+          ],
+          "longest_same_state_run_in_interval": [
+            9,
+            11
+          ],
+          "nonblank_cells": 10,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2039,
+            2057
+          ],
+          "visits_including_initial": [
+            2040,
+            2057
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -4,
+          "last_state_visit": [
+            65536,
+            65535
+          ],
+          "longest_same_state_run_in_interval": [
+            13,
+            15
+          ],
+          "nonblank_cells": 12,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            30717,
+            30723
+          ],
+          "visits_including_initial": [
+            32757,
+            32780
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            999999,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            16,
+            18
+          ],
+          "nonblank_cells": 18,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            467227,
+            467237
+          ],
+          "visits_including_initial": [
+            499984,
+            500017
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB0LA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            4095,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            14,
+            122
+          ],
+          "nonblank_cells": 65,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            235,
+            3861
+          ],
+          "visits_including_initial": [
+            236,
+            3861
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -58,
+          "last_state_visit": [
+            65088,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            20,
+            504
+          ],
+          "nonblank_cells": 199,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            764,
+            60676
+          ],
+          "visits_including_initial": [
+            1000,
+            64537
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -302,
+          "last_state_visit": [
+            998308,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            26,
+            1992
+          ],
+          "nonblank_cells": 700,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            2973,
+            931491
+          ],
+          "visits_including_initial": [
+            3973,
+            996028
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2LB0LA2LA_1RB3RA2RB3LA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -4,
+          "last_state_visit": [
+            4096,
+            4094
+          ],
+          "longest_same_state_run_in_interval": [
+            11,
+            22
+          ],
+          "nonblank_cells": 21,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            1739,
+            2357
+          ],
+          "visits_including_initial": [
+            1740,
+            2357
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -4,
+          "last_state_visit": [
+            65536,
+            65534
+          ],
+          "longest_same_state_run_in_interval": [
+            17,
+            36
+          ],
+          "nonblank_cells": 34,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            26323,
+            35117
+          ],
+          "visits_including_initial": [
+            28063,
+            37474
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            999987,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            21,
+            50
+          ],
+          "nonblank_cells": 50,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            400473,
+            533991
+          ],
+          "visits_including_initial": [
+            428536,
+            571465
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB2LB3LB1RA_3RB2LB1RA0LB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -26,
+          "last_state_visit": [
+            3996,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            5,
+            123
+          ],
+          "nonblank_cells": 42,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            108,
+            3988
+          ],
+          "visits_including_initial": [
+            109,
+            3988
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -206,
+          "last_state_visit": [
+            65232,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            7,
+            507
+          ],
+          "nonblank_cells": 56,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            378,
+            61062
+          ],
+          "visits_including_initial": [
+            487,
+            65050
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -942,
+          "last_state_visit": [
+            998944,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            9,
+            1995
+          ],
+          "nonblank_cells": 66,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            1484,
+            932980
+          ],
+          "visits_including_initial": [
+            1971,
+            998030
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2LA0LA2LB_3RB1LA2RB1RA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -6,
+          "last_state_visit": [
+            4096,
+            4092
+          ],
+          "longest_same_state_run_in_interval": [
+            11,
+            22
+          ],
+          "nonblank_cells": 19,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            1740,
+            2356
+          ],
+          "visits_including_initial": [
+            1741,
+            2356
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -6,
+          "last_state_visit": [
+            65535,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            17,
+            36
+          ],
+          "nonblank_cells": 33,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            26322,
+            35118
+          ],
+          "visits_including_initial": [
+            28063,
+            37474
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            999985,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            21,
+            50
+          ],
+          "nonblank_cells": 50,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            400472,
+            533992
+          ],
+          "visits_including_initial": [
+            428535,
+            571466
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB2LA3RA2RA_1RB2RA0LB2RB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 6,
+          "last_state_visit": [
+            4088,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            94,
+            66
+          ],
+          "nonblank_cells": 63,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            1919,
+            2177
+          ],
+          "visits_including_initial": [
+            1920,
+            2177
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 156,
+          "last_state_visit": [
+            65534,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            400,
+            270
+          ],
+          "nonblank_cells": 276,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            30364,
+            31076
+          ],
+          "visits_including_initial": [
+            32284,
+            33253
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 924,
+          "last_state_visit": [
+            999998,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            1585,
+            1060
+          ],
+          "nonblank_cells": 1067,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            466238,
+            468226
+          ],
+          "visits_including_initial": [
+            498522,
+            501479
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB0LB0RA2RA_1RB3RA3RA2LA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            4095,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            3,
+            3
+          ],
+          "nonblank_cells": 13,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2041,
+            2055
+          ],
+          "visits_including_initial": [
+            2042,
+            2055
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            65533,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            3,
+            3
+          ],
+          "nonblank_cells": 18,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            30717,
+            30723
+          ],
+          "visits_including_initial": [
+            32759,
+            32778
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -4,
+          "last_state_visit": [
+            1000000,
+            999998
+          ],
+          "longest_same_state_run_in_interval": [
+            3,
+            3
+          ],
+          "nonblank_cells": 20,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            467231,
+            467233
+          ],
+          "visits_including_initial": [
+            499990,
+            500011
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB0RA---3RA_3RB2RA0LA0LB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 10,
+          "last_state_visit": [
+            4074,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            32,
+            64
+          ],
+          "nonblank_cells": 61,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            893,
+            3203
+          ],
+          "visits_including_initial": [
+            894,
+            3203
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 152,
+          "last_state_visit": [
+            65526,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            128,
+            256
+          ],
+          "nonblank_cells": 357,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            7518,
+            53922
+          ],
+          "visits_including_initial": [
+            8412,
+            57125
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 232,
+          "last_state_visit": [
+            999720,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            512,
+            1024
+          ],
+          "nonblank_cells": 1101,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            66813,
+            867651
+          ],
+          "visits_including_initial": [
+            75225,
+            924776
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_short_excursions",
+      "machine": "1LB2RA0LB1RA_1RB3LA2RB3RB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 4,
+          "last_state_visit": [
+            4096,
+            4093
+          ],
+          "longest_same_state_run_in_interval": [
+            17,
+            8
+          ],
+          "nonblank_cells": 18,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            2618,
+            1478
+          ],
+          "visits_including_initial": [
+            2619,
+            1478
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 0,
+          "last_state_visit": [
+            65536,
+            65535
+          ],
+          "longest_same_state_run_in_interval": [
+            25,
+            4
+          ],
+          "nonblank_cells": 24,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            39490,
+            21950
+          ],
+          "visits_including_initial": [
+            42109,
+            23428
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": 8,
+          "last_state_visit": [
+            1000000,
+            999992
+          ],
+          "longest_same_state_run_in_interval": [
+            33,
+            4
+          ],
+          "nonblank_cells": 31,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            600721,
+            333743
+          ],
+          "visits_including_initial": [
+            642830,
+            357171
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB2LA2RA3LB_2RB3RA0LB3RA",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": -2,
+          "last_state_visit": [
+            4094,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            17,
+            116
+          ],
+          "nonblank_cells": 63,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            447,
+            3649
+          ],
+          "visits_including_initial": [
+            448,
+            3649
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": -174,
+          "last_state_visit": [
+            65210,
+            65536
+          ],
+          "longest_same_state_run_in_interval": [
+            23,
+            498
+          ],
+          "nonblank_cells": 83,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            1525,
+            59915
+          ],
+          "visits_including_initial": [
+            1973,
+            63564
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -918,
+          "last_state_visit": [
+            998930,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            29,
+            1986
+          ],
+          "nonblank_cells": 83,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            5952,
+            928512
+          ],
+          "visits_including_initial": [
+            7925,
+            992076
+          ]
+        }
+      ]
+    },
+    {
+      "cluster": "both_states_recent_long_excursions",
+      "machine": "1LB2LA0RA3RB_3RB1RA1LB0LB",
+      "observations": [
+        {
+          "executed_steps": 4096,
+          "halt": null,
+          "head_position": 36,
+          "last_state_visit": [
+            4093,
+            4096
+          ],
+          "longest_same_state_run_in_interval": [
+            10,
+            57
+          ],
+          "nonblank_cells": 74,
+          "requested_step": 4096,
+          "visits_in_interval": [
+            1514,
+            2582
+          ],
+          "visits_including_initial": [
+            1515,
+            2582
+          ]
+        },
+        {
+          "executed_steps": 65536,
+          "halt": null,
+          "head_position": 12,
+          "last_state_visit": [
+            65536,
+            65535
+          ],
+          "longest_same_state_run_in_interval": [
+            14,
+            231
+          ],
+          "nonblank_cells": 288,
+          "requested_step": 65536,
+          "visits_in_interval": [
+            21936,
+            39504
+          ],
+          "visits_including_initial": [
+            23451,
+            42086
+          ]
+        },
+        {
+          "executed_steps": 1000000,
+          "halt": null,
+          "head_position": -316,
+          "last_state_visit": [
+            999683,
+            1000000
+          ],
+          "longest_same_state_run_in_interval": [
+            17,
+            885
+          ],
+          "nonblank_cells": 808,
+          "requested_step": 1000000,
+          "visits_in_interval": [
+            338099,
+            596365
+          ],
+          "visits_including_initial": [
+            361550,
+            638451
+          ]
+        }
+      ]
+    }
+  ],
+  "scope": "Finite simulation diagnostics only; no proof of recurrence, tail permanence or bound.",
+  "state_order": [
+    "A",
+    "B"
+  ],
+  "visit_convention": "Configuration step 0 is the initial A visit; interval counts cover (previous point, requested point].",
+  "workers": 1
+}

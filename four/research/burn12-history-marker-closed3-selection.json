@@ -1,0 +1,103 @@
+{
+  "native_report": "research/burn17-history-closed-native.json",
+  "native_sha256": "c85622f8a4e399d31d844f4fe61a5147042e1fc53c4ae207db70bffcdcd18ac1",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 1581254325,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 35,
+      "invariant": "conditional",
+      "machine": "1LB1LA0LB1RB_2RB2LA3RA0RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2402266027,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 33,
+      "invariant": "conditional",
+      "machine": "1LB0RB0RA1RB_3RB2LA3RA1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4408166849,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB2LA1RB0RA_2RB2RA3LA2RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    }
+  ],
+  "scope": "Exact cost-ordered slice of23 independently validated closed-graph refinements.",
+  "selected": [
+    {
+      "distinct_history_cells": 198,
+      "edges": 4966,
+      "graph_path": "build/burn17-history-closed-refinement/graph-21-h8-w2.json",
+      "graph_sha256": "b634f2d876d173c42e8e3d13d7bb64b728a29ec86a3ea1543647f5df12da37b2",
+      "history": 8,
+      "machine": "1LB1LA0LB1RB_2RB2LA3RA0RB",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 1817,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 153,
+      "edges": 5524,
+      "graph_path": "build/burn17-history-closed-refinement/graph-06-h8-w2.json",
+      "graph_sha256": "1f22442c4655b028a2ebac09dd54abc8710a839b46c470100034516c1dbf1906",
+      "history": 8,
+      "machine": "1LB0RB0RA1RB_3RB2LA3RA1LB",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 1965,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 145,
+      "edges": 5544,
+      "graph_path": "build/burn17-history-closed-refinement/graph-47-h8-w2.json",
+      "graph_sha256": "81c075bd9075e59d25687d88d5c3d43563d8297ddbcbf40533b54c4545dcd4d4",
+      "history": 8,
+      "machine": "1LB2LA1RB0RA_2RB2RA3LA2RA",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 1979,
+      "width": 2
+    }
+  ],
+  "selected_range": [
+    20,
+    23
+  ],
+  "sort_key": [
+    "nodes",
+    "history",
+    "width",
+    "machine"
+  ]
+}

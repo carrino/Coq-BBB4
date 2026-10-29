@@ -1,0 +1,19 @@
+{
+  "format": "BBB24 weighted instruction portfolios v1",
+  "status": "Untrusted complementary-orientation witnesses; kernel replay required.",
+  "source": {
+    "diagnostic": "One complementary-orientation case in the paired32 late-boot sample."
+  },
+  "rows": 1,
+  "kinds": {
+    "weighted": 1
+  },
+  "bundles": [
+    {
+      "path": "research/weighted-portfolio-pilot-certificates.json",
+      "rows": 1,
+      "bytes": 3890,
+      "sha256": "30431355c92ace5cc5bdef9daa90d9b8b8eeaff52d0335e0962f51e9f46c9d3b"
+    }
+  ]
+}
