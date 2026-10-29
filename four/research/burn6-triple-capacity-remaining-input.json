@@ -1,0 +1,27 @@
+{
+  "bundle": {
+    "bytes": 9354,
+    "path": "research/burn6-triple-capacity-remaining-certificates.json",
+    "rows": 2,
+    "sha256": "19e91a403c51648d8e072cbea4e24b3f3514331cda8c8f0939902fbb5a74964c"
+  },
+  "indices": [
+    44,
+    52
+  ],
+  "instruction_bound": 0,
+  "machines": [
+    "1LB2LB3RA2RA_1RA3LB2LB1RB",
+    "1LB2LB3LA2RB_3RA1RA0LA1RA"
+  ],
+  "selected_rows": 2,
+  "state_bound": 0,
+  "targets": [
+    1,
+    5
+  ],
+  "theory_dependency": {
+    "report": "research/burn6-triple-capacity-checked.json",
+    "sha256": "860b4b7042c850df4e79a82a059daa75e40ba9d11800a8a74c5a57876d682009"
+  }
+}

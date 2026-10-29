@@ -1,0 +1,366 @@
+{
+  "generic_report_sha256": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 2265320623,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 5,
+      "invariant": "conditional",
+      "machine": "1LB2RB0LA3LB_1RB3RA2LA1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 213950003,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 133,
+      "invariant": "conditional",
+      "machine": "1LB1RB3LA2RA_2RB3RA2LA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 358775417,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 133,
+      "invariant": "conditional",
+      "machine": "1LB1RB3LA2RA_2RB3RA3RA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 5775865571,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 97,
+      "invariant": "conditional",
+      "machine": "1LB0LA0LB2RB_3RB1LA0LB3RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4448299276,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 34,
+      "invariant": "conditional",
+      "machine": "1LB0LA0LB2RB_3RB1LA3RA2RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3144860588,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 36,
+      "invariant": "conditional",
+      "machine": "1LB2LB0LA2LB_3RB1LA2RB1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3303518103,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 65,
+      "invariant": "conditional",
+      "machine": "1LB2LA1RB0RA_2RB3RA0LA2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 3665304793,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 7,
+      "invariant": "conditional",
+      "machine": "1LB2LB0LB3RA_1RB3RA3RB2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4969019034,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 65,
+      "invariant": "conditional",
+      "machine": "1LB2LA0RB1LA_2RB3RA0LB3LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 3298221872,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 201,
+      "invariant": "conditional",
+      "machine": "1LB1RB1RB3LA_3RB2RA0LA2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 310171992,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 195,
+      "invariant": "conditional",
+      "machine": "1LB2LA3RB2RB_1RB3RA3LA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4689684503,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 36,
+      "invariant": "conditional",
+      "machine": "1LB0LA0LA3LB_3RB1LA1RB2RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 310500211,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 133,
+      "invariant": "conditional",
+      "machine": "1LB0RB3LA2RA_2RB3RA3LA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 3144860622,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 36,
+      "invariant": "conditional",
+      "machine": "1LB2RB0LA2LB_3RB1LA2RB1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1032860182,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 76,
+      "invariant": "conditional",
+      "machine": "1LB2RB0LA2LA_1RB3LB2LA0RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 5210044456,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 11,
+      "invariant": "conditional",
+      "machine": "1LB2LA3RB0LA_1RB3RA2RB3LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3303249384,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 197,
+      "invariant": "conditional",
+      "machine": "1LB2RB3LA3RB_1RB3RA0LA2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2887884372,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 75,
+      "invariant": "conditional",
+      "machine": "1LB2LA2RB3LA_3RB2RA0LA1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 865649644,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 15,
+      "invariant": "conditional",
+      "machine": "1LB2LA3LA1RB_2RB3RA0LB0RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 2887884967,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 73,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LB3LA_3RB2RA0LA1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1970600157,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 9,
+      "invariant": "conditional",
+      "machine": "1LB2RB0RA0LB_3RB2RA3LB1LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 3
+    }
+  ],
+  "scope": "Separate earlier21 historical-marker state-zero proof batch.",
+  "selection_report": "research/burn12-history-marker-earlier21-selection.json",
+  "selection_sha256": "5b28a4a02e1d850f6ab82231d96fe8b3faa3cf7762ab957d5ed61dbebc8cd504",
+  "state_bound": 0
+}

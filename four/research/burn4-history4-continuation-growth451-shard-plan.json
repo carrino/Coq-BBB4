@@ -1,0 +1,183 @@
+{
+  "maximum_rows_per_shard": 4,
+  "native_cost_ledger_sha256": "56b64c9cd769ea49ee8c69053f5939b4eb94b3cc87dd0007dcc131d152cf0f0d",
+  "producer_sha256": "59b219a5c6bdc23e2fb8318ae60a996f565e29cfb72d656f26116cb731720cb4",
+  "scope": "Proof scheduling only; every selected family is independently checked.",
+  "selected_rows": 41,
+  "shards": [
+    {
+      "native_seconds": 0.999839,
+      "rows": [
+        5427319433
+      ]
+    },
+    {
+      "native_seconds": 0.603921,
+      "rows": [
+        3592539931,
+        2794167622
+      ]
+    },
+    {
+      "native_seconds": 0.83364,
+      "rows": [
+        164248565
+      ]
+    },
+    {
+      "native_seconds": 0.95794,
+      "rows": [
+        6459553500,
+        1032869872,
+        1686672260
+      ]
+    },
+    {
+      "native_seconds": 0.684136,
+      "rows": [
+        3592539115,
+        2601476090
+      ]
+    },
+    {
+      "native_seconds": 0.569289,
+      "rows": [
+        4290321897
+      ]
+    },
+    {
+      "native_seconds": 0.828535,
+      "rows": [
+        6459182220
+      ]
+    },
+    {
+      "native_seconds": 0.56415,
+      "rows": [
+        4413522019
+      ]
+    },
+    {
+      "native_seconds": 0.950655,
+      "rows": [
+        4413856103
+      ]
+    },
+    {
+      "native_seconds": 0.872138,
+      "rows": [
+        2788882509,
+        4437656120,
+        2770449511
+      ]
+    },
+    {
+      "native_seconds": 0.860562,
+      "rows": [
+        2601467165,
+        4552714245
+      ]
+    },
+    {
+      "native_seconds": 0.276892,
+      "rows": [
+        1698423663
+      ]
+    },
+    {
+      "native_seconds": 0.756058,
+      "rows": [
+        4425583162
+      ]
+    },
+    {
+      "native_seconds": 0.772409,
+      "rows": [
+        6037097448
+      ]
+    },
+    {
+      "native_seconds": 0.669929,
+      "rows": [
+        2476101005
+      ]
+    },
+    {
+      "native_seconds": 0.903339,
+      "rows": [
+        3460785273,
+        5009122136
+      ]
+    },
+    {
+      "native_seconds": 0.980243,
+      "rows": [
+        5105672412,
+        5298772964
+      ]
+    },
+    {
+      "native_seconds": 0.746244,
+      "rows": [
+        189435034
+      ]
+    },
+    {
+      "native_seconds": 0.521536,
+      "rows": [
+        3427363596
+      ]
+    },
+    {
+      "native_seconds": 3.286145,
+      "rows": [
+        5376863093
+      ]
+    },
+    {
+      "native_seconds": 0.959593,
+      "rows": [
+        2788872717,
+        5376196659,
+        648122557
+      ]
+    },
+    {
+      "native_seconds": 0.9689,
+      "rows": [
+        304101309,
+        3593158289,
+        527712458,
+        1734910542
+      ]
+    },
+    {
+      "native_seconds": 0.608513,
+      "rows": [
+        5113506947,
+        3665244137
+      ]
+    },
+    {
+      "native_seconds": 0.480636,
+      "rows": [
+        3080307270
+      ]
+    },
+    {
+      "native_seconds": 0.94354,
+      "rows": [
+        521381335
+      ]
+    },
+    {
+      "native_seconds": 0.386316,
+      "rows": [
+        3741155478
+      ]
+    }
+  ],
+  "slow_rows_get_separate_shards": true,
+  "source_report_sha256": "98d3fc0c9bc0e46c615fe8b93612120bbb9fc14e094c363838030e9832f32bd6",
+  "target_native_seconds_per_shard": 1.0
+}

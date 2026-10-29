@@ -152,14 +152,21 @@ With the toolchain already active, `make -C four proof-checkpoint PROOF_JOBS=8` 
 The target verifies the current development; the universal upper bound remains
 open.
 
-`make proof-2-4 BUILD_JOBS=8` is reserved for the completed state equality
-theorem. It currently fails because the exhaustive upper bound has not yet
-been assembled in `four/theories/Value.v`. Once available, it builds the proof,
-checks `BBB24_state_value : BBB24_state_statement`, performs a full recursive
-`coqchk`, and prints the statement, numeric value and actual `Print Assumptions`
-output. The statement in [ValueSpec.v](../four/theories/ValueSpec.v) requires
-both champion attainment and the upper bound for every machine. A successful
-checkpoint build cannot produce the final equality success report.
+The complete selected-source proof build is under verification. Run it with:
+
+```bash
+make proof-2-4 BUILD_JOBS=8
+```
+
+See the [state equality build guide](VERIFYING_BBB24.md) for the reviewed source
+graph, 32-GiB WSL profile, logs and exact resume rules. The command checks the
+unconditional theorem, both numeric targets and actual assumptions, then runs
+full recursive audits before printing an equality success report. Only a
+successful complete run establishes the global result; source preparation and
+a successful checkpoint build carry no global proof credit.
+The statement in [ValueSpec.v](../four/theories/ValueSpec.v) requires both
+champion attainment and an upper bound for every machine. The global proof
+remains open until the complete selected build has passed.
 
 Individual state-based BBB(2,4) holdout proofs have a separate
 [case index and replay command](../four/STATE-CASE-PROOFS.md). That source

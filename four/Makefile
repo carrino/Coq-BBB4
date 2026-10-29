@@ -38,17 +38,64 @@ check: all
 
 # Keep these recursive calls and checkpoint replays sequential even under -j:
 # the drivers deliberately share generated prerequisites under build/.
-proof:
-	python3 tools/report_state_value.py --check-source
-	$(MAKE) proof-checkpoint
-	$(MAKE) -f Makefile.coq theories/Value.vo
-	python3 tools/report_state_value.py
+# Complete BBB(2,4) state proof build, currently under verification.
+# Reviewed source inputs and preparation hashes are fixed below. Only successful
+# type, assumptions and full recursive audits establish the equality. The heavy
+# graph stays out of four/_CoqProject/all.
+# Paths below are relative to four/. Users can relocate the prepared tree/logs
+# to a larger disk by overriding STATE24_PREPARED and STATE24_STATE.
+STATE24_PREPARED ?= build/state-value-selected
+STATE24_TREE ?= $(STATE24_PREPARED)/tree
+STATE24_MANIFEST ?= $(STATE24_PREPARED)/frozen-prepare-manifest.json
+STATE24_STATE ?= build/state-value-proof
+# Fixed reviewed source hashes; never infer these from an unreviewed file.
+STATE24_MANIFEST_SHA256 ?= c55522aa04323eb95f93e0866410c6ab42d987baff167372054724e5aad5a0da
+STATE24_PREPARE_SPEC ?= research/state-value-prepare-manifest.json
+STATE24_PREPARE_SPEC_SHA256 ?= 8a608c2f1c62ebb4676d0ed0b0a9dd29fcfb0a920e482d74107a1356b6c184ba
+STATE24_PREPARER ?= tools/state_value/prepare_global_sources.py
+STATE24_PREPARER_SHA256 ?= 6533956d26f878011e6a63a0d25efdd9c6de5e29fa358c84ff9cd8bc6654e49b
+STATE24_SOURCE_INPUT ?= ..
+STATE24_JOBS ?= $(if $(BUILD_JOBS),$(BUILD_JOBS),8)
+STATE24_DISK_RESERVE_GIB ?= 8
+STATE24_RESUME ?=
+
+# Keep invocation sequential even if an outer make uses -j.
+# Pure preparation uses the hashes independently checked against the source
+# graph. It neither invokes Coq nor establishes the global theorem.
+proof: proof-state-source-ready
+	@test -n "$(STATE24_MANIFEST_SHA256)" || { \
+	  echo 'The selected build requires its reviewed source-manifest hash.' >&2; exit 2; }
+	python3 tools/build_state_value.py build \
+	  --tree "$(STATE24_TREE)" --manifest "$(STATE24_MANIFEST)" \
+	  --manifest-sha256 "$(STATE24_MANIFEST_SHA256)" \
+	  --state "$(STATE24_STATE)" --jobs "$(STATE24_JOBS)" --disk-reserve-gib "$(STATE24_DISK_RESERVE_GIB)" \
+	  $(if $(filter 1,$(STATE24_RESUME)),--resume,)
+
+proof-state-source-ready:
+	@test -n "$(STATE24_MANIFEST_SHA256)" -a -n "$(STATE24_PREPARE_SPEC_SHA256)" -a -n "$(STATE24_PREPARER_SHA256)" || { \
+	  echo 'The selected build requires all reviewed source-preparation hashes.' >&2; exit 2; }
+	python3 tools/prepare_state_value.py \
+	  --source-input "$(STATE24_SOURCE_INPUT)" --spec "$(STATE24_PREPARE_SPEC)" \
+	  --spec-sha256 "$(STATE24_PREPARE_SPEC_SHA256)" \
+	  --preparer "$(STATE24_PREPARER)" --preparer-sha256 "$(STATE24_PREPARER_SHA256)" \
+	  --output "$(STATE24_PREPARED)" --frozen-manifest-sha256 "$(STATE24_MANIFEST_SHA256)" \
+	  --disk-reserve-gib "$(STATE24_DISK_RESERVE_GIB)" \
+	  $(if $(filter 1,$(STATE24_RESUME)),--resume,)
+
+# A separate explicit target reruns the exact statement/assumptions check and
+# full recursive kernel audit on the current selected closure.
+proof-report:
+	python3 tools/report_state_value.py \
+	  --tree "$(STATE24_TREE)" --manifest "$(STATE24_MANIFEST)" \
+	  --manifest-sha256 "$(STATE24_MANIFEST_SHA256)" --state "$(STATE24_STATE)"
+
+.PHONY: proof proof-report proof-state-source-ready
 
 proof-checkpoint:
-	@echo "Checking current BBB(2,4) Coq proofs; the universal upper bound remains open."
+	@echo "Checking the BBB(2,4) proof checkpoint; use proof-2-4 for the complete state equality."
 	$(MAKE) check -j$(PROOF_JOBS)
 	$(MAKE) proof-state-cases
-	@echo "Checkpoint verified. The global BBB(2,4) equality is still open."
+	@echo "Checkpoint verified. This target does not verify the global state equality."
 
 proof-state-cases:
 	python3 tools/replay_state_case_proofs.py --jobs $(PROOF_JOBS)

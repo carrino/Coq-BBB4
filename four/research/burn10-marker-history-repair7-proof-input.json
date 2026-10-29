@@ -1,0 +1,120 @@
+{
+  "rows": [
+    {
+      "machine": "1LB0RA---1LA_2RB3LB0LB1RA",
+      "code": 2505570794,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "marker_mask": 10,
+      "history": 1,
+      "width": 3,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB0RA---2RA_3RB3LA0LB1LB",
+      "code": 2094175826,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "marker_mask": 2,
+      "history": 1,
+      "width": 3,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB1RA---0LB_2RB3LB0LB1RA",
+      "code": 2505556123,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "marker_mask": 10,
+      "history": 3,
+      "width": 3,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB1RA---0RA_2RB3LB0LB1RA",
+      "code": 2505561036,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "marker_mask": 10,
+      "history": 3,
+      "width": 2,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB2LB0RA---_3RB2LB1RA0LB",
+      "code": 569274959,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "marker_mask": 6,
+      "history": 1,
+      "width": 3,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB2LB3RA---_3RB2LB1RA0LB",
+      "code": 569278427,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "marker_mask": 6,
+      "history": 3,
+      "width": 3,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB2LB3RA---_3RB2RA1LB0LB",
+      "code": 546560715,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "marker_mask": 6,
+      "history": 3,
+      "width": 3,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    }
+  ],
+  "state_bound": 0,
+  "selection_report": "research/burn10-marker-history-repair7-selection.json",
+  "selection_sha256": "943a863881bc669644e620b222cf90d8fa5dfd94d91ee257ec4327af32cfa288",
+  "generic_report_sha256": "b1161e50fd3a56f7b469db3293f1ae3004824801c4b0f0540c504b648a6c825b"
+}

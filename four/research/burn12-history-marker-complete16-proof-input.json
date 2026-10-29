@@ -1,0 +1,281 @@
+{
+  "generic_report_sha256": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 310500279,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 133,
+      "invariant": "conditional",
+      "machine": "1LB1RB3LA2RA_2RB3RA3LA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2887231810,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB2LA3RA3RB_1RB2RA0LA1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3297570483,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB2LA3RA3RB_1RB2RA0LA2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 6169941194,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB2LA3RA3RB_1RB2RA0LA3RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1032870008,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 5,
+      "invariant": "conditional",
+      "machine": "1LB2RB0LA2RA_1RB3LB2LA0RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2504166934,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 97,
+      "invariant": "conditional",
+      "machine": "1LB2LA0RB2LA_2RB3LA0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 6169931368,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB2LA3RA3LB_1RB2RA0LA3RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 93247436,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 133,
+      "invariant": "conditional",
+      "machine": "1LB2LA3LA1RB_2RB3RA0RB0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2072193721,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB2LA2RB1RB_1RB3RA0LA1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 334623126,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 133,
+      "invariant": "conditional",
+      "machine": "1LB2LA3LA1RB_2RB3RA3LB0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 6113408323,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 34,
+      "invariant": "conditional",
+      "machine": "1LB0LA0LB0LB_2RB1LA3RB3RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 353120588,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 135,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LA3RB_2RB2RA3RA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 256570295,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 135,
+      "invariant": "conditional",
+      "machine": "1LB2LA3LA3RB_2RB2RA2RA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 69109867,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 133,
+      "invariant": "conditional",
+      "machine": "1LB2LA3LA1RB_2RB3RA0RA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3303246443,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB2LA0RA3RB_1RB3RA0LA2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4762087673,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 34,
+      "invariant": "conditional",
+      "machine": "1LB0LA0LB2RB_3RB1LA2RA2RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    }
+  ],
+  "scope": "First sixteen reduced complete-table historical marker proofs.",
+  "selection_report": "research/burn12-history-marker-complete16-selection.json",
+  "selection_sha256": "db3f9025ff891ddb71a2ef67c975fac578b5931b79331efde0d96b0484b0713c",
+  "state_bound": 0
+}

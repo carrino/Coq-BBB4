@@ -1,0 +1,25 @@
+{
+  "generic_report_sha256": "c7da08e977e7ecc582ddd6d12fb099dd9eaf7c24b01ec0d7ccf8dde7485f68b0",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 3322369148,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB0LA1RB3RA_3RB2RA0LB2LA",
+      "marker_mask": 14,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    }
+  ],
+  "scope": "One original-width contextual-marker state proof; separate checkpoint10 package.",
+  "selection_report": "research/burn9-context-marker-large1-selection.json",
+  "selection_sha256": "159cf0def0e0ec4db0750b1dd450669448969b7b07a4a7fa1bddabe04c677af3",
+  "state_bound": 0
+}

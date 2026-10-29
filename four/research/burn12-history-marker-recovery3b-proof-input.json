@@ -1,0 +1,60 @@
+{
+  "generic_report_sha256": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 3322349496,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB0LA1RB2RA_3RB2RA0LB2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1267165181,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 73,
+      "invariant": "conditional",
+      "machine": "1LB2RA3RA3LB_1RB2LA0LB0RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 68747189,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 11,
+      "invariant": "conditional",
+      "machine": "1LB2LB3RB0LB_1RB3RA0RA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    }
+  ],
+  "scope": "Recovery historical-marker state-zero batch, outside earlier frozen aggregate.",
+  "selection_report": "research/burn12-history-marker-recovery3b-selection.json",
+  "selection_sha256": "198db7e65cc6d525859a4cd5587683410c73f21680f6469a17970f9816579e14",
+  "state_bound": 0
+}

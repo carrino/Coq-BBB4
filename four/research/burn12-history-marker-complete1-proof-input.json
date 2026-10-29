@@ -1,0 +1,26 @@
+{
+  "generic_report_sha256": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 3031291527,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 35,
+      "invariant": "conditional",
+      "machine": "1LB0LA0LA3LB_3RB2LB1RA1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "width": 4
+    }
+  ],
+  "scope": "Reduced complete-table historical marker state proofs; independent exact batch.",
+  "selection_report": "research/burn12-history-marker-complete1-selection.json",
+  "selection_sha256": "98e186fe22272fcdcb2c4584ba3a179f58b8cca70ffbf6812efcb35b56fd1426",
+  "state_bound": 0
+}

@@ -1,0 +1,28 @@
+{
+  "generic_report_sha256": "ae6551224262e339d8cfc4b78cda61be0b1bd885b08d7fe790c838c25d66c5ef",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 5515677001,
+      "fuel": 131072,
+      "graph_path": "build/burn15-padded-wall-large1-reduce/graph-h3-w2.json",
+      "graph_sha256": "acefce021a0afeff17615bdd83468b905c02a7d45c9570604ffe604507f83fc5",
+      "guard_mask": 7,
+      "history": 3,
+      "history_marker_mask": 131,
+      "machine": "1LB2LB3RA1RA_2RB2LA1RB3LB",
+      "nodes": 1113,
+      "rank": [
+        2,
+        0,
+        1,
+        0
+      ],
+      "rounds": 128,
+      "width": 2
+    }
+  ],
+  "selection_report": "research/burn15-padded-wall-large1-selection.json",
+  "selection_sha256": "806fb6fddc667da53042bb2f1ff4ec584ae355023aef55d8477f81cc77d6058d",
+  "state_bound": 0
+}
