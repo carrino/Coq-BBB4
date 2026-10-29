@@ -132,7 +132,22 @@ optional search reproduction. The
 [`Small BBB proofs` workflow](../.github/workflows/small.yml) runs the same
 build-and-audit command, followed by the extraction regression.
 
-## Four-symbol champion
+## Four-symbol proofs
+
+Build and recursively audit the current BBB(2,4) proofs from the repository root:
+
+```bash
+make proof-2-4 BUILD_JOBS=8
+```
+
+This target activates the census toolchain, checks the public four-symbol
+theories and regressions, then replays all three reviewed state-case checkpoints
+below. `BUILD_JOBS` sets the prerequisite build parallelism; the case drivers run
+sequentially and each performs a recursive `coqchk` audit. A failed build or audit
+stops the target. Logs and current receipts are written under `four/build/`.
+With the toolchain already active, `make -C four proof PROOF_JOBS=8` is equivalent.
+The target verifies the current development; the universal upper bound remains
+open.
 
 Individual state-based BBB(2,4) holdout proofs have a separate
 [case index and replay command](../four/STATE-CASE-PROOFS.md). That source

@@ -4,6 +4,11 @@ These eleven packages extend the [initial 36 cases](STATE-CASE-PROOFS.md) and [a
 
 ## Build and audit
 
+From the repository root, `make proof-2-4 BUILD_JOBS=8` checks the public
+four-symbol theories and regressions and replays all three checkpoints below.
+It activates the census toolchain automatically. This verifies the current
+proofs; the global upper bound is still open.
+
 Use the tested Coq 8.18.0 / OCaml 4.14.2 toolchain with `coq-native`, GNU make and Python 3; see [toolchain setup](../docs/VERIFYING.md#reproduce-the-complete-targets). From the repository root:
 
 ```bash

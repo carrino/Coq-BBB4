@@ -122,6 +122,14 @@ clean:
 proof: proof-all
 .PHONY: proof
 
+# Current (2,4) development: public theories/regressions and all reviewed
+# standalone state-case checkpoints. The universal upper bound is still open.
+# BUILD_JOBS controls prerequisite compilation; case replays run sequentially.
+proof-2-4:
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) -C four proof PROOF_JOBS=$(BUILD_JOBS)
+.PHONY: proof-2-4
+
 # The census certification: the per-subtree queue enumerations
 # (parallel; each Qed is one native_compute walk) + the assembled
 # theorem.  Needs native_compute: eval $(opam env --switch=census).
