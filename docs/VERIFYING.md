@@ -132,6 +132,8 @@ optional search reproduction. The
 [`Small BBB proofs` workflow](../.github/workflows/small.yml) runs the same
 build-and-audit command, followed by the extraction regression.
 
+<a id="four-symbol-champion"></a>
+
 ## Four-symbol proofs
 
 Build and recursively audit the current BBB(2,4) proofs from the repository root:
