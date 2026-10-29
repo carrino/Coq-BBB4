@@ -1,0 +1,80 @@
+{
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 4424141919,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 36,
+      "invariant": "conditional",
+      "machine": "1LB2LB0LA1RB_3RB1LA3LB2RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 3326284571,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 97,
+      "invariant": "conditional",
+      "machine": "1LB0RB1RA3LA_2RB3LB0LB2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 1683836439,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 64,
+      "invariant": "conditional",
+      "machine": "1LB2RB3LB2RA_3RB3LA0LB1LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2380274555,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 9,
+      "invariant": "conditional",
+      "machine": "1LB0RA---0LB_1RB2RA3LB1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        2,
+        1
+      ],
+      "width": 4
+    }
+  ],
+  "scope": "Four historical-marker state-zero families; requires full proof and recursive kernel audit.",
+  "selection_report": "research/burn12-history-marker-selection.json",
+  "selection_sha256": "91f7d28792fac677edca3575807dc63ed3a5afb0a85a6afb8f9e85b5365feca3",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn12-history-marker/HistoryMarker.v": "163559434fa4dc810fda50a108fd8726b30d236b6ad0eff01aeca449f4053efc",
+    "proof-sources/burn12-history-marker/Regression.v": "ef8003f6647d2c52c9e962bca9dbda85acd91c0d2407101349aa6ad476966581"
+  }
+}

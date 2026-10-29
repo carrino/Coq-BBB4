@@ -4,6 +4,7 @@
 theories/Statement.v
 theories/StatementTr.v
 theories/Spec.v
+theories/ValueSpec.v
 theories/CTape.v
 theories/Gap.v
 theories/Macros.v

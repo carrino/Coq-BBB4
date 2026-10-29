@@ -1,0 +1,34 @@
+name: Final four-symbol state case
+on:
+  pull_request:
+    paths: ['four/**', '.github/actions/setup-native-coq/**', '.github/workflows/state-final.yml']
+  push:
+    branches: [main]
+    paths: ['four/**', '.github/actions/setup-native-coq/**', '.github/workflows/state-final.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: state-final-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Build public four-symbol prerequisites
+        run: make -C four all -j2
+      - name: Compile and freshly audit the final state case
+        run: python3 four/tools/check_burn43_s071_far.py
+      - name: Preserve proof replay and audit logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-state-case-proof
+          path: four/build/burn43-s071-far/proof/
+          retention-days: 14

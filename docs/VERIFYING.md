@@ -132,7 +132,49 @@ optional search reproduction. The
 [`Small BBB proofs` workflow](../.github/workflows/small.yml) runs the same
 build-and-audit command, followed by the extraction regression.
 
-## Four-symbol champion
+<a id="four-symbol-champion"></a>
+
+## Four-symbol proofs
+
+Build and recursively audit the current BBB(2,4) checkpoint from the repository root:
+
+```bash
+make proof-2-4-checkpoint BUILD_JOBS=8
+```
+
+This target activates the census toolchain, checks the public four-symbol
+theories and regressions, then replays all three reviewed state-case checkpoints
+below and the [final S071 case](../four/STATE-CASE-PROOFS-FINAL.md).
+`BUILD_JOBS` sets the prerequisite build parallelism; the case drivers run
+sequentially and each performs a recursive `coqchk` audit. A failed build or audit
+stops the target. Logs and current receipts are written under `four/build/`.
+With the toolchain already active, `make -C four proof-checkpoint PROOF_JOBS=8` is equivalent.
+The target verifies the current development; the universal upper bound remains
+open.
+
+`make proof-2-4 BUILD_JOBS=8` is reserved for the completed state equality
+theorem. It currently fails because the exhaustive upper bound has not yet
+been assembled in `four/theories/Value.v`. Once available, it builds the proof,
+checks `BBB24_state_value : BBB24_state_statement`, performs a full recursive
+`coqchk`, and prints the statement, numeric value and actual `Print Assumptions`
+output. The statement in [ValueSpec.v](../four/theories/ValueSpec.v) requires
+both champion attainment and the upper bound for every machine. A successful
+checkpoint build cannot produce the final equality success report.
+
+Individual state-based BBB(2,4) holdout proofs have a separate
+[case index and replay command](../four/STATE-CASE-PROOFS.md). That source
+checkpoint contains 36 machine families. The
+[additional checkpoint](../four/STATE-CASE-PROOFS-ADDITIONAL.md) adds 30 families;
+run its replay command with `--checkpoint additional` after the initial command
+to reproduce all 66 accepted cases at that freeze. The
+[recent checkpoint](../four/STATE-CASE-PROOFS-RECENT.md), selected with
+`--checkpoint recent`, adds eleven more cases for 77 accepted families.
+The [final case](../four/STATE-CASE-PROOFS-FINAL.md), S071, completes all 78
+hard machine proofs; it is included in `proof-2-4-checkpoint`.
+The
+[public scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) tracks the
+remaining proof work and census assembly. These individual proofs do not yet
+establish the global upper bound.
 
 The isolated `four/` development proves the exact score of
 `1RB2LA1RA1LB_0LB2RB3RB1LA` for both state and instruction quasihalting:

@@ -1,0 +1,955 @@
+{
+  "schema": 1,
+  "scope": "36 individually proved state families from the original final78; no global upper bound or instruction theorem.",
+  "frozen_checkpoint": {
+    "original_holdouts": 78,
+    "proved_at_freeze": 59,
+    "remaining_at_freeze": 19,
+    "included_cases": 36,
+    "included_packages": 30
+  },
+  "base_commit": "6cd8d912849d1549ec6a3c299bfdf48ff8d4703c",
+  "scoreboard": "https://github.com/carrino/Coq-BBB4/issues/261",
+  "core_targets": [
+    "theories/AbstractCensus.vo",
+    "theories/BellmanFord.vo",
+    "theories/BoardManifest.vo",
+    "theories/Bootstrap.vo",
+    "theories/Bounds.vo",
+    "theories/CTape.vo",
+    "theories/Census.vo",
+    "theories/CensusUnion.vo",
+    "theories/CertifiedBoard.vo",
+    "theories/Checkers/Cycle.vo",
+    "theories/Checkers/ExactClosure.vo",
+    "theories/Checkers/FiniteNGram.vo",
+    "theories/Checkers/NGram.vo",
+    "theories/Checkers/NGramHist.vo",
+    "theories/Checkers/RepWL.vo",
+    "theories/Checkers/TCycler.vo",
+    "theories/Closeout.vo",
+    "theories/Closure.vo",
+    "theories/ClosureTr.vo",
+    "theories/CycleCensus.vo",
+    "theories/DualCloseout.vo",
+    "theories/FamilyTransport.vo",
+    "theories/FiniteCensus.vo",
+    "theories/FiniteRankSearch.vo",
+    "theories/GTape.vo",
+    "theories/HistCensus.vo",
+    "theories/HistRankSearch.vo",
+    "theories/Instructions.vo",
+    "theories/Labels.vo",
+    "theories/MarkerPotential.vo",
+    "theories/MarkerState.vo",
+    "theories/Mirror.vo",
+    "theories/NGramCensus.vo",
+    "theories/OneStateConditional.vo",
+    "theories/OneStateReach.vo",
+    "theories/OrbitCloseout.vo",
+    "theories/PattCount.vo",
+    "theories/Pipeline.vo",
+    "theories/PosEnc.vo",
+    "theories/RankSearch.vo",
+    "theories/Records.vo",
+    "theories/RepWLCensus.vo",
+    "theories/RepWLSearch.vo",
+    "theories/RightMarkerState.vo",
+    "theories/Shadow.vo",
+    "theories/Spec.vo",
+    "theories/StateBounds.vo",
+    "theories/StateOnlyCloseout.vo",
+    "theories/StatePipeline.vo",
+    "theories/Statement.vo",
+    "theories/StatementTr.vo",
+    "theories/Symmetry.vo",
+    "theories/TotalCompletion.vo"
+  ],
+  "packages": [
+    {
+      "package": "burn17-binary-rank",
+      "group": 1,
+      "driver": "check_burn17_binary_rank.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn17-binary-rank-checked.json",
+      "report_sha256": "4141e1dd9ec1d212b3a6dae3b0361e3da572e7884ef9efd5de0f2eaee9e12957",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S024",
+          "machine": "1LB1RB0LB2RA_1RB3LB2LB3RA"
+        }
+      ]
+    },
+    {
+      "package": "burn17-quaternary-sibling",
+      "group": 2,
+      "driver": "check_burn17_quaternary_sibling.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn17-quaternary-sibling-checked.json",
+      "report_sha256": "fa4a6a413507ae306ca2ecaab28cf362cb89e3a184d4e47a9706d7c60256b7dd",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S047",
+          "machine": "1LB2LB0LB1RA_2RB2RA3LB1RB"
+        }
+      ]
+    },
+    {
+      "package": "burn17-double-zero-rank",
+      "group": 3,
+      "driver": "check_burn17_double_zero_rank.py",
+      "args": [],
+      "prerequisites": [
+        "burn17-binary-rank"
+      ],
+      "report": "research/burn17-double-zero-rank-checked.json",
+      "report_sha256": "9f4e35cf2f4c7a0da64726f393180c22e7abd454217a2e1f4802506ec0536838",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S013",
+          "machine": "1LB0RA0LB2RA_1RB3LB2LB1LA"
+        }
+      ],
+      "replay_driver": "replay_shared_state_case.py",
+      "replay_args": [
+        "--package",
+        "burn17-double-zero-rank"
+      ]
+    },
+    {
+      "package": "burn17-zero-marker",
+      "group": 1,
+      "driver": "check_burn17_zero_marker.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn17-zero-marker-checked.json",
+      "report_sha256": "4e489a626e9ad27e347717044931f70615fea2b8194b23d7d4e95b034d5ce8aa",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S046",
+          "machine": "1LB2LB0LB1RA_2RB2RA3LB0RA"
+        }
+      ]
+    },
+    {
+      "package": "burn12-history-marker-next1a",
+      "group": 2,
+      "driver": "check_burn12_history_marker_batch.py",
+      "args": [
+        "--batch",
+        "next1a"
+      ],
+      "prerequisites": [
+        "history-marker"
+      ],
+      "report": "research/burn12-history-marker-next1a-checked.json",
+      "report_sha256": "bda158c25f8ddcc6977adbd9f568976399f06890c224f39462d67ad151d3e87a",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S034",
+          "machine": "1LB2LA1RB0RA_2RB1RA3LA3RB"
+        }
+      ],
+      "replay_driver": "replay_shared_state_case.py",
+      "replay_args": [
+        "--package",
+        "burn12-history-marker-next1a"
+      ]
+    },
+    {
+      "package": "burn12-history-marker-next1b",
+      "group": 3,
+      "driver": "check_burn12_history_marker_batch.py",
+      "args": [
+        "--batch",
+        "next1b"
+      ],
+      "prerequisites": [
+        "history-marker"
+      ],
+      "report": "research/burn12-history-marker-next1b-checked.json",
+      "report_sha256": "28e9fe480dc612814108fa712cf8b9130e564a50eca2ef4298ad57b847999d78",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S060",
+          "machine": "1LB2LB3RA0RB_2RB2RA3LA2LA"
+        }
+      ],
+      "replay_driver": "replay_shared_state_case.py",
+      "replay_args": [
+        "--package",
+        "burn12-history-marker-next1b"
+      ]
+    },
+    {
+      "package": "burn18-cut-siblings",
+      "group": 1,
+      "driver": "check_burn18_cut_siblings.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn18-cut-siblings-checked.json",
+      "report_sha256": "ed6b7d8099ddef90a6f3aa4c163628190f0f86e8dde079ab548a06a48ba478b9",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S027",
+          "machine": "1LB2LA0RA2LB_3RB1LA0RB3RA"
+        },
+        {
+          "id": "S031",
+          "machine": "1LB2LA1RA2LB_3RB1LA0RB3RA"
+        }
+      ]
+    },
+    {
+      "package": "burn17-paired-zero-counter",
+      "group": 2,
+      "driver": "check_burn17_paired_zero_counter.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn17-paired-zero-counter-checked.json",
+      "report_sha256": "b1b8f110215b2f86de1fdc0e9d62a999a58fd3ae9c3e630b59bf6daa63ea2859",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S045",
+          "machine": "1LB2LB0LB0RB_2RB3RA3LB2RA"
+        }
+      ]
+    },
+    {
+      "package": "burn17-terminal-pair-counter",
+      "group": 3,
+      "driver": "check_burn17_terminal_pair_counter.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn17-terminal-pair-counter-checked.json",
+      "report_sha256": "77df386da409447e908e77e99992f74229d3a24a5e52648177d058b91d9b357b",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S048",
+          "machine": "1LB2LB0LB2RB_1RB2RA3LB1RA"
+        }
+      ]
+    },
+    {
+      "package": "burn18-paired-carry",
+      "group": 1,
+      "driver": "check_burn18_paired_carry.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn18-paired-carry-checked.json",
+      "report_sha256": "7e2e23993a6778eb92d13e57b5b1150450303d1c870f6679b267c17dfacdcf68",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S067",
+          "machine": "1LB2RA0RA1RA_3RB3LA2LB2LB"
+        },
+        {
+          "id": "S068",
+          "machine": "1LB2RA0RA1RA_3RB3LA2LB2RB"
+        }
+      ]
+    },
+    {
+      "package": "burn18-double-pair",
+      "group": 2,
+      "driver": "check_burn18_double_pair.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn18-double-pair-checked.json",
+      "report_sha256": "dfa78ed7215412031a370ab4ebb5cdf9e0563a76fdcb24c2e55fdaa2d69e65ce",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S051",
+          "machine": "1LB2LB1RA0RA_2RB3RA2LB1LA"
+        },
+        {
+          "id": "S055",
+          "machine": "1LB2LB1RA2RA_2RB3RA2LB1LA"
+        }
+      ]
+    },
+    {
+      "package": "burn19-binary-trio",
+      "group": 3,
+      "driver": "check_burn19_binary_trio.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn19-binary-trio-checked.json",
+      "report_sha256": "62cc3c9e9a381abd7010a2ac9c8bc12c953b86a613f7e14aca1351e93ed693bf",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S001",
+          "machine": "1LB0LA0RB3LB_3RB1LB3RA2LB"
+        },
+        {
+          "id": "S002",
+          "machine": "1LB0LA0RB3LB_3RB2RA3RA2LB"
+        },
+        {
+          "id": "S003",
+          "machine": "1LB0LA0RB3LB_3RB3LB3RA2LB"
+        }
+      ]
+    },
+    {
+      "package": "burn18-s044-counter",
+      "group": 1,
+      "driver": "check_burn18_s044_counter.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn18-s044-counter-checked.json",
+      "report_sha256": "862e24730ee803430dc6cddbbf101c11a1178e66ab60ae9d2b11dae443178dd2",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S044",
+          "machine": "1LB2LB0LB0RB_2RB1LB3LB2RA"
+        }
+      ]
+    },
+    {
+      "package": "burn20-run-counter",
+      "group": 2,
+      "driver": "check_burn20_run_counter.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn20-run-counter-checked.json",
+      "report_sha256": "682820f0e788071ba1d7b4b5d6a1381c33411e158399a332b0db62dbae7d08f7",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S006",
+          "machine": "1LB0LB0LA0RA_3RB3RA1RB2LB"
+        }
+      ]
+    },
+    {
+      "package": "burn18-s065-rightmost",
+      "group": 3,
+      "driver": "check_burn18_s065_rightmost.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn18-s065-rightmost-checked.json",
+      "report_sha256": "84e97e996a3998901f064cb91947475ff9ef74430dcf8d3eadce0f3a70f9aaa9",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S065",
+          "machine": "1LB2RA0LB1RA_1RB3LB2LB0RA"
+        }
+      ]
+    },
+    {
+      "package": "burn20-run-sibling",
+      "group": 1,
+      "driver": "check_burn20_run_sibling.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn20-run-sibling-checked.json",
+      "report_sha256": "57df9b14b53b2087a4cc1408d01d26609fefe6eee107be445d252dd138747adc",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S009",
+          "machine": "1LB0LB1LA3RB_3RB3RA1RB2LB"
+        }
+      ]
+    },
+    {
+      "package": "burn19-finite-counter",
+      "group": 2,
+      "driver": "check_burn19_finite_counter.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn19-finite-counter-checked.json",
+      "report_sha256": "749f17bdee17640438627fdbb688dee4f95463a56b0d09c611ecbd69f88f1d46",
+      "state_bound": 4294967296,
+      "cases": [
+        {
+          "id": "S063",
+          "machine": "1LB2LB3RA2LA_2RB1RA0LB3LA"
+        }
+      ]
+    },
+    {
+      "package": "burn18-s012-rightmost",
+      "group": 3,
+      "driver": "check_burn18_s012_rightmost.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn18-s012-rightmost-checked.json",
+      "report_sha256": "a516d571b90b7ca1afe630d9cd7734ab80fc7470623579964aa4ce90b35f5683",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S012",
+          "machine": "1LB0RA0LA0LB_3RB2RA2LB1LB"
+        }
+      ]
+    },
+    {
+      "package": "burn20-unary-counter",
+      "group": 1,
+      "driver": "check_burn20_unary_counter.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn20-unary-counter-checked.json",
+      "report_sha256": "9c6ae1c8815a4ab8a1fefcd8a23103a900433985d77c01d5e6b9f1194bf13672",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S011",
+          "machine": "1LB0LB2RA2LA_2RB2RA3LB1RB"
+        }
+      ]
+    },
+    {
+      "package": "burn20-fibonacci-counter",
+      "group": 2,
+      "driver": "check_burn20_fibonacci_counter.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn20-fibonacci-counter-checked.json",
+      "report_sha256": "b445f6cf1dfcab29d019eb03c1428556a97a05508b9e6c00301e7806a3619045",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S022",
+          "machine": "1LB1RA1LB2RB_3RB3LA3LB2RA"
+        }
+      ]
+    },
+    {
+      "package": "burn19-s077-finite",
+      "group": 3,
+      "driver": "check_burn19_s077_finite.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn19-s077-finite-checked.json",
+      "report_sha256": "a3ec6a79da431461fbdbb96a2e1b77eb4e203e9a3e833274cf0b8867ac157835",
+      "state_bound": 4194304,
+      "cases": [
+        {
+          "id": "S077",
+          "machine": "1LB2RB3LA2RA_3RB3LA0LB1LB"
+        }
+      ]
+    },
+    {
+      "package": "burn21-s057-drift",
+      "group": 1,
+      "driver": "check_burn21_s057_drift.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn21-s057-drift-checked.json",
+      "report_sha256": "4d6bd4e50848dd4509b3b921765008d5320763c60c73bde268c0bd9792532d7d",
+      "state_bound": 4194304,
+      "cases": [
+        {
+          "id": "S057",
+          "machine": "1LB2LB1RB1RA_1RB3LA3RA2LB"
+        }
+      ]
+    },
+    {
+      "package": "burn20-paired-wall-counter",
+      "group": 2,
+      "driver": "check_burn20_paired_wall_counter.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn20-paired-wall-counter-checked.json",
+      "report_sha256": "b9660a4a611a8e4d1baa907b45e25365765708e86322ccdfd90e4e22793787cb",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S050",
+          "machine": "1LB2LB1LA1RA_3RB3LA3LB0RB"
+        }
+      ]
+    },
+    {
+      "package": "burn22-s053-counter",
+      "group": 3,
+      "driver": "check_burn22_s053_counter.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn22-s053-counter-checked.json",
+      "report_sha256": "609c35167cd9addb222f93223e83fc22854ed32bc3dec193043ba9f6783e590b",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S053",
+          "machine": "1LB2LB1RA2LA_2RB3LB3RB1RA"
+        }
+      ]
+    },
+    {
+      "package": "burn20-pair-accumulator",
+      "group": 1,
+      "driver": "check_burn20_pair_accumulator.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn20-pair-accumulator-checked.json",
+      "report_sha256": "09c75852ccd7429b647ff6625cb9d7dbbab9b06ce741d9f1f37e48675300c4f4",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S075",
+          "machine": "1LB2RB0LA2RA_1RB3LB2LB2RA"
+        }
+      ]
+    },
+    {
+      "package": "burn21-s032-finite",
+      "group": 2,
+      "driver": "check_burn21_s032_finite.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn21-s032-finite-checked.json",
+      "report_sha256": "66547f8aa062d3f464fa0c8cde5989887653f4dbae1c2bbb4d11034a38272967",
+      "state_bound": 72057594037927936,
+      "cases": [
+        {
+          "id": "S032",
+          "machine": "1LB2LA1RA2RB_2RB3LB0LB1LA"
+        }
+      ]
+    },
+    {
+      "package": "burn23-s069-transducer",
+      "group": 3,
+      "driver": "check_burn23_s069_transducer.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn23-s069-transducer-checked.json",
+      "report_sha256": "04867cfb9f9259d729a06c70e015a26373b6b8b6f5b25f66594f17b020d2d8c9",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S069",
+          "machine": "1LB2RA1LA1RB_2RB2LB3LB1RA"
+        }
+      ]
+    },
+    {
+      "package": "burn23-s062-counter",
+      "group": 1,
+      "driver": "check_burn23_s062_counter.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn23-s062-counter-checked.json",
+      "report_sha256": "bb938f39ac9603db18bddd0de91dff40d9b5417e5f18b672a856f33167f91e76",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S062",
+          "machine": "1LB2LB3RA1RA_3RB3LA0RB2LB"
+        }
+      ]
+    },
+    {
+      "package": "burn24-s056-counter",
+      "group": 2,
+      "driver": "check_burn24_s056_counter.py",
+      "args": [],
+      "prerequisites": [
+        "counter-obligations"
+      ],
+      "report": "research/burn24-s056-counter-checked.json",
+      "report_sha256": "31730413ccc8963fe852b566eb3398ceda6f2939f53bc0395e3cb62d76c190de",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S056",
+          "machine": "1LB2LB1RA3RA_3RB3LA2RB2LB"
+        }
+      ]
+    },
+    {
+      "package": "burn23-s004-s005-unary",
+      "group": 3,
+      "driver": "check_burn23_s004_s005_unary.py",
+      "args": [],
+      "prerequisites": [],
+      "report": "research/burn23-s004-s005-unary-checked.json",
+      "report_sha256": "e4d4b94928b82f11ba700975dbc852d2d58fe25511803cef28810165241ef023",
+      "state_bound": 0,
+      "cases": [
+        {
+          "id": "S004",
+          "machine": "1LB0LA1LB1RB_3RB3RA0RB2LA"
+        },
+        {
+          "id": "S005",
+          "machine": "1LB0LA1LB1RB_3RB3RA2RB2LA"
+        }
+      ]
+    }
+  ],
+  "files_sha256": {
+    "four/proof-sources/burn12-history-marker/HistoryMarker.v": "163559434fa4dc810fda50a108fd8726b30d236b6ad0eff01aeca449f4053efc",
+    "four/proof-sources/burn12-history-marker/Regression.v": "ef8003f6647d2c52c9e962bca9dbda85acd91c0d2407101349aa6ad476966581",
+    "four/proof-sources/burn17-binary-rank/BinaryRank.v": "1b73db4dcac7dc9e25a5c4f0afdc1de843241535b3e76f00fccec14af3bbc096",
+    "four/proof-sources/burn17-binary-rank/Regression.v": "437455ea41385c0f2ca6d30f88f25b17f0424890c94745f8d7817e224e060200",
+    "four/proof-sources/burn17-double-zero-rank/DoubleZeroRank.v": "7a276d8beb906d195babb74d4685d0a210bdfbda8c76f269201cb760717ead9c",
+    "four/proof-sources/burn17-double-zero-rank/Regression.v": "20674fb7772dedad4e6432358604011819cd9787ceff46dde36aa68b163218a2",
+    "four/proof-sources/burn17-paired-zero-counter/PairedZero.v": "3d44a7e6e6f9366774b686dbf11049f8f695d11f75e88ee36a6e7c1600b6f594",
+    "four/proof-sources/burn17-paired-zero-counter/Regression.v": "e09653376b4da72930dded90a69b9c635749bdb51ece28d7b8369c030dab61c6",
+    "four/proof-sources/burn17-quaternary-sibling/QuaternarySibling.v": "fb3e47e9d0206c08db883c851fd536ca6199780467b7e36a2061c0e08d4d5c09",
+    "four/proof-sources/burn17-quaternary-sibling/Regression.v": "3bdbb708f2a13efba5ccee150862a94fd97e2d2bfbb78904a641107469877ba7",
+    "four/proof-sources/burn17-terminal-pair-counter/Regression.v": "a8c357059404d948fe9c5012e0873a0fb1015dcc88cfdcd683872e2d9079bad3",
+    "four/proof-sources/burn17-terminal-pair-counter/TerminalPair.v": "700ddd573f398f129b8a8a710cc9a21f6524c7cdade25df7c46de5b0c151cc3a",
+    "four/proof-sources/burn17-zero-marker/Regression.v": "d54cea34ec25b832290c69ef95027af183baedaedab1e0195f0c82bc65c49544",
+    "four/proof-sources/burn17-zero-marker/ZeroMarker.v": "e8b4518d1c671b429bfad138934eab00cea444d5be5b2c3a12f3267a104cc2b3",
+    "four/proof-sources/burn18-counter-obligations/CounterObligations.v": "b609faaf47773caf187d0cad864c09c80e3bc90edb30bc430eb63d4c51f1a222",
+    "four/proof-sources/burn18-cut-siblings/CutSiblings.v": "4ea9246c077143d8a997b4459125009a73130a2319c4523b1f13230957b3f60a",
+    "four/proof-sources/burn18-cut-siblings/Regression.v": "24af82c0aca37bf513a8cd780a717ac030422bdccb983ca1e0d8d9927474a5cd",
+    "four/proof-sources/burn18-double-pair/DoublePair.v": "192fee9545dbb0d934b5b8cb33801d34a880071d252fd85b373b5d7dfaf63695",
+    "four/proof-sources/burn18-double-pair/Regression.v": "f52badf0587c0d533df0b09f4953353797e1416a1c845b5d6d5458730bc89b8e",
+    "four/proof-sources/burn18-paired-carry/PairedCarry.v": "cc802987e7e396822342693ee3effc121aa0eb0ae1f43b91c30d32ff420776cc",
+    "four/proof-sources/burn18-paired-carry/Regression.v": "82356918369934f22c7fbe68517d9392fe11a94f0ad2679924a57848c0f393a4",
+    "four/proof-sources/burn18-s012-rightmost/Regression.v": "726cb1260c19fd14638cab3efa1c499fcfd38dd3c3491ed9018ef00e3de051c9",
+    "four/proof-sources/burn18-s012-rightmost/RightmostOne.v": "1f6a3ad21a3741ad547ef0e673756dbd92e692291a63d5cd99015faedb1c75d5",
+    "four/proof-sources/burn18-s044-counter/Regression.v": "bdb8ae830edf6d2d5c78f2393d948ddcf87aa8ef0bcc4b04162947c0e09e37fe",
+    "four/proof-sources/burn18-s044-counter/S044Counter.v": "5638e547ce325c56b2b9675054ad77258ac4538fe9625f98f59077b5eed1fcb5",
+    "four/proof-sources/burn18-s065-rightmost/Regression.v": "3cf340d6aa3b739a789e380c5f14b1cece1b03090ec35990da5f98eb1ba07768",
+    "four/proof-sources/burn18-s065-rightmost/RightmostReturn.v": "48dcc11407a059a7d5567eefcad294a81dcc6d9e4f1b504c665752616ace03e0",
+    "four/proof-sources/burn19-binary-trio/BinaryTrio.v": "52c1e6caf3b16b4a669c980e0e8acaa1d04908b41b572b42f7cb617f86071574",
+    "four/proof-sources/burn19-binary-trio/Regression.v": "1181002707221ecc6d1e5cc83ecb1862ceaebca10ddcf149232f3526be1b22a4",
+    "four/proof-sources/burn19-finite-counter/FiniteCounter.v": "2e0e11ff6870709528745b46d7b2be4dc454e88b0de8fd7ff1e856f4f2164e71",
+    "four/proof-sources/burn19-finite-counter/Regression.v": "c04a3727dca5c0cf2f7439080790516a3230b39efb1b017d3a9c99bb2759d5b2",
+    "four/proof-sources/burn19-finite-counter/Trace.v": "e0f3f3e5c4280dca5e06b1d9179dd0b50e051c74a7b5faa75cd7d826789f3b26",
+    "four/proof-sources/burn19-s077-finite/FiniteEscape.v": "f452cac7a8790501e8844066e7346aef7ff574f79b3e9b5a8a39343e445bada6",
+    "four/proof-sources/burn19-s077-finite/FinitePrefix.v": "40fb345f879a411169982e7ba0c68a9dcd2089544120e6eb18d08d821dac3ba7",
+    "four/proof-sources/burn19-s077-finite/Regression.v": "ffefa732c1a5cb90c3a38be755cda28e8240baf0feca374231d739d140cf830b",
+    "four/proof-sources/burn20-fibonacci-counter/FibonacciCounter.v": "8b321e6c5698eaa7aec2e567c37f3fe587e2f20c1ff90247fdc2f7d6e945b003",
+    "four/proof-sources/burn20-fibonacci-counter/Regression.v": "f00b4f0e81c9b29b30808e7d3a980fe49e6e116ac6fb83f05fe5a259a1efa66b",
+    "four/proof-sources/burn20-pair-accumulator/PairAccumulator.v": "24e1fbcb8ffb2a969416ca25b91d845d8b7aa793c5a575b84793a81fd56d7e84",
+    "four/proof-sources/burn20-pair-accumulator/Regression.v": "edc72dc7ff42a90affb0b1dcfddad86c1cee324699bac14825cfbc037d4ba526",
+    "four/proof-sources/burn20-paired-wall-counter/PairedWallCounter.v": "5b701ea64cc4935052678fb78fef3612fd86393d270f11dc171a0142241f6c5a",
+    "four/proof-sources/burn20-paired-wall-counter/Regression.v": "397223762bf1acc7a2754f9472ac4613ef004cb2534e360b643b579f99c7ae3e",
+    "four/proof-sources/burn20-run-counter/Regression.v": "d065de58df2a76fbae2c9837c739bca72b2d0854dc61ac5063749eb63f368fce",
+    "four/proof-sources/burn20-run-counter/RunCounter.v": "f82ad52be7682418c79c568ceeb40d24a8dec5b2c81668a2593773304bf8d5f1",
+    "four/proof-sources/burn20-run-sibling/Regression.v": "e2e22b792543d54e6b15c2fa3a699fcad4bf0a9f65c0540673f4f1bb11212889",
+    "four/proof-sources/burn20-run-sibling/RunSibling.v": "22e9a4697516e36935f465076eb95b1269f07882052000cf8335d857f05f0793",
+    "four/proof-sources/burn20-unary-counter/Regression.v": "d340554b46e678971d967600b77d2c4ab6040b3461a892ba557df40191ed08fa",
+    "four/proof-sources/burn20-unary-counter/UnaryCounter.v": "b1c67f1e730f194a6a0ee3a053edffd5c924c6d1c4052339cb7e92776e1dc834",
+    "four/proof-sources/burn21-s032-finite/BinaryBridge.v": "a2ce4ab9d2e0a8d36a942901dd5e7f05aaeb4e1fbeb65affdbd1d7f79ff99d3a",
+    "four/proof-sources/burn21-s032-finite/CutMacros.v": "19808cea5f0f9e4d573f1780936f3182b78309c44e96ad92d75ba88cf9a79193",
+    "four/proof-sources/burn21-s032-finite/Final.v": "fdafb6cd52d5b223999536084a41cb7299b18646fb5c3026b704b8d21b97b7fa",
+    "four/proof-sources/burn21-s032-finite/Regression.v": "189fe96581ceeb71d9bec0f6ec549fcd9b086cd035272cedfcdf15159a0e94b7",
+    "four/proof-sources/burn21-s032-finite/Trace.v": "8208019d799608be4112e879931e40b5efa5a17939fe956deadcf32813b74417",
+    "four/proof-sources/burn21-s057-drift/Regression.v": "e0e75e266684146d5e24fae0e01619e3d631371c653309c65d7e1be316a96d77",
+    "four/proof-sources/burn21-s057-drift/RightBlankDrift.v": "7b91d6f6807210fb1cfa118eab4db5c552b7089d569f440a2217e88e6aca92f7",
+    "four/proof-sources/burn22-s053-counter/Odd.v": "501d72b64a940c0d88e76566f45ead5d12eada6b68ce37e9705745f08b725753",
+    "four/proof-sources/burn22-s053-counter/Outer.v": "b315bae4e2a00fe5fc5fb26c769ce03110fee4331c2623a994e365dfcc24bc30",
+    "four/proof-sources/burn22-s053-counter/Regression.v": "ead341d81b7437d52067cd3256ecbaf5e9d5485f9850c8eb8acf30494b02b349",
+    "four/proof-sources/burn22-s053-counter/S053Core.v": "b6956e0e5afc5438221cf87cfc037c3405288a2bafa5af578787c0fade17fc48",
+    "four/proof-sources/burn23-s004-s005-unary/Regression.v": "b5d660c24238a53eae5d7100742224b13d42d6648eee1f00a0110850bc13c1e2",
+    "four/proof-sources/burn23-s004-s005-unary/UnaryPhases.v": "24deef53b40737d3367ea0a1aa8a7acf4ec766f3121e36b7a0be22d199de26a3",
+    "four/proof-sources/burn23-s062-counter/Regression.v": "fe733aecabe97b96ca12368305789b488f447189540231d16242c33dcc2a225a",
+    "four/proof-sources/burn23-s062-counter/Return.v": "d95e194a9199ddf0b09516d5cb003dd65a548ae41a657bd888971d32a1cdf097",
+    "four/proof-sources/burn23-s062-counter/S062Core.v": "cf95cd50711fe6195a408ab6e9338f74bd25867ad23536d962535282c7667541",
+    "four/proof-sources/burn23-s069-transducer/CrossingParity.v": "3352dd0f068f22e3ced7084a15057922386d8a14b940bc76c638a8a40cb14b0e",
+    "four/proof-sources/burn23-s069-transducer/Regression.v": "4fad95b3ce4da0f0bf58249696ae8cd2dc7f3210e1924df529876aa985d516b1",
+    "four/proof-sources/burn24-s056-counter/Fallback.v": "9889c207e69bdd88557a66ddddfb1e766f6b97071cfd2ad23a0e0dc7c7e3d09e",
+    "four/proof-sources/burn24-s056-counter/Phase.v": "7040c586226da7b300174b1dad6b2339686de2dcf61a1b4e129b16d88335adb6",
+    "four/proof-sources/burn24-s056-counter/Regression.v": "db74693a5e51ff8fd810db7421d62cca33712b0c4969ef2f9db236f29e3ccd8d",
+    "four/proof-sources/burn24-s056-counter/Return.v": "0591bd01eee10bcb93f4e19b82424064ca904b72a985a97b9e06f23ebac3ec67",
+    "four/research/burn12-history-marker-checked.json": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed",
+    "four/research/burn12-history-marker-input.json": "229d6dfe2aa3b74df7e19aa5880ca915bcaae310e6731cf859282c6cdf396dc4",
+    "four/research/burn12-history-marker-machines.json": "4c1441802183159120655e48040d90eb4760eb16251efa897aa4b74a2f11b96e",
+    "four/research/burn12-history-marker-next1a-checked.json": "bda158c25f8ddcc6977adbd9f568976399f06890c224f39462d67ad151d3e87a",
+    "four/research/burn12-history-marker-next1a-machines.json": "216ce9ec4978f2bcff1cefef52655a1cd28b0ec20d3653de10450673ba025d31",
+    "four/research/burn12-history-marker-next1a-proof-input.json": "7f376ff6a1cae26dbc4ab5e982ac21e4550d1425516251c4023bb40771991228",
+    "four/research/burn12-history-marker-next1a-selection.json": "47d478f2a5d73e9884ea40ad2c9bd076a3e819bb995c231be1b9360a72e284c4",
+    "four/research/burn12-history-marker-next1a.md": "94601294506cfc32924ce2c801428df95219d2e1fbebde08734e3be2ed479119",
+    "four/research/burn12-history-marker-next1b-checked.json": "28e9fe480dc612814108fa712cf8b9130e564a50eca2ef4298ad57b847999d78",
+    "four/research/burn12-history-marker-next1b-machines.json": "e7fdb2e1c4b4d329caeb6cbf386dbdba153b294a569b5831561b655216e42d44",
+    "four/research/burn12-history-marker-next1b-proof-input.json": "be18af9a5ed3ad1262601822c49db25989d4360a51498b99ac55c582097786ad",
+    "four/research/burn12-history-marker-next1b-selection.json": "aa9359807f3ebe4be5e9b63acdf2060529e5cb2eb6b2ac53f70128ef9baf41db",
+    "four/research/burn12-history-marker-next1b.md": "98be9deb1104683a0be75a650bf4362a18b657626fdcce23eb04dcbb96b1e7dc",
+    "four/research/burn12-history-marker-selection.json": "91f7d28792fac677edca3575807dc63ed3a5afb0a85a6afb8f9e85b5365feca3",
+    "four/research/burn12-history-marker.md": "9a073374261d3c544387af37c1b846652f3f33d2e595bfbb08b15a37bd5664c0",
+    "four/research/burn17-binary-rank-checked.json": "4141e1dd9ec1d212b3a6dae3b0361e3da572e7884ef9efd5de0f2eaee9e12957",
+    "four/research/burn17-binary-rank-machines.json": "08aee20b38910b691c235e94aedccf71654538e6aee2db4736514c3fd00728b4",
+    "four/research/burn17-binary-rank-native.json": "7e3146fbf76cc4f342998079c5bb15598adfdd3bed56642af491e5a5a28b9d68",
+    "four/research/burn17-binary-rank-proof-input.json": "8bb4f0346e92fc05a30ec485a890a7a26b094082e1c849f9def4eddd32252b66",
+    "four/research/burn17-binary-rank.md": "1e9a9d31b02c875a84dae01cba42aa9a01bd1ad67bc2f6f6699bfa83ea3ba52b",
+    "four/research/burn17-double-zero-rank-checked.json": "9f4e35cf2f4c7a0da64726f393180c22e7abd454217a2e1f4802506ec0536838",
+    "four/research/burn17-double-zero-rank-machines.json": "fb964b3bf1faa4bb34f21c6063a360a0d9169fb98f6b5426e25b059d35f55f83",
+    "four/research/burn17-double-zero-rank-native.json": "7f3d6ae52a6ad38079ec4b02282c45d418a565068a22a8e96fa254fd00b3b413",
+    "four/research/burn17-double-zero-rank-proof-input.json": "2f671eabe18c27a5fcc686bb021b0c738b0637ae068d2de1e84dc24f89fc0c2e",
+    "four/research/burn17-double-zero-rank.md": "3ac37e8afb20d5fe77f5d208e66ad2403aa34abbd550f682b3526bcc9736bef2",
+    "four/research/burn17-paired-zero-counter-checked.json": "b1b8f110215b2f86de1fdc0e9d62a999a58fd3ae9c3e630b59bf6daa63ea2859",
+    "four/research/burn17-paired-zero-counter-machines.json": "c6b41de64e7720532b295d525dbd4bbaf6c93571809b9e3b6fd0b5b4e0ac05f7",
+    "four/research/burn17-paired-zero-counter-native.json": "dd46894874117d74449bbd252f8bf42875a06c0f750b60d1eee7bcc3c5332dfe",
+    "four/research/burn17-paired-zero-counter-proof-input.json": "0fefb34329e833424a00e5f638627d77ab5a69c91cf1f82b642aced0865c96bb",
+    "four/research/burn17-paired-zero-counter.md": "79342cf1df9e42e6e64faae60d57e97688c0eb8f7eb90873f569f3b60391e7f3",
+    "four/research/burn17-quaternary-sibling-checked.json": "fa4a6a413507ae306ca2ecaab28cf362cb89e3a184d4e47a9706d7c60256b7dd",
+    "four/research/burn17-quaternary-sibling-machines.json": "dee6c040b1f3d949c527cd65be0e2dd17bcf121bbc13e593f0c97ed3990ee90e",
+    "four/research/burn17-quaternary-sibling-native.json": "51c930c53720bcd3aab5f7ef02c62e0b32b279679b776b3d7584fa858186e82a",
+    "four/research/burn17-quaternary-sibling-proof-input.json": "aa947bd70f0baf7fded8673dab839a2aae2bc02896b549df9c23ccf04cc4f78f",
+    "four/research/burn17-quaternary-sibling.md": "4558974265504e4f20fe90270a2ef52521a07f37b24f8758f2270e59820a7b79",
+    "four/research/burn17-terminal-pair-counter-checked.json": "77df386da409447e908e77e99992f74229d3a24a5e52648177d058b91d9b357b",
+    "four/research/burn17-terminal-pair-counter-machines.json": "4a8b88af3b92edbc7db03752f490c4f7a7b6250bf18a2615f0f8db6253bb430b",
+    "four/research/burn17-terminal-pair-counter-native.json": "2e7589e39bd6d4035fc62d464baebeb6d8302e1f254513dd5d3078c554ddb0ed",
+    "four/research/burn17-terminal-pair-counter-proof-input.json": "ae275546e49a64fe8df7494e3a1ab1d8b864de6247393de0ff4801f21f049565",
+    "four/research/burn17-terminal-pair-counter.md": "2a868402cdc97cfdea4db64c6d5b63e7edabf91dc2beb523ef3e76dbe5c1a2b7",
+    "four/research/burn17-zero-marker-checked.json": "4e489a626e9ad27e347717044931f70615fea2b8194b23d7d4e95b034d5ce8aa",
+    "four/research/burn17-zero-marker-machines.json": "0692a6a0b5204a42ef77591222b0079bc1f213c4e0a855f1b6ed9ca4e0d388e4",
+    "four/research/burn17-zero-marker-native.json": "d6d614bf179287e8642334f2b57eaf00040bd416025d25445d28a6b9fb9b8095",
+    "four/research/burn17-zero-marker-proof-input.json": "853efb3ab08ad423845c984df994de49bac0119d03d1037964868059659ed034",
+    "four/research/burn17-zero-marker.md": "e29e4c515f67afb9eab990dd0458bf3d10c1ac34f3e808b9ede182765c70100e",
+    "four/research/burn18-counter-obligations-checked.json": "01c9b7ec414fe42af09ccb688fa557223e2f7b8ffc8b2f526de93fc89d1a19d5",
+    "four/research/burn18-counter-obligations.md": "b9cc54a9a1501c5f45a917357e99640ba70cba61371d65d6acc964a9588634c5",
+    "four/research/burn18-cut-siblings-checked.json": "ed6b7d8099ddef90a6f3aa4c163628190f0f86e8dde079ab548a06a48ba478b9",
+    "four/research/burn18-cut-siblings-machines.json": "c7fa4651976d845abfd1d1cc677e6538b0f5d62c29079cdab6bc35411a76b87d",
+    "four/research/burn18-cut-siblings-native.json": "eca2b894e1bc1dc694842916c54ab60a2ca07427a99828e02ce14212fa0073f3",
+    "four/research/burn18-cut-siblings-proof-input.json": "53d10e8e79f57806d20f05fce8f2057f3df11fb0efd525c9d3bbfdadd9edad02",
+    "four/research/burn18-cut-siblings.md": "70d0b8ae884d323c9b8c390dd70b561851a457b16af9d8a7e17a0686b01afff6",
+    "four/research/burn18-double-pair-checked.json": "dfa78ed7215412031a370ab4ebb5cdf9e0563a76fdcb24c2e55fdaa2d69e65ce",
+    "four/research/burn18-double-pair-machines.json": "c2b24f71ff9779ea54594389f5a949c7c0e1ef7e42f6d93fa9e06fbb43413a53",
+    "four/research/burn18-double-pair-native.json": "c60123aad24839969c5b7435b280c66d1ed9895c5e639e6210a172f0aea4bd0d",
+    "four/research/burn18-double-pair-proof-input.json": "d588668f672edb72e9a003ae727d703def0a345e449c4e8181df3d3ff0457326",
+    "four/research/burn18-paired-carry-checked.json": "7e2e23993a6778eb92d13e57b5b1150450303d1c870f6679b267c17dfacdcf68",
+    "four/research/burn18-paired-carry-machines.json": "aacdbc63f66448632be1b30559ea701badd8d5f4e66ee432d562606c0151e48b",
+    "four/research/burn18-paired-carry-native.json": "3121a5c406474ed77f0dfeb90aa54e9b38f200e4ff029e62ebae4e5b03d78fd1",
+    "four/research/burn18-paired-carry-proof-input.json": "6e700fd0eb93f0725511298928725db91967ed19241b143eab57ee04fc93d458",
+    "four/research/burn18-s012-rightmost-checked.json": "a516d571b90b7ca1afe630d9cd7734ab80fc7470623579964aa4ce90b35f5683",
+    "four/research/burn18-s012-rightmost-machines.json": "b3d8d66956257d3cf40596d1b0baa1f6ce33eec4327db980766cb1f7a3d3c37f",
+    "four/research/burn18-s012-rightmost-native.json": "5920ead1867b932b1ea5b72b1a79d47a2d8a26e9f724d37f87e7f0834545722e",
+    "four/research/burn18-s012-rightmost-proof-input.json": "fca28e9c6dad809bccb3ce4b32344f258c7e6a6f3bcf43c366a8577b8efc203c",
+    "four/research/burn18-s012-rightmost.md": "6055acbd9957d4f0c1e633ab7c6358473d9b723a465450fb8ab6a4004e23fe49",
+    "four/research/burn18-s044-counter-checked.json": "862e24730ee803430dc6cddbbf101c11a1178e66ab60ae9d2b11dae443178dd2",
+    "four/research/burn18-s044-counter-machines.json": "d46b38514f05e9277c4f8509ab90795351adf2de00f68d0f11532f0dc7341053",
+    "four/research/burn18-s044-counter-native.json": "6fdd9a2fc19dab2c0cb45b75e2dce7f0c3837669dd3b2cc2619778974cf32b18",
+    "four/research/burn18-s044-counter-proof-input.json": "3a9374a8085c1c32e4c764cde43662c3c423f09f9d9bb40cbfc2627a987df16c",
+    "four/research/burn18-s044-counter.md": "309fbbcaca63e3a3ccf5c83ba6ee2355ed0152c5411d166dd0c0d216f8e74c53",
+    "four/research/burn18-s065-rightmost-checked.json": "84e97e996a3998901f064cb91947475ff9ef74430dcf8d3eadce0f3a70f9aaa9",
+    "four/research/burn18-s065-rightmost-hypotheses.json": "41eca7e11f2b0c5b9fdd79e8c59be03878da9db752e38e2d619e968fe0afed43",
+    "four/research/burn18-s065-rightmost-machines.json": "c8411b58bc9061409ab0a1d76a660309873dbd501745e8f91c47ac1d53b6c352",
+    "four/research/burn18-s065-rightmost-native.json": "c34232bd7e38e33239ebfb25fc86f9eb7442402624a0c8dc39f59c38c312fcaa",
+    "four/research/burn18-s065-rightmost-proof-input.json": "e05c5568ebe7bad2270f5d961f8cfd61e4245901bf26d9d34ae0fa7ebeb682c1",
+    "four/research/burn18-s065-rightmost.md": "28e0b3054404ed9e4c7e901090e16f82d445e6cfb953181e4e913e2928920016",
+    "four/research/burn19-binary-trio-checked.json": "62cc3c9e9a381abd7010a2ac9c8bc12c953b86a613f7e14aca1351e93ed693bf",
+    "four/research/burn19-binary-trio-machines.json": "85e348008aed367c55fd6042856df195fe50d3b56e9d915ca88f5bada38877cc",
+    "four/research/burn19-binary-trio-native.json": "863fd1150b5b984d9408b08f11ac8bc525607b2c1ed3aa87e517ea687e0085cf",
+    "four/research/burn19-binary-trio-proof-input.json": "b7dd4228f964fae4bd1fe89a1bccd254bc0a33ff4ed3c4d0fb246c14294f033d",
+    "four/research/burn19-binary-trio.md": "4f6e22bb2da1bf70f5c6c0bde4d2d7e62353733a83723f705b4160bf405b7a4a",
+    "four/research/burn19-finite-counter-checked.json": "749f17bdee17640438627fdbb688dee4f95463a56b0d09c611ecbd69f88f1d46",
+    "four/research/burn19-finite-counter-machines.json": "2c4f05ae3044709c97ea008200e30faa685254478b19c4b745caefdf80a74a11",
+    "four/research/burn19-finite-counter-native.json": "cae659d7693705cb1b793b84cb5c2cb22f9f011504c472cec755864417bbc5c6",
+    "four/research/burn19-finite-counter-proof-input.json": "fddc02d24768f3a6cb46b75c8bff48fe67ae15797576dd20f1def12e26d542df",
+    "four/research/burn19-s077-finite-checked.json": "a3ec6a79da431461fbdbb96a2e1b77eb4e203e9a3e833274cf0b8867ac157835",
+    "four/research/burn19-s077-finite-machines.json": "edc3c016d08a5e1bd4c1da0008e52c6b8646ead46536c2df8c881c2ee72324ca",
+    "four/research/burn19-s077-finite-native.json": "b75a70d5ec4a5067a56683056d28f73b4262926773840e11173abfb33733f288",
+    "four/research/burn19-s077-finite-proof-input.json": "d14d588d697c128fe39f02a2371a3c4c8cbdf494cb19e749dafb60483167d630",
+    "four/research/burn19-s077-finite.md": "d6383d56a85f2a74af5d37ed72043a9dc99ff7fdad2d7bc4df20f19722197f6a",
+    "four/research/burn20-fibonacci-counter-checked.json": "b445f6cf1dfcab29d019eb03c1428556a97a05508b9e6c00301e7806a3619045",
+    "four/research/burn20-fibonacci-counter-machines.json": "16bfa3fa1ffdad2d9a1185af253d3fbaebcbbb98c7a46b1bd36840ee392453ca",
+    "four/research/burn20-fibonacci-counter-native.json": "e20f138cf7aaceaaf41f807f8582462d22e2be0febea0c616d4c218b19f83d37",
+    "four/research/burn20-fibonacci-counter-proof-input.json": "4b402f5caffcf00c07aba49f6fb14b62cdca25e67b5c34b407c98d3a6b572cd1",
+    "four/research/burn20-fibonacci-counter.md": "1950c8c35690449643421b36a6c868ddae8aa5e400015713f8ebf57e0a7959c4",
+    "four/research/burn20-pair-accumulator-checked.json": "09c75852ccd7429b647ff6625cb9d7dbbab9b06ce741d9f1f37e48675300c4f4",
+    "four/research/burn20-pair-accumulator-machines.json": "24faf3ed79d8c2606bc971b055c816b3360e22a019e355d41a0019ba5d4e2e1e",
+    "four/research/burn20-pair-accumulator-native.json": "8281aafef2670a5fda2277232392450548791338e438af2522da8649642404f3",
+    "four/research/burn20-pair-accumulator-proof-input.json": "0e67668aa8b8a7a83cfce6bbc66ef6ed9749d77732fe9aa99c6b681290005225",
+    "four/research/burn20-pair-accumulator.md": "3025c546b07bf58fc53cbfe81fd0a86ca8617febfe877b3b872e5cbc2fcbb41e",
+    "four/research/burn20-paired-wall-counter-checked.json": "b9660a4a611a8e4d1baa907b45e25365765708e86322ccdfd90e4e22793787cb",
+    "four/research/burn20-paired-wall-counter-machines.json": "fc1949683028f6ccce841195e9e06001b6ac19d28928814357feaa3bdb6c19dd",
+    "four/research/burn20-paired-wall-counter-native.json": "85699312d5dd4e17684a90aad051c66ff62eb3702290da44a2578653dd06f75c",
+    "four/research/burn20-paired-wall-counter-proof-input.json": "58278fe4937409ffca5f009b156ba50fbf9408b67fd4bd45d2eeba894070a648",
+    "four/research/burn20-paired-wall-counter.md": "dff44f252e4ece4e82745eebe2f537671956c3e68d222fbace5401d4e5400b72",
+    "four/research/burn20-run-counter-checked.json": "682820f0e788071ba1d7b4b5d6a1381c33411e158399a332b0db62dbae7d08f7",
+    "four/research/burn20-run-counter-machines.json": "8b9a579da56efb005d6a5741a97c838a693aa6d85f83546e59afad2055b0d058",
+    "four/research/burn20-run-counter-native.json": "6ed31415eabdec4b94b349155e57da88998d5fbd39dbc527f8a2d30aed7eb10b",
+    "four/research/burn20-run-counter-proof-input.json": "12d41bd975cd27f80ff2f8493b66aa7db2ea83b856f547b2844ec74f88478af7",
+    "four/research/burn20-run-counter.md": "a00312abd44c0f5ebe387258cb5788d1e4f3e5360da9eded4bdb076915053d50",
+    "four/research/burn20-run-sibling-checked.json": "57df9b14b53b2087a4cc1408d01d26609fefe6eee107be445d252dd138747adc",
+    "four/research/burn20-run-sibling-machines.json": "38de4a25e749405eb7fbcc2b9cc31f4342e4bd9bfabcbf1fdfbecafac2782f24",
+    "four/research/burn20-run-sibling-native.json": "1b5d8710abd4ffffd9df57219b78fadaac0aaaa20d5fda82adadb4058cffcead",
+    "four/research/burn20-run-sibling-proof-input.json": "82c45e883b5249e4b91dd76795aab521f47883f69bd92c8bf36206df33ba4276",
+    "four/research/burn20-run-sibling.md": "10e8bfd30e282ace0e4c926ee37fb24c838e0e42c9885837cd937e2f0647db96",
+    "four/research/burn20-unary-counter-checked.json": "9c6ae1c8815a4ab8a1fefcd8a23103a900433985d77c01d5e6b9f1194bf13672",
+    "four/research/burn20-unary-counter-machines.json": "e10f57eaf0c4ee1cd5469038a25f58033e5abe1ca856209e7651d7bd8b3a8d62",
+    "four/research/burn20-unary-counter-native.json": "a7b51c48f8d390ab17cfb52516c917edb376ad12e9ff08d31bbd4701474f3c37",
+    "four/research/burn20-unary-counter-proof-input.json": "0f871826749aedd3117a814cf382a129f557ced6af08583f365ed294203c192b",
+    "four/research/burn20-unary-counter.md": "628d70ef123fc7f3301ca2c941e73c97896f6d229a47fa175a088e1225e1980c",
+    "four/research/burn21-s032-finite-checked.json": "66547f8aa062d3f464fa0c8cde5989887653f4dbae1c2bbb4d11034a38272967",
+    "four/research/burn21-s032-finite-machines.json": "62b3b1945b22d660095116137a3d3286b425b5bb3c2e7f24745a18c6a49cd26a",
+    "four/research/burn21-s032-finite-native.json": "bd444878da76eaf8ae54425e040da7cfbf942379330be9a966bcd5c85de39515",
+    "four/research/burn21-s032-finite-proof-input.json": "458a43bdd46579fb6ae836d05e287c9c72ad09e0647cef74d7087251005edf1c",
+    "four/research/burn21-s032-finite.md": "f1b11bc88f3d348808407f2ba521db83ee462f9e4cc6ddf7e38176ad8d84d0b0",
+    "four/research/burn21-s057-drift-checked.json": "4d6bd4e50848dd4509b3b921765008d5320763c60c73bde268c0bd9792532d7d",
+    "four/research/burn21-s057-drift-machines.json": "aac4f93207dc3575a1e2b2742fab5d968309ac065d5a20ba556d5272a9c86e83",
+    "four/research/burn21-s057-drift-proof-input.json": "5db9cf823ad2dc16c6344b64a7fe05d5f8ac462e4182603d2ad037853e51205a",
+    "four/research/burn21-s057-drift.md": "e93a9de525c05ef3f0b0db2120517925708f4635a6c022a906fa930d1bcd308f",
+    "four/research/burn21-s057-native-input.json": "01c31b53231b66a431713001517240c7396f01bf8b2c09d273445442e7078e25",
+    "four/research/burn21-s057-native.json": "0919522477d77fa506a4370e64b17621828c29951356d81b45993b4e6e5a7204",
+    "four/research/burn21-s057-source-probe.cpp": "c7b1d5b81f3285c153663ec426413153fb518c4c52384b74477cf05af863dcb1",
+    "four/research/burn21-s057-source-result.json": "aece093302d71f0706f99363c74ad034b212bf518a777fc6eaf2f97a9cfbaff8",
+    "four/research/burn22-s053-counter-checked.json": "609c35167cd9addb222f93223e83fc22854ed32bc3dec193043ba9f6783e590b",
+    "four/research/burn22-s053-counter-machines.json": "34d4c596afa5ec63d2c07bfbfc73407f94a2a0a3cc41766ec0bc32d85f64d1da",
+    "four/research/burn22-s053-counter-native.json": "b22070a1f074847f33105223282c7a87b136fbc755a65fb3ba1b448621d263db",
+    "four/research/burn22-s053-counter-proof-input.json": "ec53422b0ce5043bf34ce45693316d5272bdf86b436dd685924d8273bb785c0e",
+    "four/research/burn23-s004-s005-unary-checked.json": "e4d4b94928b82f11ba700975dbc852d2d58fe25511803cef28810165241ef023",
+    "four/research/burn23-s004-s005-unary-frontier-source.txt": "1f07b47247419e108daa1026b5cc7d196bdd7a2ea19ecc2492aeb1b9f32c46f5",
+    "four/research/burn23-s004-s005-unary-machines.json": "f9bbe721e593607d10db3c90bd3afe1e73d94b832afc020a474803708e74f3a6",
+    "four/research/burn23-s004-s005-unary-native-input.json": "f3ac1db68b1cbb98f55635d2d59f1b2d7932d4307a03ed4c3301029f6af2d7ec",
+    "four/research/burn23-s004-s005-unary-native.json": "74b08a00092e95c030781d19bfd0138ce835aadd0526a0dea1ae9ad3fe78e8cc",
+    "four/research/burn23-s004-s005-unary-proof-input.json": "e5fc8bead3f8aa792f624603af96ba702663257bbadaf12b780992b1fe4d42d3",
+    "four/research/burn23-s004-s005-unary.md": "77ed1b7439652dbbef45cc19b6cced61aa1c8b895a7a59dd24a21b51861316ba",
+    "four/research/burn23-s062-counter-checked.json": "bb938f39ac9603db18bddd0de91dff40d9b5417e5f18b672a856f33167f91e76",
+    "four/research/burn23-s062-counter-machines.json": "ffdb1e9577145f174e5c7d323f020761a811df0153ae3b0f35dadad7ba4493c7",
+    "four/research/burn23-s062-counter-native.json": "8dd092ace2f16c605b36212fe4ccc9f159993ce9f300f2e52c17c7964ad66d57",
+    "four/research/burn23-s062-counter-proof-input.json": "6b88d107aa7376c3395177ea5343f556246785b79850fda25dd765b15236642a",
+    "four/research/burn23-s069-transducer-checked.json": "04867cfb9f9259d729a06c70e015a26373b6b8b6f5b25f66594f17b020d2d8c9",
+    "four/research/burn23-s069-transducer-frontier-source.txt": "74cc8658ff767fb152f36ae9f885dfdff9f393e45cb9f74c199ba56464dfe050",
+    "four/research/burn23-s069-transducer-machines.json": "bb22e96b3425832aeeeb323fe79536177e646a86b99b05dac78b726097cbde8c",
+    "four/research/burn23-s069-transducer-native-input.json": "bd71628158bef24dbcc78d48cc4f30f5a42e66cf21c1c4d64d0080cd71d0a6ae",
+    "four/research/burn23-s069-transducer-native.json": "4d9b776d93a061dc561781d6bd0332feae673a66b2dc56a3052ee10b7918f8f3",
+    "four/research/burn23-s069-transducer-proof-input.json": "a7f008856fceef0286eca68a2ad0bc2351ebfcfb07a0c7143df044425574b6ec",
+    "four/research/burn23-s069-transducer.md": "488f96e2d4cc72cdaec41f338856ae3a0438153cbd59a922c9fbbdcac54aa9c2",
+    "four/research/burn24-s056-counter-checked.json": "31730413ccc8963fe852b566eb3398ceda6f2939f53bc0395e3cb62d76c190de",
+    "four/research/burn24-s056-counter-machines.json": "7bd29e140960ab586cc945257856eae90cc76978551cb550da475e823b1cf980",
+    "four/research/burn24-s056-counter-native.json": "fa24ad6150859bd9fefc1e36ff96b3da97bab9fed58196be723d36be10ecf7fc",
+    "four/research/burn24-s056-counter-proof-input.json": "2c6ac10ada6c6492bcabca1a1953b326e859b95b60cfe5c01e1b95bc7df99dde",
+    "four/research/state-holdouts-78.txt": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+    "four/theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+    "four/theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+    "four/theories/BoardManifest.v": "ee34d205828c4980781b16c9f8460209326d5d0f342423bd1b714bcfa6dd82c3",
+    "four/theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "four/theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "four/theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "four/theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "four/theories/CensusUnion.v": "d4e178b18b2c8db7538161d74833c1998c0ed3bea8f27ef58b76741049026fab",
+    "four/theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "four/theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+    "four/theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+    "four/theories/Checkers/FiniteNGram.v": "786ba3d650b1ac4ddb2a630a46a5526d4fabc3cdb9207ca2a1576a6d0d3e3697",
+    "four/theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+    "four/theories/Checkers/NGramHist.v": "5976b6f0267b4cf70f3e96e33ce633484062780aa6e24d83581cb6c9ebee9488",
+    "four/theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+    "four/theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+    "four/theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "four/theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+    "four/theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+    "four/theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+    "four/theories/DualCloseout.v": "927e47c77c537ff99ea06a044df5b74b20d86da291d9e21c96a311addd1978c2",
+    "four/theories/FamilyTransport.v": "08a9435900fb92864e3741ad9db2c90fecd386cb727cb1b6da2aa42fa1b67a8d",
+    "four/theories/FiniteCensus.v": "7aacff3e2be77c06239992a0361ca8bbdd13265b9ed26ffd4377e976e7404524",
+    "four/theories/FiniteRankSearch.v": "e5f380a603f81f42a07c13805062eee79e96b163d75c2f1d09befafda0ccac45",
+    "four/theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+    "four/theories/HistCensus.v": "f6f42a2dfc76fb95f552b1569c414d13e9702a3a04234f0b33c114e3165b9c89",
+    "four/theories/HistRankSearch.v": "ee92b8f518f520c703adf0e9b58f9e00bb03e693a3df4faf0f167c842886249d",
+    "four/theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+    "four/theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+    "four/theories/MarkerPotential.v": "c4a00d9e14c9d50556cfc55a718636b02d6b23dab91cf5f72de882ba121ae6a5",
+    "four/theories/MarkerState.v": "4d17bbc6793f5e1a175781104627cd58f42cef72f7526350367c4769f42e02f9",
+    "four/theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "four/theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+    "four/theories/OneStateConditional.v": "b30a6bc6533fb00ec33022ea3e5ca5291bbb95a50783d0e51223007fe8cfc99d",
+    "four/theories/OneStateReach.v": "412e37f661f7583e2685b910d077c2c1eb734840e2264db10f1700616f5d037b",
+    "four/theories/OrbitCloseout.v": "f7005d5ca6ce0d3e64acdda425704eb31226192fc6bf2ae3eff71eb4be230556",
+    "four/theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+    "four/theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+    "four/theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+    "four/theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+    "four/theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+    "four/theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+    "four/theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+    "four/theories/RightMarkerState.v": "2b883d9a4d9b65e4534ec0602de50e5d318c60d6cee8d19fa2ee52fb11398efd",
+    "four/theories/Shadow.v": "6c68cae389ad7b9198dba2bd2d30dc8403bfe6f51c439570dfa4610dd863e160",
+    "four/theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "four/theories/StateBounds.v": "2892c4dc4dea327dcef826fd35912e3df6ff60436dc1d520811e9729a456d224",
+    "four/theories/StateOnlyCloseout.v": "afb65dbfc17f3eaa495a5648e6cf024137ec360d4d573b38a563e685c0dce5d2",
+    "four/theories/StatePipeline.v": "96345f0cce06443422729d42447338aca2049958ea625faa7d48cd567d0af59f",
+    "four/theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "four/theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+    "four/theories/Symmetry.v": "ff83de1ebfb0f8e210728e383ca1a413ddb99e19879e6caf95fb9822ced127e6",
+    "four/theories/TotalCompletion.v": "45fe012cff63886641e3b4a091ca9f2d80c071075d6f2b4cfc68f94137e8bbad",
+    "four/tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "four/tools/check_burn12_history_marker.py": "dcfa72033dfece27b41679b3c1b094e7bb37cf76eee14f462f3db33064266972",
+    "four/tools/check_burn12_history_marker_batch.py": "ff1730e74de6908aabf9a870fa586446fd2fe85729826385b066103f7cddec08",
+    "four/tools/check_burn17_binary_rank.py": "24db6e0119ad8a7299e7dbb5bb7c55d03947fe5d6372e4e3ae4877a882b9e27a",
+    "four/tools/check_burn17_binary_rank_native.py": "d0c11f3e6aeed4d95500265454fe0e54e8066e7a5408a418933205a404f2ad26",
+    "four/tools/check_burn17_double_zero_rank.py": "0549f9c483d1ea024070a5613fde9115cd03db0e59821057cc57b23a9b850ce7",
+    "four/tools/check_burn17_double_zero_rank_native.py": "0fcab0cecba71c2cd10e3fed4d10694ed7e522a03c334ffba23b3654aac131d1",
+    "four/tools/check_burn17_paired_zero_counter.py": "22c6f1dba496d7e2a15a225148b088020f4297f5c300c31f8f285d590aacc502",
+    "four/tools/check_burn17_paired_zero_counter_native.py": "e6c536fbb8361a6d6528674e8182178ae3318658118dddc6fb441cd0891627b1",
+    "four/tools/check_burn17_quaternary_sibling.py": "b6b60205b722b1001912f5ce6e5e03715c9ae8a0c54e60ad88e3f1c816f8f7da",
+    "four/tools/check_burn17_quaternary_sibling_native.py": "eb099e924a24113da541331eefbbd948ddfef7d66d1ca35b8017a5acd93e9983",
+    "four/tools/check_burn17_terminal_pair_counter.py": "2d6ed216cde1d91be5e4b235854918dbdefb5a60f706f204c0f2daa9aaadaed5",
+    "four/tools/check_burn17_terminal_pair_counter_native.py": "392b2bc24029b2b39e281687c0145dcc84fbd66062239325b43a6d60c8f1102e",
+    "four/tools/check_burn17_zero_marker.py": "1a11a8c379e3e268adfc0f6f528e69478ef8d80939744d42ff4dff67374a9c61",
+    "four/tools/check_burn17_zero_marker_native.py": "c799de4cf74e1b6e0f8696f66c187e0cd87c5908d5034e3f8f9f68a2b31000db",
+    "four/tools/check_burn18_cut_siblings.py": "c2f8744815820b2b64ba0aecd6e846166f89a785fd6611028f39f84a5deca305",
+    "four/tools/check_burn18_cut_siblings_native.py": "a8800e8c6f36fa108791a18d8781ea0636bc66bb41d86deac3f3fc86b8d6e2d6",
+    "four/tools/check_burn18_double_pair.py": "e0c89b8b7fba8ffae37fac1b6ae7c7d3f5e7cba9ad91b392033003ac753bdfe2",
+    "four/tools/check_burn18_double_pair_native.py": "bf23f885b292952c6a6aa9a76f65dd83bdb26b472bbc4cfae0b32e78615980cb",
+    "four/tools/check_burn18_paired_carry.py": "336d1c2510f5db12cbeefc67b93de803f429e132bd62731bdc0eafafde9618e7",
+    "four/tools/check_burn18_paired_carry_native.py": "f11e05ec86ea9ce51ba9e3f5ccbdd3cdfd850b334c22ccf94e2620fc4158b8b9",
+    "four/tools/check_burn18_s012_rightmost.py": "87afefebca3295610d8dc2851929e964bb0bc79004fa46026b0776539d5d0385",
+    "four/tools/check_burn18_s012_rightmost_native.py": "7231968451633d3d7daaebb726fd6f7417f1cc639f1b4de26cd6d83e3963fe45",
+    "four/tools/check_burn18_s044_counter.py": "18e4e53767bd8bd92c7bf22e10b4a0d2dc3400ad2e42597b5f598fac69cd244d",
+    "four/tools/check_burn18_s044_counter_native.py": "b344914417825b457ed8c8125427f82bad16bf8672e57bb3e8213565456d9892",
+    "four/tools/check_burn18_s065_rightmost.py": "0d1f7f2b5de3ad050e3864d035e59479dd4cb98718205d8bdcee99d15aaf429b",
+    "four/tools/check_burn18_s065_rightmost_native.py": "4d313d361a7058f59b20e850beaf4ecae5db1203fdf5fdd82edada6782aeeb60",
+    "four/tools/check_burn19_binary_trio.py": "8f2ed216786f2939ba28e79c8f470d98bae6683e9365665ca30964cde95fb370",
+    "four/tools/check_burn19_binary_trio_native.py": "fd23488d8057fcc276c3cf6c967b6c5af4155892dafa568af0c700ff021fe7b9",
+    "four/tools/check_burn19_finite_counter.py": "307047e4e43ec5287be3af01224c4e9eacf547dc56b59c8e8d3ab439bbe8af86",
+    "four/tools/check_burn19_finite_counter_native.py": "008d06a14044c0c8800a73f93c4b81cd705e707eaed5ba45ac314ee5270b1360",
+    "four/tools/check_burn19_s077_finite.py": "b66cff2a8a807b290749dd98bf6a5cde01e576bf3f64219af3c31354a3263777",
+    "four/tools/check_burn19_s077_finite_native.py": "8b4c742259bc9a4d85ab6291985cf29b825248807a4935497f546fe899077236",
+    "four/tools/check_burn20_fibonacci_counter.py": "a4c525d502936ba76c6b26d0ee52605098b989c58921ba092295315de8e62998",
+    "four/tools/check_burn20_fibonacci_counter_native.py": "0262d5df7e2ebb4592044685a606dfaa4322a75a05c4504d7d7391e57ddb79be",
+    "four/tools/check_burn20_pair_accumulator.py": "bbabc9070d64d9ce765b305dca160bf4a9bf35aa4ec60283a9d42eb58d71a28b",
+    "four/tools/check_burn20_pair_accumulator_native.py": "c70389c2fb6ac35ae31882e50cea6f4f88b75c76d637b79c2d47690e685e96c6",
+    "four/tools/check_burn20_paired_wall_counter.py": "6f56e5a4f3667266be34b7241da622975ad14a4f0d3b146cddd6a10831911ad6",
+    "four/tools/check_burn20_paired_wall_counter_native.py": "d04ce47e667a98793e594dc74a93715d5b840331d82487c16e9dc4842a1acd32",
+    "four/tools/check_burn20_run_counter.py": "dad3e27e2c709293decdd55eaa70392e9aa85714c54329472b793ac0ffb8f340",
+    "four/tools/check_burn20_run_counter_native.py": "0db6937d151b0a5d074d5f495d7d5146d09e046f421516b6a0737460301b106f",
+    "four/tools/check_burn20_run_sibling.py": "bb92cb8d323088de48d70775019b5e6c981d4155ff019cab0e7dafcbdbc925cc",
+    "four/tools/check_burn20_run_sibling_native.py": "96d99255fb9d4e53be61a3b4be2775b7f3d91cec150595207fafbfe20f42557e",
+    "four/tools/check_burn20_unary_counter.py": "785eb473ca363d95a11b3333f00f06bbe3e8c4b88081637fb32e5823f386f399",
+    "four/tools/check_burn20_unary_counter_native.py": "0607610bf85e9915298de3b875d72f27ff45c0944d011998853dd242fea10f58",
+    "four/tools/check_burn21_s032_finite.py": "596416a8649b898ffc7e2c83370a277ad2f798ee2e48596a023e4e2e395dc708",
+    "four/tools/check_burn21_s032_finite_native.py": "4fe8e135a42fafbfb77381ef7e0338694d9a7d508eb4e9c15e5777d13e9e6965",
+    "four/tools/check_burn21_s057_drift.py": "dd4f502722e2c5d01d3cd66b4cc45e00fe1d4810c7197519f5b574456d468150",
+    "four/tools/check_burn21_s057_native.py": "4ad601211dfe14c12807c2f59e3e70d3a3ea559512ee30afeb8185c05198d068",
+    "four/tools/check_burn22_s053_counter.py": "2b7250763c3b806ba8cd111c658be4ec6e9352e4c5558aa79c85411307198555",
+    "four/tools/check_burn22_s053_counter_native.py": "3738fce3e1207d762c171ab1428727bf2adf64dcbcba4107ff1e99b60a5a2a67",
+    "four/tools/check_burn23_s004_s005_unary.py": "5c9a5c10af0fcc0c9c973446786385859e0cbe57d7df387a61867f83020cf9de",
+    "four/tools/check_burn23_s004_s005_unary_native.py": "9e148612efbdd0f56f7b628bb72915f757be0e18cc4a7f0ce51fb8b1a05a8d87",
+    "four/tools/check_burn23_s062_counter.py": "a9123e9b948fb60f906bf6a218a0811a5e1329e9d0ce05b895400856b08f3c70",
+    "four/tools/check_burn23_s062_counter_native.py": "91d7771137fd7d0c16c6724f1dc4d848475bbf3d48957b60b72d0c904331b79e",
+    "four/tools/check_burn23_s069_transducer.py": "5d703d25eba8cc37b05d97e23ecc64e7184ab1fb06df259cca102f997e92550c",
+    "four/tools/check_burn23_s069_transducer_native.py": "d6440cec5f41ec43e5688c58f5dbc199007832557e3ff2d4f3f8b636cdf010e0",
+    "four/tools/check_burn24_s056_counter.py": "a2f2c11981f6e40a61c4fb10ed5a5b03d4699cbbb6afa73fbdd885d1981d1739",
+    "four/tools/check_burn24_s056_counter_native.py": "ab49b1b2b3eec6b4890da444c2ff54d716e2d51d8127e03bb14488415d028c24",
+    "four/tools/check_burn9_context_marker.py": "f4338a5701b14ec033b6b151cf413c2bcac76cdcfd02bf714ce2b180fc978612",
+    "four/tools/check_campaign.py": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+    "four/tools/check_shadow_links.py": "342b0c36d050f727ad5478af1b68f67d9c3827de984835b0bf6e60b5b657c9ca",
+    "four/tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "four/tools/group_families.py": "904d15a0fd0663858e7526dbc22b15cf7a6dca96d8087af09fd366a6a00acf9f",
+    "four/tools/kernel_audit_cache_v3.py": "0323d125e53534efe41ce5c675ec3189537b6568cbf10fe057e32810835e9e0f",
+    "four/tools/marker_state_profile_v2.py": "998103d4757e54fd719d6d5bc2a303b27ea3eff36df12eb8e910e3e89185d005",
+    "four/tools/replay_shared_state_case.py": "5727993233c1f8971a1ba0371e1b6814cd55b99246f9ab28efc6c85cbf0dadfb",
+    "four/tools/search_burn4_entry_marker.py": "e17ecea3520fb369f517c65c3a64e1c5b7a581042dcbd4aebfd04a5208612985"
+  }
+}

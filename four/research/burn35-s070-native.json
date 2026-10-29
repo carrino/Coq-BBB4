@@ -1,0 +1,76 @@
+{
+  "checked_state_families": 0,
+  "rows": [
+    {
+      "DFA_states": 8,
+      "actual_entry_steps": 35,
+      "arbitrary_context_scanner_controls": 25389,
+      "code": 4013446348,
+      "contribution": "Root synthesized and independently validated the frozen8-state DFA; remaining_state_solver proved its finite laws, universal scanner translation and full state recurrence in Coq.",
+      "direct_blank_steps": 1000000,
+      "direct_main_cuts": 1278,
+      "direct_normalized_cycles": 637,
+      "finite_transition_controls": 84,
+      "independent_model_check_sha256": "2a5e3378c853bc65872142e40fb451fe5a49d1934f0ecd88976c17871d6396b3",
+      "last_direct_normalized_cut": {
+        "length": 1303,
+        "time": 995895
+      },
+      "machine": "1LB2RA1RA0RA_2RB1LA3LB2LB",
+      "main_word_controls": 3054,
+      "model_sha256": "5799ccc7ce51cf7c5b3fca568ed2d5a1876565576f2e3659d515da23caf7f73a",
+      "negative_controls": {
+        "empty_G_rejected": true,
+        "final_scanner_rejected": true,
+        "twos_G_rejected": true,
+        "weak_marker_sequence": [
+          [
+            2,
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            2,
+            0,
+            2,
+            2,
+            1,
+            1
+          ],
+          [
+            2,
+            1,
+            0,
+            0,
+            0,
+            2,
+            2
+          ],
+          [
+            2,
+            0,
+            2,
+            2,
+            1,
+            0,
+            2,
+            2
+          ]
+        ]
+      },
+      "outer_phase_controls": 206,
+      "prefix_relation_entries": 28,
+      "rejected_main_words": 226,
+      "state_bound": 0
+    }
+  ],
+  "scope": "S070 exact scanner controls and finite DFA provenance, without proof credit.",
+  "source_sha256": {
+    "research/burn35-s070-grammar-model.json": "5799ccc7ce51cf7c5b3fca568ed2d5a1876565576f2e3659d515da23caf7f73a",
+    "research/burn35-s070-model-independent-check.json": "2a5e3378c853bc65872142e40fb451fe5a49d1934f0ecd88976c17871d6396b3",
+    "tools/check_burn35_s070_native.py": "b84c721829b16ff9d22134522ed9fbe5b242d1ae41acab25584c2e5b0437c8ec",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

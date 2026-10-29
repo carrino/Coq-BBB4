@@ -1,0 +1,78 @@
+{
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 4424141919,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 36,
+      "invariant": "conditional",
+      "machine": "1LB2LB0LA1RB_3RB1LA3LB2RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 3326284571,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 97,
+      "invariant": "conditional",
+      "machine": "1LB0RB1RA3LA_2RB3LB0LB2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 1683836439,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 64,
+      "invariant": "conditional",
+      "machine": "1LB2RB3LB2RA_3RB3LA0LB1LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2380274555,
+      "fuel": 131072,
+      "history": 4,
+      "history_marker_mask": 9,
+      "invariant": "conditional",
+      "machine": "1LB0RA---0LB_1RB2RA3LB1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        2,
+        1
+      ],
+      "width": 4
+    }
+  ],
+  "scope": "Four representative historical-marker proposals. Zero proof credit until separate generic theorem and recursive audit pass.",
+  "selection": "Three inexpensive complete-table examples with distinct masks and one reserved partial-table example.",
+  "source_sha256": {
+    "research/burn11-history-marker-complete-search.json": "e02337b9520ca1a982e6f462e61aa608f0bc84084dc36dac79f3cebb830da05a",
+    "research/burn11-history-marker-partial-search.json": "2057337319533e810a503ddca41ccb0f32ce7d50388a1e0103f2bf3da5efc736"
+  }
+}

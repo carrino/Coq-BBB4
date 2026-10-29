@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 2789553601,
+      "machine": "1LB2RA1LA1RB_2RB2LB3LB1RA"
+    }
+  ],
+  "selection_report": "research/burn23-s069-transducer-native.json",
+  "selection_sha256": "4d9b776d93a061dc561781d6bd0332feae673a66b2dc56a3052ee10b7918f8f3",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn23-s069-transducer/CrossingParity.v": "3352dd0f068f22e3ced7084a15057922386d8a14b940bc76c638a8a40cb14b0e",
+    "proof-sources/burn23-s069-transducer/Regression.v": "4fad95b3ce4da0f0bf58249696ae8cd2dc7f3210e1924df529876aa985d516b1"
+  }
+}

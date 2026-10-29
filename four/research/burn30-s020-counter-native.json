@@ -1,0 +1,3846 @@
+{
+  "actual_blank_entry_steps": 176,
+  "checked_instruction_families": 0,
+  "checked_state_families": 0,
+  "inputs_sha256": {
+    "research/burn30-s020-counter-frontier.txt": "b30a2e76d47f8baa4018d4f2b2fecb61fa72b6ce2a2e72f6868fadeeb4e50c18",
+    "research/burn30-s020-counter-native-input.json": "b5763c431d5989da8e89f63a43b7e53cd6493e9f99b60b6a2dfe0d89c46d8474"
+  },
+  "macro_control_count": 540,
+  "macro_controls": [
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 0,
+      "steps": 114,
+      "tag": ""
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 0,
+      "steps": 114,
+      "tag": "0"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 0,
+      "steps": 114,
+      "tag": "1"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 0,
+      "steps": 114,
+      "tag": "3"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 0,
+      "steps": 114,
+      "tag": "0012"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 0,
+      "steps": 114,
+      "tag": "1321"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 0,
+      "steps": 114,
+      "tag": "3221311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 0,
+      "steps": 114,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 0,
+      "steps": 130,
+      "tag": ""
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 0,
+      "steps": 130,
+      "tag": "0"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 0,
+      "steps": 130,
+      "tag": "1"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 0,
+      "steps": 130,
+      "tag": "3"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 0,
+      "steps": 130,
+      "tag": "0012"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 0,
+      "steps": 130,
+      "tag": "1321"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 0,
+      "steps": 130,
+      "tag": "3221311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 0,
+      "steps": 130,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 0,
+      "steps": 146,
+      "tag": ""
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 0,
+      "steps": 146,
+      "tag": "0"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 0,
+      "steps": 146,
+      "tag": "1"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 0,
+      "steps": 146,
+      "tag": "3"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 0,
+      "steps": 146,
+      "tag": "0012"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 0,
+      "steps": 146,
+      "tag": "1321"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 0,
+      "steps": 146,
+      "tag": "3221311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 0,
+      "steps": 146,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 0,
+      "steps": 162,
+      "tag": ""
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 0,
+      "steps": 162,
+      "tag": "0"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 0,
+      "steps": 162,
+      "tag": "1"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 0,
+      "steps": 162,
+      "tag": "3"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 0,
+      "steps": 162,
+      "tag": "0012"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 0,
+      "steps": 162,
+      "tag": "1321"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 0,
+      "steps": 162,
+      "tag": "3221311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 0,
+      "steps": 162,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 0,
+      "steps": 178,
+      "tag": ""
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 0,
+      "steps": 178,
+      "tag": "0"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 0,
+      "steps": 178,
+      "tag": "1"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 0,
+      "steps": 178,
+      "tag": "3"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 0,
+      "steps": 178,
+      "tag": "0012"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 0,
+      "steps": 178,
+      "tag": "1321"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 0,
+      "steps": 178,
+      "tag": "3221311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 0,
+      "steps": 178,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 0,
+      "steps": 194,
+      "tag": ""
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 0,
+      "steps": 194,
+      "tag": "0"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 0,
+      "steps": 194,
+      "tag": "1"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 0,
+      "steps": 194,
+      "tag": "3"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 0,
+      "steps": 194,
+      "tag": "0012"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 0,
+      "steps": 194,
+      "tag": "1321"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 0,
+      "steps": 194,
+      "tag": "3221311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 0,
+      "steps": 194,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 1,
+      "steps": 178,
+      "tag": ""
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 1,
+      "steps": 178,
+      "tag": "0"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 1,
+      "steps": 178,
+      "tag": "1"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 1,
+      "steps": 178,
+      "tag": "3"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 1,
+      "steps": 178,
+      "tag": "0012"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 1,
+      "steps": 178,
+      "tag": "1321"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 1,
+      "steps": 178,
+      "tag": "3221311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 1,
+      "steps": 178,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 1,
+      "steps": 194,
+      "tag": ""
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 1,
+      "steps": 194,
+      "tag": "0"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 1,
+      "steps": 194,
+      "tag": "1"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 1,
+      "steps": 194,
+      "tag": "3"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 1,
+      "steps": 194,
+      "tag": "0012"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 1,
+      "steps": 194,
+      "tag": "1321"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 1,
+      "steps": 194,
+      "tag": "3221311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 1,
+      "steps": 194,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 1,
+      "steps": 210,
+      "tag": ""
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 1,
+      "steps": 210,
+      "tag": "0"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 1,
+      "steps": 210,
+      "tag": "1"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 1,
+      "steps": 210,
+      "tag": "3"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 1,
+      "steps": 210,
+      "tag": "0012"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 1,
+      "steps": 210,
+      "tag": "1321"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 1,
+      "steps": 210,
+      "tag": "3221311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 1,
+      "steps": 210,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 1,
+      "steps": 226,
+      "tag": ""
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 1,
+      "steps": 226,
+      "tag": "0"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 1,
+      "steps": 226,
+      "tag": "1"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 1,
+      "steps": 226,
+      "tag": "3"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 1,
+      "steps": 226,
+      "tag": "0012"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 1,
+      "steps": 226,
+      "tag": "1321"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 1,
+      "steps": 226,
+      "tag": "3221311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 1,
+      "steps": 226,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 1,
+      "steps": 242,
+      "tag": ""
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 1,
+      "steps": 242,
+      "tag": "0"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 1,
+      "steps": 242,
+      "tag": "1"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 1,
+      "steps": 242,
+      "tag": "3"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 1,
+      "steps": 242,
+      "tag": "0012"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 1,
+      "steps": 242,
+      "tag": "1321"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 1,
+      "steps": 242,
+      "tag": "3221311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 1,
+      "steps": 242,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 1,
+      "steps": 258,
+      "tag": ""
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 1,
+      "steps": 258,
+      "tag": "0"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 1,
+      "steps": 258,
+      "tag": "1"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 1,
+      "steps": 258,
+      "tag": "3"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 1,
+      "steps": 258,
+      "tag": "0012"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 1,
+      "steps": 258,
+      "tag": "1321"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 1,
+      "steps": 258,
+      "tag": "3221311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 1,
+      "steps": 258,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 2,
+      "steps": 242,
+      "tag": ""
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 2,
+      "steps": 242,
+      "tag": "0"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 2,
+      "steps": 242,
+      "tag": "1"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 2,
+      "steps": 242,
+      "tag": "3"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 2,
+      "steps": 242,
+      "tag": "0012"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 2,
+      "steps": 242,
+      "tag": "1321"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 2,
+      "steps": 242,
+      "tag": "3221311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 2,
+      "steps": 242,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 2,
+      "steps": 258,
+      "tag": ""
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 2,
+      "steps": 258,
+      "tag": "0"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 2,
+      "steps": 258,
+      "tag": "1"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 2,
+      "steps": 258,
+      "tag": "3"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 2,
+      "steps": 258,
+      "tag": "0012"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 2,
+      "steps": 258,
+      "tag": "1321"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 2,
+      "steps": 258,
+      "tag": "3221311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 2,
+      "steps": 258,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 2,
+      "steps": 274,
+      "tag": ""
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 2,
+      "steps": 274,
+      "tag": "0"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 2,
+      "steps": 274,
+      "tag": "1"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 2,
+      "steps": 274,
+      "tag": "3"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 2,
+      "steps": 274,
+      "tag": "0012"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 2,
+      "steps": 274,
+      "tag": "1321"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 2,
+      "steps": 274,
+      "tag": "3221311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 2,
+      "steps": 274,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 2,
+      "steps": 290,
+      "tag": ""
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 2,
+      "steps": 290,
+      "tag": "0"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 2,
+      "steps": 290,
+      "tag": "1"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 2,
+      "steps": 290,
+      "tag": "3"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 2,
+      "steps": 290,
+      "tag": "0012"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 2,
+      "steps": 290,
+      "tag": "1321"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 2,
+      "steps": 290,
+      "tag": "3221311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 2,
+      "steps": 290,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 2,
+      "steps": 306,
+      "tag": ""
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 2,
+      "steps": 306,
+      "tag": "0"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 2,
+      "steps": 306,
+      "tag": "1"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 2,
+      "steps": 306,
+      "tag": "3"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 2,
+      "steps": 306,
+      "tag": "0012"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 2,
+      "steps": 306,
+      "tag": "1321"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 2,
+      "steps": 306,
+      "tag": "3221311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 2,
+      "steps": 306,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 2,
+      "steps": 322,
+      "tag": ""
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 2,
+      "steps": 322,
+      "tag": "0"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 2,
+      "steps": 322,
+      "tag": "1"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 2,
+      "steps": 322,
+      "tag": "3"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 2,
+      "steps": 322,
+      "tag": "0012"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 2,
+      "steps": 322,
+      "tag": "1321"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 2,
+      "steps": 322,
+      "tag": "3221311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 2,
+      "steps": 322,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 3,
+      "steps": 306,
+      "tag": ""
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 3,
+      "steps": 306,
+      "tag": "0"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 3,
+      "steps": 306,
+      "tag": "1"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 3,
+      "steps": 306,
+      "tag": "3"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 3,
+      "steps": 306,
+      "tag": "0012"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 3,
+      "steps": 306,
+      "tag": "1321"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 3,
+      "steps": 306,
+      "tag": "3221311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 3,
+      "steps": 306,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 3,
+      "steps": 322,
+      "tag": ""
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 3,
+      "steps": 322,
+      "tag": "0"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 3,
+      "steps": 322,
+      "tag": "1"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 3,
+      "steps": 322,
+      "tag": "3"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 3,
+      "steps": 322,
+      "tag": "0012"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 3,
+      "steps": 322,
+      "tag": "1321"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 3,
+      "steps": 322,
+      "tag": "3221311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 3,
+      "steps": 322,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 3,
+      "steps": 338,
+      "tag": ""
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 3,
+      "steps": 338,
+      "tag": "0"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 3,
+      "steps": 338,
+      "tag": "1"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 3,
+      "steps": 338,
+      "tag": "3"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 3,
+      "steps": 338,
+      "tag": "0012"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 3,
+      "steps": 338,
+      "tag": "1321"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 3,
+      "steps": 338,
+      "tag": "3221311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 3,
+      "steps": 338,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 3,
+      "steps": 354,
+      "tag": ""
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 3,
+      "steps": 354,
+      "tag": "0"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 3,
+      "steps": 354,
+      "tag": "1"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 3,
+      "steps": 354,
+      "tag": "3"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 3,
+      "steps": 354,
+      "tag": "0012"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 3,
+      "steps": 354,
+      "tag": "1321"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 3,
+      "steps": 354,
+      "tag": "3221311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 3,
+      "steps": 354,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 3,
+      "steps": 370,
+      "tag": ""
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 3,
+      "steps": 370,
+      "tag": "0"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 3,
+      "steps": 370,
+      "tag": "1"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 3,
+      "steps": 370,
+      "tag": "3"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 3,
+      "steps": 370,
+      "tag": "0012"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 3,
+      "steps": 370,
+      "tag": "1321"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 3,
+      "steps": 370,
+      "tag": "3221311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 3,
+      "steps": 370,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 3,
+      "steps": 386,
+      "tag": ""
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 3,
+      "steps": 386,
+      "tag": "0"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 3,
+      "steps": 386,
+      "tag": "1"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 3,
+      "steps": 386,
+      "tag": "3"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 3,
+      "steps": 386,
+      "tag": "0012"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 3,
+      "steps": 386,
+      "tag": "1321"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 3,
+      "steps": 386,
+      "tag": "3221311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 3,
+      "steps": 386,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 4,
+      "steps": 370,
+      "tag": ""
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 4,
+      "steps": 370,
+      "tag": "0"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 4,
+      "steps": 370,
+      "tag": "1"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 4,
+      "steps": 370,
+      "tag": "3"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 4,
+      "steps": 370,
+      "tag": "0012"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 4,
+      "steps": 370,
+      "tag": "1321"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 4,
+      "steps": 370,
+      "tag": "3221311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 4,
+      "steps": 370,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 4,
+      "steps": 386,
+      "tag": ""
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 4,
+      "steps": 386,
+      "tag": "0"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 4,
+      "steps": 386,
+      "tag": "1"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 4,
+      "steps": 386,
+      "tag": "3"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 4,
+      "steps": 386,
+      "tag": "0012"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 4,
+      "steps": 386,
+      "tag": "1321"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 4,
+      "steps": 386,
+      "tag": "3221311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 4,
+      "steps": 386,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 4,
+      "steps": 402,
+      "tag": ""
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 4,
+      "steps": 402,
+      "tag": "0"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 4,
+      "steps": 402,
+      "tag": "1"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 4,
+      "steps": 402,
+      "tag": "3"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 4,
+      "steps": 402,
+      "tag": "0012"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 4,
+      "steps": 402,
+      "tag": "1321"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 4,
+      "steps": 402,
+      "tag": "3221311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 4,
+      "steps": 402,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 4,
+      "steps": 418,
+      "tag": ""
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 4,
+      "steps": 418,
+      "tag": "0"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 4,
+      "steps": 418,
+      "tag": "1"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 4,
+      "steps": 418,
+      "tag": "3"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 4,
+      "steps": 418,
+      "tag": "0012"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 4,
+      "steps": 418,
+      "tag": "1321"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 4,
+      "steps": 418,
+      "tag": "3221311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 4,
+      "steps": 418,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 4,
+      "steps": 434,
+      "tag": ""
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 4,
+      "steps": 434,
+      "tag": "0"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 4,
+      "steps": 434,
+      "tag": "1"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 4,
+      "steps": 434,
+      "tag": "3"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 4,
+      "steps": 434,
+      "tag": "0012"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 4,
+      "steps": 434,
+      "tag": "1321"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 4,
+      "steps": 434,
+      "tag": "3221311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 4,
+      "steps": 434,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 4,
+      "steps": 450,
+      "tag": ""
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 4,
+      "steps": 450,
+      "tag": "0"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 4,
+      "steps": 450,
+      "tag": "1"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 4,
+      "steps": 450,
+      "tag": "3"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 4,
+      "steps": 450,
+      "tag": "0012"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 4,
+      "steps": 450,
+      "tag": "1321"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 4,
+      "steps": 450,
+      "tag": "3221311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 4,
+      "steps": 450,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 5,
+      "steps": 434,
+      "tag": ""
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 5,
+      "steps": 434,
+      "tag": "0"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 5,
+      "steps": 434,
+      "tag": "1"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 5,
+      "steps": 434,
+      "tag": "3"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 5,
+      "steps": 434,
+      "tag": "0012"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 5,
+      "steps": 434,
+      "tag": "1321"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 5,
+      "steps": 434,
+      "tag": "3221311"
+    },
+    {
+      "carry": 0,
+      "kind": "increment",
+      "n": 5,
+      "steps": 434,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 5,
+      "steps": 450,
+      "tag": ""
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 5,
+      "steps": 450,
+      "tag": "0"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 5,
+      "steps": 450,
+      "tag": "1"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 5,
+      "steps": 450,
+      "tag": "3"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 5,
+      "steps": 450,
+      "tag": "0012"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 5,
+      "steps": 450,
+      "tag": "1321"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 5,
+      "steps": 450,
+      "tag": "3221311"
+    },
+    {
+      "carry": 1,
+      "kind": "increment",
+      "n": 5,
+      "steps": 450,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 5,
+      "steps": 466,
+      "tag": ""
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 5,
+      "steps": 466,
+      "tag": "0"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 5,
+      "steps": 466,
+      "tag": "1"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 5,
+      "steps": 466,
+      "tag": "3"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 5,
+      "steps": 466,
+      "tag": "0012"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 5,
+      "steps": 466,
+      "tag": "1321"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 5,
+      "steps": 466,
+      "tag": "3221311"
+    },
+    {
+      "carry": 2,
+      "kind": "increment",
+      "n": 5,
+      "steps": 466,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 5,
+      "steps": 482,
+      "tag": ""
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 5,
+      "steps": 482,
+      "tag": "0"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 5,
+      "steps": 482,
+      "tag": "1"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 5,
+      "steps": 482,
+      "tag": "3"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 5,
+      "steps": 482,
+      "tag": "0012"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 5,
+      "steps": 482,
+      "tag": "1321"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 5,
+      "steps": 482,
+      "tag": "3221311"
+    },
+    {
+      "carry": 3,
+      "kind": "increment",
+      "n": 5,
+      "steps": 482,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 5,
+      "steps": 498,
+      "tag": ""
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 5,
+      "steps": 498,
+      "tag": "0"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 5,
+      "steps": 498,
+      "tag": "1"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 5,
+      "steps": 498,
+      "tag": "3"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 5,
+      "steps": 498,
+      "tag": "0012"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 5,
+      "steps": 498,
+      "tag": "1321"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 5,
+      "steps": 498,
+      "tag": "3221311"
+    },
+    {
+      "carry": 4,
+      "kind": "increment",
+      "n": 5,
+      "steps": 498,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 5,
+      "steps": 514,
+      "tag": ""
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 5,
+      "steps": 514,
+      "tag": "0"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 5,
+      "steps": 514,
+      "tag": "1"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 5,
+      "steps": 514,
+      "tag": "3"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 5,
+      "steps": 514,
+      "tag": "0012"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 5,
+      "steps": 514,
+      "tag": "1321"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 5,
+      "steps": 514,
+      "tag": "3221311"
+    },
+    {
+      "carry": 5,
+      "kind": "increment",
+      "n": 5,
+      "steps": 514,
+      "tag": "322131213121311"
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_E",
+      "n": 0,
+      "steps": 147,
+      "tag": null
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_E",
+      "n": 0,
+      "steps": 173,
+      "tag": null
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_E",
+      "n": 0,
+      "steps": 199,
+      "tag": null
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_E",
+      "n": 0,
+      "steps": 225,
+      "tag": null
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_E",
+      "n": 0,
+      "steps": 251,
+      "tag": null
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_E",
+      "n": 0,
+      "steps": 277,
+      "tag": null
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_E",
+      "n": 1,
+      "steps": 201,
+      "tag": null
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_E",
+      "n": 1,
+      "steps": 227,
+      "tag": null
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_E",
+      "n": 1,
+      "steps": 253,
+      "tag": null
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_E",
+      "n": 1,
+      "steps": 279,
+      "tag": null
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_E",
+      "n": 1,
+      "steps": 305,
+      "tag": null
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_E",
+      "n": 1,
+      "steps": 331,
+      "tag": null
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_E",
+      "n": 2,
+      "steps": 255,
+      "tag": null
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_E",
+      "n": 2,
+      "steps": 281,
+      "tag": null
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_E",
+      "n": 2,
+      "steps": 307,
+      "tag": null
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_E",
+      "n": 2,
+      "steps": 333,
+      "tag": null
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_E",
+      "n": 2,
+      "steps": 359,
+      "tag": null
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_E",
+      "n": 2,
+      "steps": 385,
+      "tag": null
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_E",
+      "n": 3,
+      "steps": 309,
+      "tag": null
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_E",
+      "n": 3,
+      "steps": 335,
+      "tag": null
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_E",
+      "n": 3,
+      "steps": 361,
+      "tag": null
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_E",
+      "n": 3,
+      "steps": 387,
+      "tag": null
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_E",
+      "n": 3,
+      "steps": 413,
+      "tag": null
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_E",
+      "n": 3,
+      "steps": 439,
+      "tag": null
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_E",
+      "n": 4,
+      "steps": 363,
+      "tag": null
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_E",
+      "n": 4,
+      "steps": 389,
+      "tag": null
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_E",
+      "n": 4,
+      "steps": 415,
+      "tag": null
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_E",
+      "n": 4,
+      "steps": 441,
+      "tag": null
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_E",
+      "n": 4,
+      "steps": 467,
+      "tag": null
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_E",
+      "n": 4,
+      "steps": 493,
+      "tag": null
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_E",
+      "n": 5,
+      "steps": 417,
+      "tag": null
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_E",
+      "n": 5,
+      "steps": 443,
+      "tag": null
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_E",
+      "n": 5,
+      "steps": 469,
+      "tag": null
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_E",
+      "n": 5,
+      "steps": 495,
+      "tag": null
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_E",
+      "n": 5,
+      "steps": 521,
+      "tag": null
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_E",
+      "n": 5,
+      "steps": 547,
+      "tag": null
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 152,
+      "tag": 0
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 174,
+      "tag": 1
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 196,
+      "tag": 2
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 218,
+      "tag": 3
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 240,
+      "tag": 4
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 262,
+      "tag": 5
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 168,
+      "tag": 0
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 190,
+      "tag": 1
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 212,
+      "tag": 2
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 234,
+      "tag": 3
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 256,
+      "tag": 4
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 278,
+      "tag": 5
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 184,
+      "tag": 0
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 206,
+      "tag": 1
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 228,
+      "tag": 2
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 250,
+      "tag": 3
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 272,
+      "tag": 4
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 294,
+      "tag": 5
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 200,
+      "tag": 0
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 222,
+      "tag": 1
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 244,
+      "tag": 2
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 266,
+      "tag": 3
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 288,
+      "tag": 4
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 310,
+      "tag": 5
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 216,
+      "tag": 0
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 238,
+      "tag": 1
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 260,
+      "tag": 2
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 282,
+      "tag": 3
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 304,
+      "tag": 4
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 326,
+      "tag": 5
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 232,
+      "tag": 0
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 254,
+      "tag": 1
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 276,
+      "tag": 2
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 298,
+      "tag": 3
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 320,
+      "tag": 4
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 0,
+      "steps": 342,
+      "tag": 5
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 216,
+      "tag": 0
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 238,
+      "tag": 1
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 260,
+      "tag": 2
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 282,
+      "tag": 3
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 304,
+      "tag": 4
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 326,
+      "tag": 5
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 232,
+      "tag": 0
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 254,
+      "tag": 1
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 276,
+      "tag": 2
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 298,
+      "tag": 3
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 320,
+      "tag": 4
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 342,
+      "tag": 5
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 248,
+      "tag": 0
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 270,
+      "tag": 1
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 292,
+      "tag": 2
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 314,
+      "tag": 3
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 336,
+      "tag": 4
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 358,
+      "tag": 5
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 264,
+      "tag": 0
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 286,
+      "tag": 1
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 308,
+      "tag": 2
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 330,
+      "tag": 3
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 352,
+      "tag": 4
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 374,
+      "tag": 5
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 280,
+      "tag": 0
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 302,
+      "tag": 1
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 324,
+      "tag": 2
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 346,
+      "tag": 3
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 368,
+      "tag": 4
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 390,
+      "tag": 5
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 296,
+      "tag": 0
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 318,
+      "tag": 1
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 340,
+      "tag": 2
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 362,
+      "tag": 3
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 384,
+      "tag": 4
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 1,
+      "steps": 406,
+      "tag": 5
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 280,
+      "tag": 0
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 302,
+      "tag": 1
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 324,
+      "tag": 2
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 346,
+      "tag": 3
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 368,
+      "tag": 4
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 390,
+      "tag": 5
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 296,
+      "tag": 0
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 318,
+      "tag": 1
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 340,
+      "tag": 2
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 362,
+      "tag": 3
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 384,
+      "tag": 4
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 406,
+      "tag": 5
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 312,
+      "tag": 0
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 334,
+      "tag": 1
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 356,
+      "tag": 2
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 378,
+      "tag": 3
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 400,
+      "tag": 4
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 422,
+      "tag": 5
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 328,
+      "tag": 0
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 350,
+      "tag": 1
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 372,
+      "tag": 2
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 394,
+      "tag": 3
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 416,
+      "tag": 4
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 438,
+      "tag": 5
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 344,
+      "tag": 0
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 366,
+      "tag": 1
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 388,
+      "tag": 2
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 410,
+      "tag": 3
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 432,
+      "tag": 4
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 454,
+      "tag": 5
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 360,
+      "tag": 0
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 382,
+      "tag": 1
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 404,
+      "tag": 2
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 426,
+      "tag": 3
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 448,
+      "tag": 4
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 2,
+      "steps": 470,
+      "tag": 5
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 344,
+      "tag": 0
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 366,
+      "tag": 1
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 388,
+      "tag": 2
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 410,
+      "tag": 3
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 432,
+      "tag": 4
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 454,
+      "tag": 5
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 360,
+      "tag": 0
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 382,
+      "tag": 1
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 404,
+      "tag": 2
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 426,
+      "tag": 3
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 448,
+      "tag": 4
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 470,
+      "tag": 5
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 376,
+      "tag": 0
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 398,
+      "tag": 1
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 420,
+      "tag": 2
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 442,
+      "tag": 3
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 464,
+      "tag": 4
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 486,
+      "tag": 5
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 392,
+      "tag": 0
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 414,
+      "tag": 1
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 436,
+      "tag": 2
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 458,
+      "tag": 3
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 480,
+      "tag": 4
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 502,
+      "tag": 5
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 408,
+      "tag": 0
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 430,
+      "tag": 1
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 452,
+      "tag": 2
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 474,
+      "tag": 3
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 496,
+      "tag": 4
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 518,
+      "tag": 5
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 424,
+      "tag": 0
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 446,
+      "tag": 1
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 468,
+      "tag": 2
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 490,
+      "tag": 3
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 512,
+      "tag": 4
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 3,
+      "steps": 534,
+      "tag": 5
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 408,
+      "tag": 0
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 430,
+      "tag": 1
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 452,
+      "tag": 2
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 474,
+      "tag": 3
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 496,
+      "tag": 4
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 518,
+      "tag": 5
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 424,
+      "tag": 0
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 446,
+      "tag": 1
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 468,
+      "tag": 2
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 490,
+      "tag": 3
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 512,
+      "tag": 4
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 534,
+      "tag": 5
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 440,
+      "tag": 0
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 462,
+      "tag": 1
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 484,
+      "tag": 2
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 506,
+      "tag": 3
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 528,
+      "tag": 4
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 550,
+      "tag": 5
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 456,
+      "tag": 0
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 478,
+      "tag": 1
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 500,
+      "tag": 2
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 522,
+      "tag": 3
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 544,
+      "tag": 4
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 566,
+      "tag": 5
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 472,
+      "tag": 0
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 494,
+      "tag": 1
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 516,
+      "tag": 2
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 538,
+      "tag": 3
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 560,
+      "tag": 4
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 582,
+      "tag": 5
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 488,
+      "tag": 0
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 510,
+      "tag": 1
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 532,
+      "tag": 2
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 554,
+      "tag": 3
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 576,
+      "tag": 4
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 4,
+      "steps": 598,
+      "tag": 5
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 472,
+      "tag": 0
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 494,
+      "tag": 1
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 516,
+      "tag": 2
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 538,
+      "tag": 3
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 560,
+      "tag": 4
+    },
+    {
+      "carry": 0,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 582,
+      "tag": 5
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 488,
+      "tag": 0
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 510,
+      "tag": 1
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 532,
+      "tag": 2
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 554,
+      "tag": 3
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 576,
+      "tag": 4
+    },
+    {
+      "carry": 1,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 598,
+      "tag": 5
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 504,
+      "tag": 0
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 526,
+      "tag": 1
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 548,
+      "tag": 2
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 570,
+      "tag": 3
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 592,
+      "tag": 4
+    },
+    {
+      "carry": 2,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 614,
+      "tag": 5
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 520,
+      "tag": 0
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 542,
+      "tag": 1
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 564,
+      "tag": 2
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 586,
+      "tag": 3
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 608,
+      "tag": 4
+    },
+    {
+      "carry": 3,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 630,
+      "tag": 5
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 536,
+      "tag": 0
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 558,
+      "tag": 1
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 580,
+      "tag": 2
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 602,
+      "tag": 3
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 624,
+      "tag": 4
+    },
+    {
+      "carry": 4,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 646,
+      "tag": 5
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 552,
+      "tag": 0
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 574,
+      "tag": 1
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 596,
+      "tag": 2
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 618,
+      "tag": 3
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 640,
+      "tag": 4
+    },
+    {
+      "carry": 5,
+      "kind": "overflow_G",
+      "n": 5,
+      "steps": 662,
+      "tag": 5
+    }
+  ],
+  "maximum_macro_steps": 662,
+  "negative_boundary_controls": [
+    {
+      "drift_checks": 65,
+      "escape_steps": 29,
+      "start": [
+        0,
+        [],
+        0,
+        [
+          3,
+          1,
+          3,
+          1,
+          1
+        ]
+      ]
+    },
+    {
+      "drift_checks": 65,
+      "escape_steps": 3,
+      "start": [
+        0,
+        [
+          3
+        ],
+        0,
+        []
+      ]
+    },
+    {
+      "drift_checks": 65,
+      "escape_steps": 3,
+      "start": [
+        0,
+        [
+          3
+        ],
+        2,
+        []
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "code": 4338317776,
+      "machine": "1LB0RB1LA3RA_1RB3LA2LB2RA"
+    }
+  ],
+  "scope": "Independent finite cut-macro and negative-boundary controls only; zero proof credit.",
+  "source_sha256": {
+    "tools/check_burn30_s020_counter_native.py": "7e30f6cc309a22e49979e4e082b9d8d79bdd979f261c182286522eadc0407f4c",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

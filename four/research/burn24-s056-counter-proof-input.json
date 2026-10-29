@@ -1,0 +1,162 @@
+{
+  "rows": [
+    {
+      "actual_entry_steps": 14,
+      "all_token_fallback_controls": 510,
+      "arbitrary_context_phase_controls": 95256,
+      "code": 3976923089,
+      "direct_blank_steps": 2000000,
+      "direct_resets": [
+        {
+          "m": 1,
+          "time": 14
+        },
+        {
+          "m": 5,
+          "time": 61
+        },
+        {
+          "m": 13,
+          "time": 250
+        },
+        {
+          "m": 29,
+          "time": 1017
+        },
+        {
+          "m": 61,
+          "time": 4086
+        },
+        {
+          "m": 125,
+          "time": 16373
+        },
+        {
+          "m": 253,
+          "time": 65522
+        },
+        {
+          "m": 509,
+          "time": 262129
+        },
+        {
+          "m": 1021,
+          "time": 1048558
+        }
+      ],
+      "excluded_divisible_reset_seeds": [
+        {
+          "first_B0_blank": 26,
+          "m": 0
+        },
+        {
+          "first_B0_blank": 113,
+          "m": 3
+        },
+        {
+          "first_B0_blank": 254,
+          "m": 6
+        },
+        {
+          "first_B0_blank": 449,
+          "m": 9
+        },
+        {
+          "first_B0_blank": 698,
+          "m": 12
+        },
+        {
+          "first_B0_blank": 1001,
+          "m": 15
+        },
+        {
+          "first_B0_blank": 1358,
+          "m": 18
+        },
+        {
+          "first_B0_blank": 1769,
+          "m": 21
+        },
+        {
+          "first_B0_blank": 2234,
+          "m": 24
+        },
+        {
+          "first_B0_blank": 2753,
+          "m": 27
+        },
+        {
+          "first_B0_blank": 3326,
+          "m": 30
+        },
+        {
+          "first_B0_blank": 3953,
+          "m": 33
+        },
+        {
+          "first_B0_blank": 4634,
+          "m": 36
+        },
+        {
+          "first_B0_blank": 5369,
+          "m": 39
+        },
+        {
+          "first_B0_blank": 6158,
+          "m": 42
+        },
+        {
+          "first_B0_blank": 7001,
+          "m": 45
+        },
+        {
+          "first_B0_blank": 7898,
+          "m": 48
+        },
+        {
+          "first_B0_blank": 8849,
+          "m": 51
+        },
+        {
+          "first_B0_blank": 9854,
+          "m": 54
+        },
+        {
+          "first_B0_blank": 10913,
+          "m": 57
+        },
+        {
+          "first_B0_blank": 12026,
+          "m": 60
+        },
+        {
+          "first_B0_blank": 13193,
+          "m": 63
+        }
+      ],
+      "general_stop_context_controls": 23814,
+      "machine": "1LB2LB1RA3RA_3RB3LA2RB2LB",
+      "negative_controls": [
+        "arbitrary left13 escapes to B2 at10",
+        "every tested m divisible3 escapes to B0"
+      ],
+      "next_reset_prediction": {
+        "m": 2045,
+        "time": 4194285
+      },
+      "reset_controls": 43,
+      "reset_formula": "m mod3 nonzero -> G(2m+3), cost3(m+3)^2-1 for residue1 / -3 for residue2",
+      "residue_cap_controls": 200,
+      "state_bound": 0
+    }
+  ],
+  "selection_report": "research/burn24-s056-counter-native.json",
+  "selection_sha256": "fa24ad6150859bd9fefc1e36ff96b3da97bab9fed58196be723d36be10ecf7fc",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn24-s056-counter/Fallback.v": "9889c207e69bdd88557a66ddddfb1e766f6b97071cfd2ad23a0e0dc7c7e3d09e",
+    "proof-sources/burn24-s056-counter/Phase.v": "7040c586226da7b300174b1dad6b2339686de2dcf61a1b4e129b16d88335adb6",
+    "proof-sources/burn24-s056-counter/Regression.v": "db74693a5e51ff8fd810db7421d62cca33712b0c4969ef2f9db236f29e3ccd8d",
+    "proof-sources/burn24-s056-counter/Return.v": "0591bd01eee10bcb93f4e19b82424064ca904b72a985a97b9e06f23ebac3ec67"
+  }
+}

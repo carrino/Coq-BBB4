@@ -1,0 +1,20 @@
+{
+  "hypotheses": "research/burn29-s074-even-counter-hypotheses.json",
+  "hypotheses_sha256": "0e635a14eb73f44962787f4d04fa112f891613710511868664cdc1b1da821517",
+  "initial_word": [],
+  "rows": [
+    {
+      "code": 527720261,
+      "machine": "1LB2RB0LA1RB_2RB3RA1LA0LB"
+    }
+  ],
+  "selection_report": "research/burn29-s074-even-counter-native.json",
+  "selection_sha256": "136b282a26f3673270e379b1c4ffdbabc47661f49ac546afd05d120a8157a64f",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn29-s074-even-counter/Final.v": "1b7e97de6e63a2b19cbf13a518d156aee9e15245ad2ad4e20f6689ec1756bab9",
+    "proof-sources/burn29-s074-even-counter/Grammar.v": "121007420135dc9c65ab171af31efaac724498b45c6410768f727d7ea3c1c455",
+    "proof-sources/burn29-s074-even-counter/Programs.v": "28099517a5a3ac11a15472388a445a3a53b157624c0b52659e0e6f107efc4e7d",
+    "proof-sources/burn29-s074-even-counter/Regression.v": "2b856224d3acf66888a0e12cf869f59742cf9804e27d6447959b29b15dcd0e26"
+  }
+}

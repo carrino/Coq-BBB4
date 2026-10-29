@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 3201306334,
+      "machine": "1LB2LB0LB1RA_2RB2RA3LB1RB"
+    }
+  ],
+  "selection_report": "research/burn17-quaternary-sibling-native.json",
+  "selection_sha256": "51c930c53720bcd3aab5f7ef02c62e0b32b279679b776b3d7584fa858186e82a",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn17-quaternary-sibling/QuaternarySibling.v": "fb3e47e9d0206c08db883c851fd536ca6199780467b7e36a2061c0e08d4d5c09",
+    "proof-sources/burn17-quaternary-sibling/Regression.v": "3bdbb708f2a13efba5ccee150862a94fd97e2d2bfbb78904a641107469877ba7"
+  }
+}

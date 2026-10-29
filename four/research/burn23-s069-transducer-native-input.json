@@ -1,0 +1,8 @@
+{
+  "actual_blank_steps": 4096,
+  "frontier_sha256": "74cc8658ff767fb152f36ae9f885dfdff9f393e45cb9f74c199ba56464dfe050",
+  "frontier_source": "research/burn23-s069-transducer-frontier-source.txt",
+  "machine": "1LB2RA1LA1RB_2RB2LB3LB1RA",
+  "maximum_left_length": 6,
+  "maximum_right_length": 4
+}

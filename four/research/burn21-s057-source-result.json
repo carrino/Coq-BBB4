@@ -1,0 +1,20 @@
+{
+  "last_visits": [
+    2333908,
+    2333909
+  ],
+  "machine": "1LB2LB1RB1RA_1RB3LA3RA2LB",
+  "max_episodes": [
+    3,
+    2
+  ],
+  "nonzero_span": [
+    -3327,
+    12
+  ],
+  "position": 13,
+  "right_blank_B_escape": true,
+  "seconds": 0.00709675,
+  "state": 1,
+  "steps": 2333909
+}

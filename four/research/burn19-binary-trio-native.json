@@ -1,0 +1,40 @@
+{
+  "checksum": "head0: value mod3=0; head1/head23: value mod3=1; head3: odd length; head21: even length for S001, value mod3=2 for S002/S003",
+  "context_max_length": 2,
+  "excluded_corner": "head1 with bit word [false] reaches B on blank with a blank right tail after8 steps",
+  "macro_controls": {
+    "increment": 4032,
+    "left_true": 10584,
+    "overflow_double": 2016,
+    "overflow_single": 2016,
+    "right_pairs": 10584
+  },
+  "max_carry": 8,
+  "maximum_normalized_return_cost": 39,
+  "normalized_bit_length": 8,
+  "normalized_controls": [
+    1026,
+    851,
+    851
+  ],
+  "rows": [
+    {
+      "code": 4039390864,
+      "machine": "1LB0LA0RB3LB_3RB1LB3RA2LB"
+    },
+    {
+      "code": 4046490149,
+      "machine": "1LB0LA0RB3LB_3RB2RA3RA2LB"
+    },
+    {
+      "code": 4050749720,
+      "machine": "1LB0LA0RB3LB_3RB3LB3RA2LB"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn19_binary_trio_native.py": "fd23488d8057fcc276c3cf6c967b6c5af4155892dafa568af0c700ff021fe7b9",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

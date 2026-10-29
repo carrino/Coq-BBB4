@@ -1,0 +1,24 @@
+{
+  "context_max_length": 2,
+  "excluded_corner": "Equal counts can return to B with a right suffix containing only twos, then drift into blanks.",
+  "invariant": "B cut: left/current in {0,3}, right in {1,2}, count(1,right)>count(3,left/current)",
+  "macro_checks": 15876,
+  "max_twos": 8,
+  "rows": [
+    {
+      "code": 5824131308,
+      "machine": "1LB2LA0RA2LB_3RB1LA0RB3RA"
+    },
+    {
+      "code": 5824132464,
+      "machine": "1LB2LA1RA2LB_3RB1LA0RB3RA"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "seconds": 0.048318,
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn18_cut_siblings_native.py": "a8800e8c6f36fa108791a18d8781ea0636bc66bb41d86deac3f3fc86b8d6e2d6",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

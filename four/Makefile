@@ -1,5 +1,6 @@
 .PHONY: all small23-deps check check-affine-batch check-affine-closeout check-closure-batch check-shadow-links check-transport check-wave check-campaign list-campaign check-next-campaign list-next-campaign check-burn2-campaign list-burn2-campaign check-burn3-campaign list-burn3-campaign check-burn4-campaign list-burn4-campaign check-burn5-campaign list-burn5-campaign check-burn6-campaign list-burn6-campaign clean
 CAMPAIGN_JOBS ?= 1
+PROOF_JOBS ?= 2
 all: small23-deps Makefile.coq
 	$(MAKE) -f Makefile.coq
 # Alphabet reduction reuses the completed (2,3) theorem. Build only that
@@ -34,6 +35,28 @@ check: all
 	  BBB24.StateBranchCloseout BBB24.StateBranchCycles BBB24.StateBranchJoin \
 	  BBB24.StateHistoryCertificate BBB24.StateHistoryCertificateRegression BBB24.WeightedCapacity \
 	  BBB24.WeightedSuffixRegression BBB24.ChampionCensusNext
+
+# Keep these recursive calls and checkpoint replays sequential even under -j:
+# the drivers deliberately share generated prerequisites under build/.
+proof:
+	python3 tools/report_state_value.py --check-source
+	$(MAKE) proof-checkpoint
+	$(MAKE) -f Makefile.coq theories/Value.vo
+	python3 tools/report_state_value.py
+
+proof-checkpoint:
+	@echo "Checking current BBB(2,4) Coq proofs; the universal upper bound remains open."
+	$(MAKE) check -j$(PROOF_JOBS)
+	$(MAKE) proof-state-cases
+	@echo "Checkpoint verified. The global BBB(2,4) equality is still open."
+
+proof-state-cases:
+	python3 tools/replay_state_case_proofs.py --jobs $(PROOF_JOBS)
+	python3 tools/replay_state_case_proofs.py --checkpoint additional --jobs $(PROOF_JOBS)
+	python3 tools/replay_state_case_proofs.py --checkpoint recent --jobs $(PROOF_JOBS)
+	python3 tools/check_burn43_s071_far.py
+.PHONY: proof proof-checkpoint proof-state-cases
+
 check-affine-batch: all
 	python3 tools/check_affine_batch.py
 check-affine-closeout: check-affine-batch

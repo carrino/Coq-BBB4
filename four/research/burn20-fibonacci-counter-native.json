@@ -1,0 +1,66 @@
+{
+  "context_max_length": 2,
+  "controls": {
+    "A_one_even": 3528,
+    "A_one_odd": 3528,
+    "Q_finish": 36,
+    "Q_pair": 125,
+    "drain": 125,
+    "left_twos": 3528,
+    "main_returns": 64,
+    "open_even": 168,
+    "open_even_step": 168,
+    "open_odd": 168,
+    "open_round": 125,
+    "open_zero": 168,
+    "right_pairs": 3528,
+    "to_left": 7056,
+    "wall_even": 3528,
+    "wall_odd": 3528,
+    "wall_round": 250
+  },
+  "drain_cost": {
+    "constant": 0,
+    "m_linear": 0,
+    "m_times_n": 8,
+    "n_linear": 22,
+    "n_squared": 12
+  },
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "invariant": "A0, blank right tail, nearest-first left word2^(2m) 1 2^(2n+1)3",
+  "main_cost": {
+    "constant": 37,
+    "m_linear": 20,
+    "m_times_n": 8,
+    "n_linear": 44,
+    "n_squared": 12
+  },
+  "metadata_revision": 1,
+  "rejected_parity_control": {
+    "final_head": 0,
+    "final_right": [],
+    "final_state": "B",
+    "initial_left": [
+      2,
+      1,
+      3
+    ],
+    "steps": 27
+  },
+  "return_map": {
+    "m_prime": "n+2",
+    "n_prime": "m+n"
+  },
+  "rows": [
+    {
+      "code": 4435521821,
+      "machine": "1LB1RA1LB2RB_3RB3LA3LB2RA"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn20_fibonacci_counter_native.py": "0262d5df7e2ebb4592044685a606dfaa4322a75a05c4504d7d7391e57ddb79be",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

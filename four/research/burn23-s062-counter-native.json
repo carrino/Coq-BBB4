@@ -1,0 +1,137 @@
+{
+  "checked_state_families": 0,
+  "rows": [
+    {
+      "actual_entry_steps": 5,
+      "arbitrary_context_sweeps": 19845,
+      "code": 3783785545,
+      "dead_cut_controls": 12159,
+      "direct_blank_steps": 400000,
+      "direct_maximum_state_gaps": [
+        361,
+        371
+      ],
+      "direct_right_cuts": 652,
+      "first_direct_right_cuts": [
+        {
+          "head": 0,
+          "length": 0,
+          "time": 0
+        },
+        {
+          "head": 1,
+          "length": 2,
+          "time": 5
+        },
+        {
+          "head": 2,
+          "length": 5,
+          "time": 28
+        },
+        {
+          "head": 3,
+          "length": 7,
+          "time": 65
+        },
+        {
+          "head": 4,
+          "length": 8,
+          "time": 82
+        },
+        {
+          "head": 5,
+          "length": 9,
+          "time": 99
+        },
+        {
+          "head": 6,
+          "length": 11,
+          "time": 132
+        },
+        {
+          "head": 7,
+          "length": 12,
+          "time": 163
+        },
+        {
+          "head": 8,
+          "length": 13,
+          "time": 188
+        },
+        {
+          "head": 9,
+          "length": 14,
+          "time": 209
+        },
+        {
+          "head": 10,
+          "length": 15,
+          "time": 238
+        },
+        {
+          "head": 11,
+          "length": 16,
+          "time": 267
+        }
+      ],
+      "last_direct_right_cuts": [
+        {
+          "head": 644,
+          "length": 649,
+          "time": 388854
+        },
+        {
+          "head": 645,
+          "length": 650,
+          "time": 390275
+        },
+        {
+          "head": 646,
+          "length": 651,
+          "time": 391704
+        },
+        {
+          "head": 647,
+          "length": 652,
+          "time": 393133
+        },
+        {
+          "head": 648,
+          "length": 653,
+          "time": 394574
+        },
+        {
+          "head": 649,
+          "length": 654,
+          "time": 396011
+        },
+        {
+          "head": 650,
+          "length": 655,
+          "time": 397456
+        },
+        {
+          "head": 651,
+          "length": 656,
+          "time": 398901
+        }
+      ],
+      "launch_controls": 882,
+      "machine": "1LB2LB3RA1RA_3RB3LA0RB2LB",
+      "main_cut_controls": 6048,
+      "negative_controls": [
+        "unguarded dead right1",
+        "single leading1 with left3",
+        "a1 left of0 in the tail"
+      ],
+      "pair_controls": 441,
+      "protected_double_launch_controls": 10633,
+      "state_bound": 0
+    }
+  ],
+  "scope": "Bounded S062 protected-word and dead-boundary controls; no kernel credit.",
+  "source_sha256": {
+    "tools/check_burn23_s062_counter_native.py": "91d7771137fd7d0c16c6724f1dc4d848475bbf3d48957b60b72d0c904331b79e",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

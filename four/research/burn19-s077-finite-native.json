@@ -1,0 +1,75 @@
+{
+  "escape_steps": 2501552,
+  "final_support_sha256": "226777d249fb478fcd83407dd4a3c104ee30070027cb6ee02aba0835869c5bb0",
+  "last_A": 2501551,
+  "nonzero_cells": 2747,
+  "nonzero_span": [
+    -2741,
+    5
+  ],
+  "points": [
+    {
+      "head": 0,
+      "position": 0,
+      "span": null,
+      "state": 0,
+      "step": 0
+    },
+    {
+      "head": 3,
+      "position": -142,
+      "span": [
+        -173,
+        5
+      ],
+      "state": 0,
+      "step": 10000
+    },
+    {
+      "head": 2,
+      "position": -1172,
+      "span": [
+        -1979,
+        5
+      ],
+      "state": 0,
+      "step": 1000000
+    },
+    {
+      "head": 1,
+      "position": 5,
+      "span": [
+        -2741,
+        5
+      ],
+      "state": 0,
+      "step": 2501551
+    },
+    {
+      "head": 0,
+      "position": 6,
+      "span": [
+        -2741,
+        5
+      ],
+      "state": 1,
+      "step": 2501552
+    }
+  ],
+  "position": 6,
+  "proof_method": "Coq computes two Boolean predicates from binary counts; native ending tape is not supplied to the proof.",
+  "rows": [
+    {
+      "code": 2094174823,
+      "machine": "1LB2RB3LA2RA_3RB3LA0LB1LB"
+    }
+  ],
+  "scope": "Independent sparse finite replay and drift controls only; no proof credit.",
+  "seconds": 0.631427,
+  "source_sha256": {
+    "tools/check_burn19_s077_finite_native.py": "8b4c742259bc9a4d85ab6291985cf29b825248807a4935497f546fe899077236",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "state": 1,
+  "synthetic_drift_controls": 1155
+}

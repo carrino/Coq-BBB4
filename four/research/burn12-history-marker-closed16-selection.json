@@ -1,0 +1,467 @@
+{
+  "native_report": "research/burn17-history-closed-native.json",
+  "native_sha256": "c85622f8a4e399d31d844f4fe61a5147042e1fc53c4ae207db70bffcdcd18ac1",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 1394163018,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LA0RB1RA_3RB3LA1RA0RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1249357528,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 5,
+      "invariant": "conditional",
+      "machine": "1LB1RB1LA2RA_3RB3LA0LA0RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3327664546,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 5,
+      "invariant": "conditional",
+      "machine": "1LB0RB1LA1LA_2RB3RA0LB2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 715127666,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 5,
+      "invariant": "conditional",
+      "machine": "1LB0RB1LA1LA_2RB2RA3LA0LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4042932287,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 35,
+      "invariant": "conditional",
+      "machine": "1LB0LB0LA0RB_1RB2LA3RA2LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 5202222110,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 7,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LA1RA_3RB2LA2RB3LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4042926966,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 161,
+      "invariant": "conditional",
+      "machine": "1LB2RB3RB0LB_1RB2LA3RA2LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3327320432,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 129,
+      "invariant": "conditional",
+      "machine": "1LB2LA0RB0RA_1RB3RA0LB2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4818860992,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 7,
+      "invariant": "conditional",
+      "machine": "1LB2LA3LB1RA_3RB2RA3LA2RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4172139393,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LA0LA0RB_1RB3RA0RA2RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4123572943,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 7,
+      "invariant": "conditional",
+      "machine": "1LB2LA3LA2RB_0RB3RA0LA2RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2085287733,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 193,
+      "invariant": "conditional",
+      "machine": "1LB2LA3RA0RB_2RB1RA0LB1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 68739947,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LA1RB0LA_1RB3RA0RA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 117371983,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 13,
+      "invariant": "conditional",
+      "machine": "1LB1RB0LB1LB_2RB3RA1LA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4981133047,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LA3RB1LA_0RB1RA0RA3LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2577348993,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 37,
+      "invariant": "conditional",
+      "machine": "1LB2RA3LB2RB_0RB3LB1LA1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "width": 2
+    }
+  ],
+  "scope": "Exact cost-ordered slice of23 independently validated closed-graph refinements.",
+  "selected": [
+    {
+      "distinct_history_cells": 101,
+      "edges": 428,
+      "graph_path": "build/burn17-history-closed-refinement/graph-34-h12-w2.json",
+      "graph_sha256": "5bdd6cfdd1686697df0ef994f4c110d8dd057ef960f1c87d3dc6e734d95b715e",
+      "history": 12,
+      "machine": "1LB2LA0RB1RA_3RB3LA1RA0RB",
+      "maximum_encoded_cell_bits": 39,
+      "nodes": 167,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 93,
+      "edges": 449,
+      "graph_path": "build/burn17-history-closed-refinement/graph-41-h12-w2.json",
+      "graph_sha256": "8ffed78269d686fe20391ddad663342303205f40f2db10d344b01b7fa3c0ccee",
+      "history": 12,
+      "machine": "1LB1RB1LA2RA_3RB3LA0LA0RB",
+      "maximum_encoded_cell_bits": 39,
+      "nodes": 171,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 90,
+      "edges": 597,
+      "graph_path": "build/burn17-history-closed-refinement/graph-19-h8-w2.json",
+      "graph_sha256": "629166258ea912f6a9466fe3a1c08c69bf5444c8ed9e5eb5e3ec4ea22e61ccaa",
+      "history": 8,
+      "machine": "1LB0RB1LA1LA_2RB3RA0LB2LA",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 208,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 92,
+      "edges": 610,
+      "graph_path": "build/burn17-history-closed-refinement/graph-35-h8-w2.json",
+      "graph_sha256": "1f6f6601152d55d5010e7908626f774a05166c3e74cf154e1923a5520aeab5bc",
+      "history": 8,
+      "machine": "1LB0RB1LA1LA_2RB2RA3LA0LB",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 209,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 81,
+      "edges": 486,
+      "graph_path": "build/burn17-history-closed-refinement/graph-24-h8-w2.json",
+      "graph_sha256": "be1ecb5d5862f04f180d469d99ebcfbb1ebccd8d5dc3f525ef0cc1379754461d",
+      "history": 8,
+      "machine": "1LB0LB0LA0RB_1RB2LA3RA2LB",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 217,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 67,
+      "edges": 572,
+      "graph_path": "build/burn17-history-closed-refinement/graph-50-h8-w2.json",
+      "graph_sha256": "23ab745449d8f5cabbb94c708f36b4d005d9b14c60aa396665e035dd0ac36f43",
+      "history": 8,
+      "machine": "1LB2LB3LA1RA_3RB2LA2RB3LA",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 235,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 67,
+      "edges": 684,
+      "graph_path": "build/burn17-history-closed-refinement/graph-15-h8-w2.json",
+      "graph_sha256": "a9f5fc78dd778cb23295bcd06777a6264a36e3239ed21e4229ac6048e7bb9189",
+      "history": 8,
+      "machine": "1LB2RB3RB0LB_1RB2LA3RA2LB",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 237,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 149,
+      "edges": 463,
+      "graph_path": "build/burn17-history-closed-refinement/graph-49-h12-w2.json",
+      "graph_sha256": "8895cd5b60895cd6b07b9abdf114fae94f662cc454091671838e0ba89a8d41a3",
+      "history": 12,
+      "machine": "1LB2LA0RB0RA_1RB3RA0LB2LA",
+      "maximum_encoded_cell_bits": 39,
+      "nodes": 267,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 157,
+      "edges": 500,
+      "graph_path": "build/burn17-history-closed-refinement/graph-40-h12-w2.json",
+      "graph_sha256": "5c6836b00842485d72f6dba1b7e2fa88481ca68930aedc1f31c686bb58a1ee32",
+      "history": 12,
+      "machine": "1LB2LA3LB1RA_3RB2RA3LA2RB",
+      "maximum_encoded_cell_bits": 39,
+      "nodes": 325,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 130,
+      "edges": 737,
+      "graph_path": "build/burn17-history-closed-refinement/graph-28-h12-w2.json",
+      "graph_sha256": "dde1a2802487e00c949e3b911092ae30c23d8a13b7ee0d494851590bc724172f",
+      "history": 12,
+      "machine": "1LB2LA0LA0RB_1RB3RA0RA2RA",
+      "maximum_encoded_cell_bits": 39,
+      "nodes": 331,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 137,
+      "edges": 740,
+      "graph_path": "build/burn17-history-closed-refinement/graph-01-h12-w2.json",
+      "graph_sha256": "5ebda4dbec3e3949bba63b6ffb16c91e0d8464b3771c5394c227794ad5db181c",
+      "history": 12,
+      "machine": "1LB2LA3LA2RB_0RB3RA0LA2RA",
+      "maximum_encoded_cell_bits": 39,
+      "nodes": 346,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 138,
+      "edges": 805,
+      "graph_path": "build/burn17-history-closed-refinement/graph-09-h12-w2.json",
+      "graph_sha256": "1ac197a05c0ba24f15bde74d393612d4feae5e16652dcc539780250b8a7c9646",
+      "history": 12,
+      "machine": "1LB2LA3RA0RB_2RB1RA0LB1LB",
+      "maximum_encoded_cell_bits": 39,
+      "nodes": 356,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 165,
+      "edges": 772,
+      "graph_path": "build/burn17-history-closed-refinement/graph-14-h12-w2.json",
+      "graph_sha256": "d0191497e85fe261ff1d4334334c12c5f28741c175a276769806d57c1b437977",
+      "history": 12,
+      "machine": "1LB2LA1RB0LA_1RB3RA0RA0LA",
+      "maximum_encoded_cell_bits": 39,
+      "nodes": 364,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 170,
+      "edges": 931,
+      "graph_path": "build/burn17-history-closed-refinement/graph-30-h12-w2.json",
+      "graph_sha256": "714b82eb1a012cefc38d4f564ba45e265a31e62d549051e164b1e56d8924f40b",
+      "history": 12,
+      "machine": "1LB1RB0LB1LB_2RB3RA1LA0LA",
+      "maximum_encoded_cell_bits": 39,
+      "nodes": 439,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 54,
+      "edges": 1488,
+      "graph_path": "build/burn17-history-closed-refinement/graph-42-h8-w2.json",
+      "graph_sha256": "3c77ab0c513df3c3fb958cba0a7f2e24c7f0439322efb5ed057fa4223db61df9",
+      "history": 8,
+      "machine": "1LB2LA3RB1LA_0RB1RA0RA3LA",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 440,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 181,
+      "edges": 697,
+      "graph_path": "build/burn17-history-closed-refinement/graph-07-h12-w2.json",
+      "graph_sha256": "b2c4240699a6983a6d9ae18213a8612ec5874a62de168ffb091ce7b9d77e377c",
+      "history": 12,
+      "machine": "1LB2RA3LB2RB_0RB3LB1LA1RA",
+      "maximum_encoded_cell_bits": 39,
+      "nodes": 488,
+      "width": 2
+    }
+  ],
+  "selected_range": [
+    0,
+    16
+  ],
+  "sort_key": [
+    "nodes",
+    "history",
+    "width",
+    "machine"
+  ]
+}

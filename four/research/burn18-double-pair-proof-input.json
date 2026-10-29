@@ -1,0 +1,53 @@
+{
+  "rows": [
+    {
+      "actual_entry_steps": 35,
+      "arbitrary_context_checks": 24717,
+      "code": 1879401260,
+      "context_max_length": 2,
+      "initial_main": {
+        "digits": [],
+        "k": 0,
+        "mode": false
+      },
+      "machine": "1LB2LB1RA0RA_2RB3RA2LB1LA",
+      "main_max_bits": 6,
+      "main_max_k": 4,
+      "main_returns": 1270,
+      "negative_controls": [
+        "left1133 reaches B2 with no1/3 on the left",
+        "left13 reaches B2 with no1/3 on the left"
+      ],
+      "repeat_max_length": 6,
+      "two": false
+    },
+    {
+      "actual_entry_steps": 33,
+      "arbitrary_context_checks": 24717,
+      "code": 1879440564,
+      "context_max_length": 2,
+      "initial_main": {
+        "digits": [],
+        "k": 0,
+        "mode": false
+      },
+      "machine": "1LB2LB1RA2RA_2RB3RA2LB1LA",
+      "main_max_bits": 6,
+      "main_max_k": 4,
+      "main_returns": 1270,
+      "negative_controls": [
+        "left1133 reaches B2 with no1/3 on the left",
+        "left13 reaches B2 with no1/3 on the left"
+      ],
+      "repeat_max_length": 6,
+      "two": true
+    }
+  ],
+  "selection_report": "research/burn18-double-pair-native.json",
+  "selection_sha256": "c60123aad24839969c5b7435b280c66d1ed9895c5e639e6210a172f0aea4bd0d",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn18-double-pair/DoublePair.v": "192fee9545dbb0d934b5b8cb33801d34a880071d252fd85b373b5d7dfaf63695",
+    "proof-sources/burn18-double-pair/Regression.v": "f52badf0587c0d533df0b09f4953353797e1416a1c845b5d6d5458730bc89b8e"
+  }
+}

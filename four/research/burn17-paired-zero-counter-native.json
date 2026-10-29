@@ -1,0 +1,28 @@
+{
+  "arbitrary_context_macros": 10584,
+  "arbitrary_context_max_length": 2,
+  "checksum": "head equals little-endian binary digit value modulo3",
+  "encoding": [
+    "20",
+    "22"
+  ],
+  "excluded_corner": "all-maximal digits never have checksum2",
+  "increment_cost": "4*carry+4",
+  "main_configurations": 8191,
+  "max_digits": 12,
+  "outer_macros": 21,
+  "overflow_cost": "4*digits+5",
+  "rows": [
+    {
+      "code": 4437987042,
+      "machine": "1LB2LB0LB0RB_2RB3RA3LB2RA"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "seconds": 0.101957,
+  "simulated_main_steps": 65489,
+  "source_sha256": {
+    "tools/check_burn17_paired_zero_counter_native.py": "e6c536fbb8361a6d6528674e8182178ae3318658118dddc6fb441cd0891627b1",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "metadata_revision": 1,
+  "rows": [
+    {
+      "code": 1563126307,
+      "machine": "1LB2LB1LA1RA_3RB3LA3LB0RB"
+    }
+  ],
+  "selection_report": "research/burn20-paired-wall-counter-native.json",
+  "selection_sha256": "85699312d5dd4e17684a90aad051c66ff62eb3702290da44a2578653dd06f75c",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn20-paired-wall-counter/PairedWallCounter.v": "5b701ea64cc4935052678fb78fef3612fd86393d270f11dc171a0142241f6c5a",
+    "proof-sources/burn20-paired-wall-counter/Regression.v": "397223762bf1acc7a2754f9472ac4613ef004cb2534e360b643b579f99c7ae3e"
+  }
+}
