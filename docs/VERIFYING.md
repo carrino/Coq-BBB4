@@ -144,7 +144,8 @@ make proof-2-4-checkpoint BUILD_JOBS=8
 
 This target activates the census toolchain, checks the public four-symbol
 theories and regressions, then replays all three reviewed state-case checkpoints
-below. `BUILD_JOBS` sets the prerequisite build parallelism; the case drivers run
+below and the [final S071 case](../four/STATE-CASE-PROOFS-FINAL.md).
+`BUILD_JOBS` sets the prerequisite build parallelism; the case drivers run
 sequentially and each performs a recursive `coqchk` audit. A failed build or audit
 stops the target. Logs and current receipts are written under `four/build/`.
 With the toolchain already active, `make -C four proof-checkpoint PROOF_JOBS=8` is equivalent.
@@ -168,6 +169,8 @@ run its replay command with `--checkpoint additional` after the initial command
 to reproduce all 66 accepted cases at that freeze. The
 [recent checkpoint](../four/STATE-CASE-PROOFS-RECENT.md), selected with
 `--checkpoint recent`, adds eleven more cases for 77 accepted families.
+The [final case](../four/STATE-CASE-PROOFS-FINAL.md), S071, completes all 78
+hard machine proofs; it is included in `proof-2-4-checkpoint`.
 The
 [public scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) tracks the
 remaining proof work and census assembly. These individual proofs do not yet

@@ -54,6 +54,7 @@ proof-state-cases:
 	python3 tools/replay_state_case_proofs.py --jobs $(PROOF_JOBS)
 	python3 tools/replay_state_case_proofs.py --checkpoint additional --jobs $(PROOF_JOBS)
 	python3 tools/replay_state_case_proofs.py --checkpoint recent --jobs $(PROOF_JOBS)
+	python3 tools/check_burn43_s071_far.py
 .PHONY: proof proof-checkpoint proof-state-cases
 
 check-affine-batch: all
