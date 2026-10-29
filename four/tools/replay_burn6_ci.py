@@ -36,6 +36,11 @@ def pinned_inputs(repo, report_path, plan_path):
     report = json.loads(report_path.read_text())
     paths = {report_path, plan_path}
     paths.update(repo / 'four' / name for name in report['inputs'])
+    # These new orchestration tools are deliberately outside historical reports.
+    # Pin them locally as well before any current-run receipts are produced.
+    paths.update(repo / 'four/tools' / name for name in
+                 ('replay_burn6_ci.py', 'check_campaign_next_audit.py',
+                  'campaign_snapshot_dependencies.py'))
     # Generated build sources are reproduced by the unchanged final checker.
     paths.update(repo / 'four' / name for name in report['source_sha256']
                  if not (repo / 'four' / name).resolve().is_relative_to(repo / 'four/build'))
@@ -236,7 +241,10 @@ def main():
                        'sha256': digest(receipt), 'fresh': phase['checked_modules']})
         caches.append(receipt)
     recheck_pins(pins)
-    command = [*expected, '--audit-only', '--timeout', str(args.timeout),
+    # Preserve the frozen checker; normalize its local receipt projection
+    # through an explicit-loadpath adapter when Coq lives inside the checkout.
+    command = [expected[0], 'four/tools/check_campaign_next_audit.py', *expected[2:],
+               '--audit-only', '--timeout', str(args.timeout),
                '--memory-mib', str(args.memory_mib)]
     command.extend(arg for path in caches for arg in ('--audit-cache', str(path)))
     subprocess.run(command, cwd=repo, check=True)

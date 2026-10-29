@@ -87,6 +87,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-native-coq
+      - name: Check local compilation receipt normalization
+        run: python3 -m unittest discover -s four/tools -p 'test_campaign_snapshot_dependencies.py'
       - name: Replay and audit the expanded supplementary census
         run: python3 four/tools/replay_burn6_ci.py --jobs 2
       - name: Check expanded census replay integrity guards
