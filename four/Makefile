@@ -39,15 +39,22 @@ check: all
 # Keep these recursive calls and checkpoint replays sequential even under -j:
 # the drivers deliberately share generated prerequisites under build/.
 proof:
+	python3 tools/report_state_value.py --check-source
+	$(MAKE) proof-checkpoint
+	$(MAKE) -f Makefile.coq theories/Value.vo
+	python3 tools/report_state_value.py
+
+proof-checkpoint:
 	@echo "Checking current BBB(2,4) Coq proofs; the universal upper bound remains open."
 	$(MAKE) check -j$(PROOF_JOBS)
 	$(MAKE) proof-state-cases
+	@echo "Checkpoint verified. The global BBB(2,4) equality is still open."
 
 proof-state-cases:
 	python3 tools/replay_state_case_proofs.py --jobs $(PROOF_JOBS)
 	python3 tools/replay_state_case_proofs.py --checkpoint additional --jobs $(PROOF_JOBS)
 	python3 tools/replay_state_case_proofs.py --checkpoint recent --jobs $(PROOF_JOBS)
-.PHONY: proof proof-state-cases
+.PHONY: proof proof-checkpoint proof-state-cases
 
 check-affine-batch: all
 	python3 tools/check_affine_batch.py
