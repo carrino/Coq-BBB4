@@ -1,0 +1,229 @@
+{
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 2505565949,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 97,
+      "invariant": "conditional",
+      "machine": "1LB1RA---0RB_2RB3LB0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 3714221630,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 201,
+      "invariant": "conditional",
+      "machine": "1LB---2RB2LA_3RB3RA0LA2LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 3568764343,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 5,
+      "invariant": "conditional",
+      "machine": "1LB2LB0LB---_1RB3RA2RB2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 2096707007,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB2LB0RA---_2RB3RA0LB1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 3303253957,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB2LA2RB---_1RB3RA0LA2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 304515973,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 195,
+      "invariant": "conditional",
+      "machine": "1LB2LA2RB---_1RB2RA3LA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 3985401890,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 145,
+      "invariant": "conditional",
+      "machine": "1LB---0RA1RA_3RB0LB3LA2LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 310195401,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 195,
+      "invariant": "conditional",
+      "machine": "1LB2LA2RB---_1RB3RA3LA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 4139884698,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LB3RA---_2RB2LA0LB2RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 1136858192,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 33,
+      "invariant": "conditional",
+      "machine": "1LB1RA---2RA_2RB0LB3LB0RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 45015954,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA---_2RB3RA0LB0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 2505628135,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA---_2RB3LB0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 2096709319,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA---_2RB3RA0LB1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 3
+    }
+  ],
+  "state_bound": 0,
+  "selection_report": "research/burn12-history-marker-partial13-selection.json",
+  "selection_sha256": "32e79b868a002100d9e0e5f8dcb0bc6ee8562fadb623afc7fadb31e042118fb7",
+  "generic_report_sha256": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed"
+}

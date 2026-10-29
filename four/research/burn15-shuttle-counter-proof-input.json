@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 1083202486,
+      "machine": "1LB2LA3LB0RB_3RB3RA2RA0RA"
+    }
+  ],
+  "selection_report": "research/burn15-shuttle-counter-native.json",
+  "selection_sha256": "a1c15b555c1d9debdc7f24860e5832e2ec35bd2c85c9c8f513c8b3958802742a",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn15-shuttle-counter/Regression.v": "db249cfc6b9985589c9f28aa4d44888f8d266125713b1e0a5234341108ccad63",
+    "proof-sources/burn15-shuttle-counter/ShuttleCounter.v": "e9f20abb4f785c3e34c309377e946c04cadfcd27b978628c4d39642c0678600c"
+  }
+}

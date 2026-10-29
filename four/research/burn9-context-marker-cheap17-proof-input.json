@@ -1,0 +1,281 @@
+{
+  "generic_report_sha256": "c7da08e977e7ecc582ddd6d12fb099dd9eaf7c24b01ec0d7ccf8dde7485f68b0",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 4966188874,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB0RA1RA_2RB3LA0LB3LA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2093818163,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB0RA1RA_2RB3LA0LB1LB",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 522409308,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2RB0LA3RA_3RB2RA1LA0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2504156836,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB0RA1RA_2RB3LA0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 4550505435,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB1LA1RA_3RB2LA0LB2RB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 4544851439,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB1RB2RB_3RB1LA0LB2RB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 4544861129,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB0LB1RB3LB_3RB1LA0LB2RB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 779037517,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB2LB1RB_2RB1LA3RB0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 779056591,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB1RB2RB_2RB1LA3RB0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 4544851303,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB0LB1RB2RB_3RB1LA0LB2RB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 520953887,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2RA3LB1RA_3RB2LB1LA0LB",
+      "marker_mask": 6,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2504127664,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2RA0RB0LA_2RB3LA0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2505576693,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB0RA1RA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 1684916347,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB1RA2RA2LB_2RB3LB0LB1LA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 766608783,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB3LB2RA_3RB3LA3RA0LB",
+      "marker_mask": 6,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2505592588,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB1RA2LB_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2505596345,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB0RA2RA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 4
+    }
+  ],
+  "scope": "Seventeen contextual-marker state proofs; checkpoint10 package.",
+  "selection_report": "research/burn9-context-marker-cheap17-selection.json",
+  "selection_sha256": "de482a711f3caaf64f4295daa38e5e7dd164f23a51a3fbd0af2b2a15636f32db",
+  "state_bound": 0
+}

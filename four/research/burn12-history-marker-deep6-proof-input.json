@@ -1,0 +1,110 @@
+{
+  "generic_report_sha256": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 1991568467,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 37,
+      "invariant": "conditional",
+      "machine": "1LB1RA0LB0RA_2RB2LA3RA1LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1388519035,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 33,
+      "invariant": "conditional",
+      "machine": "1LB0RA1RB3LB_3RB2LA1RA0RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2480787157,
+      "fuel": 131072,
+      "history": 10,
+      "history_marker_mask": 33,
+      "invariant": "conditional",
+      "machine": "1LB2RA1RB2LB_0RB3LB0LA1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1659695402,
+      "fuel": 131072,
+      "history": 10,
+      "history_marker_mask": 5,
+      "invariant": "conditional",
+      "machine": "1LB2RB0LB2RA_3RB3LA0LA1LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 68791967,
+      "fuel": 131072,
+      "history": 10,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LA0LA2RB_1RB3RA0RA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 304138539,
+      "fuel": 131072,
+      "history": 12,
+      "history_marker_mask": 67,
+      "invariant": "conditional",
+      "machine": "1LB2LA3RA1RB_0RB2RA3LA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    }
+  ],
+  "selection_report": "research/burn12-history-marker-deep6-selection.json",
+  "selection_sha256": "6ca7adba9fc4097705231e6a9977ffe734aacebb579aa2aa0375e206a668af51",
+  "state_bound": 0
+}

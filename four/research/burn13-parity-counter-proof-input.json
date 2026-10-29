@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 2650391278,
+      "machine": "1LB0LB---0RB_2RB3LB1RB1RA"
+    }
+  ],
+  "state_bound": 0,
+  "selection_report": "research/burn13-parity-counter-native.json",
+  "selection_sha256": "7c796acf03d48a0be358458b475974031f3fd00ee74cd5f7ff2493538da7eb7f",
+  "template_sha256": {
+    "proof-sources/burn13-parity-counter/ParityCounter.v": "323e6a1c51c1f21d29c5e8fa1a2608200861a0ea7b837796b496353b741c0f0a",
+    "proof-sources/burn13-parity-counter/Regression.v": "99b63767a4a71a74d75174a193e7400ed025df75bf81e817687ea90bd2b701c2"
+  }
+}

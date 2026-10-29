@@ -1,0 +1,76 @@
+{
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 682828669,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB---0LA2LB_3RB1LA2RB0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 6427570091,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB---0LA2LB_3RB1LA2RB3RB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 682832137,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB---3LA2LB_3RB1LA2RB0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 368728441,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB---2LB3LB_2RB1LA3RB0LA",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    }
+  ],
+  "state_bound": 0,
+  "selection_report": "research/burn11-global-marker-partial-search.json",
+  "selection_sha256": "0d7f1c2760f135326f7a407df8baef7cca6a1e5220e89ddc7fb48927713dd1e3",
+  "generic_report_sha256": "b1161e50fd3a56f7b469db3293f1ae3004824801c4b0f0540c504b648a6c825b",
+  "template_sha256": {
+    "proof-sources/burn11-global-marker/GlobalMarker.v": "8be76eedb5eeff4570d7cfce812043bbc2d1b5e0a96f63732e6c7e526a562591",
+    "proof-sources/burn11-global-marker/Regression.v": "5e4f3e4879d2419a2c9090893c470fd2354c50c4a9e710e4b0304717f5570a81"
+  }
+}

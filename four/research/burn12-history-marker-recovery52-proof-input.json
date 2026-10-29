@@ -1,0 +1,893 @@
+{
+  "generic_report_sha256": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 520989655,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 5,
+      "invariant": "conditional",
+      "machine": "1LB1RA0LB3RA_3RB2LB1LA0LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 865646754,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LA0RA1RB_2RB3RA0LB0RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2505590803,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 9,
+      "invariant": "conditional",
+      "machine": "1LB1RA0LA2LB_2RB3LB0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2505586179,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 5,
+      "invariant": "conditional",
+      "machine": "1LB1RA0LB2LA_2RB3LB0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2505592248,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 13,
+      "invariant": "conditional",
+      "machine": "1LB1RA1LB2LB_2RB3LB0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2505572936,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 11,
+      "invariant": "conditional",
+      "machine": "1LB2LB1RA1LB_2RB3LB0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 5252641322,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 9,
+      "invariant": "conditional",
+      "machine": "1LB2LA0RA0LB_1RB2RA3LB3LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 546530948,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 7,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LB2RA_3RB2RA1LB0LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2096700360,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 7,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LB3RA_2RB3RA0LB1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3177480885,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 73,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA0LB_3RB2RA3LA1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 520990233,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 161,
+      "invariant": "conditional",
+      "machine": "1LB1RA0RB3RA_3RB2LB1LA0LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 310135289,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 195,
+      "invariant": "conditional",
+      "machine": "1LB2LA1RB1LA_1RB3RA3LA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4139860082,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 65,
+      "invariant": "conditional",
+      "machine": "1LB1RA3RA2RB_2RB2LA0LB2RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4969001422,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 37,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA0LA_2RB3RA0LB3LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2505591092,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 13,
+      "invariant": "conditional",
+      "machine": "1LB1RA0LB2LB_2RB3LB0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2505553284,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 11,
+      "invariant": "conditional",
+      "machine": "1LB2LB1RA0LB_2RB3LB0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4969025987,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 44,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA1LB_2RB3RA0LB3LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1734616884,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LA2RA_2RB3RA0RB1LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3665236589,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 11,
+      "invariant": "conditional",
+      "machine": "1LB2LB0RB0LA_1RB3RA3RB2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2887885545,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 73,
+      "invariant": "conditional",
+      "machine": "1LB2LB3RB3LA_3RB2RA0LA1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2505560509,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 99,
+      "invariant": "conditional",
+      "machine": "1LB2LB3RA0RA_2RB3LB0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2914164621,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 69,
+      "invariant": "conditional",
+      "machine": "1LB2RA3LB1RA_1RB3LA0LB1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1136855353,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 83,
+      "invariant": "conditional",
+      "machine": "1LB2LB1RA2RA_2RB0LB3LB0RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 863890229,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 51,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA1RA_1RB3LB0LB0RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2504171235,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 162,
+      "invariant": "conditional",
+      "machine": "1LB1RA0LB2LB_2RB3LA0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2504193539,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 140,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA3LB_2RB3LA0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 562169027,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 74,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LB3RA_3RB1LA1RA0LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 425862755,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 41,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LB3RA_3RB2RA0LA0LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3176528188,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 7,
+      "invariant": "conditional",
+      "machine": "1LB0LA3LA2RB_0RB2RA3LA1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 42166414,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 13,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA3RA_2RB3LA0LB0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3375585761,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 11,
+      "invariant": "conditional",
+      "machine": "1LB2LB0RB0LA_1RB3RA0RB2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3711388614,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 133,
+      "invariant": "conditional",
+      "machine": "1LB0RA0LB2RA_3RB3LA0LA2LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3083124136,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 5,
+      "invariant": "conditional",
+      "machine": "1LB2RA0LB1RA_1RB3LA2LA1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2914832789,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 69,
+      "invariant": "conditional",
+      "machine": "1LB2RA3LB1RA_3RB3LA0LB1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3177532752,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 11,
+      "invariant": "conditional",
+      "machine": "1LB0LA0RB3LA_3RB2RA3LA1RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1267116051,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 65,
+      "invariant": "conditional",
+      "machine": "1LB2RA3RA0RB_1RB2LA0LB0RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1267155355,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 65,
+      "invariant": "conditional",
+      "machine": "1LB2RA3RA2RB_1RB2LA0LB0RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1007980852,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 35,
+      "invariant": "conditional",
+      "machine": "1LB0LA0LB2RA_3RB3LA1RB0RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2505599524,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 168,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LB2RA_2RB3LB0LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2096680708,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 168,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LB2RA_2RB3RA0LB1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 569268312,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 104,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LB3RA_3RB2LB1RA0LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 546550600,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 104,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LB3RA_3RB2RA1LB0LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2093859779,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 140,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA3RA_2RB3LA0LB1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 190141537,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 133,
+      "invariant": "conditional",
+      "machine": "1LB0RB3LA2LB_3RB3RA1RB0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2836397016,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 11,
+      "invariant": "conditional",
+      "machine": "1LB2LB3RA1LA_2RB2LA3RB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 2096641404,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 71,
+      "invariant": "conditional",
+      "machine": "1LB2LB3LB0RA_2RB3RA0LB1LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 1267145529,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 49,
+      "invariant": "conditional",
+      "machine": "1LB2RA3RA2LB_1RB2LA0LB0RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4967611043,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 44,
+      "invariant": "conditional",
+      "machine": "1LB2LB2RA1RA_2RB3LB0LB3LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4003196640,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 195,
+      "invariant": "conditional",
+      "machine": "1LB2LA0RA1RB_1RB3RA3LA2LB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 190140381,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 13,
+      "invariant": "conditional",
+      "machine": "1LB0RB2LA2LB_3RB3RA1RB0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4555519313,
+      "fuel": 131072,
+      "history": 2,
+      "history_marker_mask": 69,
+      "invariant": "conditional",
+      "machine": "1LB2RA3LB1RA_1RB3LA0LB2RB",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 6060898621,
+      "fuel": 131072,
+      "history": 1,
+      "history_marker_mask": 83,
+      "invariant": "conditional",
+      "machine": "1LB2LB0RA1RA_2RB0LB3LB3RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    }
+  ],
+  "scope": "Recovery historical-marker state-zero batch, outside earlier frozen aggregate.",
+  "selection_report": "research/burn12-history-marker-recovery52-selection.json",
+  "selection_sha256": "339f16b15f3360b597564d774ad4d58cf8b5d9e23e473600ddb631bb7b3490b5",
+  "state_bound": 0
+}

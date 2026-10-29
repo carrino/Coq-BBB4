@@ -1,0 +1,16 @@
+{
+  "format": "BBB24 compact weighted certificates v2",
+  "rows": 485,
+  "kinds": {
+    "weighted": 337,
+    "ordinary": 148
+  },
+  "bundles": [
+    {
+      "path": "certificates-0000.json",
+      "sha256": "ee3308fd5917a451f6a48775acc34dc180e2c52ccdea79110fd85a994c1afd0c",
+      "bytes": 540894,
+      "rows": 485
+    }
+  ]
+}

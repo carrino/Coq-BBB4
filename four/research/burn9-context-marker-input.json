@@ -1,0 +1,60 @@
+{
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 569250598,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB1LA0RB2RB_3RB2LB1RA0LB",
+      "marker_mask": 6,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 779066417,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB1RB3LB_2RB1LA3RB0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2505555596,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB3RA0LB_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 4
+    }
+  ],
+  "scope": "Three prospective contextual-marker state-zero families; kernel replay required.",
+  "selection_report": "research/burn9-context-marker-selection.json",
+  "selection_sha256": "5d72936b107052ebe58c8fd7276f33043b8c64d39a3dd92a084327f07fd5426d",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn9-context-marker/ContextMarker.v": "c18fbd4a646ac6bae689036b8facb8e25ee0851224535aea48d08052d08b7fe8",
+    "proof-sources/burn9-context-marker/Regression.v": "83ad741fcb5db6ee7cc0d32798922950e2b6693a46e9458e43d100723748ae1b"
+  }
+}

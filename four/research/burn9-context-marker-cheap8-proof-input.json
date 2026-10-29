@@ -1,0 +1,137 @@
+{
+  "generic_report_sha256": "c7da08e977e7ecc582ddd6d12fb099dd9eaf7c24b01ec0d7ccf8dde7485f68b0",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 2492791622,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB3RA1LA_2RB1LA0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 42124798,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB0RA1RA_2RB3LA0LB0LA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2504175349,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2RA3RB2LB_2RB3LA0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 4544832399,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2RB2LB1RB_3RB1LA0LB2RB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 4544866603,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB0LA2LB3RA_3RB1LA0LB2RB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 779039251,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB3RB1RB_2RB1LA3RB0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 1677818286,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2RA3RA2LB_2RB2LA0LB1LA",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 2505592537,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB1RA1RA2LB_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 4
+    }
+  ],
+  "scope": "Eight cheap contextual-marker candidates; kernel replay required.",
+  "selection_report": "research/burn9-context-marker-cheap8-selection.json",
+  "selection_sha256": "499de95a9c5060e78cb27674863b5b9d791df567dc3408b3767847eb622258d4",
+  "state_bound": 0
+}

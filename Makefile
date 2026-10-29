@@ -122,12 +122,12 @@ clean:
 proof: proof-all
 .PHONY: proof
 
-# The completed (2,4) equality theorem. This fails until the global Value.v
-# exists; a successful checkpoint replay alone cannot claim the exact value.
+# Rebuild the selected state equality from reviewed source inputs. The driver
+# activates the prepared Value alias only after the unconditional Final audit.
+STATE24_JOBS ?= $(BUILD_JOBS)
 proof-2-4:
-	@python3 four/tools/report_state_value.py --check-source
 	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
-	 $(MAKE) -C four proof PROOF_JOBS=$(BUILD_JOBS)
+	 $(MAKE) -C four proof STATE24_JOBS=$(STATE24_JOBS)
 
 # Current public theories/regressions and reviewed standalone state cases.
 proof-2-4-checkpoint:

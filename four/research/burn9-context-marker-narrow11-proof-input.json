@@ -1,0 +1,185 @@
+{
+  "generic_report_sha256": "c7da08e977e7ecc582ddd6d12fb099dd9eaf7c24b01ec0d7ccf8dde7485f68b0",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 4145539765,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB1LA3RB2RB_2RB3LA0LB2RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 569228991,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LA3LB1RA_3RB2LB1RA0LB",
+      "marker_mask": 6,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2096700071,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB3LA3RA_2RB3RA0LB1LB",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2096702672,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB1LA3RB_2RB3RA0LB1LB",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2505591959,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB1RA1LA2LB_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4544861265,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB1RB3LB_3RB1LA0LB2RB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2492776883,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB3RA0LB_2RB1LA0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 715462175,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2RB1LB1LA_3RB2RA3LA0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 4969019918,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB1RA1LA_2RB3RA0LB3LA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3471803092,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LA1RB0LA_0RB3RA1RB2LA",
+      "marker_mask": 6,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3809361637,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB0RA2RB2RA_3RB3LB1LA2LB",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        2,
+        0,
+        1
+      ],
+      "width": 2
+    }
+  ],
+  "scope": "Eleven reduced-window contextual-marker state proofs; separate checkpoint10 package.",
+  "selection_report": "research/burn9-context-marker-narrow11-selection.json",
+  "selection_sha256": "207344cb3ec641898745f04760c489a1ac9f3501e3ffd84c3f772d41a6d2dd60",
+  "state_bound": 0
+}

@@ -1,0 +1,153 @@
+{
+  "generic_report_sha256": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed",
+  "native_report_sha256": "a09ee78ab3afdb2118637c75cc887ae1937bc8ae36305a8c1169bb7f3c69ce4d",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 5156788114,
+      "fuel": 131072,
+      "graph_path": "build/burn14-local-capacity/graph-08-h3-w3.json",
+      "graph_sha256": "91767d3dfb6d9804f79a73db3ed30d1cbb93d59e01cefb0ad194e7fb75594d77",
+      "guard_mask": 9,
+      "history": 3,
+      "history_marker_mask": 5,
+      "machine": "1LB2LA0LA1RB_3RB2RA2LB3LA",
+      "nodes": 137,
+      "rank": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "rounds": 128,
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 3515433303,
+      "fuel": 131072,
+      "graph_path": "build/burn14-local-capacity/graph-02-h3-w3.json",
+      "graph_sha256": "58c18484d61879f2a6c00046c8bf631bc859f6f3ec07e00f0960fcf52b23b543",
+      "guard_mask": 9,
+      "history": 3,
+      "history_marker_mask": 3,
+      "machine": "1LB0LB0LA1RB_3RB2RA2LB2LA",
+      "nodes": 139,
+      "rank": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "rounds": 128,
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 5684277901,
+      "fuel": 131072,
+      "graph_path": "build/burn14-local-capacity/graph-23-h1-w2.json",
+      "graph_sha256": "eeecaa39606bf33c4fb8960ae2ef3c5bf8bbef0b262ba31fa46dcd9b06cece26",
+      "guard_mask": 3,
+      "history": 1,
+      "history_marker_mask": 41,
+      "machine": "1LB2RB0RA0LB_1RB2LA3RA3LB",
+      "nodes": 141,
+      "rank": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "rounds": 128,
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 3515433422,
+      "fuel": 131072,
+      "graph_path": "build/burn14-local-capacity/graph-07-h3-w3.json",
+      "graph_sha256": "8762458b85481332f479102ef36e5954c9a11586ccf2a27c38520fc610d302e0",
+      "guard_mask": 9,
+      "history": 3,
+      "history_marker_mask": 5,
+      "machine": "1LB2LA0LA1RB_3RB2RA2LB2LA",
+      "nodes": 153,
+      "rank": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "rounds": 128,
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 5354908018,
+      "fuel": 131072,
+      "graph_path": "build/burn14-local-capacity/graph-09-h1-w2.json",
+      "graph_sha256": "48d530202ba26c3708e1b33a07e0685563e9244a857080b3cf7a56efd55ffeb1",
+      "guard_mask": 3,
+      "history": 1,
+      "history_marker_mask": 75,
+      "machine": "1LB2LA2RB2LA_1RB3RA0LA3LB",
+      "nodes": 207,
+      "rank": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "rounds": 128,
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 5644860579,
+      "fuel": 131072,
+      "graph_path": "build/burn14-local-capacity/graph-10-h1-w2.json",
+      "graph_sha256": "23709467a599b3c8a16c9ac7a851781fe85c0387f72abcb27741560c66d5a2da",
+      "guard_mask": 5,
+      "history": 1,
+      "history_marker_mask": 83,
+      "machine": "1LB2LB0LB0RA_2RB3RA3LA3LB",
+      "nodes": 335,
+      "rank": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "rounds": 128,
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 1463094873,
+      "fuel": 131072,
+      "graph_path": "build/burn14-local-capacity/graph-01-h1-w2.json",
+      "graph_sha256": "a9bce57650104ba018b2658a68208c46fd99fb40fd975026f24013a950c04705",
+      "guard_mask": 3,
+      "history": 1,
+      "history_marker_mask": 71,
+      "machine": "1LB0LA3LA2RB_1RB2RA2LB0RB",
+      "nodes": 557,
+      "rank": [
+        1,
+        0,
+        0,
+        2
+      ],
+      "rounds": 128,
+      "width": 2
+    }
+  ],
+  "selection_report": "research/burn15-padded-wall-small7-selection.json",
+  "selection_sha256": "e51d86ff3a47cccf0fb90a3dc82f699c08956e263d68d12a2702f3e6f2bf7c1b",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn15-padded-wall/PaddedWall.v": "577959450585396d73ce1d77c22955a7227cca7d193627dae6d55646b2c35c52",
+    "proof-sources/burn15-padded-wall/Regression.v": "b49d9a81e8332341b9f6882766450b15f5f1e2f0c6d9f12ad62ed605bfeba59e"
+  }
+}
