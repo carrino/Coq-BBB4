@@ -6,6 +6,9 @@ on:
       - 'four/tools/test_state_value_renderer_escapes.py'
       - 'four/tools/test_state_value_native.py'
       - 'four/tools/test_state_value_scheduler.py'
+      - 'four/tools/test_state_value_stack.py'
+      - 'four/tools/with_coq_stack.py'
+      - 'four/Makefile'
       - 'four/tools/proof24_common.py'
       - 'four/tools/build_state_value.py'
       - '.github/workflows/state-value-source.yml'
@@ -16,6 +19,9 @@ on:
       - 'four/tools/test_state_value_renderer_escapes.py'
       - 'four/tools/test_state_value_native.py'
       - 'four/tools/test_state_value_scheduler.py'
+      - 'four/tools/test_state_value_stack.py'
+      - 'four/tools/with_coq_stack.py'
+      - 'four/Makefile'
       - 'four/tools/proof24_common.py'
       - 'four/tools/build_state_value.py'
       - '.github/workflows/state-value-source.yml'
@@ -34,3 +40,5 @@ jobs:
         run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_native.py'
       - name: Check bounded provider concurrency and exact resume migration
         run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_scheduler.py'
+      - name: Check bounded Coq stack launch and inheritance
+        run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_stack.py'
