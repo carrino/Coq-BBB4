@@ -60,7 +60,8 @@ promise a separate fixed 4-GiB reserve.
 The cloud research runner has a distinct reviewed 14-GiB address-space and
 12.25-GiB RSS profile. The portable cloud profile has not passed the
 complete build; the portable driver's own memory preflight can refuse it.
-No profile automatically raises its limits after failure.
+A failed command never raises the frozen full-budget limits. The optional
+small-budget provider pass below can retry within the existing provider limit.
 
 The default disk guard retains 8 GiB of free space. Generated Coq sources,
 objects, runtime receipts and logs occupy additional disk space. Generated
@@ -85,6 +86,39 @@ an error. Forcing `-native-compiler no` can exhaust memory in
 `BUILD_JOBS` reaches the selected compiler scheduler. Memory limits can reduce
 actual concurrency below the requested count. `STATE24_JOBS` is an optional
 override for this target alone. The old BBB(4) `proof-all` target remains separate.
+
+For the bulk provider phase, enable the optional faster pass with
+`STATE24_PROVIDER_LIGHT=1`. It first tries up to `BUILD_JOBS` files (at most eight)
+using the ordinary 2-GiB address-space and 1843-MiB RSS limits. A file that reaches
+that memory limit is retried once under its original provider budget, at most
+two at a time. The small-budget and full-budget batches never overlap. Type or
+statement errors, timeouts, disk failures and the system-memory guard still stop
+the build. Dependency readiness and available RAM can reduce concurrency.
+
+This mode changes scheduling, while keeping source preparation, compiler flags,
+object validation and final recursive audits intact. Assembly remains serial.
+Small-budget logs use `.light.log`; a full-budget retry preserves that log and
+records its reason in the successful compile receipt.
+
+To upgrade a running build from `91c48ed4`, press Ctrl+C and wait for the shell
+prompt **before updating the checkout**. Then run, preserving the paths used by
+that build:
+
+```sh
+git fetch origin
+git merge --ff-only origin/codex/bbb24-provider-parallelism
+make proof-2-4 BUILD_JOBS=8 STATE24_RESUME=1 STATE24_PROVIDER_LIGHT=1 \
+  STATE24_PREPARED=build/state-value-selected-native \
+  STATE24_STATE=build/state-value-proof-native
+```
+
+The resume migration accepts only that exact preceding driver with the same
+source graph, toolchain, compiler policy, resource monitor and reporter. It
+records the scheduler upgrade, checks every object receipt, and repeats the
+final audits. Other identity changes still require a fresh build. Existing
+completed files can be reused; no `git clean` is needed. To return to the normal
+provider schedule after upgrading, omit `STATE24_PROVIDER_LIGHT=1` on a later
+resume.
 
 Default prepared sources and proof state live under
 `four/build/state-value-selected/` and `four/build/state-value-proof/`. To place
