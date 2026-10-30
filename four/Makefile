@@ -58,6 +58,7 @@ STATE24_SOURCE_INPUT ?= ..
 STATE24_JOBS ?= $(if $(BUILD_JOBS),$(BUILD_JOBS),8)
 STATE24_DISK_RESERVE_GIB ?= 8
 STATE24_RESUME ?=
+STATE24_PROVIDER_LIGHT ?=
 
 # Keep invocation sequential even if an outer make uses -j.
 # Pure preparation uses the hashes independently checked against the source
@@ -69,7 +70,8 @@ proof: proof-state-source-ready
 	  --tree "$(STATE24_TREE)" --manifest "$(STATE24_MANIFEST)" \
 	  --manifest-sha256 "$(STATE24_MANIFEST_SHA256)" \
 	  --state "$(STATE24_STATE)" --jobs "$(STATE24_JOBS)" --disk-reserve-gib "$(STATE24_DISK_RESERVE_GIB)" \
-	  $(if $(filter 1,$(STATE24_RESUME)),--resume,)
+	  $(if $(filter 1,$(STATE24_RESUME)),--resume,) \
+	  $(if $(filter 1,$(STATE24_PROVIDER_LIGHT)),--provider-light,)
 
 proof-state-source-ready:
 	@test -n "$(STATE24_MANIFEST_SHA256)" -a -n "$(STATE24_PREPARE_SPEC_SHA256)" -a -n "$(STATE24_PREPARER_SHA256)" || { \

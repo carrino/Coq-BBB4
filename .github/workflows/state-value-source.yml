@@ -5,6 +5,7 @@ on:
       - 'four/tools/state_value/**'
       - 'four/tools/test_state_value_renderer_escapes.py'
       - 'four/tools/test_state_value_native.py'
+      - 'four/tools/test_state_value_scheduler.py'
       - 'four/tools/proof24_common.py'
       - 'four/tools/build_state_value.py'
       - '.github/workflows/state-value-source.yml'
@@ -14,6 +15,7 @@ on:
       - 'four/tools/state_value/**'
       - 'four/tools/test_state_value_renderer_escapes.py'
       - 'four/tools/test_state_value_native.py'
+      - 'four/tools/test_state_value_scheduler.py'
       - 'four/tools/proof24_common.py'
       - 'four/tools/build_state_value.py'
       - '.github/workflows/state-value-source.yml'
@@ -30,3 +32,5 @@ jobs:
         run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_renderer_escapes.py'
       - name: Check native policy and reject VM-only receipts
         run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_native.py'
+      - name: Check bounded provider concurrency and exact resume migration
+        run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_scheduler.py'

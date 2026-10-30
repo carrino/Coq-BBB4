@@ -102,24 +102,138 @@ def verify_receipts(graph, state, runtime_digest):
     return rows
 
 
-def compile_graph(graph, state, runtime, env, jobs, timeout, reserve_gib):
+# The sole supported migration preserves the compiler, resources and reporter
+# byte-for-byte from the published native-census fix (91c48ed4). Source graph,
+# runtime and tree must still match, and every object receipt is checked again.
+SCHEDULER_PREDECESSOR = {
+    'proof24_common.py': 'fcf4cf5ecd8baa311773f0ebaa3f590412ac8fa63dfe345f2ef6bc6f71a432b0',
+    'proof24_resources.py': '4464141932bdcd63bd2ea5aa9ecc5d3b44c0c9e12e196e11d0218320f9a36c40',
+    'build_state_value.py': 'ced36b3d0c4359de56cb502f210a28a89f42a88ad5f07e9d26d0470a5461156d',
+    'report_state_value.py': '5c67ad828c41f0958b0d8bbaac63f5086268a70c4fe94b454c497cc095c197b6',
+}
+
+
+def resume_identity(state, identity, provider_light):
+    initial = state / 'build-identity.json'
+    if not initial.is_file():
+        raise ValueError('Missing resume identity')
+    previous = json.loads(initial.read_text())
+    if previous == identity:
+        return
+    unchanged = set(SCHEDULER_PREDECESSOR) - {'build_state_value.py'}
+    predecessor = {**identity, 'implementation': SCHEDULER_PREDECESSOR}
+    if (not provider_light or previous != predecessor
+            or any(identity['implementation'].get(name) != SCHEDULER_PREDECESSOR[name]
+                   for name in unchanged)):
+        raise ValueError('Resume identity differs; use a new freshly prepared tree/state')
+    write_json(state / 'scheduler-upgrade.json', {
+        'scope': 'provider scheduling only; no compiler/source/runtime/receipt relaxation',
+        'previous_identity': previous, 'current_identity': identity,
+        'fresh_object_receipt_validation_required': True,
+        'fresh_final_recursive_audits_required': True})
+    write_json(initial, identity)
+    print('Upgraded the reviewed 91c48ed4 scheduler; current compile receipts will be checked.',
+          flush=True)
+
+
+def memory_limited_failure(error, log):
+    """Only an owned-process memory limit permits the existing full-budget retry."""
+    message = str(error)
+    if message.startswith('Child session exceeded RSS guard: '):
+        return True
+    if message.startswith('Command failed, exit '):
+        return bool(re.search(
+            r'^(?:Fatal error: (?:out of memory|exception Out_of_memory)|Error: Out of memory\.)\s*$',
+            log.read_text(), re.IGNORECASE | re.MULTILINE))
+    return False
+
+
+def compile_graph(graph, state, runtime, env, jobs, timeout, reserve_gib, provider_light=False):
     runtime_digest = canonical(runtime)
     pending = set(graph.order)
     rows = {}
-    completed, resumed = 0, 0
+    completed, resumed, light_attempts, memory_retries = 0, 0, 0, 0
+
+    def save(task, result, phase, limits, log, retry=None):
+        nonlocal completed
+        source, key, path, obj, _ = task
+        if sha(graph.tree / source) != graph.sources[source]['sha256']:
+            raise ValueError('Source changed during compile: ' + source)
+        row = {'inputs': key, 'object_sha256': sha(obj), 'object_bytes': obj.stat().st_size,
+               'compile_exit_code': result['exit_code'], 'compile_log_sha256': sha(log),
+               'compile_log': str(log.relative_to(state)),
+               'resource_profile': phase, 'execution': result,
+               'resource_limits': {k: limits[k] for k in ('address_space_bytes', 'rss_guard_bytes')},
+               'kernel_audit_status': 'pending; compilation alone is not an audit'}
+        if retry is not None:
+            row['light_memory_retry'] = retry
+        write_json(path, row)
+        rows[source] = row
+        pending.remove(source)
+        completed += 1
+
+    def batch(tasks, limits, phase, light=False, retries=None):
+        """Every child is owned; a light memory failure cancels only that child."""
+        failed = {}
+        owners = {task[0]: CommandBatch() for task in tasks}
+
+        def attempt(task):
+            source, _, _, obj, normal_log = task
+            log = normal_log.with_suffix('.light.log') if light else normal_log
+            try:
+                result = run_capped(
+                    [runtime['binaries']['coqc']['path'], *FLAGS, *graph.flags, source],
+                    graph.tree, env, log, limits, timeout, owners[source])
+                return result, log, None
+            except RuntimeError as error:
+                if not light or not memory_limited_failure(error, log):
+                    raise
+                # run_capped has terminated/reaped this whole child session.
+                # Failed output never receives a receipt or reaches a dependent.
+                for suffix in ('.vo', '.vos', '.vok', '.vio'):
+                    obj.with_suffix(suffix).unlink(missing_ok=True)
+                return None, log, {'reason': str(error), 'log': str(log.relative_to(state)),
+                    'log_sha256': sha(log), 'address_space_bytes': limits['address_space_bytes'],
+                    'rss_guard_bytes': limits['rss_guard_bytes']}
+
+        if tasks:
+            print(json.dumps({'phase': phase, 'workers': len(tasks), 'remaining': len(pending),
+                              'sources': [t[0] for t in tasks]}), flush=True)
+        with ThreadPoolExecutor(max_workers=limits['workers']) as pool:
+            futures = {}
+            try:
+                for task in tasks:
+                    futures[pool.submit(attempt, task)] = task
+                for future in as_completed(futures):
+                    task = futures[future]
+                    result, log, retry = future.result()
+                    if retry is not None:
+                        failed[task[0]] = retry
+                    else:
+                        save(task, result, phase, limits, log,
+                             (retries or {}).get(task[0]))
+            except BaseException:
+                for owner in owners.values():
+                    owner.cancel()
+                for future in futures:
+                    future.cancel()
+                raise
+        return failed
+
     while pending:
         ready = [s for s in graph.order if s in pending and set(graph.deps[s]) <= rows.keys()]
         if not ready:
             raise ValueError('No ready source in selected DAG')
-        # Profiles never overlap; heavy providers/checks run with fewer workers,
-        # global assembly runs alone. Available RAM is measured at every batch.
         phase = graph.phase[ready[0]]
-        limits = phase_limits(phase, jobs, profiles=graph.profiles)
-        batch = [s for s in ready if graph.phase[s] == phase][:limits['workers']]
+        light = provider_light and phase == 'provider'
+        # A light provider attempt borrows the frozen ordinary budget. Its
+        # complete batch ends before any full-budget provider retry starts.
+        limits = phase_limits('ordinary' if light else phase, jobs, profiles=graph.profiles)
+        sources = [s for s in ready if graph.phase[s] == phase][:limits['workers']]
         check_disk(graph.tree, reserve_gib)
         check_disk(state, reserve_gib)
         tasks = []
-        for source in batch:
+        for source in sources:
             key = receipt_key(graph, source, runtime_digest, rows)
             path = state / 'receipts' / (graph.module[source] + '.json')
             obj = graph.tree / Path(source).with_suffix('.vo')
@@ -128,43 +242,28 @@ def compile_graph(graph, state, runtime, env, jobs, timeout, reserve_gib):
                 pending.remove(source)
                 resumed += 1
                 continue
-            # Never consume a stale result if the new command fails.
             path.unlink(missing_ok=True)
             for suffix in ('.vo', '.vos', '.vok', '.vio'):
                 obj.with_suffix(suffix).unlink(missing_ok=True)
             log = state / 'compile' / (graph.module[source] + '.log')
             log.parent.mkdir(parents=True, exist_ok=True)
             tasks.append((source, key, path, obj, log))
-        if tasks:
-            print(json.dumps({'phase': phase, 'workers': len(tasks), 'remaining': len(pending),
-                              'sources': [t[0] for t in tasks]}), flush=True)
-        owner = CommandBatch()
-        with ThreadPoolExecutor(max_workers=limits['workers']) as pool:
-            futures = {pool.submit(run_capped,
-                [runtime['binaries']['coqc']['path'], *FLAGS, *graph.flags, source],
-                graph.tree, env, log, limits, timeout, owner): (source, key, path, obj, log)
-                for source, key, path, obj, log in tasks}
-            try:
-                for future in as_completed(futures):
-                    source, key, path, obj, log = futures[future]
-                    result = future.result()
-                    if sha(graph.tree / source) != graph.sources[source]['sha256']:
-                        raise ValueError('Source changed during compile: ' + source)
-                    row = {'inputs': key, 'object_sha256': sha(obj), 'object_bytes': obj.stat().st_size,
-                           'compile_exit_code': result['exit_code'], 'compile_log_sha256': sha(log),
-                           'resource_profile': phase, 'execution': result,
-                           'kernel_audit_status': 'pending; compilation alone is not an audit'}
-                    write_json(path, row)
-                    rows[source] = row
-                    pending.remove(source)
-                    completed += 1
-            except BaseException:
-                owner.cancel()
-                for future in futures:
-                    future.cancel()
-                raise
-    return rows, {'fresh_compiled': completed, 'exact_receipts_resumed': resumed}
-
+        if light:
+            light_attempts += len(tasks)
+        failed = batch(tasks, limits, 'provider-light' if light else phase, light)
+        retry_tasks = [task for task in tasks if task[0] in failed]
+        memory_retries += len(retry_tasks)
+        while retry_tasks:
+            # Never exceed the original reviewed provider cap, and never retry
+            # a statement/type error, timeout, disk error or system-RAM guard.
+            limits = phase_limits('provider', jobs, profiles=graph.profiles)
+            check_disk(graph.tree, reserve_gib)
+            check_disk(state, reserve_gib)
+            selected = retry_tasks[:limits['workers']]
+            batch(selected, limits, 'provider', retries=failed)
+            retry_tasks = retry_tasks[len(selected):]
+    return rows, {'fresh_compiled': completed, 'exact_receipts_resumed': resumed,
+                  'provider_light_attempts': light_attempts, 'provider_memory_retries': memory_retries}
 
 def checked_root(graph, state, runtime, env, constant, require, name, timeout):
     """Fresh exact statement/assumptions check followed by FULL recursive coqchk."""
@@ -211,8 +310,7 @@ def execute(graph, state, args):
                     'implementation': implementation_pins(), 'tree': str(graph.tree)}
         initial = state / 'build-identity.json'
         if args.resume:
-            if not initial.is_file() or json.loads(initial.read_text()) != identity:
-                raise ValueError('Resume identity differs; use a new freshly prepared tree/state')
+            resume_identity(state, identity, args.provider_light)
         else:
             if initial.exists():
                 raise ValueError('Build state already exists; use --resume with exact receipts')
@@ -225,7 +323,7 @@ def execute(graph, state, args):
         (state / 'receipts').mkdir(exist_ok=True)
         check_dependencies(graph, runtime, state, env, args.command_timeout)
         rows, counts = compile_graph(graph, state, runtime, env, args.jobs,
-                                     args.command_timeout, args.disk_reserve_gib)
+                                     args.command_timeout, args.disk_reserve_gib, args.provider_light)
         # Recheck the complete current closure before asking the kernel to audit it.
         verify_receipts(graph, state, canonical(runtime))
         gate = checked_root(graph, state, runtime, env, graph.final_constant,
@@ -264,6 +362,8 @@ def main():
     parser.add_argument('--manifest-sha256', required=True)
     parser.add_argument('--state', type=Path)
     parser.add_argument('--resume', action='store_true')
+    parser.add_argument('--provider-light', action='store_true',
+                        help='Try providers with the ordinary worker budget; retry memory-limited files at their original provider budget')
     parser.add_argument('--jobs', type=int, default=8)
     parser.add_argument('--disk-reserve-gib', type=int, default=8)
     parser.add_argument('--command-timeout', type=int, default=6 * 3600)
