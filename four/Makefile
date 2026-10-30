@@ -66,7 +66,7 @@ STATE24_PROVIDER_LIGHT ?=
 proof: proof-state-source-ready
 	@test -n "$(STATE24_MANIFEST_SHA256)" || { \
 	  echo 'The selected build requires its reviewed source-manifest hash.' >&2; exit 2; }
-	python3 tools/build_state_value.py build \
+	python3 tools/with_coq_stack.py python3 tools/build_state_value.py build \
 	  --tree "$(STATE24_TREE)" --manifest "$(STATE24_MANIFEST)" \
 	  --manifest-sha256 "$(STATE24_MANIFEST_SHA256)" \
 	  --state "$(STATE24_STATE)" --jobs "$(STATE24_JOBS)" --disk-reserve-gib "$(STATE24_DISK_RESERVE_GIB)" \
@@ -87,7 +87,7 @@ proof-state-source-ready:
 # A separate explicit target reruns the exact statement/assumptions check and
 # full recursive kernel audit on the current selected closure.
 proof-report:
-	python3 tools/report_state_value.py \
+	python3 tools/with_coq_stack.py python3 tools/report_state_value.py \
 	  --tree "$(STATE24_TREE)" --manifest "$(STATE24_MANIFEST)" \
 	  --manifest-sha256 "$(STATE24_MANIFEST_SHA256)" --state "$(STATE24_STATE)"
 

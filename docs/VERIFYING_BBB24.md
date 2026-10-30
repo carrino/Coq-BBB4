@@ -75,6 +75,19 @@ build-state path contains spaces. The temporary project is removed on success
 or failure; the state copy and dependency log remain. Warnings, unknown sources,
 unknown dependencies, missing sources and graph mismatches stop the build.
 
+The Make build and report targets give their child processes at least a 64-MiB
+stack, matching the existing affine replay. The large affine aggregate's
+26,970-family count can overflow the usual 8-MiB shell stack. This changes the
+process stack allowance; address-space and resident-memory guards still apply.
+An already larger or unlimited stack is preserved. A hard stack limit below
+64 MiB stops the command with a clear error.
+
+For direct Python-driver invocations, use the same wrapper, for example
+`python3 four/tools/with_coq_stack.py python3 four/tools/build_state_value.py ...`.
+If resuming an older checkout without updating, run `ulimit -S -s 65536` in that
+shell first, then use the same resume command and paths. Completed object
+receipts remain reusable; source preparation and compiler flags are unchanged.
+
 The selected compiler uses `-native-compiler ondemand`: census proofs can use
 `native_compute` without generating native objects for every module. The driver
 checks native capability before compiling, and treats native-to-VM fallback as
