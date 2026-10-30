@@ -125,13 +125,58 @@ make proof-2-4 BUILD_JOBS=8 STATE24_RESUME=1 STATE24_PROVIDER_LIGHT=1 \
   STATE24_STATE=build/state-value-proof-native
 ```
 
-The resume migration accepts only that exact preceding driver with the same
-source graph, toolchain, compiler policy, resource monitor and reporter. It
+The scheduler resume migration accepts the reviewed preceding execution
+policies with the same source graph, toolchain, compiler policy, resource
+monitor and reporter. It
 records the scheduler upgrade, checks every object receipt, and repeats the
 final audits. Other identity changes still require a fresh build. Existing
 completed files can be reused; no `git clean` is needed. To return to the normal
 provider schedule after upgrading, omit `STATE24_PROVIDER_LIGHT=1` on a later
 resume.
+
+The final recursive audits use `OCAMLRUNPARAM=o=40,O=60` by default, matching
+the repository's established smaller-heap profile. This is an audit-only default;
+normal source compilation keeps its existing settings. An explicitly inherited
+`OCAMLRUNPARAM` is preserved. To override only the audit, prefix the command with
+`STATE24_COQCHK_OCAMLRUNPARAM='o=20,O=60'` (or another OCaml GC profile).
+Address-space/RSS guards, exact-statement checks, allowed assumptions and full
+recursive checking remain unchanged. No dependencies are skipped.
+
+A 32-root affine diagnostic using the stock Coq checker measured:
+
+| GC profile | Sampled peak RSS | Elapsed time |
+| --- | ---: | ---: |
+| Unset | 644 MiB | 57.9 s |
+| `o=40,O=60` | 457 MiB | 67.9 s |
+| `o=5,O=10` | 364 MiB | 385.3 s |
+
+These are component measurements, not a full-build peak-memory or runtime
+claim. The complete global audit still must pass on the chosen machine. The
+more aggressive profile saved additional memory but was much slower in this
+sample. The final audits print an `audit` progress record and save
+`CheckFinal-audit-policy.json` / `CheckValue-audit-policy.json`. On a failed
+audit, the corresponding `*-audit-failure.json` records the GC profile, limits,
+elapsed time and error. To retain the checker's library/constant trace in its
+log, prefix the command with `STATE24_COQCHK_TRACE=1`.
+
+The GC-only driver upgrade also accepts completed state from the exact bounded
+provider scheduler (`4c1637e1`, including the Make-only stack fix `d14f1b4e`),
+with the same graph, runtime, compiler policy, resource monitor and reporter.
+Use the same paths and `STATE24_RESUME=1 STATE24_PROVIDER_LIGHT=1`. It checks all
+object receipts again and performs both full recursive audits. Other identity
+changes remain rejected.
+
+For an older checkout whose audit exceeded its memory guard, a bounded trial
+requires no Git update: set the stack and GC settings, then resume the same
+compiled work:
+
+```sh
+ulimit -S -s 65536
+OCAMLRUNPARAM='o=40,O=60' \
+make proof-2-4 BUILD_JOBS=8 STATE24_RESUME=1 STATE24_PROVIDER_LIGHT=1 \
+  STATE24_PREPARED=build/state-value-selected-native \
+  STATE24_STATE=build/state-value-proof-native
+```
 
 Default prepared sources and proof state live under
 `four/build/state-value-selected/` and `four/build/state-value-proof/`. To place

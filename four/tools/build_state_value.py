@@ -102,8 +102,8 @@ def verify_receipts(graph, state, runtime_digest):
     return rows
 
 
-# The sole supported migration preserves the compiler, resources and reporter
-# byte-for-byte from the published native-census fix (91c48ed4). Source graph,
+# Reviewed execution-policy migrations preserve compiler, monitor and reporter
+# bytes from the native-census fix and bounded provider scheduler. Source graph,
 # runtime and tree must still match, and every object receipt is checked again.
 SCHEDULER_PREDECESSOR = {
     'proof24_common.py': 'fcf4cf5ecd8baa311773f0ebaa3f590412ac8fa63dfe345f2ef6bc6f71a432b0',
@@ -111,6 +111,24 @@ SCHEDULER_PREDECESSOR = {
     'build_state_value.py': 'ced36b3d0c4359de56cb502f210a28a89f42a88ad5f07e9d26d0470a5461156d',
     'report_state_value.py': '5c67ad828c41f0958b0d8bbaac63f5086268a70c4fe94b454c497cc095c197b6',
 }
+
+
+# The bounded provider scheduler kept the same compiler, monitor and reporter.
+# Its completed receipts also survive an audit-GC-only execution-policy upgrade.
+AUDIT_PREDECESSOR = {
+    **SCHEDULER_PREDECESSOR,
+    'build_state_value.py': 'c1e0d5dcc8ac519c4b2074b17d50c927ffc25a7e2a887b9bed84f5db7c9db052',
+}
+DEFAULT_AUDIT_GC = 'o=40,O=60'
+
+
+def audit_environment(env):
+    audit_env = env.copy()
+    if 'STATE24_COQCHK_OCAMLRUNPARAM' in env:
+        audit_env['OCAMLRUNPARAM'] = env['STATE24_COQCHK_OCAMLRUNPARAM']
+    else:
+        audit_env.setdefault('OCAMLRUNPARAM', DEFAULT_AUDIT_GC)
+    return audit_env
 
 
 def resume_identity(state, identity, provider_light):
@@ -121,18 +139,19 @@ def resume_identity(state, identity, provider_light):
     if previous == identity:
         return
     unchanged = set(SCHEDULER_PREDECESSOR) - {'build_state_value.py'}
-    predecessor = {**identity, 'implementation': SCHEDULER_PREDECESSOR}
-    if (not provider_light or previous != predecessor
+    predecessors = [{**identity, 'implementation': implementation}
+                    for implementation in (SCHEDULER_PREDECESSOR, AUDIT_PREDECESSOR)]
+    if (not provider_light or previous not in predecessors
             or any(identity['implementation'].get(name) != SCHEDULER_PREDECESSOR[name]
                    for name in unchanged)):
         raise ValueError('Resume identity differs; use a new freshly prepared tree/state')
     write_json(state / 'scheduler-upgrade.json', {
-        'scope': 'provider scheduling only; no compiler/source/runtime/receipt relaxation',
+        'scope': 'execution policy only; no compiler/source/runtime/receipt relaxation',
         'previous_identity': previous, 'current_identity': identity,
         'fresh_object_receipt_validation_required': True,
         'fresh_final_recursive_audits_required': True})
     write_json(initial, identity)
-    print('Upgraded the reviewed 91c48ed4 scheduler; current compile receipts will be checked.',
+    print('Upgraded the reviewed execution policy; current compile receipts will be checked.',
           flush=True)
 
 
@@ -280,9 +299,32 @@ def checked_root(graph, state, runtime, env, constant, require, name, timeout):
     run_capped([runtime['binaries']['coqc']['path'], *FLAGS, *flags,
                 str(source.relative_to(graph.tree))], graph.tree, env, compile_log, limits, timeout)
     assumptions = parse_assumptions(compile_log.read_text())
-    result = run_capped([runtime['binaries']['coqchk']['path'], '-silent', '-bytecode-compiler',
-                         'yes', *flags, REPORT_NS + '.' + name], graph.tree, env,
-                        audit_log, limits, timeout)
+    audit_env = audit_environment(env)
+    trace = env.get('STATE24_COQCHK_TRACE') == '1'
+    verbosity = [] if trace else ['-silent']
+    policy = {'status': 'policy recorded before audit; no proof credit',
+              'verification_mode': 'full-recursive', 'trace_enabled': trace,
+              'ocamlrunparam': audit_env['OCAMLRUNPARAM'],
+              'address_space_bytes': limits['address_space_bytes'],
+              'rss_guard_bytes': limits['rss_guard_bytes'], 'timeout_seconds': timeout}
+    archive_results(state, [name + '-audit-policy.json', name + '-audit-failure.json'])
+    write_json(state / (name + '-audit-policy.json'), policy)
+    print(json.dumps({'phase': 'audit', 'mode': 'full-recursive',
+        'root': REPORT_NS + '.' + name, 'workers': 1,
+        'ocamlrunparam': audit_env['OCAMLRUNPARAM'],
+        'rss_guard_mib': limits['rss_guard_bytes'] // (1024 * 1024)}), flush=True)
+    started = time.monotonic()
+    try:
+        result = run_capped([runtime['binaries']['coqchk']['path'], *verbosity, '-bytecode-compiler',
+                            'yes', *flags, REPORT_NS + '.' + name], graph.tree, audit_env,
+                           audit_log, limits, timeout)
+    except (OSError, ValueError, RuntimeError) as error:
+        write_json(state / (name + '-audit-failure.json'), {
+            **policy, 'status': 'audit failed; no proof credit', 'error': str(error),
+            'elapsed_seconds': round(time.monotonic() - started, 3),
+            'audit_log_sha256': sha(audit_log) if audit_log.is_file() else None})
+        raise
+    result = {**result, 'ocamlrunparam': audit_env['OCAMLRUNPARAM'], 'trace_enabled': trace}
     if source.read_text() != expected_source:
         raise ValueError('Report theorem source changed during compile/audit')
     return {'mode': 'full-recursive', 'root': REPORT_NS + '.' + name,
