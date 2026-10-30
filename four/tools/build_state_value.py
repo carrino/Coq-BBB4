@@ -16,7 +16,7 @@ import time
 
 from proof24_common import (COMPILER_FLAGS, Graph, REPORT_PATH, REPORT_NS, VALUE, canonical, clean_environment, inside,
     archive_results, exclusive_build_locks,
-    parse_assumptions, receipt_key, receipt_valid, runtime_snapshot, sha,
+    parse_assumptions, receipt_key, receipt_valid, require_native_compiler, runtime_snapshot, sha,
     selected_statement_check, write_json)
 from proof24_resources import CommandBatch, check_disk, phase_limits, run_capped
 
@@ -206,6 +206,7 @@ def execute(graph, state, args):
         graph.verify_no_unselected(allow_value=args.resume)
         env = clean_environment()
         runtime = runtime_snapshot(env)
+        require_native_compiler(runtime)
         identity = {'manifest_sha256': graph.digest, 'runtime_sha256': canonical(runtime),
                     'implementation': implementation_pins(), 'tree': str(graph.tree)}
         initial = state / 'build-identity.json'

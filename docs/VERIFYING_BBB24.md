@@ -43,8 +43,10 @@ The WSL profile is intended for an environment exposing roughly
 32 GiB to Linux. It allows ordinary work up to eight workers, provider/check
 work up to two, and assembly one at a time. Providers have caps of
 8 GiB address space and 7 GiB resident memory per worker; assembly keeps
-27 GiB address space and 25 GiB resident memory. Ordinary and census-check
-limits stay at their existing defaults. The provider allowance gives the
+27 GiB address space and 25 GiB resident memory. Ordinary workers retain their 2-GiB address-space limit.
+`SmallBB.Census23Conditional` uses the separate census-check phase, with a
+4-GiB address-space and 3686-MiB resident-memory limit; it exceeds the ordinary
+limit even with native compilation enabled. The provider allowance gives the
 blank-root frontier modules more headroom. These are limits, not measured
 requirements or a guarantee that the complete graph fits.
 
@@ -72,6 +74,12 @@ build-state path contains spaces. The temporary project is removed on success
 or failure; the state copy and dependency log remain. Warnings, unknown sources,
 unknown dependencies, missing sources and graph mismatches stop the build.
 
+The selected compiler uses `-native-compiler ondemand`: census proofs can use
+`native_compute` without generating native objects for every module. The driver
+checks native capability before compiling, and treats native-to-VM fallback as
+an error. Forcing `-native-compiler no` can exhaust memory in
+`SmallBB.Census23Conditional`; adding workers does not fix that fallback.
+
 ## Logs, resume and separate checks
 
 `BUILD_JOBS` reaches the selected compiler scheduler. Memory limits can reduce
@@ -93,6 +101,19 @@ Resume only the same initialized source graph, toolchain and compiler settings:
 ```sh
 make proof-2-4 BUILD_JOBS=8 STATE24_RESUME=1
 ```
+
+If upgrading from the build that forced `-native-compiler no`, start in new
+prepared-source and proof-state directories. The compiler settings changed, so
+its existing receipts cannot be resumed. Preserve the old logs; no repository
+cleanup is needed:
+
+```sh
+make proof-2-4 BUILD_JOBS=8 \
+  STATE24_PREPARED=build/state-value-selected-native \
+  STATE24_STATE=build/state-value-proof-native
+```
+
+Use those same path overrides with `STATE24_RESUME=1` to resume this new run.
 
 An object is reused only when its complete source, dependency, runtime, selected
 path, compiler-flag and object receipts match. Resume still performs the final

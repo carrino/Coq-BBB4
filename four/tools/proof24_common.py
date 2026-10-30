@@ -27,7 +27,11 @@ VALUE = 'four/theories/Value.v'
 THEOREM = 'BBB24.Value.BBB24_state_value'
 REPORT_PATH = 'four/build/state-value-report'
 REPORT_NS = 'BBB24ValueReport'
-COMPILER_FLAGS = ('-q', '-noglob', '-w', '-abstract-large-number', '-native-compiler', 'no')
+# Enable native_compute without compiling native code for every selected module.
+# Treat a native-to-VM fallback as an error before a large census is evaluated.
+COMPILER_FLAGS = ('-q', '-noglob', '-w',
+                  '-abstract-large-number,+native-compiler-disabled',
+                  '-native-compiler', 'ondemand')
 FE = 'FunctionalExtensionality.functional_extensionality_dep'
 IDENT = re.compile(r'[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*\Z')
 OBJECT_SUFFIXES = ('.vo', '.vos', '.vok', '.vio', '.cmxs', '.cmo', '.cmx', '.cma',
@@ -343,6 +347,13 @@ def runtime_snapshot(env):
                        'sha256': sha(Path(sys.executable).resolve()), 'version': sys.version},
             'environment_hash': canonical({k: env.get(k) for k in
                 ('PATH', 'OCAMLPATH', 'CAML_LD_LIBRARY_PATH', 'COQPATH', 'COQLIB', 'COQCORELIB')})}
+
+
+def require_native_compiler(runtime):
+    config = dict(line.split('=', 1) for line in runtime['config'].splitlines() if '=' in line)
+    if config.get('COQ_NATIVE_COMPILER_DEFAULT') not in ('yes', 'ondemand'):
+        raise ValueError('Selected census build requires native-capable Coq; '
+                         'run tools/census_toolchain.sh from the repository root')
 
 
 def receipt_key(graph, source, runtime_digest, dependencies):
