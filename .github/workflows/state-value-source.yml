@@ -1,0 +1,32 @@
+name: State value build tooling
+on:
+  pull_request:
+    paths:
+      - 'four/tools/state_value/**'
+      - 'four/tools/test_state_value_renderer_escapes.py'
+      - 'four/tools/test_state_value_native.py'
+      - 'four/tools/proof24_common.py'
+      - 'four/tools/build_state_value.py'
+      - '.github/workflows/state-value-source.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'four/tools/state_value/**'
+      - 'four/tools/test_state_value_renderer_escapes.py'
+      - 'four/tools/test_state_value_native.py'
+      - 'four/tools/proof24_common.py'
+      - 'four/tools/build_state_value.py'
+      - '.github/workflows/state-value-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  renderer-escapes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check warning-free, equivalent renderer syntax
+        run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_renderer_escapes.py'
+      - name: Check native policy and reject VM-only receipts
+        run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_native.py'

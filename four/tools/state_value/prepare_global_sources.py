@@ -54,6 +54,22 @@ def read_raw(path):
         return stream.read()
 
 
+# Historical renderer bytes remain pinned by existing proof checkpoints. Correct
+# only their invalid Python escape spelling in memory before compilation; their
+# parsed programs and all generated Coq bytes must remain identical.
+LEGACY_ESCAPE_RENDERERS = frozenset((
+    'four/tools/check_weighted_closeout.py',
+    'four/tools/check_burn21_s057_drift.py',
+    'four/tools/check_burn10_state_replay_pilot.py',
+))
+
+
+def renderer_python_source(relative_path, data):
+    if relative_path not in LEGACY_ESCAPE_RENDERERS:
+        return data
+    return data.replace(b' \\/ ', b' \\\\/ ').replace(b' /\\ ', b' /\\\\ ')
+
+
 class Preparation:
     def __init__(self, source_pool, output, spec, extra_inputs=()):
         self.source_pool = source_pool.resolve()
@@ -230,7 +246,9 @@ class Preparation:
         def loader_get_data(loader,path):
             p=Path(path).resolve()
             if p.suffix=='.py'and p.is_relative_to(self.repo):
-                self.require_input(p.relative_to(self.repo))
+                relative = p.relative_to(self.repo).as_posix()
+                self.require_input(relative)
+                return renderer_python_source(relative, self.old_loader_get_data(loader,path))
             return self.old_loader_get_data(loader,path)
         importlib.machinery.SourceFileLoader.get_data=loader_get_data
         def forbidden(*args, **kwargs):
@@ -307,7 +325,8 @@ class Preparation:
         plan={'scope':'Deferred compilation plan for this foundation source graph; NOT executed by preparation.',
               'working_directory':'tree','environment':{'COQPATH':''},
               'common_flags':[arg for row in self.spec['load_paths']for arg in('-Q',row['path'],row['namespace'])],
-              'module_command_prefix':['coqc','-q','-w','-abstract-large-number','-native-compiler','no'],
+              'module_command_prefix':['coqc','-q','-noglob','-w',
+                  '-abstract-large-number,+native-compiler-disabled','-native-compiler','ondemand'],
               'command_construction':'module_command_prefix + common_flags + [source]',
               'compile_order':self.spec['compile_order'],
               'local_dependencies':self.spec['local_dependencies'],
