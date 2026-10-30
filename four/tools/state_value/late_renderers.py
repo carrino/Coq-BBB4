@@ -177,10 +177,10 @@ def _routine_prior(ctx):
         body += 'Lemma was_pending : forall family, In family board -> bootstrap_pending family.\nProof. apply boards_pending. unfold boards.\n'
         body += campaign.forall_proof(links,'was_pending')+'\nQed.\n'
         body += '''Definition pending := remaining bootstrap_pending board.
-Theorem coverage : forall tm, QHBound score tm \/ pending tm.
+Theorem coverage : forall tm, QHBound score tm \\/ pending tm.
 Proof. exact (state_closeout_coverage _ _ _ bootstrap_state_coverage sound). Qed.
 Theorem discharged : forall family, In family board -> forall tm, TM_le family tm ->
-  bootstrap_pending tm /\ QHBound score tm /\ ~ pending tm.
+  bootstrap_pending tm /\\ QHBound score tm /\\ ~ pending tm.
 Proof. exact (state_board_discharge _ _ was_pending sound). Qed.
 Print Assumptions discharged.
 '''
