@@ -136,37 +136,42 @@ build-and-audit command, followed by the extraction regression.
 
 ## Four-symbol proofs
 
-Build and recursively audit the current BBB(2,4) checkpoint from the repository root:
+The complete state-based equality **BBB(2,4) = 205770076433044242247860** has
+passed both full recursive kernel audits. The [verified-run record](BBB24_VERIFIED_RUN.md)
+and [compact receipt summary](BBB24_VERIFIED_RUN.json) identify the exact source
+and runtime, final assumptions, audit timings and sampled peak RAM.
 
-```bash
+From the repository root, use the successful audit profile on a machine with
+sufficient available RAM:
+
+```sh
+STATE24_AUDIT_RSS_GIB=40 STATE24_COQCHK_TRACE=1 \
+STATE24_COQCHK_OCAMLRUNPARAM='o=40,O=60' \
+make proof-2-4 BUILD_JOBS=8 STATE24_PROVIDER_LIGHT=1
+```
+
+See the [state equality build guide](VERIFYING_BBB24.md) for installation,
+source preparation, resource admission, logs and exact checkpoint resume.
+The successful run used 48 GiB allocated to WSL, peaked at 28.739 GiB sampled
+RSS, and spent 11 h 52 m in the two recursive audits. That is audit time only;
+the uninterrupted complete fresh-build time remains unmeasured.
+The [public statement](../four/theories/ValueSpec.v) requires champion
+attainment and an upper bound for every two-state, four-symbol machine.
+The only reported axiom was `functional_extensionality_dep`.
+
+For the earlier machine-case checkpoint separately:
+
+```sh
 make proof-2-4-checkpoint BUILD_JOBS=8
 ```
 
-This target activates the census toolchain, checks the public four-symbol
+This target activates the census toolchain, checks the base four-symbol
 theories and regressions, then replays all three reviewed state-case checkpoints
-below and the [final S071 case](../four/STATE-CASE-PROOFS-FINAL.md).
-`BUILD_JOBS` sets the prerequisite build parallelism; the case drivers run
-sequentially and each performs a recursive `coqchk` audit. A failed build or audit
-stops the target. Logs and current receipts are written under `four/build/`.
-With the toolchain already active, `make -C four proof-checkpoint PROOF_JOBS=8` is equivalent.
-The target verifies the current development; the universal upper bound remains
-open.
-
-The complete selected-source proof build is under verification. Run it with:
-
-```bash
-make proof-2-4 BUILD_JOBS=8
-```
-
-See the [state equality build guide](VERIFYING_BBB24.md) for the reviewed source
-graph, 32-GiB WSL profile, logs and exact resume rules. The command checks the
-unconditional theorem, both numeric targets and actual assumptions, then runs
-full recursive audits before printing an equality success report. Only a
-successful complete run establishes the global result; source preparation and
-a successful checkpoint build carry no global proof credit.
-The statement in [ValueSpec.v](../four/theories/ValueSpec.v) requires both
-champion attainment and an upper bound for every machine. The global proof
-remains open until the complete selected build has passed.
+and the [final S071 case](../four/STATE-CASE-PROOFS-FINAL.md).
+`BUILD_JOBS` sets prerequisite parallelism; the case drivers run sequentially
+and each performs a recursive audit. Logs and receipts are under `four/build/`.
+With the toolchain active, `make -C four proof-checkpoint PROOF_JOBS=8` is equivalent.
+The complete global equality is built with `make proof-2-4` above.
 
 Individual state-based BBB(2,4) holdout proofs have a separate
 [case index and replay command](../four/STATE-CASE-PROOFS.md). That source
@@ -179,14 +184,14 @@ to reproduce all 66 accepted cases at that freeze. The
 The [final case](../four/STATE-CASE-PROOFS-FINAL.md), S071, completes all 78
 hard machine proofs; it is included in `proof-2-4-checkpoint`.
 The
-[public scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) tracks the
-remaining proof work and census assembly. These individual proofs do not yet
-establish the global upper bound.
+[public scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) records the
+completed hard-machine proofs and global census assembly. The complete selected
+build combines these proofs with exhaustive coverage to establish the upper bound.
 
 The isolated `four/` development proves the exact score of
 `1RB2LA1RA1LB_0LB2RB3RB1LA` for both state and instruction quasihalting:
-**205,770,076,433,044,242,247,860**. This establishes two global lower bounds;
-the global BBB(2,4) maxima remain unresolved. The last `A` / `A3` configuration
+**205,770,076,433,044,242,247,860**. This supplies the lower bound used by the completed
+global state proof; the global instruction maximum remains open. The last `A` / `A3` configuration
 index is one less, matching this repository's existing score convention.
 
 With the Coq 8.18.0 / OCaml 4.14.2 switch installed above, run from the root:
@@ -237,14 +242,17 @@ COQ
 The first four assumption reports should contain only
 `functional_extensionality_dep`; the two completion theorems are closed under
 the global context (no axioms).
-The census covers every table but explicitly defers unresolved partial-table
-families; its coverage theorem is not a global upper bound. The build uses VM
-computation throughout, avoiding native compilation of the large certificate DAG.
+This earlier bootstrap census covers every table but explicitly defers
+partial-table families. Its component target uses VM computation, avoiding
+native compilation of that certificate DAG. The complete selected state build
+uses the native-capable toolchain and includes the later family discharge.
 The binary run-length replay uses 2,934 accelerated operations with proved exact
 costs; it never expands the enormous tape or simulates every transition. See
 [`four/README.md`](../four/README.md) for the three rules and proof boundary.
-The [four-symbol burndown](../four/BURNDOWN.md) explains the remaining families
-and how to reproduce their machine-level inventory and proof-status ledger.
+The [four-symbol burndown](../four/BURNDOWN.md) records the earlier census
+families and how to reproduce their inventory; the
+[scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) records the completed
+state proof and verification milestones.
 `BBB24.TotalCompletion` proves the reduction to fully defined tables for
 non-halting machines and states the separate halting-time obligation. The
 [grouping report](../four/GROUPING.md) distinguishes exploratory reductions
@@ -803,3 +811,4 @@ including cross-checks on the hardest machines, is
   the instruction-level closeout batches (sharded over six runners,
   [`CLOSEOUT_TR.md`](CLOSEOUT_TR.md) "CI"), enforces zero `Admitted`, and
   runs the untrusted audits; tiers A and B above are local.
+
