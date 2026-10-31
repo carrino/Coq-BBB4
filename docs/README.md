@@ -15,6 +15,10 @@ documents, [`CLAIMS.md`](CLAIMS.md) is right.
 * [`Small-machine proofs`](VERIFYING.md#small-machine-proofs) — build and
   independently check the exact state and instruction values for `(1,2)`,
   `(2,2)`, `(3,2)` and `(2,3)`.
+* [`bb33/README.md`](../bb33/README.md) — the BB(3,3) lower bounds:
+  Bigfoot and the probable champion each run for more than
+  119,112,334,170,342,541 steps (the current champion's count), by
+  Collatz-like rules with exact step counts iterated with `vm_compute`.
 * [`TERMINOLOGY.md`](TERMINOLOGY.md) — the vocabulary: the theorem's own
   terms, then census / holdouts / residue / boards / tiers.
 

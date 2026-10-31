@@ -1,0 +1,9 @@
+-Q ../small/theories SmallBB
+-Q theories BB33
+-arg -w -arg -abstract-large-number
+
+theories/Lib.v
+theories/Bigfoot.v
+theories/BigfootRun.v
+theories/Champion.v
+theories/ChampionRun.v

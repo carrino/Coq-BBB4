@@ -13,6 +13,13 @@ The isolated [small-machine development](small/README.md) proves both state
 and instruction quasihalting values for `(2,2)`, `(3,2)`, and `(2,3)`:
 respectively **6 / 8**, **55 / 55**, and **59 / 67**.
 
+The [BB(3,3) lower bounds](bb33/README.md) prove, on the same three-symbol
+carrier, that the two Cryptid machines on the wiki's BB(3,3) page --
+Bigfoot `1RB2RA1LC_2LC1RB2RB_---2LA1LA` and the probable champion
+`1RB2LC1RC_2LC---2RB_2LA0LB0RA` -- each run for **more than
+119,112,334,170,342,541 steps**, the current BB(3,3) champion's step count
+(`make -C bb33`, stock Coq 8.18).
+
 ## The result
 
 **BBB(4) = 32,779,478.**
