@@ -1,0 +1,24 @@
+{
+  "commit": "b011bd2ec0f27d3cee7ba8f3f9d9989d7bd59331",
+  "toolchain": "The Coq Proof Assistant, version 8.18.0\ncompiled with OCaml 4.14.2",
+  "build_status": "exact statement and full recursive kernel audit passed",
+  "result_status": "PASSED",
+  "score": "205770076433044242247860",
+  "assumptions": [
+    "FunctionalExtensionality.functional_extensionality_dep"
+  ],
+  "manifest_sha256": "d3dcf2838b64e1fc92a93b6e03ada93d56ae0f2354a91e041ec87d83ce898c3c",
+  "runtime_sha256": "64269705de594329af4f50dd27b0c9c9e68331e0056763f559772b0710567e7e",
+  "fresh_compiled": 0,
+  "resumed": 6813,
+  "final_audit": {
+    "seconds": 21400.338,
+    "peak_rss_gib": 28.235,
+    "log_sha256": "04abd1c8c08b24b435e2e3af9bd7e8c78533d18e99fc29535e92d3be5b8be8c4"
+  },
+  "value_audit": {
+    "seconds": 21348.551,
+    "peak_rss_gib": 28.739,
+    "log_sha256": "07bedecf0287abfaaced7abad7eadc941ace69e368c7de2408bf12ca3eca3f4b"
+  }
+}

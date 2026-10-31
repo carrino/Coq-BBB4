@@ -20,8 +20,7 @@ certificates; Coq checks the machine behavior and exhaustive coverage.
 2 when omitted. All values below use the counting convention defined next.
 
 Each domain is `(states, symbols)`. Each value links to its formal statement;
-proof links open the proving theorems. The state `(2,4)` entry
-accompanies the proof stack currently being verified. Champion programs are
+proof links open the proving theorems. Champion programs are
 shown with the first move to the right; reflecting the tape preserves both
 scores. The [program notation](#champion-programs) is explained below.
 
@@ -32,17 +31,20 @@ scores. The [program notation](#champion-programs) is explained below.
 | `(3,2)` | [**55**](small/theories/Spec.v#L24) ([proof](small/theories/Value32.v#L3)) | [**55**](small/theories/Spec.v#L24) ([proof](small/theories/Value32.v#L3)) | `1RB0LB_1LA0RC_1LC1LA` | `1RB0LB_1LA0RC_1LC1LA` |
 | `(4,2)` | [**32,779,478**](theories/BBB4_Spec.v#L99) ([proof](theories/Closeout/BBB4_Value.v#L104)) | [**32,779,478**](theories/BBBT4_Spec.v#L70) ([proof](theories/CloseoutTr/BBBT4_Value.v#L43)) | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` |
 | `(2,3)` | [**59**](small/theories/Spec.v#L25) ([proof](small/theories/Value23.v#L4)) | [**67**](small/theories/Spec.v#L25) ([proof](small/theories/Value23.v#L4)) | `1RB2LB1LA_2LB2RA0RA` | `1RB2LA0RB_1LA0LB1RA` |
-| `(2,4)` † | [**205,770,076,433,044,242,247,860**](four/theories/ValueSpec.v#L9) ([proof assembly](four/proof-sources/state-opaque-byte448/Final.v#L28)) |  | `1RB2LA1RA1LB_0LB2RB3RB1LA` |  |
+| `(2,4)` | [**205,770,076,433,044,242,247,860**](four/theories/ValueSpec.v#L9) ([proof assembly](four/proof-sources/state-opaque-byte448/Final.v#L28)) |  | `1RB2LA1RA1LB_0LB2RB3RB1LA` |  |
 
 ### State (2,4) verification
 
-† The state `(2,4)` equality is included with the accompanying proof stack;
-its final recursive audit must pass before that stack is merged.
-[`champion_exact`](four/theories/Champion.v) proves the known champion's exact
-score at both levels. The global instruction equality is not established.
-Follow the
-[scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) and
-[state proof build guide](docs/VERIFYING_BBB24.md).
+A complete WSL run passed both full recursive kernel audits and printed
+`BBB24.Value.BBB24_state_value : BBB24.ValueSpec.BBB24_state_statement`.
+This establishes champion attainment and the universal state upper bound;
+the only reported axiom is `functional_extensionality_dep`.
+The [verification record](docs/BBB24_VERIFIED_RUN.md) identifies the accepted
+commit and source graph. The instruction `(2,4)` cells remain blank until the
+global instruction value is proved. Build instructions are in the
+[state proof guide](docs/VERIFYING_BBB24.md), and the
+[scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) records the completed
+burndown.
 
 ## What quasihalting means
 
@@ -141,7 +143,8 @@ For `(2,4)`, [`ValueSpec.v`](four/theories/ValueSpec.v) states the state equalit
 as `BBB24_state_lower_bound score /\ (forall tm : TM, QHBound score tm)`.
 Here `QHBound B tm` means every state's last-visit score is at most `B`.
 [`Champion.v`](four/theories/Champion.v) supplies the named lower-bound witness;
-the complete state build must verify the universal upper bound as well.
+the [final assembly](four/proof-sources/state-opaque-byte448/Final.v#L28) and
+the complete state build prove the universal upper bound as well.
 
 ### Champion programs
 
@@ -166,8 +169,9 @@ The instruction `(2,2)` champion starts by writing `0` and moving right. That
 initial blank-writing move is included: fixing the first transition to `1RB`
 instead gives the separately proved restricted maximum of
 **7**, in [`Normalized22.v`](small/theories/Normalized22.v).
-The `(2,4)` champion has a proved exact score; its global maximality remains
-under verification at state level and is not established at instruction level.
+The `(2,4)` champion attains the proved global state maximum. Its exact
+instruction score is also proved, while the global instruction maximum is
+not established.
 
 ## The verification ladder
 
@@ -226,18 +230,24 @@ These measurements include proof preparation, prerequisites, census, closeout,
 and final theorem checks; the toolchain was already installed. Revision details
 and historical measurements are in [`docs/CENSUS_RUNTIME.md`](docs/CENSUS_RUNTIME.md).
 
-For the complete **state `(2,4)` build under verification**, run:
+For the complete **state `(2,4)` proof**, use the successful audit profile on a
+machine with sufficient available RAM:
 
 ```sh
+STATE24_AUDIT_RSS_GIB=40 STATE24_COQCHK_TRACE=1 \
+STATE24_COQCHK_OCAMLRUNPARAM='o=40,O=60' \
 make proof-2-4 BUILD_JOBS=8 STATE24_PROVIDER_LIGHT=1
 ```
 
 This prepares the selected source graph, compiles it, checks the exact statement
 and numeric value, reports its assumptions, and runs both full recursive audits.
-Only a successful complete run establishes the global state result. Its runtime
-and peak memory remain under verification; the `(4,2)` measurements above do not
-apply to this target. Resource settings, checkpoint resume, audit logs, and
-success criteria are in [`docs/VERIFYING_BBB24.md`](docs/VERIFYING_BBB24.md).
+The completed run used a 48-GiB WSL allocation and a 40-GiB audit RSS guard,
+with sampled peak RSS of 28.739 GiB. Its two recursive audits took 11 h 52 m
+combined. Minimum RAM and uninterrupted fresh-build runtime remain unmeasured; the
+`(4,2)` timings above describe those separate targets. The
+[verified-run record](docs/BBB24_VERIFIED_RUN.md) and
+[build guide](docs/VERIFYING_BBB24.md) document the source checkpoint, resource
+settings, checkpoint resume, audit logs, and success criteria.
 
 ## What is in the tree
 
@@ -277,8 +287,8 @@ See [`docs/CLAIMS.md`](docs/CLAIMS.md) and
 ## Contributing
 
 Independent builds and reviews of the statements are especially useful. For
-`(2,4)`, the [scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) tracks
-the remaining verification work. When reporting a build, include the commit,
+`(2,4)`, the [scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) records
+the completed proof and its verification milestones. When reporting a build, include the commit,
 command, Coq and OCaml versions, available RAM, and final report or failure log.
 
 ## The instruction-level development
@@ -300,6 +310,8 @@ CI. See [`docs/CLOSEOUT_TR.md`](docs/CLOSEOUT_TR.md) and the
 * [`docs/VERIFYING.md`](docs/VERIFYING.md) — build commands and expected results.
 * [`docs/VERIFYING_BBB24.md`](docs/VERIFYING_BBB24.md) — selected `(2,4)` state
   build, resource controls, audit diagnostics, and checkpoint resume.
+* [`docs/BBB24_VERIFIED_RUN.md`](docs/BBB24_VERIFIED_RUN.md) — the successful
+  complete state `(2,4)` proof run and its exact source checkpoint.
 * [`docs/CENSUS_RUNTIME.md`](docs/CENSUS_RUNTIME.md) — measured build conditions
   and runtimes.
 * [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — how the `(4,2)` state holdouts
