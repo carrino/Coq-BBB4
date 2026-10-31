@@ -7,8 +7,11 @@ This development proves the exact state and instruction quasihalting scores of
 convention. The last state `A` visit and last instruction `A3` occur at index
 205,770,076,433,044,242,247,859. Afterwards only `B0` executes, moving left forever.
 
-These are rigorous **lower bounds** on the two global BBB(2,4) values. There is
-no claim that the champion is globally maximal. The public definitions are in
+The complete state proof now establishes the global maximum:
+**state-based BBB(2,4) = 205,770,076,433,044,242,247,860**. Both full recursive
+audits passed in the [verified WSL run](../docs/BBB24_VERIFIED_RUN.md).
+The global instruction maximum remains open; the exact champion instruction
+score supplies its lower bound. The public definitions are in
 [`Spec.v`](theories/Spec.v); the machine model is in
 [`Statement.v`](theories/Statement.v) and
 [`StatementTr.v`](theories/StatementTr.v). The carrier has exactly two states
@@ -17,7 +20,22 @@ padding on both ends of the tape.
 
 ## Build and audit
 
-With the repository's Coq 8.18.0 / OCaml 4.14.2 toolchain active, from the root:
+For the complete state equality, run from the repository root on a machine
+with sufficient available RAM:
+
+```sh
+STATE24_AUDIT_RSS_GIB=40 STATE24_COQCHK_TRACE=1 \
+STATE24_COQCHK_OCAMLRUNPARAM='o=40,O=60' \
+make proof-2-4 BUILD_JOBS=8 STATE24_PROVIDER_LIGHT=1
+```
+
+The successful run used Coq 8.18.0 / OCaml 4.14.2 with 48 GiB allocated to WSL.
+The [build guide](../docs/VERIFYING_BBB24.md) documents resources and exact
+checkpoint resume; the [run record](../docs/BBB24_VERIFIED_RUN.md) includes the
+source identifiers, assumptions, timings and sampled memory measurements.
+
+To audit the champion and the earlier bootstrap/checker components separately,
+activate the same toolchain and run:
 
 ```bash
 eval "$(opam env --switch=census)"
@@ -27,7 +45,8 @@ python3 four/tools/generate_census.py --check
 python3 four/tools/generate_pipeline_examples.py --check
 ```
 
-This builds the `BBB24` namespace and recursively audits it with `coqchk`.
+This component target builds the base `BBB24` namespace and recursively audits
+it with `coqchk`; the complete selected-source assembly uses `make proof-2-4`.
 Alphabet reduction also builds the completed `SmallBB.Value23` theorem;
 the existing BBB(4) census and the unrelated (3,2) legacy dependencies are not needed.
 See the [usage guide](../docs/VERIFYING.md#four-symbol-champion) for installation
@@ -76,6 +95,10 @@ refer to adjacent configurations, and both are proved in `Champion.v`.
 
 ## Certified census coverage
 
+The bootstrap below is an independently reproducible intermediate checkpoint.
+The complete global state bound combines the later census and family proofs;
+its successful verification is recorded [here](../docs/BBB24_VERIFIED_RUN.md).
+
 `Bootstrap.bootstrap_coverage` proves that every two-state, four-symbol table
 satisfies both candidate bounds **or belongs to an explicitly deferred family**.
 All 17 choices at each of the eight cells are covered: 16 defined transitions
@@ -106,7 +129,7 @@ no population percentage is used as a proof premise.
 The checker compares a small cycle anchor against binary candidate bounds. It
 never simulates to the bound. This first checker requires the whole recurrent
 suffix to start before both bounds; later-anchor certificates may need a more
-precise prefix check. The four-symbol build uses Coq's VM and disables native
+precise prefix check. The base component build uses Coq's VM and disables native
 compilation to avoid the native compiler's stack limit on the large shared DAG.
 
 Regenerate the current certificate with
@@ -115,7 +138,7 @@ Regenerate the current certificate with
 `--fuel 4` certificate can be generated for quick experiments; the checked-in
 horizon is eight.
 
-## Residual-family profiling
+## Historical residual-family profiling
 
 [`BURNDOWN.md`](BURNDOWN.md) tracks the 611,360-family search queue, the sampled
 holdouts, and the separate certified remainder. It links a compact machine ledger
@@ -137,9 +160,10 @@ The [stronger campaign](WAVE3.md) adds weighted recurrence, state-only tiers,
 deeper affine/closure passes, structural marker invariants, and reusable
 recurring suffixes. Together with the [first supplementary round](NEXT_BURNDOWN.md)
 and the later supplements through the [sixth checkpoint](BURN6.md),
-the audited boards cover **124,968 distinct families for both bounds** and
-**155,853 for the state bound**. In the original 133,185-row cohort, **31,419
-instruction-bound** and **534 state-bound** obligations remain.
+the audited boards at that checkpoint covered **124,968 distinct families for
+both bounds** and **155,853 for the state bound**. In the original 133,185-row
+cohort, **31,419 instruction-bound** and **534 state-bound** obligations remained.
+The later state proofs and global assembly have now discharged the state side.
 `make -C four check-campaign` rebuilds the frozen 113-board checkpoint;
 `make -C four check-burn6-campaign` rebuilds all 41 supplementary boards and
 their coverage theorem. Earlier supplements remain separately reproducible
@@ -207,5 +231,7 @@ block ID. The checked examples depend only on functional extensionality.
 The [pipeline guide](PIPELINE.md) describes replay of the full 786-candidate
 affine sample, n-gram/repeated-word sweeps, and the new symmetry and shadow
 proofs. Search failures need alternative invariants as well as larger budgets.
-A global exact value still requires discharging **every** remaining family;
-sample acceptance rates cannot establish that.
+These samples illustrate the certificate methods. The complete state proof
+now discharges the global state obligations; the global instruction value
+remains open. Sample acceptance rates alone do not establish a global bound.
+

@@ -1,6 +1,7 @@
 # docs/ — index
 
-**BBB(4) = 32,779,478, kernel-checked.**  The claim is
+**State BBB(2,4) = 205770076433044242247860** and **BBB(4) = 32,779,478** are
+kernel-checked. The `(4,2)` claim is
 `theories/BBB4_Spec.v` (`BBB4_statement`), the proof is
 `theories/Closeout/BBB4_Value.v` (`BBB4_value`); the residue closed at
 5,156 of 5,156 frozen rows on 2026-08-01.  On any conflict between
@@ -18,8 +19,13 @@ documents, [`CLAIMS.md`](CLAIMS.md) is right.
 * [`TERMINOLOGY.md`](TERMINOLOGY.md) — the vocabulary: the theorem's own
   terms, then census / holdouts / residue / boards / tiers.
 
-* [Four-symbol champion](VERIFYING.md#four-symbol-champion) — build and audit
-  the exact `(2,4)` champion score and both global lower bounds.
+* [Four-symbol proofs](VERIFYING.md#four-symbol-champion) — build the complete
+  state `(2,4)` equality or audit the champion and component checkpoints.
+* [`VERIFYING_BBB24.md`](VERIFYING_BBB24.md) — the complete state `(2,4)` build,
+  resource controls and exact checkpoint resume.
+* [`BBB24_VERIFIED_RUN.md`](BBB24_VERIFIED_RUN.md) and its
+  [receipt summary](BBB24_VERIFIED_RUN.json) — the accepted source checkpoint,
+  both recursive audits, assumptions and measured resources.
 
 ## How the last machines fell
 
@@ -82,3 +88,4 @@ log and compute playbook.
   `RESIDUE_HEADROOM.md`, `RESIDUE_VISIT_MEASUREMENT.md`, and the
   session prompts of the era, `RESIDUE_PROMPT.md` /
   `NEXT_SESSION_PROMPT.md`.
+

@@ -1,16 +1,21 @@
 # State BBB(2,4): selected source build
 
-The complete state proof build is under verification. A reported WSL run
-compiled the selected source graph and reached the final recursive audit,
-which exceeded its memory guard. The global state equality still awaits a
-complete audit. Source preparation and resource-profile metadata have been
-independently checked. Follow the
-[scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) for current proof status.
+The complete state proof passed both full-recursive kernel audits in the WSL
+run recorded in [BBB24_VERIFIED_RUN.md](BBB24_VERIFIED_RUN.md). It proves
+**state-based BBB(2,4) = 205770076433044242247860**, with standard functional
+extensionality as its only reported axiom. The accepted source/build commit is
+`b011bd2ec0f27d3cee7ba8f3f9d9989d7bd59331`, merged into `main` through
+[PR #275](https://github.com/carrino/Coq-BBB4/pull/275). The
+[scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) records the completed
+burndown and verification milestones.
 
-From the repository root, run the reviewed source build with:
+From the repository root, use the successful audit-memory profile on a machine
+with sufficient available RAM:
 
 ```sh
-make proof-2-4 BUILD_JOBS=8
+STATE24_AUDIT_RSS_GIB=40 STATE24_COQCHK_TRACE=1 \
+STATE24_COQCHK_OCAMLRUNPARAM='o=40,O=60' \
+make proof-2-4 BUILD_JOBS=8 STATE24_PROVIDER_LIGHT=1
 ```
 
 The selected build prepares the exact source dependency graph from repository
@@ -170,10 +175,12 @@ changes remain rejected.
 
 ### Audit memory on larger machines
 
-A reported 32-GiB WSL run compiled the complete selected source graph, but the
-full recursive `CheckFinal` audit exceeded its 25-GiB RSS guard both with the
-original GC settings and with `o=40,O=60`. The complete audit's required memory
-has not yet been measured. Compilation receipts remain reusable.
+The initial 32-GiB WSL run compiled the complete selected source graph, but
+its full recursive `CheckFinal` audit exceeded the 25-GiB RSS guard both with
+the original GC settings and with `o=40,O=60`. After increasing the WSL
+allocation to 48 GiB and the audit RSS guard to 40 GiB, the resumed run passed
+both full recursive audits. The minimum required memory remains unmeasured.
+Compilation receipts remain reusable.
 
 `STATE24_AUDIT_RSS_GIB` sets a positive integer RSS budget for the two final
 recursive audits only. Their address-space limit is that budget plus 2 GiB,
@@ -184,9 +191,9 @@ The existing RAM/cgroup admission check requires the budget to fit current
 available memory and leaves the normal reserve. A 40-GiB request is rejected
 on a 32-GiB machine; adding this setting alone does not supply more RAM.
 
-On a 64-GiB Windows host currently exposing 32 GiB to WSL, the next profile to
-try is 48 GiB for WSL and a 40-GiB checker RSS guard (42 GiB address space).
-Its complete-audit fit is still unverified. In Windows, set `memory=48GB` in
+The successful run used a 64-GiB Windows host with 48 GiB allocated to WSL
+and a 40-GiB checker RSS guard (42 GiB address space). For that allocation,
+set `memory=48GB` in
 the existing `[wsl2]` section of `%USERPROFILE%\.wslconfig`, preserving other
 settings. Restart WSL with `wsl --shutdown` from PowerShell after saving any
 running WSL work, then reopen the Linux shell and check `free -h`.
@@ -195,7 +202,7 @@ With the same toolchain and prepared-tree/state paths as the interrupted run:
 
 ```sh
 git fetch origin
-git merge --ff-only origin/codex/bbb24-audit-memory
+git merge --ff-only origin/main
 STATE24_AUDIT_RSS_GIB=40 STATE24_COQCHK_TRACE=1 \
 make proof-2-4 BUILD_JOBS=8 STATE24_RESUME=1 STATE24_PROVIDER_LIGHT=1 \
   STATE24_PREPARED=build/state-value-selected-native \

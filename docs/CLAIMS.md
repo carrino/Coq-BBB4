@@ -211,6 +211,40 @@ printed `Print Assumptions BBBT4_value` (`BBBT4_REVIEW.md` §8.1), and again
 on 2026-10-11 at `455d4d96` and 2026-10-12 at `bb35b8d9`, after the build
 speedups (§8.2–8.3).
 
+## State-based BBB(2,4)
+
+**BBB(2,4) = 205770076433044242247860**, at state level under the same
+last-configuration-index-plus-one convention. The public claim is
+[`BBB24_state_statement`](../four/theories/ValueSpec.v), using the two-state,
+four-symbol model in [`Statement.v`](../four/theories/Statement.v) and the
+champion/score definitions in [`Spec.v`](../four/theories/Spec.v):
+
+```coq
+BBB24.Value.BBB24_state_value : BBB24.ValueSpec.BBB24_state_statement
+```
+
+The statement requires both champion attainment and
+`forall tm : TM, QHBound score tm`. It bounds every finitely visited state's
+last-visit score across every machine in the model, including halting tables
+and unrestricted first transitions. The witness is
+`1RB2LA1RA1LB_0LB2RB3RB1LA`. Its final state `A` visit occurs at configuration
+index 205770076433044242247859; its next transition reaches permanent `B0`
+drift and gives the repository's score above.
+
+The [final assembly](../four/proof-sources/state-opaque-byte448/Final.v#L28)
+combines the champion lower bound with the exhaustive census upper bound.
+`make proof-2-4` reconstructs and compiles the selected dependency graph,
+checks the exact statement and numeric value, and requires both full-recursive
+`coqchk` audits before printing the value report. The
+[verified run](BBB24_VERIFIED_RUN.md) passed both audits at source/build commit
+`b011bd2e`, merged into `main` through [PR #275](https://github.com/carrino/Coq-BBB4/pull/275).
+The only reported axiom was
+`FunctionalExtensionality.functional_extensionality_dep`.
+
+The known champion's exact instruction score is proved as a lower bound;
+this result does not establish the global instruction-based `(2,4)` maximum.
+The README's instruction `(2,4)` cells remain empty.
+
 ## Reproducing
 
 See `docs/VERIFYING.md`.  In short: `make` builds everything through
@@ -222,3 +256,8 @@ files that load the walk output, kept out of the default build), under
 the census opam switch.  `make proof-tr-all` does the same for the
 instruction-level claim, `BBBT4_value` (VERIFYING.md, Tier C).  No `.vo`
 are committed.
+
+For the complete state `(2,4)` claim, use `make proof-2-4` with the documented
+resource profile in [`VERIFYING_BBB24.md`](VERIFYING_BBB24.md). Its successful
+run and receipt identifiers are in [`BBB24_VERIFIED_RUN.md`](BBB24_VERIFIED_RUN.md).
+
