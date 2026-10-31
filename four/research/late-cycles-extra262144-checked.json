@@ -1,0 +1,42 @@
+{
+  "families": 54,
+  "concrete": 54,
+  "partial": 0,
+  "certificate_roots": {
+    "C": 54
+  },
+  "state_bound": 262145,
+  "instruction_bound": 262145,
+  "source_sha256": {
+    "tools/check_late_cycles.py": "dd7ea3da361044a93de79dc4483e3718eb33fded636e218e0c1b54fde5e8533d",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+    "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+    "theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+    "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+    "theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+    "theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+    "theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+    "theories/CycleBatch.v": "38b363cc53315cdd1d8c1d30495bfba2cf022394220b3b20fe9b3755bbd6d178"
+  },
+  "bundle_sha256": "bc697fa40061c2bfd08cd26e9381776f7ba396e43fa50f504e6c33ed376a909e",
+  "generated_source_sha256": {
+    "extra262144/Cycle000.v": "6b910f61ee6769aaf5193a4c46ff19fdcdc850cad8fd94917f788640b60fce92",
+    "extra262144/All.v": "263be7dee56c2828666a40b56ab34fe5c70d47b5ce9784c217c5df1243344b2a"
+  },
+  "coverage_theorem": "BBB24LateCycles.extra262144.All.bootstrap_late_cycle_coverage",
+  "discharge_theorem": "BBB24LateCycles.extra262144.All.late_cycle_families_discharged",
+  "board": "BBB24LateCycles.extra262144.All.late_cycle_board",
+  "board_sound": "BBB24LateCycles.extra262144.All.late_cycle_board_sound",
+  "validation": "Every original family checked by Census.verify, empty residue, actual bootstrap pending membership, and recursive coqchk.",
+  "accounting": "Counts original input families, not expanded child leaves; halting None choices covered by Census.verify_cover."
+}

@@ -1,0 +1,183 @@
+{
+  "status": "Exploratory search output only; affine candidates have not yet been checked in BBB24.",
+  "date_utc": "2026-10-26",
+  "fuel": 256,
+  "window": 64,
+  "root_node_budget": 10000000,
+  "sample_per_root": 512,
+  "rule_steps": 4096,
+  "tape_cells": 65536,
+  "sampling": "The 512 lowest SHA-256 machine hashes in each fixed-root unresolved file. Unweighted partial-table families; success rates cannot be extrapolated to all raw tables.",
+  "sample_sha256": "d9d558057dacb8e21c4d02e90a53151af5fca1bf6334120b92bc4c068e16c369",
+  "root_classes": {
+    "blank": {
+      "A0": "0LB",
+      "multiplicity": 2
+    },
+    "nonblank": {
+      "A0": "1LB",
+      "multiplicity": 6
+    }
+  },
+  "raw_total": 6975757441,
+  "raw_unresolved_weight": 39521784,
+  "roots": {
+    "blank": {
+      "states": 2,
+      "symbols": 4,
+      "fuel": 256,
+      "window": 64,
+      "nodes": 324593,
+      "covered": 410338673,
+      "expected": 410338673,
+      "max_state": 114,
+      "state_witness": "0LB3LB3RA---_1RA2LB0LA1RB",
+      "max_instr": 207,
+      "instr_witness": "0LB3RA1LA0RB_1RA2LB2RA3LB",
+      "leaves": {
+        "cycle": 40261,
+        "halt": 20287,
+        "translated": 200619,
+        "unresolved": 63426
+      },
+      "weighted": {
+        "cycle": 34915333,
+        "halt": 30338767,
+        "translated": 342242427,
+        "unresolved": 2842146
+      },
+      "seconds": 5.2693
+    },
+    "nonblank": {
+      "states": 2,
+      "symbols": 4,
+      "fuel": 256,
+      "window": 64,
+      "nodes": 3738321,
+      "covered": 410338673,
+      "expected": 410338673,
+      "max_state": 255,
+      "state_witness": "1LB1RA0RB3LB_2RB2LA3RA2LB",
+      "max_instr": 255,
+      "instr_witness": "1LB1RA0RB3LB_2RB2LA3RA2LB",
+      "leaves": {
+        "cycle": 322540,
+        "halt": 233645,
+        "translated": 2634202,
+        "unresolved": 547934
+      },
+      "weighted": {
+        "cycle": 13269660,
+        "halt": 48176173,
+        "translated": 343253258,
+        "unresolved": 5639582
+      },
+      "seconds": 49.5695
+    }
+  },
+  "baseline": {
+    "rows": 1024,
+    "statuses": {
+      "irules": 786,
+      "undecided": 238
+    },
+    "quasihalting": {
+      "F": 674,
+      "T": 112
+    },
+    "unresolved_reasons": {
+      "noshape": 98,
+      "noproof": 76,
+      "nofit": 64
+    },
+    "successful_examples": [
+      "0LB1LB2RA0RB_3RA3RB1LA2LB",
+      "0LB2RA3RB2LA_1RA2RA3LB2RB",
+      "0LB3RB0LA1RB_3RA3LB0LA2LB",
+      "0LB2RB3RB2LA_1RA2LB3RA1LA",
+      "0LB1RA1RA3RB_3RA3LA2LB2LB",
+      "0LB2LB2RB2LA_1RA2LB3RB1LA",
+      "0LB3LA0RA2RB_2RA3LB1LB1RB",
+      "0LB1RA2RB2RB_3RA2RB3LA1LB",
+      "0LB0RA1RB2LB_3RA2LA1LA2LB",
+      "0LB0LA---2RB_3RA1LB1RB1LB",
+      "0LB2LA1RA1RB_2RA3LA3LB2RB",
+      "0LB0LB2RA3RA_2RA1LA3LB1RB"
+    ],
+    "unresolved_examples": [
+      "0LB3RA2RA1LB_1RA1LB3RA2LA",
+      "0LB1RB1RA2LB_3RA2LA3RA2LB",
+      "0LB0LA1RB2RB_2RA0LA3LB1RB",
+      "0LB2RB3RB1LA_1RA3LB1LB0LA",
+      "0LB2RB3RB0LA_2RA0RB3LB1LB",
+      "0LB2RA3RA2LA_2RA3LB2LB1RA",
+      "0LB3LB2LA3RB_1RA2LB0RA1RA",
+      "0LB3RA0RB1RA_2RA3LB1LB2LB",
+      "0LB2LA0LA1RA_3RA2RB3LA3LB",
+      "0LB3LA1RA1RB_1RA3LB2LA2RA",
+      "0LB3RB2LA1RA_1RA2LB0RA3LB",
+      "0LB2RA3RB2LA_1RA3LB0RA1LA"
+    ]
+  },
+  "three_sample_variant": {
+    "rows": 1024,
+    "statuses": {
+      "irules": 790,
+      "undecided": 234
+    },
+    "quasihalting": {
+      "F": 678,
+      "T": 112
+    },
+    "unresolved_reasons": {
+      "noshape": 98,
+      "noproof": 78,
+      "nofit": 58
+    },
+    "successful_examples": [
+      "0LB1LB2RA0RB_3RA3RB1LA2LB",
+      "0LB2RA3RB2LA_1RA2RA3LB2RB",
+      "0LB3RB0LA1RB_3RA3LB0LA2LB",
+      "0LB2RB3RB2LA_1RA2LB3RA1LA",
+      "0LB1RA1RA3RB_3RA3LA2LB2LB",
+      "0LB2LB2RB2LA_1RA2LB3RB1LA",
+      "0LB3LA0RA2RB_2RA3LB1LB1RB",
+      "0LB1RA2RB2RB_3RA2RB3LA1LB",
+      "0LB0RA1RB2LB_3RA2LA1LA2LB",
+      "0LB0LA---2RB_3RA1LB1RB1LB",
+      "0LB2LA1RA1RB_2RA3LA3LB2RB",
+      "0LB0LB2RA3RA_2RA1LA3LB1RB"
+    ],
+    "unresolved_examples": [
+      "0LB3RA2RA1LB_1RA1LB3RA2LA",
+      "0LB1RB1RA2LB_3RA2LA3RA2LB",
+      "0LB0LA1RB2RB_2RA0LA3LB1RB",
+      "0LB2RB3RB1LA_1RA3LB1LB0LA",
+      "0LB2RB3RB0LA_2RA0RB3LB1LB",
+      "0LB2RA3RA2LA_2RA3LB2LB1RA",
+      "0LB3LB2LA3RB_1RA2LB0RA1RA",
+      "0LB2LA0LA1RA_3RA2RB3LA3LB",
+      "0LB3LA1RA1RB_1RA3LB2LA2RA",
+      "0LB3RB2LA1RA_1RA2LB0RA3LB",
+      "0LB2RA3RB2LA_1RA3LB0RA1LA",
+      "0LB2RB0LA2RB_1RA2LB3LB3LA"
+    ]
+  },
+  "three_sample_only": [
+    "0LB3LA3RB1RB_2RA0RB3LB1LA",
+    "0LB3RA0RB1RA_2RA3LB1LB2LB",
+    "1LB3LA0LB2RB_2RA3LB1RB3LA",
+    "1LB3RA1RA0RA_2RA3LB0LA3LA"
+  ],
+  "five_sample_only": [],
+  "source_sha256": {
+    "/tmp/BBB-upstream/src/irules.c": "cdffab331bb1987b9995a538bcfb62616c1e2a83ca62a3f4ca8a61f0392e3796",
+    "/tmp/repa/irules3.c": "7b6f27d59767fcf5f5b5b25014034ad345dee5542d5835feaa8fa8b6aee82f77"
+  },
+  "reproduce_baseline": "python3 four/tools/triage.py --irules /path/to/BBB/bin/irules",
+  "next_steps": [
+    "Port the affine-rule checker and validate representative emitted certificates before adding this proof family to the census.",
+    "Investigate the 98 sampled families with no recurring tape shape separately from template fitting and symbolic replay failures.",
+    "The three-sample fitter has a small net gain on this sample; do not assume the dramatic (2,3) improvement carries over unchanged."
+  ]
+}

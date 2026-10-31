@@ -1,0 +1,578 @@
+{
+  "format": "BBB24 padded paired-digit tail templates v1",
+  "instruction_bound": 147,
+  "rows": [
+    {
+      "destination_boot": 82,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LA1RB3RB_3RA0LB3LA1RA",
+      "mirror": false,
+      "source_boot": 12,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        3,
+        [
+          1
+        ]
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 16,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LA1RB3RB_3RA0RA3LA1RA",
+      "mirror": false,
+      "source_boot": 16,
+      "source_configuration": [
+        0,
+        [
+          3
+        ],
+        1,
+        [
+          2,
+          2,
+          2
+        ]
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 28,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LA1RB3RB_3RA1LB3LA1RA",
+      "mirror": false,
+      "source_boot": 12,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        3,
+        [
+          1
+        ]
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 16,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LA1RB3RB_3RA1RA3LA1RA",
+      "mirror": false,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 20,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LA1RB3RB_3RA2LA3LA1RA",
+      "mirror": false,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 61,
+      "dormant_left_suffix": [
+        1,
+        1,
+        1,
+        3
+      ],
+      "machine": "1LB2LA1RB3RB_3RA2LB3LA1RA",
+      "mirror": false,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 28,
+      "dormant_left_suffix": [
+        1,
+        3
+      ],
+      "machine": "1LB2LA1RB3RB_3RA2RA3LA1RA",
+      "mirror": false,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 28,
+      "dormant_left_suffix": [
+        1,
+        3
+      ],
+      "machine": "1LB2LA1RB3RB_3RA2RB3LA1RA",
+      "mirror": false,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 18,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LA1RB3RB_3RA3LA3LA1RA",
+      "mirror": false,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 24,
+      "dormant_left_suffix": [
+        1,
+        1
+      ],
+      "machine": "1LB2LA1RB3RB_3RA3LB3LA1RA",
+      "mirror": false,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 20,
+      "dormant_left_suffix": [
+        3,
+        3
+      ],
+      "machine": "1LB2LA1RB3RB_3RA3RB3LA1RA",
+      "mirror": false,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": false,
+      "symbol_map": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "destination_boot": 37,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LB0LB1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source_boot": 40,
+      "source_configuration": [
+        0,
+        [
+          3
+        ],
+        1,
+        [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "destination_boot": 147,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LB0RA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source_boot": 12,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        3,
+        [
+          1
+        ]
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "destination_boot": 35,
+      "dormant_left_suffix": [
+        3,
+        1,
+        1,
+        3
+      ],
+      "machine": "1LB2LB1LA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "destination_boot": 43,
+      "dormant_left_suffix": [
+        1,
+        1,
+        3,
+        1
+      ],
+      "machine": "1LB2LB1RA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "destination_boot": 31,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LB1RB1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source_boot": 12,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        3,
+        [
+          1
+        ]
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "destination_boot": 24,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LB2LB1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source_boot": 13,
+      "source_configuration": [
+        0,
+        [
+          1,
+          1,
+          1,
+          3
+        ],
+        1,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "destination_boot": 55,
+      "dormant_left_suffix": [
+        1,
+        1,
+        1,
+        3
+      ],
+      "machine": "1LB2LB3LA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "destination_boot": 55,
+      "dormant_left_suffix": [
+        1,
+        1,
+        1,
+        3
+      ],
+      "machine": "1LB2LB3LB1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "destination_boot": 59,
+      "dormant_left_suffix": [
+        1,
+        1,
+        1,
+        3
+      ],
+      "machine": "1LB2LB3RA1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source_boot": 10,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        0,
+        []
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "destination_boot": 39,
+      "dormant_left_suffix": [],
+      "machine": "1LB2LB3RB1RB_2RA1LA3RB2LA",
+      "mirror": true,
+      "source_boot": 12,
+      "source_configuration": [
+        1,
+        [
+          1,
+          1,
+          3
+        ],
+        3,
+        [
+          1
+        ]
+      ],
+      "state_exchange": true,
+      "symbol_map": [
+        0,
+        2,
+        3,
+        1
+      ]
+    }
+  ],
+  "selection_provenance": {
+    "path": "research/burn5-tail-template-selection.json",
+    "scope": "Historical discovery only; entries, invariants and seven recurrence transfers checked in Coq.",
+    "sha256": "a073670f51c25d9a2fe90914048b0c671f7509e1f328c2808328978b56fea81a"
+  },
+  "state_bound": 0,
+  "template_sha256": {
+    "research/burn5-tail-template/Transfer.v": "edf91d3973940bc0d72d537d60fcfdb0c4b5c03f3112258bb73ceca29b5cc83a"
+  }
+}

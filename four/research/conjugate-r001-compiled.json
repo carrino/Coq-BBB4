@@ -1,0 +1,136 @@
+{
+  "status": "compiled_queued_campaign_recursive_audit",
+  "checked_canonical_cores": 0,
+  "compiled_canonical_cores": 735,
+  "compiled_baseline_search_survivors": 640,
+  "source_board_entries": 33318,
+  "source_distinct_ids": 33096,
+  "descriptor": {
+    "module": "BBB24ConjugateR001.ConjugateAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 131072,
+    "proof_source": "build/conjugate/r001/ConjugateAll.v",
+    "load_paths": [
+      {
+        "path": "build/affine-batch",
+        "namespace": "BBB24Batch"
+      },
+      {
+        "path": "build/affine-closeout",
+        "namespace": "BBB24AffineCloseout"
+      },
+      {
+        "path": "build/closure-batch",
+        "namespace": "BBB24ClosureBatch"
+      },
+      {
+        "path": "build/family-transport",
+        "namespace": "BBB24Transport"
+      },
+      {
+        "path": "build/weighted/pilot-kernel",
+        "namespace": "BBB24Weighted"
+      },
+      {
+        "path": "build/late-cycle-proofs",
+        "namespace": "BBB24LateCycles"
+      },
+      {
+        "path": "build/weighted-reuse",
+        "namespace": "BBB24WeightedReuse"
+      },
+      {
+        "path": "build/weighted-suffix/pilot",
+        "namespace": "BBB24WeightedSuffixPilot"
+      },
+      {
+        "path": "build/affine-wave/proofs",
+        "namespace": "BBB24AffineWave"
+      },
+      {
+        "path": "build/weighted-v2/pilot205-kernel",
+        "namespace": "BBB24WeightedV2Pilot"
+      },
+      {
+        "path": "build/conjugate/r001",
+        "namespace": "BBB24ConjugateR001"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/conjugate-input-r001.json",
+        "format": "json_columns"
+      }
+    ],
+    "compiled_report": "research/conjugate-r001-compiled.json"
+  },
+  "selection": {
+    "fuel": 4096,
+    "canonical_cores": 273969,
+    "baseline_search_survivors": 133185,
+    "directly_covered_canonical_cores": 26156,
+    "table_candidates": 7254,
+    "table_candidates_in_survivors": 3945,
+    "representative_sha256": "273939e7e2d282d555adea6c7729ee5de7be9d10fd8badf47627676e03d4d744",
+    "baseline_survivor_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+    "excluded_previously_selected_cores": 1185
+  },
+  "inputs": {
+    "research/conjugate-sources-r001.json": "f044d12fc504ac02a392532f4dbcb48629f9b05812a2db690ab8c97a76518b14",
+    "research/family-transport-input.json": "86a68d4b07844e830f2bb27684002d67311ecec297da5d81fa67b58189e544a6",
+    "build/family-transport/FamilyTransportCloseout.v": "e7c366572838abc938f7c9bdd91d4ff487065a65a25ec1cac2fcb7916bd602f7",
+    "research/family-transport-summary.json": "fd9a7a467bc8f5e10243864abfb18585a4ddf6899e734b7e6f04032974ff4708",
+    "research/weighted-pilot-machines.json": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333",
+    "build/weighted/pilot-kernel/WeightedCloseout.v": "437a4c662c5cce129edde81e38b85b6a9d6f6b6295e39aebdc045c5b972de342",
+    "research/weighted-pilot-closeout.json": "1f2175177ac7b67ba1d01127fe607b175208007ec38e771f794dd2af10028f03",
+    "research/late-cycles-full65536.json": "268c14fd81504e3bf7b697ee6b2f9b548ff2bb23142c81bb77ddc74fad4775ab",
+    "build/late-cycle-proofs/full65536/NonHalt.v": "3332e14440be42f5245a13faa04f1d8efe083d6f6fd38a1ac918f3fff2e6293d",
+    "research/late-cycles-full65536-sources.json": "e1f35ccfb5aa179c7583dc488320d794a6d77010392cceb5654dce2d8cf37d5f",
+    "research/weighted-reuse-input.json": "b3eb5d852c28609d4786d8778c56ec83fc9d8d343d3ba0528186d780f888a42a",
+    "build/weighted-reuse/WeightedReuseAll.v": "020c01942b22191fdaa3395753f38aa6449d37e73e9f262ff39401eb9f777def",
+    "research/weighted-reuse-summary.json": "d0293bc6ce468252bab754e70ec1057c8f324a248166c23fbc793aa16b20fa62",
+    "research/weighted-suffix-pilot-input.json": "b5a6ed2e3ac6beac4811fa94f0bbd0b64a4655555a3dbec602070c0d5ae45ea8",
+    "build/weighted-suffix/pilot/WeightedSuffixAll.v": "076981139452a7b5c84798aaeb557ad2972e2c14e400e5b031baaf8f3c4f1e9d",
+    "research/weighted-suffix-pilot-summary.json": "f262a870a25f16983f816bfecf6de9d73d888b2c66b5a21fdf51af74d595878a",
+    "research/wave3-affine-pilot.tsv": "96c635031b69871f4d46f937d68d89dc0ceec7bcbb00377d2be89bd539533835",
+    "build/affine-wave/proofs/Pilot/All.v": "72edc2c25db1f7f69d24a59d7a9996464a4e98b3afce475875475686469405fe",
+    "research/wave3-affine-pilot.json": "450ec7438c3f54834e383908141310b1ab65706fc2e051114aed055ac461e0f1",
+    "research/wave3-affine-bulk4096a.tsv": "5fa5e6b5c08dc844fd494104da9f7a8ee0a9481841a6a8d5cd24da49f2c3cfb6",
+    "build/affine-wave/proofs/Bulk4096A/All.v": "ce1ca29cc36d6118447763f165c877ffcf96d495bdf62bed7a448da507cc6e21",
+    "research/wave3-affine-bulk4096a.json": "bddadb14e6fd5b9d38850b6b8e6a189aa21788f11a6d4e3bc601efa10e9c7c8c",
+    "research/weighted-v2-pilot-machines.json": "72d1277351f3118bd48d0493de59edf7c15f690b327cb01916a3c9eeddf95496",
+    "build/weighted-v2/pilot205-kernel/WeightedAll.v": "50c890df32dde727c211878cf6dcd16f033f91b4e513a9c2b705ae615914bb8d",
+    "research/weighted-v2-pilot-check.json": "88dace3cf40b040d4aa3cc108e23bd523d9f882d351dd51ec581ac8cd88f5b3a",
+    "research/conjugate-input-r001.json": "3b6f8b94828df4a14e63a7d4780df36904026ae99a2728b9c7ab814bd348fe7c",
+    "tools/compile_conjugate_extension.py": "44607bd8ff9d2dacfcd47b603163115dba551cfc0af582db780b0df016433286",
+    "tools/check_conjugate_batch.py": "7512556387943c24a8df979731435c72a9ddd5e6236151dc952cbbe8dbeff0a5",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e",
+    "tools/conjugate_probe.cpp": "642c773b20d6b4bd8fbee81e2a356b9bd6fc3dba883147951fb54fa3bba20a4e"
+  },
+  "compiled_snapshot": "build/conjugate/r001/compiled-snapshot.json",
+  "compiled_snapshot_sha256": "78d28a301bab9ac28ce8393c148154bfea160ea5e9500f6d26a4bddb27cd88e5",
+  "proof_artifacts_sha256": {
+    "Sources.v": "6593a6347478e239e2bad3b35334c197f21727af9308beb9af898da771151d48",
+    "Sources.vo": "e0c1b2300ff00ddd675356e324c9fc959613e0fb8e674cd96a7f6c3746b9c0c3",
+    "Rows0000.v": "ccf6868d345e86077d5f8ba53f253dc3cf57f26dff9ef46dedfa7d67da0e986f",
+    "Rows0000.vo": "ec09534fbd3add89b1732786e6d3c36df57376e9a6b118c45b78e7374c22dc4a",
+    "Rows0001.v": "cc7005e147ca8cf1f2b81e3293b1b90360197b1a02b012bdc331f4863b9b4bd8",
+    "Rows0001.vo": "8596abc13d00eca44a4955854b53024359f06eaff638782b12edaeb27b22757e",
+    "Rows0002.v": "fe2739b85d696bb659c7fa7a4d7b6c1ba2118bf08e46f719cc04d41b766da3d9",
+    "Rows0002.vo": "1ef372d6f2a6d75e3ff5ed6ac1fb4cc5f98480197e7f91157de884691753355b",
+    "Rows0003.v": "e1080387f06cccb6534cba7ead36d309f376415dda64da8c8377ea6970ddfc7d",
+    "Rows0003.vo": "cfc1fe744e43b4031fdd6df8a5dbd83eba7ab3739a30932172fdac17b07c4c51",
+    "Rows0004.v": "e6cf95892395bba963627a4e07e777bb181c606fdf22799bb51f8905da84ef06",
+    "Rows0004.vo": "36caa40583e551d1c5b6713624f761cda3560f9ef9290c2fd68e73c5abcbb5c9",
+    "Rows0005.v": "7395e5fd9f070f17cd330048c11ca913b49416b5a060d397b1e6629757ef7b1b",
+    "Rows0005.vo": "c2609524a892cc395ef1ebf68bac21b19e5b54ff10c133f6066d38be7cacdcb5",
+    "ConjugateAll.v": "01f1c95ad3264a9881982f8d0d103bf630c1c282d9707dfc0bdb5add7df95207",
+    "ConjugateAll.vo": "f4d29e86aa432cf7d5e6d370034dd96ee563fcd94e75eb915c8a6b9d669319a9"
+  },
+  "ledger_sha256": "c3b85528c663b10c8955b75c850b8a8b29150a293ce953141f90e3a0bba03ccf",
+  "promotion_requirement": "A successful recursive campaign audit must include this exact module and source/object/transitive-dependency snapshot; compilation alone is not counted as an audited closeout."
+}

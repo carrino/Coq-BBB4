@@ -1,0 +1,140 @@
+{
+  "status": "Complete cohort accounting; assigned candidates explicitly deferred without a C search",
+  "input_rows": 59627,
+  "candidate_rows": 15115,
+  "not_accepted_rows": 44512,
+  "prefix_rows_reused": 17528,
+  "this_run_statuses": {
+    "cpu_budget": 2772,
+    "undecided": 16019,
+    "deferred_weighted_candidate": 9798,
+    "irules": 9137,
+    "deferred_closure_candidate": 4373
+  },
+  "this_run_wall_seconds": 8225.938641244,
+  "parameters": {
+    "input_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+    "binary_sha256": "aa28e75e45086f6ed88cc9d12490a09c01eb3e8c26383084e9661f54697fa24c",
+    "cpu_seconds": 0.25,
+    "steps": 4096,
+    "tape_cells": 65536,
+    "source_sha256": "25aadbe1403d476d72d2a399d788a1d582a1c887d8a851ed13992290fab4c622",
+    "prefix_search_sha256": "bb1817152315e16bc1b0bdc6fcd177e1df2c05c4b69baf9f82a60fa07c6e00f0"
+  },
+  "search_csv_sha256": "2c80a585ecee1289ef279a80440e9955a6c060db8416d3ee5c2027fd0bc511be",
+  "timing_tsv_sha256": "627541fde7eea5aa572edd888b313cbcd4badb6596582f9bbd2bcf473fb650c3",
+  "candidate_sha256": "808e4c968c321429f35e2a23483f29e8ba10efad4cea7451826d622ab6f9c232",
+  "not_accepted_sha256": "e08439029edb51528e06c5b865789ddaaf9c396fd205d1bb6ed9472fa4af6199",
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "proof_accounting": "Deferred and failed rows remain in the affine residual. Search assignments are not proofs.",
+  "deferral_parameters": {
+    "source_sha256": "cf9964def219c67ef6a8ce62420d7b90d819ed821afcf28e7ad36ff214283423",
+    "core_source_sha256": "25aadbe1403d476d72d2a399d788a1d582a1c887d8a851ed13992290fab4c622",
+    "codec_source_sha256": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "input_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+    "closure_remaining": "four/build/wave3/timeout-retry/not-accepted.txt",
+    "closure_remaining_sha256": "c82a62be6185b49e858f8af2d3cb97bb098beca11d7f2fda3c91c6d3dd0119af",
+    "closure_candidates": 6038,
+    "status": "Selection bookkeeping only; every deferred machine remains unresolved."
+  },
+  "deferred_rows": 14171,
+  "this_run_deferred_rows": 14171,
+  "weighted_snapshot_archives": [
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-8ad668019ec7365101beb3849878369b1a9f059616300a8c2c57be783c25b8d4.json",
+      "sha256": "8ad668019ec7365101beb3849878369b1a9f059616300a8c2c57be783c25b8d4"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-4a4e7eca865cbf3f8e51d59d361d6b08a1166072d105221bb63c23f3961a52a7.json",
+      "sha256": "4a4e7eca865cbf3f8e51d59d361d6b08a1166072d105221bb63c23f3961a52a7"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-13b24d41ec52c06b63ffaf6af8efb676cd62390978750f69433f95f14100d8a3.json",
+      "sha256": "13b24d41ec52c06b63ffaf6af8efb676cd62390978750f69433f95f14100d8a3"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-9c983a804b83c015a3a561288ddaae622fbcd25bce154aee9789dfbfebe2f620.json",
+      "sha256": "9c983a804b83c015a3a561288ddaae622fbcd25bce154aee9789dfbfebe2f620"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-fe1d2ff0185995b940332dd47d283548cf235e8f555f26ae05013c6927b7aee3.json",
+      "sha256": "fe1d2ff0185995b940332dd47d283548cf235e8f555f26ae05013c6927b7aee3"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-a4886ccf639bc115040edc33eade18701d42222969c9dae509f716ff0eb82518.json",
+      "sha256": "a4886ccf639bc115040edc33eade18701d42222969c9dae509f716ff0eb82518"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-b1b3c882368b663990137cae3f4522264cfc778aef779c0bcef050686c83aac4.json",
+      "sha256": "b1b3c882368b663990137cae3f4522264cfc778aef779c0bcef050686c83aac4"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-7c819ac33997b92e5cf435781fd11a181199a02362e1c729f689a106ed341682.json",
+      "sha256": "7c819ac33997b92e5cf435781fd11a181199a02362e1c729f689a106ed341682"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-cec07c287ab6a7a9ac397803d93a88165138dfffd84914603797814217d7bf60.json",
+      "sha256": "cec07c287ab6a7a9ac397803d93a88165138dfffd84914603797814217d7bf60"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-48a93398313be834c704ac931594b9823a63c5772cf58cbb0472006fe761a192.json",
+      "sha256": "48a93398313be834c704ac931594b9823a63c5772cf58cbb0472006fe761a192"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-a9f642b74ba7f2710d2267eb0cd580ee4a0cfc4dfb8fe475000576cbfe8723de.json",
+      "sha256": "a9f642b74ba7f2710d2267eb0cd580ee4a0cfc4dfb8fe475000576cbfe8723de"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-8842519d51874b02b0eab07c490695c724338a3d8561f9563c3a4d36c4072064.json",
+      "sha256": "8842519d51874b02b0eab07c490695c724338a3d8561f9563c3a4d36c4072064"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-2737387d859a92422eb87a72a1499d593c9b82f3de04c5e61630d2f65e0e8ce8.json",
+      "sha256": "2737387d859a92422eb87a72a1499d593c9b82f3de04c5e61630d2f65e0e8ce8"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-38f9e2881709143e2649bfda5d447da81c2d8e459fd389288227da28bee691be.json",
+      "sha256": "38f9e2881709143e2649bfda5d447da81c2d8e459fd389288227da28bee691be"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-beafca4e0c717c7ec39447a6fce23c6220987f2b3d9b815ac7b2e5a5e1bb1e05.json",
+      "sha256": "beafca4e0c717c7ec39447a6fce23c6220987f2b3d9b815ac7b2e5a5e1bb1e05"
+    },
+    {
+      "path": "four/build/affine-wave/short-cell-deferred/weighted-snapshots/index-07b879abe05d3feac16873fdfeb7a457d41f4e5c6a4e7ec555af7a13ea927ec0.json",
+      "sha256": "07b879abe05d3feac16873fdfeb7a457d41f4e5c6a4e7ec555af7a13ea927ec0"
+    }
+  ],
+  "weighted_registries_sha256": {
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch000/registry.json": "0015b3b202b0ffe75bda4b956602f968b9cc72f6db9d1485f75e43112d7f8c58",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch001/registry.json": "b9827823268e3cb7f998236fc54751fc422d9a1c13d5fc50b90f1943710d61b0",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch002/registry.json": "cdd63241fae57dd1a04976eece09c1693baafc466e2572363171c8fdd92cd18c",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch003/registry.json": "335b0dc9e826b4cfab93b0f6b92e4bc76cb8a9714ef1622f00b08f5853b1ae9b",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch004/registry.json": "b930c41fd2f02610a1752c70f9e48b03ca48d10752a5f4e61b0de5dad14424d3",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch005/registry.json": "48af4db801bce17832829fd34758130dce69fca86545c46aef2998228b88bebe",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch006/registry.json": "e6abd1a8d9b7551ebb85ebe317458a59605e33a4f86bba31691e33e2ecc83a81",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch007/registry.json": "4746b5273010a09dfbcaa752be1a77767a9001620fe993d978529bcd8c9ddcda",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch008/registry.json": "b0e1d0edad4f5f62508ce20ba77c70163bea244974b9ea9e51e07e8fce5de713",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch009/registry.json": "bdfa3cc756dd2faa4f655119a2ca6b5d31b04db685567ad9a0aa61031e036093",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch010/registry.json": "4a0a0ff1ebe434085110381f36bf43218c70a2e04dde25b1fb3d8e01167bdee4",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch011/registry.json": "388f417408e0c9fefe05b81e36204d1d42371506aac5074058425058bcc11099",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch012/registry.json": "71be3b4f85f3a54b3eafaeeb3f4b5e9ee1827ef0a90449a1a540e57ddeaea540",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch013/registry.json": "11825a6657c25e4d560d9fa6d47a32a559aba0f452cb2aa1673f046da526dbde",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch014/registry.json": "b2cbad3331d7fd632c8c17e791bdba3dcce46dec15fe80d7c3eff1fdc7313616",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch015/registry.json": "f1bb69d045a921374a880c2b42a993839a0d07e27fceb275a8c65c6465d9c106",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch016/registry.json": "83065f59e4930de266de18d8aba752a755e6901f6610042bff923f22f4518586",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch017/registry.json": "96a20aef1c74dd89888969d49280014df069604f8c0d762ab2de8b82aec605ea",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch018/registry.json": "f639b60a3b886e2416f2c60b5e325e77c473ab6221113c538f59f70ad31bcf04",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch019/registry.json": "c1f6c6f1e9a110d2c5c2138a81c1ef988ed85f6dec6b4741850cee990b36dc21",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch020/registry.json": "91ef942aeda7202835e91abe0393d0d4841d5966a9f64e345bf2a3155068f020",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch021/registry.json": "f8965a77b939e9e12cb75963e7d53d79bd6b6496b2794928c2450c9fc613a278",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch022/registry.json": "ad99e29e71b7e742788e200d7c6a15dd54e85b4867affc73d060190c723a90bd",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch023/registry.json": "4a229d3874fff68f0ed350a72af3c8cefaf69190e30c3224de49392845b30f2f",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch024/registry.json": "832278c6d26e26c385d08cdd270460989505b95bb8873076766513147693ec7a",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch025/registry.json": "9888fd030c133424e33ec1e447e66b04051aa379ddc16ff576f0dd6a3d8764d9",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch026/registry.json": "11ec299dce30717c8ed4214ce0bb7ddcad870c1946b833a085f6bcf67c98b0a2",
+    "/workspace/Coq-BBB4/four/research/weighted-full-snapshots/batch027/registry.json": "92eac86184796de0abff454703cc0e08e3fa4449b0bab5a700d29bd8a0319626"
+  },
+  "deferred_ledger_sha256": "dbae8c5ccbbe12c65908cc7c453b42d3257abc44b77bf11c6d90cfc4f879ffbb"
+}

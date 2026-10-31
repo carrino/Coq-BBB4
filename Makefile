@@ -122,6 +122,19 @@ clean:
 proof: proof-all
 .PHONY: proof
 
+# Rebuild the selected state equality from reviewed source inputs. The driver
+# activates the prepared Value alias only after the unconditional Final audit.
+STATE24_JOBS ?= $(BUILD_JOBS)
+proof-2-4:
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) -C four proof STATE24_JOBS=$(STATE24_JOBS)
+
+# Current public theories/regressions and reviewed standalone state cases.
+proof-2-4-checkpoint:
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) -C four proof-checkpoint PROOF_JOBS=$(BUILD_JOBS)
+.PHONY: proof-2-4 proof-2-4-checkpoint
+
 # The census certification: the per-subtree queue enumerations
 # (parallel; each Qed is one native_compute walk) + the assembled
 # theorem.  Needs native_compute: eval $(opam env --switch=census).

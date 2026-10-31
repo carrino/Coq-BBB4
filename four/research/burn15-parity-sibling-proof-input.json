@@ -1,0 +1,16 @@
+{
+  "rows": [
+    {
+      "code": 2650388235,
+      "machine": "1LB2LB1LB0RB_2RB3LB1RB1RA"
+    }
+  ],
+  "state_bound": 0,
+  "selection_report": "research/burn15-parity-sibling-native.json",
+  "selection_sha256": "9acda437f6348bd84c44d78fe7917ee7eb4d0034f9bbc0cbb1aad78d0a09ebd1",
+  "template_sha256": {
+    "proof-sources/burn15-parity-sibling/ParitySibling.v": "63c273c98ee851f2a7b3745d3039c32251a5c7fda771933f55a93408bb8c64aa",
+    "proof-sources/burn15-parity-sibling/Regression.v": "b39b87f84cf813be3ab47cd08bb60b10c316c449cf35a8cb94bbbe864a2ebd0d"
+  },
+  "dependency_report_sha256": "11d690598e29a5f63c27fa7e7c495891ea011362102e140a293282ae7ab692f9"
+}

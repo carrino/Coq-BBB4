@@ -1,0 +1,13 @@
+{
+  "excluded_candidates_sha256": "fa06d357efd9d268bdab43d88b8bceadcfaeba81ecc36d49589de0937e1f8610",
+  "excluded_report": "four/research/repwl-cpu-pilot64.json",
+  "excluded_report_sha256": "21ca61c2faf3a315da84c57bed95523338ab682158293774d51410b2a9bed816",
+  "excluded_rows": 17,
+  "not_accepted_rows": 16926,
+  "not_accepted_sha256": "1605b7727cb1754147a7336134df220e98ab848e021610e6c2949364db40d080",
+  "selection_for_pilot": "lowest64 SHA256(machine) from this cohort",
+  "source_report": "four/research/repwl-stream-prefix000-014.json",
+  "source_report_sha256": "999173cbf3f50b24a38c8ebd7522d1cfbb7a1df19ec67c746f13ce4e68765ef2",
+  "source_residual_sha256": "ac9bd909b837a19418dc7b4c032a736d09c8f7218c4ff99a33b9439c1a11e1f0",
+  "status": "Frozen search cohort; no proof claims."
+}

@@ -1,0 +1,167 @@
+{
+  "scope": "Untrusted blank-root finite node certificates; Coq must verify all nodes.",
+  "encoding": "gzip JSON, deterministic mtime=0",
+  "plain_bytes": 4106550,
+  "gzip_bytes": 1396107,
+  "plain_sha256": "dc70284e6bb9100ca7dc0a6cfdc000f996890cb349a90a849f0264d25b0a658e",
+  "gzip_sha256": "5a71c32c0580412ce9fe1830faf9fdb2658ad7151d1d1c73c61ee7969aa5b8d6",
+  "recipe_sha256": "a9fb66c676adc03ac74843e8b59e545eaa4922400bc4bd895df7d82a82c16d07",
+  "root_family": "0LB---------_------------",
+  "root_unit": 45,
+  "unit_count": 46,
+  "unit_compact_sha256": [
+    "dccc6ea985f8637093f5dc7730347fc6ce345fb8df5139b4ffe8f7a80df9bf07",
+    "96d475c00608f4caab3de9cd9757ba8eff0d5ca1568c3a1024db8d891e6c8cbb",
+    "6d0710546504b6008d451613e43e455f8576fa04273bc2d7cf3949ed6c08c7e4",
+    "9aced1759723d8110ee160c265940356b2ccb09d940841f6aaa78fb09f4e7df2",
+    "55665da5d4f9083bba94b5761926b8cd7eb16cf73422d0da5f20c63b664ac096",
+    "8571f551207068a85fcc1af2b646dcbccad0391b381fbfb21f0c024643cdd0ba",
+    "e3dc0700677a1396a832e0700be1ef6272706436de4a5231e9c2e0fa366f02c3",
+    "c07dea80ef7bd19d312478cf3d661b0e98e00edfc264d1ea3d1257473d1df847",
+    "5b6e252ba928e12b67a8cb3a5213f318e577a1c75b7b5f961c1e2ee60b21ae85",
+    "49c4edb6d911609ac778087953218e3e0e16ecaae1869c54dee67851614e4134",
+    "9d42734528ea5e9e4ffaad9e6d64a39f293e336756d61ba0795017f2a2bbbd53",
+    "6bef069d9b75d69071180fce158d91d0c5e1282e15351c4569abab5d2e8bb8b4",
+    "67c00395b9698e5a67eb8ebfa2fc15d01090cde15dd8234323d292d5071387a9",
+    "5dfefbb5b0b8290dbef559c8bd89d919ac5b26f81b17e3212c1b8966d6bcc77d",
+    "fa0a649e9c0fb5d2c75cbad578e90b94705ba1aff06f1b4f32915a42c5784ecf",
+    "7c12ddd52baabdfba19ea3771d9f05d225098827f728a2751516d60d1e10f642",
+    "4e35b3b9812ca53fd7ce59307082e4ebe82c5736c930eb4d54481ea923664d02",
+    "660f833a7818bab5aacc835b8a022eed94f2c93eac430cc5ae85e747a5d41609",
+    "ed3840ae42760d0f4e7ad631e4b8effc946fe6dccfd87bee8cff8bd46c46a1a0",
+    "ff8898d25ba45c522c2e4c0d2469413d247376e2a00f247ac2e01e9ae8b696e4",
+    "7a717ab94969880d9d8b60ca8ece0a61487743d778bec6a628182d532a16bc55",
+    "d88754ed38d6661cbd4bb5c3b3de977479fed7d1152d2d63b983af6d4e60a4d4",
+    "47895585bde74c965555adea882e34da7794d5e5dbef6831f2ed74978bf9f6a4",
+    "3f9f63514ee52ac46c9bc6af48b1a37b5f84ef5a6b1b530c3ca22f4340d4548d",
+    "ad5073dbb42596fde1502706f07b8a5c65eb6b8fdf8b619891e5ee757714f6da",
+    "13164a77b346f765eadc507d1747c1b873cc24af207445db28ef1fb44bd7c7c6",
+    "2b5e487be056ad09f35ff72c258cd3a1b5a314ca860978e1631f874293560192",
+    "34b306946a0c87d6e2740fa1aced21979a887135ae51c99a734895680013efbf",
+    "fbec518735ff3d584ce4a983e783e3745f9c54b0b3f61fcf18b2775e3701c557",
+    "802bf27ed1668e5937658ff6b3bf590d0e0b96e6d01a46fdf10f57ebb0fc88ea",
+    "1a3ef2f2f0a29f05950fa020642bded3f3557b7747ab0e22e44aa007a572db88",
+    "b3084994402ec78ab3ae4532ccf20ddc95e423f5dac0d9b589491843a3cd6e76",
+    "35199bda8c020cb753fc17feec83b0b36c71856ef6c93fcc340e02cf45155f99",
+    "3c44b4fd5a0d37cd8c6e9034f47553ec6f6b80665ba14e464609975532db63ca",
+    "4770d46d2b0d8927b73577431023b9db45c54bbf139712ca38835eb9c5801729",
+    "cea5a0ab278bcea201a6d56ae39fd6d2ba0d15eb4cc21ceaafa854da5f6f8139",
+    "6bce006d8d12a2a32c64d64bf182713ff5e94802d4276efe4929a6e9e8e86f30",
+    "95d304e39f6f9265a97c9aff406dab738447802c38e179a325c80848cc9c331e",
+    "791c0f04d15c67862b8b265d3d2f2e6e210eba3c768163a16246690447beefeb",
+    "cb3739fed9081b0682c00455ace98e8b2f9af622ff28fd4dc4ca98f40926e3aa",
+    "9d86d2b0206b227733313793e6c823d52ef4974333d080799e4508e98252c36f",
+    "55a7535922767d0b8a7e11b0d0ff7e26cb335bf8c5223b4944af8426df39147d",
+    "a213beffdd7aa9d3adb2c13121bdd8f1ff71290559e42c6683eb46cdcb0ebb54",
+    "91d517921eb68c34decb33e2583e50bad6bb8842cc89241c09a09bb20a1be4c0",
+    "32902d596407f66c5b46c8a33fe877dec910b7f27277eb40b0894f01204d671d",
+    "e145afd7bf64e3fbcc0098b7c04d8c5b47ddc3e40a5c3b331a06b563a4c4c751"
+  ],
+  "unit_dependencies": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      4,
+      1,
+      2,
+      3
+    ],
+    [],
+    [
+      6
+    ],
+    [],
+    [],
+    [],
+    [],
+    [
+      11,
+      8,
+      9,
+      10
+    ],
+    [],
+    [
+      13
+    ],
+    [],
+    [],
+    [],
+    [],
+    [
+      18,
+      15,
+      16,
+      17
+    ],
+    [],
+    [
+      20
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      23,
+      24,
+      25,
+      26
+    ],
+    [],
+    [
+      28
+    ],
+    [],
+    [],
+    [],
+    [],
+    [
+      30,
+      31,
+      32,
+      33
+    ],
+    [],
+    [
+      35
+    ],
+    [],
+    [],
+    [],
+    [],
+    [
+      37,
+      38,
+      39,
+      40
+    ],
+    [],
+    [
+      42
+    ],
+    [],
+    [
+      0,
+      5,
+      7,
+      12,
+      14,
+      19,
+      21,
+      22,
+      27,
+      29,
+      34,
+      36,
+      41,
+      43,
+      44
+    ]
+  ],
+  "preserved_native_rebuild_option": "Run the tracked survey.cpp/triage source recipe later and compare every frozen compact unit hash."
+}

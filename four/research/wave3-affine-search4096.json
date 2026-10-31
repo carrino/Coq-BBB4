@@ -1,0 +1,33 @@
+{
+  "status": "Complete untrusted search",
+  "input_rows": 133185,
+  "processed_rows": 133185,
+  "unprocessed_rows": 0,
+  "candidate_rows": 82974,
+  "not_accepted_rows": 50211,
+  "failure_reasons": {
+    "nofit": 15786,
+    "noproof": 14677,
+    "noshape": 19748
+  },
+  "certificate_versions": {
+    "bbbcert v3": 29479,
+    "bbbcert v5": 42704,
+    "bbbcert v6": 10217,
+    "bbbcert v7": 574
+  },
+  "multivariable_candidates": 18,
+  "input_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+  "search_csv_sha256": "62ab82ddc24a1697fec78bffc74f865f3bd600295b9ba19418c876da582bcc57",
+  "candidates_sha256": "1de615b506209f85a3e4983140684b1f6baa18bfc15cdb9eafbb5111b6f03034",
+  "not_accepted_sha256": "0cf30fd8dc48d311f23b1568e001bee5d47f35959ca316965af1faad46fee616",
+  "parameters": {
+    "input_sha256": "df21b40e9cc14b299a323f1d628979c0185410396cf768a0d25604c09b082ac7",
+    "binary_sha256": "9726bc33cbd2aa11157dd9538ed919c5a910e6111b16474eb3a5661b8272f358",
+    "steps": 4096,
+    "tape_cells": 65536
+  },
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0,
+  "proof_accounting": "Search candidates are not certified discharges. Checked proof waves are recorded separately."
+}

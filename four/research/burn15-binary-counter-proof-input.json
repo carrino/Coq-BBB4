@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 3856657745,
+      "machine": "1LB2LA1RA3RB_0RB3LB1RA2LB"
+    }
+  ],
+  "selection_report": "research/burn15-binary-counter-native.json",
+  "selection_sha256": "66cbd4badea6619d7d34e07f89d83f5ab4d6553e2d4e41e6cba0cde07660e1f6",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn15-binary-counter/BinaryCounter.v": "a16d50977344bf8edd2fc659db491e63c5b0114aaa5dd5e7e48457a6c47520d9",
+    "proof-sources/burn15-binary-counter/Regression.v": "87ba4a04107577f63cb3c32973561fcd4692a4179f0f171781bbed8da52ea978"
+  }
+}

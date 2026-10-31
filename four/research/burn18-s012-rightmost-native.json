@@ -1,0 +1,29 @@
+{
+  "B_nonzero_return_controls": 21483,
+  "B_zero_marker_return_controls": 2295,
+  "actual_blank_steps": 4096,
+  "actual_state_visits": [
+    1564,
+    2532
+  ],
+  "admitted_one_step_controls": 19380,
+  "checked_instruction_families": 0,
+  "checked_state_families": 0,
+  "invariant": "Last nonzero of head::right is 1, or the entire suffix is zero and state is A.",
+  "maximum_left_return_context": 4,
+  "maximum_observed_control_return": 15,
+  "negative_B_blank_tail_contexts": 3,
+  "negative_B_blank_tail_steps": 17,
+  "one_step_context_max_length": 3,
+  "rows": [
+    {
+      "code": 2284387823,
+      "machine": "1LB0RA0LA0LB_3RB2RA2LB1LB"
+    }
+  ],
+  "scope": "Finite native invariant and return controls only; zero proof credit.",
+  "source_sha256": {
+    "tools/check_burn18_s012_rightmost_native.py": "7231968451633d3d7daaebb726fd6f7417f1cc639f1b4de26cd6d83e3963fe45",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

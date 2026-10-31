@@ -1,0 +1,26 @@
+{
+  "status": "candidate_state_only_branches",
+  "source_frontier_sha256": "a5c2799e311c9d4713cae0239003078b822bfd1e113b360e1772ec37941ad608",
+  "rows": [
+    {
+      "machine": "1LB2LB3RA2LA_1RA3LB---1RB",
+      "anchor": 2350
+    },
+    {
+      "machine": "1LB2RA0LB1RB_1RA3LA1LA---",
+      "anchor": 591
+    },
+    {
+      "machine": "1LB1LA0LA1RB_3RA2LB---3LA",
+      "anchor": 334
+    },
+    {
+      "machine": "1LB0LB---0RA_2RA3LA3RA1RB",
+      "anchor": 288
+    },
+    {
+      "machine": "1LB2RA0RA2LB_3RA---2LA1RB",
+      "anchor": 373
+    }
+  ]
+}

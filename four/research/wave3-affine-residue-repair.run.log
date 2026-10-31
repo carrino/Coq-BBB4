@@ -1,0 +1,13 @@
+Checked Part0000 (10.18s)
+Checked Part0001 (10.35s)
+Checked Part0002 (13.54s)
+Checked Part0003 (13.90s)
+Checked Part0004 (8.13s)
+Checked Part0005 (11.47s)
+Checked Part0006 (12.28s)
+Checked Part0007 (8.00s)
+Checked Part0008 (8.75s)
+Checked Part0009 (4.11s)
+Checked All (9.24s)
+Full kernel audit receipt: /workspace/Coq-BBB4/four/build/affine-wave/proofs/ResidueRepair/audit.json
+{"checked": 581, "census_linked": 581, "compile_seconds": 109.94, "audit_seconds": 147.12}

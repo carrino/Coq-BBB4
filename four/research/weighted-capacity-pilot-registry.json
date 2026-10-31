@@ -1,0 +1,19 @@
+{
+  "format": "BBB24 compact weighted capacity certificates v1",
+  "status": "Untrusted capacity certificates; kernel replay required.",
+  "rows": 2,
+  "kinds": {
+    "weighted": 2
+  },
+  "source": {
+    "diagnostic": "Paired32 late-boot residual sample, nonnegative all/left/right count capacities."
+  },
+  "bundles": [
+    {
+      "path": "research/weighted-capacity-pilot-certificates.json",
+      "rows": 2,
+      "bytes": 1761,
+      "sha256": "d70c0f10c319e97ec902109630dcca2e62e285c137753ec71b39ad6873e9bf5a"
+    }
+  ]
+}

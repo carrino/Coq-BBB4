@@ -1,0 +1,9 @@
+Checked Part0000 (10.25s)
+Checked Part0001 (14.94s)
+Checked Part0002 (15.42s)
+Checked Part0003 (13.33s)
+Checked Part0004 (12.86s)
+Checked Part0005 (14.08s)
+Checked All (14.96s)
+Full kernel audit receipt: /workspace/Coq-BBB4/four/build/affine-wave/proofs/PhaseCpuRepair/audit.json
+{"checked": 375, "census_linked": 375, "compile_seconds": 95.84, "audit_seconds": 236.46}

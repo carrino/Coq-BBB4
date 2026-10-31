@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 2790658142,
+      "machine": "1LB2LB0LB2RB_1RB2RA3LB1RA"
+    }
+  ],
+  "selection_report": "research/burn17-terminal-pair-counter-native.json",
+  "selection_sha256": "2e7589e39bd6d4035fc62d464baebeb6d8302e1f254513dd5d3078c554ddb0ed",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn17-terminal-pair-counter/Regression.v": "a8c357059404d948fe9c5012e0873a0fb1015dcc88cfdcd683872e2d9079bad3",
+    "proof-sources/burn17-terminal-pair-counter/TerminalPair.v": "700ddd573f398f129b8a8a710cc9a21f6524c7cdade25df7c46de5b0c151cc3a"
+  }
+}

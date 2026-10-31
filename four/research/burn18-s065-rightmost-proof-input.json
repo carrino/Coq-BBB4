@@ -1,0 +1,17 @@
+{
+  "hypothesis_report": "research/burn18-s065-rightmost-hypotheses.json",
+  "hypothesis_sha256": "41eca7e11f2b0c5b9fdd79e8c59be03878da9db752e38e2d619e968fe0afed43",
+  "rows": [
+    {
+      "code": 1056988197,
+      "machine": "1LB2RA0LB1RA_1RB3LB2LB0RA"
+    }
+  ],
+  "selection_report": "research/burn18-s065-rightmost-native.json",
+  "selection_sha256": "c34232bd7e38e33239ebfb25fc86f9eb7442402624a0c8dc39f59c38c312fcaa",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn18-s065-rightmost/Regression.v": "3cf340d6aa3b739a789e380c5f14b1cece1b03090ec35990da5f98eb1ba07768",
+    "proof-sources/burn18-s065-rightmost/RightmostReturn.v": "48dcc11407a059a7d5567eefcad294a81dcc6d9e4f1b504c665752616ace03e0"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "scope": "Search diagnostics for emitted residue/composed-return proposals; does not establish new proof counts or isolate which transformation was necessary.",
+  "search_tsv_sha256": "d09230085c469eece1e9b63cba386062f93f64e44ca881292ac291220924db30",
+  "successes": 581,
+  "successful_parameters": [
+    {
+      "candidates": 452,
+      "modulus": 2,
+      "return_power": 2,
+      "shift": 0
+    },
+    {
+      "candidates": 70,
+      "modulus": 2,
+      "return_power": 3,
+      "shift": 0
+    },
+    {
+      "candidates": 1,
+      "modulus": 2,
+      "return_power": 4,
+      "shift": 0
+    },
+    {
+      "candidates": 58,
+      "modulus": 3,
+      "return_power": 3,
+      "shift": 0
+    }
+  ],
+  "wall_seconds_by_status": {
+    "repaired_candidate": 59.892,
+    "replay_false": 264.475,
+    "timeout": 380.466
+  }
+}

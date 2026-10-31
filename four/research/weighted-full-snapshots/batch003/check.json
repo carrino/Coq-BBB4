@@ -1,0 +1,4260 @@
+{
+  "artifacts_sha256": {
+    "Weighted00000.receipt.json": "a7b3b5686ab939d636ef5e4080382a990dadcf24f1aef40c0b2fc1f8b51f04bd",
+    "Weighted00000.v": "9e4eabbdd814e18cff3a8152f5dd61bb50ef40bfd850b8c5ac7e75ea08919e39",
+    "Weighted00000.vo": "6bf6ddd46cb4ca75bf53bac6c00e0a0219e32d3d886d8627686da07b87abfedf",
+    "Weighted00001.receipt.json": "2eca3d68e77f7c2fa36d06646203b7144dba566f4a03c98456ae185d11d6f5f7",
+    "Weighted00001.v": "4c53fee70e02dcec203a045b5b7b853ab4ac92be8c90b952a595575cb23b4783",
+    "Weighted00001.vo": "2f6261855cbb09ebeec42aa2d6c41ee30a24291206488c736a27e5bda7c95e86",
+    "Weighted00002.receipt.json": "b0ab83a0efb4fec5abe19b2cd2f130760510b35f5407824475f4b21b3c63320e",
+    "Weighted00002.v": "549464f255a9251fb10e811eb18ccefbbf5314dbd86be954b16966521888f9d7",
+    "Weighted00002.vo": "31a9a39b9ddf5ad78eb8f7ba53c446b3ad505e5da543e0d448fca4c056087485",
+    "Weighted00003.receipt.json": "83d1a49de88d1301038ce92365b729935a8f53bc82ef74a10580d03c16e49034",
+    "Weighted00003.v": "63f5f2167e5a07ea8893ca13e8f63f1a51f2a17cde39a9dbe0c735e1ee700668",
+    "Weighted00003.vo": "928f7f72c19688941d34f49360d85b085da39d69b665782cc5a2d5401b1be71c",
+    "Weighted00004.receipt.json": "7b7425e689bc2bf4c0ee88f02fbe913ee7ad79082729eab7aba7e0a3f4201c9b",
+    "Weighted00004.v": "d889485234c83826897066bd5565b8309c886195c29b66d402902102f11caa5b",
+    "Weighted00004.vo": "52b2f484bb1f82c482f1c4911f62bfc9bb4a35bd2214c3e4596b1658c86a6137",
+    "Weighted00005.receipt.json": "0a65e7c0a3f78eb6643bf58b8197513c0bcc0a67fe524137cbe14b0f9ab09200",
+    "Weighted00005.v": "5c6dffff06420db7c52790359dac9f4e44accf69edf16e42e8ec76ccfeb2ec7a",
+    "Weighted00005.vo": "9a74ca750f4c1e25a42be00f8353b92682f1c58d7f749dbc85e44ff82d2983c3",
+    "Weighted00006.receipt.json": "f96cc920bfddfd62dd7ce7ba75ae1fc0a7f3ae96965bebbb25441f7a768e89c0",
+    "Weighted00006.v": "71ce5f4dd1bc85d431b67a852b82063a525ab8b487a854b22c626d023b81d028",
+    "Weighted00006.vo": "cc0a6a25281ed3be031116b0f587010352e9c53811a2011bf3ace8e6c5d17bd6",
+    "Weighted00007.receipt.json": "d27df330588bd005a50bd86e340db66a6e9fccecb320a3f526647624d6c52eb3",
+    "Weighted00007.v": "34e60c11985f9182bf47c9d7e347f06a527be684745ce025679114c41f9f9fd3",
+    "Weighted00007.vo": "98c24230316e0b28fa9ce51d9f9e4aa4eacc957a70456d798cc73a6c6c6645ee",
+    "Weighted00008.receipt.json": "e58a2aa901cc7a35935ba493016b71d2df30337e46477742b235ea33941e6920",
+    "Weighted00008.v": "47618a2150704f0ab6a291d07c62ed3aa6039f052c5e462a9cae4e3c8d448af1",
+    "Weighted00008.vo": "eb2e00f0c0023824e6a52404bf90d7cc87fd5b6bb65327b3f4967511fb658f79",
+    "Weighted00009.receipt.json": "1edd549514dc74154ee0f84fad16848598779ecc913476f2c3d28f4329ceb102",
+    "Weighted00009.v": "d04e66f0f850b046fdad5cebe4188b48be5c25b2515df2386abdfbafafac73c1",
+    "Weighted00009.vo": "3f9ee85e0a864dfa07b4a4eedc0bc87f5f933789d8d7595eecc242a189af3e38",
+    "Weighted00010.receipt.json": "0941d9a5fd1a6fdc4bf1e12f6a2585fd1b49732b578e21882670b9612df5a9f1",
+    "Weighted00010.v": "d0d91c19e4d3a9e5df74a100729df4dc47a559b44e0a9792fb4b40f291ae9c60",
+    "Weighted00010.vo": "55c923a3edd685d4ebe1f957214d7ec9c4170bf2c9c72bb9b254a589b4b075ce",
+    "Weighted00011.receipt.json": "f9bc1e2d8a048b05a5e006a506671e184464bfbce5750fc6d4a6beea57a40556",
+    "Weighted00011.v": "26b775d025b09ac3a063775e2af0e6a68b02404fe8732700c801949ae2ae8b0c",
+    "Weighted00011.vo": "26561a41e28cf51da78ab7f6e314e6903996d5f5464b3ebef12bac06e469edd3",
+    "Weighted00012.receipt.json": "24ebeed81c61b96b7da606a7b08f860a4b60edb60d1734cc52bec234e544dbbf",
+    "Weighted00012.v": "51962e44683d88650e436f081ae43cf8fd7420147f6d1f29191df3cf10c928cf",
+    "Weighted00012.vo": "139cde6075d7efcac1d6f0f2526470bf7d4bfc3af435f02023b8372722bdc2f5",
+    "Weighted00013.receipt.json": "541fe8d2c26f8307e049f339e7e968d196690f363af804d4e776007104c6d8dd",
+    "Weighted00013.v": "4ffa4e4de4da154674c76147b81a21ab1a13d3406b4db24805e33745da2f292e",
+    "Weighted00013.vo": "78513189132f5ec954185e372747a7f59397638894f36e0839b98c1dc293e789",
+    "Weighted00014.receipt.json": "d6a3c277623c5f1623701942f4b044f62a663dc3abeb823ca21600be5a079199",
+    "Weighted00014.v": "297b794a395a377f059c4a72b36e948ab8f6983df5ea58d5170029d2a172ac3b",
+    "Weighted00014.vo": "2274741645bd89f6f704c96366c2fb953259307faec78cd7a0aef912d01ab8b4",
+    "Weighted00015.receipt.json": "059008115e007f42d9424f7fb2899f41fefeba6d28b924003b0591206ea769e0",
+    "Weighted00015.v": "5ae13abda01f0e86540b3788985aeed8ab68b53c59ef1e09e0021a65c587ea22",
+    "Weighted00015.vo": "d5e953cbe3dc36152f18666557ea797c08815971d1c9f1a49c32ede801b7764c",
+    "Weighted00016.receipt.json": "0b0b9cf0f8b393fc7e9513b93c9bc3147d0d98f11b917e7decf6e18c2adafe72",
+    "Weighted00016.v": "9e86882e241e731c2cab6c1f24800e55f0d2fc5519635bdc38323cbad112dd2c",
+    "Weighted00016.vo": "c11bd0bf0dea1a65b44b9a96cd76455847de738fae2f0b3f49775a3259a86370",
+    "Weighted00017.receipt.json": "7cfa22b4a95382903e412828dbc7c6e1f536dfd631c90f9a9ea4c4dd216075f4",
+    "Weighted00017.v": "69d26f6decc3faa9734683675849ef8a423317cfeba90c130c394dd0f9189d16",
+    "Weighted00017.vo": "063fd837dd97a66fffe8bb7e1457038d7f1abc635e05cdce460935a0a81ba527",
+    "Weighted00018.receipt.json": "f1d4f5c1b4d640c226d7cc563f08cd98b107f29ba12a6174c5635c529ce679aa",
+    "Weighted00018.v": "773d3a6010970dfe7d9dd000ec4c5793120f4ca41f4e061f798be5f61d83df2a",
+    "Weighted00018.vo": "ae84a7237a98fd999574cb6a4422c78db72585d4b0e303f5b50bb17e297801f3",
+    "Weighted00019.receipt.json": "5cf650bf010ba61028c6d2db679e3282a11ff155c0a69aebe7c17609e12ec4c8",
+    "Weighted00019.v": "1a1fc0bcd760fa8bcee32aa4f58fd37f41762b4037848dceda03d7396cb6a78e",
+    "Weighted00019.vo": "b9ac4f8ac18e5b8e1e500ee45e4c24c5b0ea33c604857f2bb42da84e07a7310a",
+    "Weighted00020.receipt.json": "8890b17fc05b9c2a8c32e03576bad106b1628a6c3ac5cb319b18a3d1bed5b32d",
+    "Weighted00020.v": "4e0c2c2678de6a84aefde5ca74d43ef58af925a46bc3ee35e7b43d26eb650617",
+    "Weighted00020.vo": "cd02f6b848dedf4aabdd31b10d6bc2712d14f48998ca19338d7dad212017b1e8",
+    "Weighted00021.receipt.json": "55d6dedf2c6944996e37e82d8cfda4bc70791193add78289038c5b8575e5bd41",
+    "Weighted00021.v": "048b1f1096c06c9af431e600fab4fa77482162d3812e6464714a7040cf61f4c3",
+    "Weighted00021.vo": "b4ad0604408d81e0ca09a254af428dacce05fbceea1bbd93d6d6c653a00abe65",
+    "WeightedAll.v": "c92fe58e8bc473e69e03b90d781f83a9137be01c8b5b84837e3c14afbd545a21",
+    "WeightedAll.vo": "a721677e80f6cd74adc9501f568b41de835de17c379c919bedf2476a00bf9fcc",
+    "manifest.json": "6c66c7944a1abe116ba9bc351eac6790bc27ddefce884aff1ca2dedafc94cb26"
+  },
+  "census_linked": 683,
+  "counts": {
+    "coq_checked": 683
+  },
+  "descriptor": {
+    "board": "weighted_board",
+    "discharged": "weighted_families_discharged",
+    "load_paths": [
+      {
+        "namespace": "BBB24WeightedFullB003",
+        "path": "build/weighted-v2/full-proofs/batch003-v4"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "format": "json_rows",
+        "path": "research/weighted-full-snapshots/batch003/machines.json"
+      }
+    ],
+    "module": "BBB24WeightedFullB003.WeightedAll",
+    "nonhalt": "weighted_board_nonhalt",
+    "proof_source": "build/weighted-v2/full-proofs/batch003-v4/WeightedAll.v",
+    "small_sound": "weighted_board_small_sound",
+    "sound": "weighted_board_sound",
+    "was_pending": "weighted_board_was_pending"
+  },
+  "inventory_sha256": "15e25727b6497c4890e310113e87e0b04b733709fe27c6f7846e139da56426f4",
+  "manifest": {
+    "batch_size": 32,
+    "coq_version": "The Coq Proof Assistant, version 8.18.0",
+    "instruction_bound": 4096,
+    "namespace": "BBB24WeightedFullB003",
+    "registry_sha256": "335b0dc9e826b4cfab93b0f6b92e4bc76cb8a9714ef1622f00b08f5853b1ae9b",
+    "rows": 683,
+    "sources_sha256": {
+      "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+      "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+      "theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+      "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+      "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+      "theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+      "theories/CensusUnion.v": "d4e178b18b2c8db7538161d74833c1998c0ed3bea8f27ef58b76741049026fab",
+      "theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+      "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+      "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+      "theories/Checkers/FiniteWall.v": "f58b74f21be0d451628f126099ca3ce57b9f3a310c73aadba4c4013d6e3514db",
+      "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+      "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+      "theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+      "theories/Checkers/WeightedLex.v": "722875929fd5e9b2b11ab08caefe146f04191bcbcf3f704b3265b6996583a3e7",
+      "theories/Checkers/WeightedStack.v": "39105be50c93a9cb47897aa3dc05538d0e7dad0a8d2181cd87891df9e58d8773",
+      "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+      "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+      "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+      "theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+      "theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+      "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+      "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+      "theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+      "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+      "theories/NGramRegression.v": "c1ddef61f0d26dd8f07429a5b173fe7ee6a49504bcdce30d5c0f43dfbef69332",
+      "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+      "theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+      "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+      "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+      "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+      "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+      "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+      "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+      "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+      "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+      "theories/WeightedCensus.v": "02e50e571ed7b7aecaa60b2d058477c220b78b43b72b9119b3cce41db5e0b151",
+      "theories/WeightedNGram.v": "f22f844521f23e825aa37f7cc5907382b6ddcc7fea2394309c27d9420930a275",
+      "theories/WeightedRegression.v": "cb42f0c31f57a037c7411af9cc8ed8a71f859ef7a2397c17acb44b93a6fcffb9",
+      "tools/check_shadow_links.py": "342b0c36d050f727ad5478af1b68f67d9c3827de984835b0bf6e60b5b657c9ca",
+      "tools/check_weighted_v2.py": "72f83a55c1ae2695f80e4de947f8cfbc0b7514d11d9b583050117f2518b9e52f",
+      "tools/check_weighted_v3.py": "169ad387b19daef3a110db5a10c073aed69855b7701492c941cee2ce5b649bdb",
+      "tools/check_weighted_v4.py": "3025872c05a693b04e58009869b7e567e60fd809428732223e9488cd9a0d2ef6",
+      "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+      "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+      "tools/weighted_render.py": "e203d1d2964cece3f053f7cf9b2184931ad5cc3bb525d2f2a52699cc716d166f",
+      "tools/weighted_render_v3.py": "5988c284b17a5e653dfbe6d15f1c3083fd94a32fa0daa3b8745c215d6afbcc98",
+      "tools/weighted_render_v4.py": "8cce618311b0d70bb67074cfdffaa939a517d88fe7c54cf1e275441b6a3e5d9f"
+    },
+    "state_bound": 4096
+  },
+  "results": [
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3LA2RA_2RA---3RA1LB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RB1RA_0RA2LB3LB1LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RB3LA_2RA1LA1RA2RB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA1LA_1RB3RA3LB2RA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB1RA2RB_2RA2LA3LB1RB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA0RB1LA_2RA3RA1RB1LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RB1RB2RA_2RA3RA2LB3LB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1LB2RB_0RA2RA3LB0LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA3LB_3RA1LB2RA2RB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA2RA_3RA2LB1RB3LB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA2LA_3RA3LB1RB1LB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0RB1RA2RA_2RA3LB1RB2LB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RA2LA_3RA3LB3RA1RB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3RA0RB_3RA0LB3RB1LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3RA1LA_1RA3LB1RB1LB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA---0LB_2RB3LB3LB3RA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LB0LB2RA_3RA2LB0RB3LB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LA3RA_3RB1LA2LA3LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RA0RA_3RB1LA1LB3RA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RB1RB_2RA1LA3LB0RB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2LB3RA_2RA3LB3RB0LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RB0RB_2RA0LB3LB2RB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB1RA2RB_3RA1LB2LB2LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB0RB2RB_3RB2RA3RA3LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA2RB_3RA0LA3LA0RA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA2RA---_1RA3RA3RB2LB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2LA3RB_3RA2RB1LA1LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB0RA2LB_3RA3LB2RA1RB",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0LB2RB_3RA3RB1LB3LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB0RB2RB_2RA1LA3RB0LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB3RA2RB_1RA3LB1RB2LA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0LB0RA3LB_3RB1LA2LB2RA",
+      "module": "Weighted00000",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2LA3LA_3RA2LA3RB2LB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0LA1LA_3RA3RB2RB0LA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA3RA2RB_3RB2LB1LB0RA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0LB2RA_3RA3LB2RB1LA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA2RB_2RA3RB2LB1LA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA2LB_0RB3LB3LB3RA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB0LA0LA_2RA3RB3LA2RB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA1RB_2RA3LA2LA0RA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA1RB2RB_3RA2LA0RB1LA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1RA2LB_2RA1LB3LA---",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA3RB0RA_3RA1LA3RB1LB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA1RB_2RA3LB1RB3LA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RB3RB2LA_3RA3LB0RA0RB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB0LB_3RB1LA2LB3RA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1LA3RB_0RB3RA2LB1LB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA1LB_1RB3RA2LB0RA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB3LA_0RA1LB2LA2RB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB2LA_3RA3LA2RB3LA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0LB0RB3LA_2RA3LA0RB1RB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RB3LA_1RA1LA0LA1LB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA2LA3LB_3RA2LB3LA1RB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0LA0LB3RA_2RA0RA3LB0RB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA2LA_1RB2LB3RA1LB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA3LB2RB_2RA3LA1LA2RB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3LA1RB_2RA1LA3RB0RA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA1RB3LA_2RA3LB3LA2RA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RB2LA1RB_3RA2LA3LA1RB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2RA0RA_1RA3LB0LB2LA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA0LB3RA_2RA---3LB2RA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA2LA_2RA0LB3LB2RB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA3RA_0RA3LB1RA0LB",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RB1LB_0RA3RB1LA1LA",
+      "module": "Weighted00001",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB2RA0LA_0RB1RA3LB1RA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB1LB_0RB3LB1LA1RA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0RA3LA2RA_1RB3LA2LA---",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA3LA1RB_3RA1RA2RB0RA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RA---_1RB1RA---0LB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RB2RA2LB_2RA2LA3RB0LB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA3LB2RA_3RA3LB1RA3LB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2LB3RA_2RB0LB3LB2RA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB1RB_0RA2LB3LA1LA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2LA0RA_3RA2LB0RB2LB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA0RB2RA_3RA3RA1RA3LA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0LA3RB_3RA2LA1RB1LA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RB2RB_3RA3LB3LA1RA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA0RB2LB_3RA0LB0RB1LB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB0RA2LA_2RA0LB3LA3RB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LB3RA_2RA2LB3LA0RA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LB1RB_0RA1LA3LB2RA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB2LA2RB_2RA0RA3LA0RB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3RA0RA_3RA2LB0LA1RB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA2RB2LA_2RA2RA3LA3RB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LA1LA_3RA0LB1RB2LB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LB1RA3RA_3RA3LB2LB2RA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA0RB3RB_3RA0LA1LA1RA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA0RA_2RB1RA3LB1LA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB3RA_0RA3LB1RB0LA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB0RA2LA_3RA3LB3RA1RB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RA3RA_2RB3LA2RA0LB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0LA1RB_3RA3RA1LB2LB",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0LB3RA_1RB3LB2RB1LA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA3RB2RB_0RA2LA3LB0LA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB1LA_0RA1LB3RB3LA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB1RA---_2RA0LB3RA0RA",
+      "module": "Weighted00002",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB3LA2LA_2RA2LB3RB1RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB1RA2LA_3RA3LB3RA1RB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA3RA_1RB3RA3LB2LB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA3LB2RB_3RA2LA3LA0RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RB2LA_2RA3RB3RA1LA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RB2RA_0RA3LB2LB3LB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LB1LA_0RA3LA0RB2RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA1LB_1RA2RB3LB1LA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB3RA_0RB3LB2LA3RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA2RB2LB_2RA2LA3RA1LB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA2RB_3RA3LA3RB2LB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RB1RA_1RA3LB0LB0RB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0LA1RA_3RA3RA2RA2LA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1RB3LA_2RA3RA3RB2LA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB1RB2RA_2RA3RA2LB3LB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA---_2RA2LB1RB2RB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0RA3LB_1RA3LA2LA2RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB3LA2RB_2RA2LB3RB1RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA0LA_3RB1RA3LB1RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LB3RB_3RB2LA2RA3RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2LA1LB_2RA3LA3RB1RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0LB0RA_3RB3RA2LB0LA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA2LA_1RB2LA3LB1LB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1LA3RA_2RB2RA3LB0RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LA1RB_2RA2LA1LA2RA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA0RB_3RA3LB2LB1LB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0RB3LB_2RA3LA3RB2LB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RB---0RA_2RA3LB1RB0LB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LA3RA_3RB2LB2RA3RB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB1LA_2RA1LB2LB0LA",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA1RA_3RA0LA3LB1LB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3LA3RA_1RA2LB1RB1RB",
+      "module": "Weighted00003",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2RB0LA_1RB1RA3LB1LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB0LB2RA_1RA3RA0RA3LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LB0RA2LB_3RB3RA0RA3LA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RA0LB_0RB1RA3LB2RA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB2LB1RA_3RA0RA---3LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RB3RB---_1RA3LA2RA0LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2LA0RA_1RA3LB0RB2LA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA0RB2RA_3RA3LB1RB1LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA2LA2RB_3RA---1LB2RA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RA2LA_1RB2RA3RA3LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LA2RA_1RA1LB2LA1RA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA1LA_2RA3RB0LB3LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1LA2LA_3RA1RB1RA3LA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0RB0RB_2RA2RB3LB1LA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1RB1RA_1RB3LB2LB3LA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2RA2LB_1RA1RA3LB---",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA2RB_1RA3LA0RB0RA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LB2RA3RA_2RB3LA3LB2RA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RA2LA_1RB2LB0RA3LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LB3RA_1RA3LB2LB3RA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2LA2RB_3RA1LA3RB1RB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA2RB3RB_2RA1LB3LB0LA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB1RA2LB_2RA2RA3RA3LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA3RB_2RA3LB1LB1LA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB---_1RB3RA2LB0RA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA2LA2RB_3RA2LB1RB0LA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB---1RA_3RA0RA0LB3LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0RA---2RA_3RB3LA3LB1LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB3RA_0RA3LA2LB0LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0LA2RB_3RA0LB2LB2LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA---1LB_3RB3LB2RA2LB",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA2LA_2RB3LB3LB1RA",
+      "module": "Weighted00004",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB0LA2LA_3RA2LB0RB1LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3LB2RA_3RA1RA0LB1RB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB0LA_1RB1RA3LB1RA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA1RA_3RA2LB3RB1LB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA3LB2RB_0RA3LB1RB1LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1LA2LA_3RA0RB1RB3LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1LB1RB_2RA0LA3LB0RB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA---1LB_2RB3LB3RA2RA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0RB1LB_2RB3LB1RA2LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA---1LB_0RB3LB3RA2RA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2LA3RB_3RA2RB1LA1LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0LA3RA_3RA---2LB3LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA1LA_2RA3RB3LB3LB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0RB0LB_1RA2LB3LB3RA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB0RB_3RA0LA2LB1LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA---1RA_3RA3LB1RA2RB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA0RB2LB_3RA2RA1LB2RB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2RB2LA_2RA1RB3LA3RB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB2RA0LB_1RA0RA3LB---",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RA0RA_3RB1RA1LB3LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB0LA2RB_3RA0RA3LA1RB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB1RB3RA_3RA2RA0LA3LB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB0LA_2RA1RA3LB2RB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RA0LB_1RB1LA2RA3LB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA1RA_2RA0LA0LA2LB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA2LB3RA_3RA1RA3LB2RB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RA2LA_2RA3RA1RB3LB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0RA1LA1RA_3RB3LB2LA2LB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA2RA_3RB1RA0RA0LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA0LB_2RB3RA2RA0LA",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA0RB1RA_3RA0LB1LB2LB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1LA1LA_1RA3LB1RB3LB",
+      "module": "Weighted00005",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RB1LA_0RB2RA3LB1LA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA2LB_0RB2RA3LB3RA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA1LA_1RA1RB3LB2RA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RA1LB_0RA2RA3LB---",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LB---3RA_3RB2RA3LB2RA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3LB3RA_1RB1RA---0LB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA2RA2RA_3RA0LA3LB2LA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1RB1LA_2RA3LA0RB3RB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RB1LA_2RB1LA3LB1RB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA1LB2RA_0RA3LB2RB0LA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA0LB2RA_2RB3LA0RA3RA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1LB2RA_2RA3LB3LA1RA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1RA2LA_1RA3LB1RB1LB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB3LA2RB_3RA2LA1LA3RB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RB2LB_0RA3RA2LB3LA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA3LB2RA_2RB1RA3RA3LB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RA1LA_3RB2RA3LB1LB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2LA0RA_3RA1LA1RB0RB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3LB0RB_3RA2LB1RA1RA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1LB1RA_3RA2RA3LB3LB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA2LB1RA_3RA0RA---3LB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3LB1RB_2RA1LB3RB2LA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RA1LA_2RB1RA3LB3LA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA2LA0LB_3RB2LA3RA1RB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB1RB2LA_1RA2LB3RB0LA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2RB3RA_3RA2LA3LA1RB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA1RA_3RA0LA2LB3LA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1RB1LA_2RA3LA3LA3RB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RA0LB_2RA2RA1RA3LB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LA2LA_1RA1LA0RA3RB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA2RB_3RA3LB1RA1LA",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA0LB0RB_2RA0LB3LB0RB",
+      "module": "Weighted00006",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0LA0RA2RA_3RB3LA2LB1RB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RB1RB_2RA1LA3LA2RB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RB1RB_2RA3LA3RA0RB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA0RB_2RA2RB3LB2LB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RA3LA_0RB3LB1RB2RA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB2RB2LA_2RA3LB1RB1RA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RA3RB_0RA3LA0LA2LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA1RB_1RB1LA2LB0RA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3LB1RB_3RB1LA0RA2LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA0RB2LB_3RA0LA2RB1LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2LA0LB_3RA3RA1RB1LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA1RA3RA_2RA3LB2LA0LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA3LB_2RA3RB1LA2LB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LA3LB_0RB3RA2LA3RA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA1LB2LB_2RA3RB0LA1LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0LA1LA_3RA2RB1LA0LB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RB0RA_3RA1LB2LB3LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA2LB_3RA3LB2LA1RB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0LA1RB3RA_2RA0LB3LB0RB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LB---2RA_1RA3RA0RA3LB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB3LA2RA_3RA3RB2RB2LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LA3RA_3RA1LA2RB3LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LB2LB_1RA3RA3LB1RA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RA1RB_2RA0RB3RA3LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0RA1RA2LA_2RB1LB3LB3LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB2RA2RB_2RA3LB1RB2LA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0RA0LA3RA_1RB3LA2RB2LB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3LB1RA_2RB0LB2RA---",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0RA2RA2LA_1RB3LB3RB0RA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB2RA1RA_3RA0LB3LB0RA",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2LA1RB_3RA1LA3RB2RB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA0LA1RB_3RA3RB0RA2LB",
+      "module": "Weighted00007",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0RA0LB_2RB3RA3LB0LA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3RA2LB_3RA3LA2RB1LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0LB---2RA_2RA3LB1RB1LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB0RB1RB_2RB3RA1RB3LA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RA3RB_3RA3LA0LA2LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LB0RB_2RA0LB3LA0RB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3LA2RA_1RA3LB3RB2LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RA0RA_1RA3LB0LB1LA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3LB1RA_3RB0LB2RA2LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB1RA2LB_2RA3RA3LA0LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1LB1RA_2RA3LA0RB2RA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA2LB_1RA3RA3RB2LA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3RA3LB_1RA2LB3LB0RA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA0RB_3RA0RB2LB1LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LB0LB_0RB3RA2LA1RA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3LB1RA_3RA2RB1RA3LA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LB2RB_2RB2LA3RA1LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB0RA3LA_2RA3RB3LA1LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA2RA_3RA2RB1LB0LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA1RA_3RA3LB3LA2LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2RA1LA_2RA3LB1RB1RB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA0LA_0RB1RA3LB0LA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RB2LA_1RA3LB3RB2LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA0RB_2RA2LB2LA3RB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RB0LA0LB_2RA3LB2RB3LA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA2LB2LB_3RA2LA1RB2RB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA---1LB_0RB2RA3LB1RA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1RA3RB_3RA3LA3RB2LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA1RB2RB_2RA3RA1LB0LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LA2LB_3RA3LB2RA0RB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA0RB_3RA0RA2LB3LA",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LB0RA2RA_3RA2LB1RA3LB",
+      "module": "Weighted00008",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RA1RB_2RA0LA3LB0RB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RB3LB_2RA2LA1RB1RA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA0RB0RA_2RA1LA3RB0RB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2RB3RB_2RA0RA3LA1LB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1LA1RA_1RB3LB2LB3LA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RA1RB_0RA3LB0LB2LA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB0RA1LB_3RA3RB0LA2LB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB1RB_2RA0RB3LA2LA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA2RA2RA_3RA3RB1RB1LB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA1RB_1RA2LB1LA3LA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB0LA0RA_0RB3LB3LA1RA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB3RA_1RA3LA1LB0RA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1LA1LA_3RA2LB3RB2LB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0RB0LB_3RA2LB0RA1LA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RA2LA_1RB1RA3RA3LB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2RB1LA_2RA2LA3RB---",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2LB3RA_1RA3LB---1RA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB0LB1LB_3RA2LA2RB3RB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3LB3RA_0RB2LB2RA1LB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA1RB_3RA1RB2RB2LA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RB0RA0LA_2RA3LA3RB2LB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RB2RA_2RA0LB3LB1RB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB---0RB_2RA1LA3RB0LA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RA3LA_1RA3LB3LB1LA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA---_1RA3RA1LB0RA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3LA0RA_1RB1LA2RB---",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA0RB1RA_3RA0LB2LB1LA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LB1LB3RB_2RA2LB3LB0RA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA2RA2LA_3RA2LB0LA2LB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RB2LA1LA_2RA3LB0RB---",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB0LB1RA_3RA2RA3LB3LB",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2RA2LB_3RA---3LB3RA",
+      "module": "Weighted00009",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA1LA0RB_3RA0RA3RB2LB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA1LA2RA_1RB3LB0RB2LA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2RB3LA_2RA3RB3LA1LA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA2RA_3RB3RA2LB1LA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RA0LB_2RB2RA2RA3LB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1LA1RB_3RA1LB3LB2LA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3LB1RA_3RA3LB2LA2RA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LB0LB_3RB2LB3LB3RA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA2RA_3RB2RA2LB3LA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RA1LA_1RA1LB3LA2RA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA0RA_1RA3LB3RA0LB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RB2LA_2RA3RA1RB0LB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RA1LA_3RA2RB0LA3LB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB1LA_2RA3RB3LA3RB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RB0LA_3RA1LA2RB1RA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RA2LA_0RB3LB3LB1RA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB1LA_3RA2RB2LA3RA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RA0RA_1RA3LA1LB---",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RA1RA_2RB3LB1RA0RA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA3RB_0RA1LB3LB1RA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB2RA0LA_0RB2LB3LB2RA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA1RB2RA_1RA3LB1RB2LA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB3LA2RA_2RA2LA2RB3RB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA---_3RA0RA1LB1RA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA0RA_3RA2LB1RB2LB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB0RA1RB_2RA1LA3RB3LB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1LA2RB_3RA0RB2RA3LA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA2LA_2RA2RB3LB2RB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2RB0LB_3RA1RB0LA2LB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1RA0LA_2RB1RA3LB2LA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA2RB_3RA1RA2RB0LA",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LA2LB_2RA1LA1RB0LB",
+      "module": "Weighted00010",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB3LA2RA_2RA2LA2RB3RB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RA1LB_2RB1LA3LB1RA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB2LA_1RA3LA2RB1LA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LA0LA_2RA1LA3LB1RB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RB2LA_1RA2LB3LA3RB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB1RA0LB_0RA3RA---3LB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA0RB2RB_3RA3RB2LA1LB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB2RA2LB_1RA3LA3RB2LB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB2RA1RA_3RA0LB3LB3RA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA3RB_1RA3LB2LB1LA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RB0RA2LA_2RA2RA3LA1LA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LB2LB_1RA1RB3LB3RA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA3LA2RB_3RA2LB2LA3RB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA3LB2RB_3RA1RB0RA2LA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LB3LB2RA_2RB2LB3RA1RA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LA3LA_1RA1LA3RA0RB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA2LA2RB_3RA2LA1LB3LA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2RA---_2RA0LB3RB2LB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2RA1RA_2RA2RB3LB2LB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1LA3RB_3RA2LA2RB0RA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA3RA2RA_1RB2RA2LB1RB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB0RA3LB_1RA2LA3RB1RA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA2RA2LB_0RB3LB0LA1RA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA2RA3RB_3RB1LB3LB2RA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2RB1LA_1RA3LA3LB3RB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1LB3RA_3RB2LB3LB2RA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB2RA_3RB1LA2LB3RA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LB0RA3RA_1RA3LB---2LB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3RA0LB_1RB2LB2LA3RB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA0LB2RA_2RA3RA1RB3LB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1LB2RB_3RA3LB1RA1LB",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB0RA2LA_1RB3RA2LB3LA",
+      "module": "Weighted00011",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA2LA_3RA1LB3LB2LB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1LA1RB_1RB3RA0LB2LB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LB---3RA_3RB3LA3LB2RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA0RB_3RA3RB1LB2LA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RB2RA_3RB2RA3LB1RB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3LB2RA_1RB3LB0LB3RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RA---_1RA3RA1LB2LB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LA2LA_2RA3LB2RB1RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB2LB0RA_1RA2RA3LB---",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA1RB_1RA1LB2LB3LA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0RA1LB_3RA3LA0RB2LB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RB2LA_3RA1LA2RB1RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LB---_1RB3RA2LB3RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB3LB2RA_2RB2LB3RA1RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RA2RA_1RA3RA3LB2LB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA1RB_2RA0LB0RA3LB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RA0RA_3RB2LA---1LB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RB3LB_1RB1LA3LA0RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LB2RA_0RA3LB1RB2LA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RB0LA_2RA0LA2LB1RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0RA1RA_1RB3LB2LB2RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RA3RA_1RA3LB1LB2LA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1RB2LA_2RA3LB3LA3RB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA1RA_3RB3LB0LA3RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA3RB_3RA2LB2LB2RA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LB3RB_1RA3LA1RB0LB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA2RB0RA_3RA1LA3RB0RB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA1RB_2RA1LA2LB3LB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB0RB1RA_2RA2RB3LB2LB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA---_3RB2RA1LB3RB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3LB0RA_2RA3RA3RB1LA",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA0RB1LA_2RA3LA0RB3RB",
+      "module": "Weighted00012",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA1LA2RB_3RA3RA1RB1RA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA3LB1RB_2RA3LB1RA1RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA0RA_3RA3LA0LB1RA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1LA1LB_1RB3RA2LB3RA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB0RB1RA_3RA2RB1LA3LB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2LB2RA_1RA3LB1RB2LA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA2LA_3RA3LA3RB3LB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RB2RA_0RA3LA2LB0RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA0RB0RA_3RA1RA3LA1RA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0LB3LB_3RA2LA1LB0RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LA1RB_3RA1LA3RB2LA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA0LA2RB_3RA3RB1LA3LB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0LB1LB_3RB2LB3LB3RA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA0RB_2RB2RA2LA0LA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA2LA_2RA3LB1RB1RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RB2RB_2RA0LB3LB0RA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RB2RA_2RA2LB3LB2RA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RB3LB_2RA2LA3RA1RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA1RB2LB_2RA3RB3LA1RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RA2LB3RA_2RB3LA1RA0RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LA2RA_3RA2RB1LB2LB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA3LB2LB_2RA2LA1RB3RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA1RB_2RB2LA0RA3LB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB2LA2LA_3RA2LB0RB1LA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA1RA3LB_3RA2LA2RB0RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB3LA_0RA1LA2LB2RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB0RB0RB_2RA2RB3LB1LA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA2RB_1RA2LA3LB3RA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2RA1LB_0RB3RA3LB3RA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA0LB3RA_2RA3LB1RB1RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0LA1LB_3RA2RB3RB1LA",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA2LA3RB_3RA3LB3LA2RB",
+      "module": "Weighted00013",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB3RB2RB_1RA2LB3LA1RB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LB1RB_2RA0RB1LA0LB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RB3LA_2RA3RA2RB1LA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA2RB_2RA3RA1LB---",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RB0LA_2RA3LA3LB0RA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB0RB2LA_2RA3LB1RB2LB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA3LA2RB_3RA2RA2LB1RB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RB3LA_2RA1LA3LB2RB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB1LA2RB_2RA2LA3LA3RB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0LA3RB_3RA0LB2RA1LA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0LA2RA2LB_3RA0LB0RB2LB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LB0LA_1RA3LA1RB0RA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RB0LB_2RA1RA3RB0LB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3LB2RA_0RA1LA2RB0LA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3RA2LA_1RA3LA2LB1LB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3LB0LA_0RB2RA3LB1LB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA2LB_2RA3RB3RA1LB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RA3RA_0RA3LB1LA2RB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB3LA2RA_1RA3LB2RB2LA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RA1LA_2RA1LA3LB2LA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA0LA_2RA2RB2LA0RB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0LA1LA_3RA2RA3RA1LA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1LA2LA_2RA1RB3LA3RA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA2RA2LB_3RA3LB1LB0RA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3LB2RA_0RA3LB1RB3LA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2LB2RA_1RA3RB3RA3LB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA2RB2LB_0RA3LB1RB1LA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA0RB1RA_3RA2RB1RA3LA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA0RB_3RB2RA1LB3LA",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA2RA_2RA2LB3RB2LB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA1LB3RB_3RA2LA1RB2RB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RA0LB_2RA1RA0RB3LB",
+      "module": "Weighted00014",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2RB2LB_3RA2RA3LA1RB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA0RA_3RA0LB1RA3LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA0RA_3RB3RA2LB1RA",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA------_1RA3RA0LB0RA",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA1RA_2RA3LB3RB2LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB0RB2RA_2RB3RA2LA1LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2LB2RB_3RA1LA3RA1RB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RA0RA_2RA0LB3LB1RB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3LA0RA_2RB2RA3RA1LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LA2LA_3RA1LA2RB1RB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1RA2LB_1RA3RA0LB3LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0RA3LA_3RA3LB1RB2LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0RA2RA_1RA2LB3RB3LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0LA0LB2RA_1RB3RA0RB3LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RB0RA_3RA2RB0LB3LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA0RA0RB_3RA0LB2LB2RB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA2LA_3RB2RA3LB1LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA1LB3RB_3RA2RB3LB1LA",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LB0RA2LB_1RA2RA3LB---",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB3LA_3RA2LA1LA2RB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB0LA3RB_2RA3LB1LB0LA",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LB2RA3RA_2RB1LA3LB2LA",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB1LA1LB_3RA3RB1RA2LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LA1RA_3RA3RA2LB1RB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA2LA2RB_3RA3RA0RA1RA",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0RA2LB_2RA3LB3RA1RB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB2LA_3RA3LB2RB3LA",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB0LB2RA_1RA3LB3RA3LB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3LA3RA_0RB3RA1LA0RA",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RA1LA_3RB2RA2LB3LA",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA2RA_2RA3LB2LB1RB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA1RA2LB_3RA3LB2RA2RB",
+      "module": "Weighted00015",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LA0RB_3RA1LA3LA0RB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA2LA_0RA2LB3RB3LB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB2RA_1RB3LB2LB3RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA2RB2LB_3RA3RA0RB0LA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2LB1RA_2RA3RB3RA3LB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RB0LA1RB_3RA3RB3RB2LB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1LA1LB_3RA0RB2RA3LA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA3RB0RA_2RA1LA0RB2RB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RB0RA_1RA3LB0LB2RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LB2RA3RA_2RB1LA3LB2RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB0LA0RB_3RA0LB1LB2LB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3RB0LA_2RA2LB1LA3LA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA2LB2LA_3RB3RA0RB0RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0LB0RA_3RB1LA2LB3RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LB2LB_2RA3LB0RB3RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LA2LB_0RB3LB3RA3RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA---0RB_2RA1LB3LB0RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RA2RA_2RA---3LB0LB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2RB3RA_2RA0RA3LB1LA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA0LA2RB_3RA3LB3RB2RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RB3LB_2RA2LB3LA1RB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB0LB2RA_3RA0RA1RA3LB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB1LB3LA_2RA3RB3LB1LA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB0RA3LA_3RA2LB3LA2RB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1LB0LA_0RB3RA3LA1RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB0RB2LA_3RA2LB3RA1LA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2RA3RB_3RA0LB3LA1RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RB3LA_2RA1LA3RB0RA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RA0RA_1RB3RA2LB1LA",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA0RA2RB_3RA2RA1LA0RB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RB0RB_3RA3LA2LB1LB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA3RA2RA_2RA3RB1RA3LB",
+      "module": "Weighted00016",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0LA1LB1RB_3RA2RB3LB2RA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RB2LB_3RA2LB3RB0LA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB1LA2RA_3RA3LB3RB2LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA2RB2LB_0RA3LB2LA0LA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0LB3RB_1RA2RA3LB1LA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA0LB_3RB2RA2LA1LA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA2RA_3RB3RA2LB1LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB0LB1LB_3RA2RB3RA1LA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA2LA_0RB3LB3LB2RA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1RA---_3RB1LB1RA0RA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA3RA2RA_2RB2RA0RA1LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RB2RA0LB_3RA3LA0RB1LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA2LB_1RA1RA3LB1LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2RB0RA_3RA3RB1LA2LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA1RB2RB_3RB2RA3LB2LA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA---0LB_0RB2LB3LB1RA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LA2RB_3RA2LB2LB1RA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA3LB2RB_3RA2RB0LB0LA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA1RA2LB_2RB3LB2RB3RA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB0RB2LA_1RA3LB3RA1RB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA2RB_2RA0LA3LB3LA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3LA2RA_1RA3RA3RB2LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB3LA2RA_2RA2LB3RB2LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB3RA2RA_1RA2LB3LB1LA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB1RA2LB_3RB3RA3LB2RA",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA3LB_2RA2LA3RB2LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3LB3RA_2RB1LA2RA0LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3LA2RB_2RA1LA3RA3RB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LB2RA2LB_1RA3RA0RA3LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0LB0RB_3RA2LB1LB3LB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2LB1RB_2RA3LA3RA0RB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RB3LA1LB_3RA1LA2RA0RB",
+      "module": "Weighted00017",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB1LA_3RA3LA2RB3RA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2RB3LA_2RA3RB1LA1LA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0RB2LB_2RA3LA1LA1LB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA3LB_3RB1RA2LB0RA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LA3LB2RB_2RA3LB1RA2RB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA2LA3RB_3RA1LB0RB2LB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3LA1RA_3RA2RA1LB1RA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RB2RB_3RB2RA3LA1RB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2LA3RB_3RA2RB1LA1LA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB1RA_3RA2RB3LB1LA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA---_3RA2LB1RB1RB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3LA2RA_3RA3RA3RB2LB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB---2LA_3RA1LA1LB3LB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA3RA_2RA2LB0RB0LB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA3RA0LA_2RA3RB3RA0RB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2LB1RA_3RA3RA2LB3LB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB1LB2RA_1RA3LB3LA1RA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB2RA1RA_3RA0RA0LA3RA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0LA1LA_0RA3RA3RB1LA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA0LA3RB_3RA2RA1RB0RA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RB1RA2LB_1RA3LA3LB2RB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA0LA2LB_0RB2LB3RA2RA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA3RA0LA_2RA0RB1LB0RB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0LB---1RA_3RA2RA3LB3LB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB3LA2RB_2RA2LB3RB0LA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RB2RA_3RA3RB2LB3LB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA2RB2RB_0RA2LB3LA0LA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA2RA3RA_2RA---3LB0LA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA1RB3LB_3RA1RA3LA2RB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2RB2RB_3RA0LA3LA1RB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB2RA1LB_0RB3RA0LA3RA",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA2LB_0RB3RA3LB1LB",
+      "module": "Weighted00018",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3LB1RA_2RA0LB0RA---",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0RA3LB_3RA2LB1LA1RA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA3LA2RA_3RA3RB3RB2LB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1LA3RA_3RA2LB1RB2LB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB0LB3RA_2RA---3LB0RA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA3RA_1RA3LB2LB0LA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA1RA1LB_0RB3LB---3RA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA0RA3LB_2RB3RA3RA2LA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB0LB2RA2LB_2RA2LA3RB0LB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3LB0RB_2RA0LA1RB3RB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3LB2RA_3RB1RA0LB---",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA3LA1RB_3RA1RB1LB2RA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1RA1LA_1RA2LB3LB---",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA2LB_0RB3RA3RA1LB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA0RA0RA_0RB3RA1LA2LB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RB3LA_2RA1LA2RB2RB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB2LA_0RA2LA3RB1LB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB0LB1RB_2RA3LA3RA2RB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB0RA0RB_3RA2RA3LA1RB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0LB1LB_2RA2RB3LA3RA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA---0RA_3RB3RA0LB0LA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB1RA2RA_1RA3LA2LA2RB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LA3LA2RB_3RA3LB2RA1RA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA0RB1RA_3RB1LA2LB0RA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB3LA_1RA2LB2LA2RB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3LA2RA_3RB1LA2LB3LA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA3RA_2RA3LB3LB0LA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA2LA_2RA1LB1RB2RB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB0RB_2RA3RA3LA2LB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3LA2RA_3RA1RA1LB3RB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA2LB3RA_2RA3LB1RA1RB",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA2RB_3RB2RA2LB1LA",
+      "module": "Weighted00019",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RB0LA1LA_2RA3LA0RB3RB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB2RA---_1RB3RA1LB3RA",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB2RA2RA_3RA3LA1LA3RB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3LB1RB_2RA2LB3RA0LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LB2RA2LA_2RB3LA3RA2LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB0LA1RA_3RA3LB0RB2LA",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA2RA3RB_3RA2LB1RB1RB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA3LB0RA_2RA1LB3RB1RA",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA---2RA_3RB3LA3LB1RB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1LB0RA3RA_3RB1LA2LB2RA",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB1RA3LB2RA_2RA0LB3RA2LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RB3LA_0RA2RA2LA2RB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA3RB_3RA0RA3LA1LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB0LA3RA_2RA3LB3LB1RA",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA---3RA_1RB3LB0LB3RA",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB1RA3RA_3RA0LA---3LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA3LA2RA_3RA3RB1LB2LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LB1LA_0RB2RA3LB1LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA0RB1RA_2RA3LB2RB3LA",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA3LA1RA_3RA1RB0LB2LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB3RA2LA_1RA3RB3RA3LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RB0LB2RA_1RA3LA1RA3RB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1LA1LA_1RA3LB1RB1RB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB0LB2RA_2RB0LB3RA3LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA3RA2LB_0RA1LA3RB3LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB2LB0RA_3RA3LB0RA1LA",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1LB---_1RA3LA0LB2RB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LA3RA1RA_3RA2RB3LB2LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA2LA_0RA3LB3RB2LB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB0RA0LA1LA_2RB2LB3LB0RA",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1RA0RA2LB_3RA0LA3LB2RA",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3LB2RB_3RA0RA1LA2RB",
+      "module": "Weighted00020",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LA2LB0RA_3RA---3LB2RA",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2LB0LB1RA_2RA0RA3LB---",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1LA1RA_3RA1LB3RB0LA",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB1LA1RB3LA_2RA3RB0LA0RA",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3RA1LB_0RA2RA3LA3RB",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB3LB0RA_2RA2LB1RB3RA",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB3LA1RB_2RA1LA3RB1RB",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2LB1LB2RB_2RA3LB3RB0LA",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RA1RA0LA_3RA1RA3LB0RB",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "weighted",
+      "machine": "1LB2RB1RA1RB_3RA0LA0RB1LB",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    },
+    {
+      "kind": "ordinary",
+      "machine": "1LB2RA1RA2LA_3RB2LB3LB1RA",
+      "module": "Weighted00021",
+      "status": "coq_checked"
+    }
+  ],
+  "validation": "coqc vm_compute for bounds and actual pending membership, plus recursive coqchk"
+}

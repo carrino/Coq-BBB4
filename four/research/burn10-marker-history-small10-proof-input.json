@@ -1,0 +1,168 @@
+{
+  "rows": [
+    {
+      "machine": "1LB------2LB_3RB1LA0LB2RB",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "marker_mask": 2,
+      "code": 4544844333,
+      "history": 4,
+      "width": 4,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB2RA3RA---_2RB2LA0LB2RA",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "marker_mask": 2,
+      "code": 4139884715,
+      "history": 4,
+      "width": 4,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB2RA0LB---_2RB3LA0LB1RA",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "marker_mask": 10,
+      "code": 2504205694,
+      "history": 4,
+      "width": 4,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB2LB---1RB_3RB1LA0LB2RB",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "marker_mask": 2,
+      "code": 4544834388,
+      "history": 4,
+      "width": 4,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB---2LB2RB_2RB1LA3RB0LB",
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "marker_mask": 2,
+      "code": 779057288,
+      "history": 4,
+      "width": 4,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB0LB---1RB_3RB1LA0LB2RB",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "marker_mask": 2,
+      "code": 4544834252,
+      "history": 4,
+      "width": 4,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB2RA------_2RB3LB0LB1RA",
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "marker_mask": 10,
+      "code": 2505629886,
+      "history": 4,
+      "width": 4,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB2RA2LB---_2RB3LA0LB1RA",
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "marker_mask": 10,
+      "code": 2504208006,
+      "history": 4,
+      "width": 4,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB0RA---2RA_2RB3LB0LB3RA",
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "marker_mask": 10,
+      "code": 5788309656,
+      "history": 4,
+      "width": 4,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    },
+    {
+      "machine": "1LB1RA---0LA_2RB3LB0LB1RA",
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "marker_mask": 10,
+      "code": 2505551210,
+      "history": 4,
+      "width": 4,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    }
+  ],
+  "state_bound": 0,
+  "selection_report": "research/burn10-marker-history-small10-selection.json",
+  "selection_sha256": "749c909e658bad3c1fe0a85df0c7aa208268543a67de335ccc9af8c44809d821",
+  "generic_report_sha256": "b1161e50fd3a56f7b469db3293f1ae3004824801c4b0f0540c504b648a6c825b"
+}

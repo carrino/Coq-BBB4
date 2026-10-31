@@ -1,0 +1,16 @@
+{
+  "scope": "Exact state-family accounting relative to the frozen current checkpoint; mathematical acceptance is recorded separately.",
+  "machine": "1LB2RA2RA1RA_2RB3LB0LB3LA",
+  "new_state_vs_burn2": 1,
+  "new_instruction_vs_burn2": 0,
+  "in_current_state_residual": true,
+  "outside_history378_candidates": true,
+  "in_history694_misses": true,
+  "source_sha256": {
+    "research/burn2-burndown-summary.json": "0e83fad4c06e7fef4d9d7a1b926a2aa375941e2fd99109ad52f19fb8d1607d05",
+    "build/burn2-burndown/state-remaining.txt": "9c5ce7ae78a64aff3205f173c9a5c21d71c7d102fd6a841586f9f045c6158a6b",
+    "research/burn3-history-search.json": "384c9f6fa534ff9bc7859418c36006b233230d9eada99b65feb6eff1bcc1559f",
+    "build/burn3-history/not-accepted.txt": "63aecb972ca90546cf9132704e9a4bef9bf8e3f773e60a42dd4c6e01a49758e2",
+    "build/burn3-history/candidates.tsv": "403f3b30a6883f6b809a6c9fb3a5bf2ab854295c3b73703426f59ab0669b5d00"
+  }
+}

@@ -1,0 +1,251 @@
+{
+  "bundles": [
+    {
+      "bytes": 111400,
+      "keep": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        7,
+        9,
+        12,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        21,
+        22,
+        24,
+        27,
+        28,
+        29,
+        30,
+        32,
+        38,
+        40,
+        43,
+        44,
+        47,
+        49,
+        52,
+        56,
+        59,
+        61,
+        62,
+        63,
+        65,
+        66,
+        67,
+        68,
+        70,
+        71,
+        73,
+        74,
+        77,
+        79,
+        80,
+        81,
+        82,
+        83
+      ],
+      "path": "research/weighted-full-snapshots/batch029/certificates-0000.json",
+      "rows": 48,
+      "sha256": "4e3429b2f5c6af0ed42f60d26da1ed77ca6639483ab0096f347917a733574df3",
+      "source_rows": 86
+    }
+  ],
+  "format": "BBB24 selected weighted certificates v1",
+  "kinds": {
+    "ordinary": 13,
+    "weighted": 35
+  },
+  "rows": 48,
+  "selection": {
+    "assignment": {
+      "path": "research/weighted-direct-assignment.json",
+      "sha256": "e39d31ca21e01088f92a8e55b568ce68a93cd9eacf0cdd0032e7de9b5927d5ca"
+    },
+    "deferred": [
+      {
+        "machine": "1LB2LB---3RA_3RA0RA3LB2RB",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB2RA0LB2LB_3RB3LA2LB3RA",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB1RB0LA2RB_3RA0LA1LB3LB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2LB2RA0RA_1RA3RA0LA---",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2LA2RA1LB_0RB3RA3LB2RA",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB1RA1LA1RA_2RA2LB3RB2LA",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB0LA0RB2LB_3RA2RA1LA2LB",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB2LA0RB1RB_2RA1LB3RB2LA",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB0RB2LB3RA_3RA3LA3LB2RB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB0LB1RA3RA_1RA2RA3LB2LB",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB2LB2RA3RA_1RA3RB0LA3RA",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2LB2RB0RB_2RA1RA3LB0LA",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB1LA3RA2RB_3RA0LB2LB2RA",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB1RB3LA2RB_2RA2LA3LB0LA",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB1RA2RA2RA_3RA3LB0LA1RB",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB2RA0RA0LA_1RA3LB3RB1LB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB1RB1RA3RB_3RA2LA3RB2LB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB1RB0LA0RA_3RA2LB---3LB",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB2LA1LA3RB_3RA3LA3RA2RB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2LB1LB0RB_2RA0LA3RA3LB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2RA3RA1LA_3RA2LB1RB3LB",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB1RA2RA3RB_1RA2LB3LB1LA",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB2RA1LA1RA_2RB3RA0LA1RA",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB1RA2RB2LA_3RA1LB0RA3LB",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB1RA0RA1RA_3RA3LB2LB2RA",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB2LA3RB2LB_3RA0LB0RA3LA",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2RA0RB3LB_3RA2LA3RB2LB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB1RA2LB3RB_2RA3LA1LA0RB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2RA---2RA_0RA3LB1RB0LB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2RA---0LB_1RA3RB3LB3RA",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2RA3LA2RA_1RB3RA0LA0RA",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB1LA2LA3RB_3RA2RB0RA1RA",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2LA1RA---_2RA3RB1LB1LB",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB2LA1RB3LB_3RA1LB1RA1RB",
+        "status": "queued"
+      },
+      {
+        "machine": "1LB2RA2RB3LA_2RA0LA3RB2LA",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2LB3LA2RA_3RA3LB2LB1RB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB2RA2RB2LA_2RA0LB3LA3RB",
+        "status": "audited"
+      },
+      {
+        "machine": "1LB---2LA3RB_3RB2RA3LA2RB",
+        "status": "queued"
+      }
+    ],
+    "deferred_rows": 38,
+    "original_registry": {
+      "path": "research/weighted-full-snapshots/batch029/registry.json",
+      "sha256": "26924eaee4d0beefb3100ad4770a16ece05afe701669a79a147d650d80a51745"
+    },
+    "original_rows": 86,
+    "retained_rows": 48
+  },
+  "source": {
+    "campaign_manifest_sha256": "daf0939c36a29229f9a754688a4a1af09e19e1480b57e4823642a949b8354bfe",
+    "input_range": [
+      59392,
+      59627
+    ],
+    "input_rows": 59627,
+    "input_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+    "ledger_prefix_rows": 59627,
+    "ledger_prefix_sha256": "6f6ee09467576a891dbd5da8637ae9401b08dfffe4695b4ef2279f780d9cdfa0",
+    "previous_registry": {
+      "path": "research/weighted-full-snapshots/batch028/registry.json",
+      "sha256": "1018213c3d64e6296f749e24cd0135df7d91ba4eaf2e2a7d47f28932ef9d2912"
+    },
+    "snapshot_tool_sha256": "192349de533373d31522aabd2951d464869c6329f893c21721a5b543f82de525"
+  },
+  "status": "Retained rows require independent kernel replay. Deferrals are scheduling only."
+}

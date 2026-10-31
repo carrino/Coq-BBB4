@@ -1,0 +1,66 @@
+{
+  "rows": [
+    {
+      "anchor": 4096,
+      "completed_machine": "1LB2LA3RA1RA_2RA3LB0LA0LA",
+      "fill_code": 0,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 1,
+      "machine": "1LB2LA3RA1RA_2RA3LB---0LA",
+      "marker_mask": 10,
+      "missing_index": 6,
+      "recipe": "one_state",
+      "rounds": 128,
+      "symbol_conditional_mask": {
+        "marker_mask": 10,
+        "required_A_mask": 0
+      },
+      "uniform_A": true,
+      "uniform_B": true,
+      "weights": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "width": 3,
+      "code": 405528120
+    },
+    {
+      "anchor": 4096,
+      "completed_machine": "1LB2RA2RB2LA_3RB1RA0LA0LA",
+      "fill_code": 0,
+      "fuel": 131072,
+      "history": 3,
+      "history_marker_mask": 73,
+      "machine": "1LB2RA2RB2LA_3RB1RA0LA---",
+      "marker_mask": null,
+      "missing_index": 7,
+      "recipe": "symbol_conditional",
+      "rounds": 128,
+      "symbol_conditional_mask": {
+        "marker_mask": 2,
+        "required_A_mask": 12
+      },
+      "uniform_A": false,
+      "uniform_B": true,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3,
+      "code": 6575233383
+    }
+  ],
+  "state_bound": 0,
+  "selection_report": "research/burn12-completion-transfer-selection.json",
+  "selection_sha256": "023c4ccfc9911dc3cd6ffbf85f2113f54d70e6145e4299f4944186e77976580c",
+  "generic_report_sha256": "dc64e0bc72605a7c1cad98979e64d3928b97bbcb5a21b83c2ca94de99c400dd1",
+  "template_sha256": {
+    "proof-sources/burn12-completion-transfer/CompletionTransfer.v": "52e2fa18cce1aec9f332854059d966b8490ce03e5a2392f046af85e981608fe9",
+    "proof-sources/burn12-completion-transfer/Regression.v": "7ff9edf6be3e2a436a322cdf3287556c08c38b4a8151d795f9b192c4d5d91e14"
+  }
+}

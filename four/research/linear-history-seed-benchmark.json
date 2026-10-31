@@ -1,0 +1,26 @@
+{
+  "scope": "Performance experiment only; no new family claim.",
+  "decision": "Not adopted: CPU improvement below 2x on the sampled late-history rows.",
+  "certificate": "StateHistory 2 2 4096 4096 16; state bound 4096",
+  "normal": {
+    "mode": "Slow",
+    "rows": 32,
+    "cpu_user": 22.213556,
+    "cpu_system": 0.268321,
+    "wall": 29.868446612999833
+  },
+  "linear": {
+    "mode": "Linear",
+    "rows": 32,
+    "cpu_user": 21.402179999999998,
+    "cpu_system": 0.225767,
+    "wall": 27.722095145996718
+  },
+  "cpu_speedup": 1.0394827118819925,
+  "semantic_validation": "Compiled axiom-free equality proofs for seed lists, seed membership, both checker modes and the state batch Boolean.",
+  "input": "research/state-closure-history-input.json",
+  "input_sha256": "8a0fa9e1450c6b65a9722e480ff7792528eeb1c91922cb379f04e2020727aba3",
+  "archived_helper": "build/linear-seed-benchmark/helpers/LinearHistSeed.v",
+  "helper_sha256": "17a74d80c92893de264425792f62e7627a55edf422ca3761b8408ed77cf4d24c",
+  "method": "Independent coqc processes with identical imports, 32 family inputs and certificate. CPU=user+system child time; wall time is load-sensitive."
+}

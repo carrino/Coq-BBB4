@@ -1,0 +1,884 @@
+{
+  "candidate_ids": [],
+  "candidates": 0,
+  "ledger_sha256": "31dffc4f1b69af6851304ec115beb91ee6d3890ae616f07087a9d30370d2491b",
+  "manifest_sha256": "39045fcc476e03620c7042342def443b3f6bf0e150e03c2cd05f6e1ab74dd1ce",
+  "per_machine": [
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 95,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 95,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 0,
+      "machine": "1LB0LB0LB0RA_2RB2RA3LA2RA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.974,
+      "worker_maxrss_kib": 63956
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 150,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 150,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 1,
+      "machine": "1LB2RB1LA1LB_2RB2RA3LA0RB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.866,
+      "worker_maxrss_kib": 63196
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "6": "absent"
+          },
+          "mirror": 0,
+          "nodes": 164,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "6": "absent"
+          },
+          "mirror": 1,
+          "nodes": 164,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 2,
+      "machine": "1LB2RB3RB1LA_1RB3RA---3LA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.983,
+      "worker_maxrss_kib": 66248
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 212,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 212,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 3,
+      "machine": "1LB2LA3RB1RA_3RB3LA0RA2LA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 0.906,
+      "worker_maxrss_kib": 62688
+    },
+    {
+      "attempts": [
+        {
+          "found": {},
+          "mirror": 0,
+          "nodes": 212,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "capacity"
+          },
+          "mirror": 1,
+          "nodes": 212,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 4,
+      "machine": "1LB2LB2LB1RA_1RB2RA3LB2RB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.95,
+      "worker_maxrss_kib": 71036
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 216,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 216,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 5,
+      "machine": "1LB0LB1RB3LB_3RB1LA0LB2RB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.846,
+      "worker_maxrss_kib": 72484
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 216,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 216,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 6,
+      "machine": "1LB2LB1RB0LB_2RB1LA3RB0LB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.65,
+      "worker_maxrss_kib": 72396
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "0": "absent",
+            "1": "absent",
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 224,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "0": "absent",
+            "1": "absent",
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 224,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 7,
+      "machine": "1LB---0LA2LB_3RB1LA2RB3RB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.018,
+      "worker_maxrss_kib": 68888
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 246,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 246,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 8,
+      "machine": "1LB2LB1RB2RB_2RB1LA3RB0LB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.782,
+      "worker_maxrss_kib": 73428
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 246,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 246,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 9,
+      "machine": "1LB2RB2LB1RB_2RB1LA3RB0LB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.049,
+      "worker_maxrss_kib": 73480
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 261,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 261,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 10,
+      "machine": "1LB0LA3RA2RA_2RB1LA3RB0LB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.15,
+      "worker_maxrss_kib": 73392
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "weighted"
+          },
+          "mirror": 0,
+          "nodes": 276,
+          "state_choices": []
+        },
+        {
+          "found": {},
+          "mirror": 1,
+          "nodes": 276,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 11,
+      "machine": "1LB2LA3RB1LA_0RB1RA3RA3RB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.305,
+      "worker_maxrss_kib": 66924
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 283,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 283,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 12,
+      "machine": "1LB1RA1LB2LA_2RB3LB0LB1RA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.243,
+      "worker_maxrss_kib": 64984
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 307,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 307,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 13,
+      "machine": "1LB1RA1RA2LB_2RB3LB0LB1RA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.298,
+      "worker_maxrss_kib": 64236
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 323,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 323,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 14,
+      "machine": "1LB0LA0LB2RB_3RB1LA0LB3RA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.506,
+      "worker_maxrss_kib": 70720
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 331,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 331,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 15,
+      "machine": "1LB0LB1LA1RB_3RB2RA3RA3LA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.099,
+      "worker_maxrss_kib": 63336
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 343,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 343,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 16,
+      "machine": "1LB2RB0LA1RB_2RB3RA1LA0LB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.098,
+      "worker_maxrss_kib": 63728
+    },
+    {
+      "attempts": [
+        {
+          "found": {},
+          "mirror": 0,
+          "nodes": 349,
+          "state_choices": []
+        },
+        {
+          "found": {},
+          "mirror": 1,
+          "nodes": 349,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 17,
+      "machine": "1LB2LB3RA1RA_3RB2LA1RB3LA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.049,
+      "worker_maxrss_kib": 71508
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "weighted"
+          },
+          "mirror": 0,
+          "nodes": 359,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "weighted"
+          },
+          "mirror": 1,
+          "nodes": 359,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 18,
+      "machine": "1LB2RB2RB2LB_0RB3RA0LA2LA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.446,
+      "worker_maxrss_kib": 64064
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 363,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 363,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 19,
+      "machine": "1LB0LA0LB3RA_3RB1LA2RA2RB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.253,
+      "worker_maxrss_kib": 70796
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "weighted"
+          },
+          "mirror": 0,
+          "nodes": 364,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "weighted"
+          },
+          "mirror": 1,
+          "nodes": 364,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 20,
+      "machine": "1LB0RB0LA0RA_1RB2RA3LA2LA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.303,
+      "worker_maxrss_kib": 71592
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 368,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 368,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 21,
+      "machine": "1LB2RB0LA0LB_3RB1LA3RA2RA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.153,
+      "worker_maxrss_kib": 69344
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 430,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 430,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 22,
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB0LA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.503,
+      "worker_maxrss_kib": 64988
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 448,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 448,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 23,
+      "machine": "1LB2LB0LA2LA_1RB3RA2RB3LA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.139,
+      "worker_maxrss_kib": 66984
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 459,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 459,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 24,
+      "machine": "1LB2LB3LB1RA_3RB2LB1RA0LB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.551,
+      "worker_maxrss_kib": 66124
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 460,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "0": "absent",
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 460,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 25,
+      "machine": "1LB2LA0LA2LB_3RB1LA2RB1RA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.095,
+      "worker_maxrss_kib": 66952
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 473,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 473,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 26,
+      "machine": "1LB2LA3RA2RA_1RB2RA0LB2RB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.303,
+      "worker_maxrss_kib": 64316
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "weighted"
+          },
+          "mirror": 0,
+          "nodes": 475,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "weighted"
+          },
+          "mirror": 1,
+          "nodes": 475,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 27,
+      "machine": "1LB0LB0RA2RA_1RB3RA3RA2LA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.397,
+      "worker_maxrss_kib": 71912
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "2": "absent",
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 480,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "2": "absent",
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 480,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 28,
+      "machine": "1LB0RA---3RA_3RB2RA0LA0LB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.249,
+      "worker_maxrss_kib": 65556
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 480,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 480,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 29,
+      "machine": "1LB2RA0LB1RA_1RB3LA2RB3RB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.317,
+      "worker_maxrss_kib": 65504
+    },
+    {
+      "attempts": [
+        {
+          "found": {},
+          "mirror": 0,
+          "nodes": 481,
+          "state_choices": []
+        },
+        {
+          "found": {},
+          "mirror": 1,
+          "nodes": 481,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 30,
+      "machine": "1LB2LA2RA3LB_2RB3RA0LB3RA",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 2.339,
+      "worker_maxrss_kib": 70368
+    },
+    {
+      "attempts": [
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 0,
+          "nodes": 492,
+          "state_choices": []
+        },
+        {
+          "found": {
+            "4": "ranked"
+          },
+          "mirror": 1,
+          "nodes": 492,
+          "state_choices": []
+        }
+      ],
+      "counts": {},
+      "index": 31,
+      "machine": "1LB2LA0RA3RB_3RB1RA1LB0LB",
+      "returncode": 0,
+      "status": "completed",
+      "wall_seconds": 1.593,
+      "worker_maxrss_kib": 65096
+    }
+  ],
+  "rows": 32,
+  "scope": "Untrusted state-only search candidates; no proof claim.",
+  "statuses": {
+    "completed": 32
+  },
+  "summed_wall_seconds": 47.413
+}

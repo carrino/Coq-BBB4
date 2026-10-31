@@ -1,0 +1,91 @@
+{
+  "status": "candidate_state_only_parent_join",
+  "machine": "1LB2RA0LB---_3RB3RA0LA0RA",
+  "anchor": 1000,
+  "cycles": [
+    {
+      "machine": "1LB2RA0LB0LA_3RB3RA0LA0RA",
+      "certificate": [
+        "C",
+        1,
+        2047,
+        1025,
+        9
+      ]
+    },
+    {
+      "machine": "1LB2RA0LB0RA_3RB3RA0LA0RA",
+      "certificate": [
+        "C",
+        0,
+        1023,
+        7,
+        0
+      ]
+    },
+    {
+      "machine": "1LB2RA0LB1LA_3RB3RA0LA0RA",
+      "certificate": [
+        "C",
+        1,
+        2047,
+        544,
+        13
+      ]
+    },
+    {
+      "machine": "1LB2RA0LB1RB_3RB3RA0LA0RA",
+      "certificate": [
+        "C",
+        0,
+        2047,
+        136,
+        3
+      ]
+    },
+    {
+      "machine": "1LB2RA0LB2RB_3RB3RA0LA0RA",
+      "certificate": [
+        "C",
+        0,
+        2047,
+        1026,
+        16
+      ]
+    },
+    {
+      "machine": "1LB2RA0LB3LA_3RB3RA0LA0RA",
+      "certificate": [
+        "C",
+        1,
+        1023,
+        6,
+        0
+      ]
+    },
+    {
+      "machine": "1LB2RA0LB3LB_3RB3RA0LA0RA",
+      "certificate": [
+        "C",
+        0,
+        1023,
+        11,
+        0
+      ]
+    }
+  ],
+  "finite_children": [
+    "1LB2RA0LB0LB_3RB3RA0LA0RA",
+    "1LB2RA0LB2LA_3RB3RA0LA0RA",
+    "1LB2RA0LB2RA_3RB3RA0LA0RA",
+    "1LB2RA0LB3RA_3RB3RA0LA0RA"
+  ],
+  "affine_children": [
+    "1LB2RA0LB1LB_3RB3RA0LA0RA",
+    "1LB2RA0LB1RA_3RB3RA0LA0RA",
+    "1LB2RA0LB2LB_3RB3RA0LA0RA",
+    "1LB2RA0LB3RB_3RB3RA0LA0RA"
+  ],
+  "marker_child": "1LB2RA0LB0RB_3RB3RA0LA0RA",
+  "source_frontier_sha256": "a5c2799e311c9d4713cae0239003078b822bfd1e113b360e1772ec37941ad608"
+}

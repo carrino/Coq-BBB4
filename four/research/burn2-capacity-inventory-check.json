@@ -1,0 +1,93 @@
+{
+  "boards": [
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn2CapacityInventory.Ordinary.inventory_exact",
+      "id": "burn2_capacity_ordinary",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-capacity-ordinary-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2CapacityOrdinary",
+          "path": "build/burn2-capacity/ordinary-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityWeighted",
+          "path": "build/burn2-capacity/weighted-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityInventory",
+          "path": "build/burn2-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24Burn2CapacityInventory.Ordinary",
+      "proof_source": "build/burn2-capacity/inventory-proof/Ordinary.v",
+      "rows": 7,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    },
+    {
+      "board": "board",
+      "exact_inventory_theorem": "BBB24Burn2CapacityInventory.Weighted.inventory_exact",
+      "id": "burn2_capacity_weighted",
+      "instruction_bound": 4096,
+      "inventories": [
+        {
+          "format": "rows",
+          "path": "research/burn2-capacity-weighted-checked-machines.json"
+        }
+      ],
+      "load_paths": [
+        {
+          "namespace": "BBB24Burn2CapacityOrdinary",
+          "path": "build/burn2-capacity/ordinary-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityWeighted",
+          "path": "build/burn2-capacity/weighted-proof"
+        },
+        {
+          "namespace": "BBB24Burn2CapacityInventory",
+          "path": "build/burn2-capacity/inventory-proof"
+        }
+      ],
+      "module": "BBB24Burn2CapacityInventory.Weighted",
+      "proof_source": "build/burn2-capacity/inventory-proof/Weighted.v",
+      "rows": 6,
+      "scope": "both",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "state_bound": 4096,
+      "was_pending": "was_pending"
+    }
+  ],
+  "exact_inventory_checked_families": 13,
+  "inputs_sha256": {
+    "research/burn2-capacity-ordinary-check.json": "0c34795f77f3c90e76112f23663ad672055930d21b9610e8ca1c6f773c64cc12",
+    "research/burn2-capacity-ordinary-checked-machines.json": "2d373a1961be8ead65f389af8ba64971fdc34e4287ee741011205a7330ee1df4",
+    "research/burn2-capacity-ordinary-registry.json": "ec575c9f6bff2aa46ef6f33340e9b442148352b9a642de47f4e40e75e2401f20",
+    "research/burn2-capacity-weighted-check.json": "81ca03704c3cecc90c1e5c9b6e10eafbb1e8e36353e2b923c020e9cc4e361efc",
+    "research/burn2-capacity-weighted-checked-machines.json": "d6b8e47df0534c3bb026b073d5ec09cabd16c8edebb25ef80fc39f74802abf9b",
+    "research/burn2-capacity-weighted-registry.json": "21afb29694bb69980ef5853c2e1fbd96f5da5105b4912edcb4d9b34940a3734f",
+    "tools/check_burn2_capacity.py": "478e23215dd6e30811588c523e1bb7af96baf55a67a55528cbdcb8738628ec6a",
+    "tools/check_campaign.py": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e"
+  },
+  "kernel_audit": "Complete recursive coqchk; no dependency-skipping flags.",
+  "kernel_receipt": "build/burn2-capacity/inventory-proof/kernel-audit.json",
+  "kernel_receipt_sha256": "55a29230ee16768c295dbf3a50f8658ef83421bedb08789fefbdba71205ed875",
+  "resource_limits": {
+    "address_space_bytes": 2147483648,
+    "workers": 1
+  },
+  "scope": "Kernel-checked both-bound families with exact census inventories.",
+  "wall_seconds": 213.094
+}

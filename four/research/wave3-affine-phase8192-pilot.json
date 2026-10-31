@@ -1,0 +1,23 @@
+{
+  "scope": "Untrusted phase-repair pilot with a larger concrete prefix budget",
+  "input_rows": 163,
+  "repaired_candidates": 9,
+  "independent_frozen_parser_replay_true": 9,
+  "additional_successes_over_bound4096": 2,
+  "new_anchors": [
+    4210,
+    4224
+  ],
+  "parameters": {
+    "bound": 8192,
+    "cfuel": 4096,
+    "fuel": 8192,
+    "phase_limit": 8,
+    "timeout_seconds": 2
+  },
+  "source_sha256": "1220aa84bb45f09c046b10c9170f5ecb11b0deeacfa1bc86f42b2e9fc1455c76",
+  "search_tsv_sha256": "14f863c08705b70c4c9e0d4589f6a8cae18fa1b20c1f49f41956e5c57e4e0616",
+  "replay_tsv_sha256": "c838ae4ff1c467362a0296c1c7bf9bd224d877eb7d8c1559a51c86c95d73678e",
+  "kernel_checked_rows": 0,
+  "census_linked_rows": 0
+}

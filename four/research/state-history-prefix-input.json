@@ -1,0 +1,13 @@
+{
+  "scope": "Exact completed prefix of a state-only board; no instruction claim.",
+  "full_input": "research/state-closure-history-input.json",
+  "full_input_sha256": "8a0fa9e1450c6b65a9722e480ff7792528eeb1c91922cb379f04e2020727aba3",
+  "original_output_dir": "build/state-closure-history",
+  "original_namespace": "BBB24StateHistoryClosure",
+  "selected_shards": 8,
+  "full_shards": 26,
+  "selected_rows": 1689,
+  "full_selected_rows": 5702,
+  "state_bound": 4096,
+  "instruction_bound": null
+}

@@ -1,0 +1,131 @@
+{
+  "native_report": "research/burn17-history-closed-native.json",
+  "native_sha256": "c85622f8a4e399d31d844f4fe61a5147042e1fc53c4ae207db70bffcdcd18ac1",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 1686340012,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LB1RA2RA_2RB3RA0LB1LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2789533354,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 99,
+      "invariant": "conditional",
+      "machine": "1LB2LB0RA0RB_2RB2LB3LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        2,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4386596637,
+      "fuel": 131072,
+      "history": 16,
+      "history_marker_mask": 35,
+      "invariant": "conditional",
+      "machine": "1LB0LB0LA3RB_1RB3LA2RB2RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2788122184,
+      "fuel": 131072,
+      "history": 8,
+      "history_marker_mask": 97,
+      "invariant": "conditional",
+      "machine": "1LB2RA3RB1LA_2RB2LA3LB1RA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 2
+    }
+  ],
+  "scope": "Exact cost-ordered slice of23 independently validated closed-graph refinements.",
+  "selected": [
+    {
+      "distinct_history_cells": 49,
+      "edges": 2734,
+      "graph_path": "build/burn17-history-closed-refinement/graph-52-h8-w2.json",
+      "graph_sha256": "fa1120ddca7bf5a1d24ef6f88c7ee19743944822739cb1d9f3c9b0e18cc29d89",
+      "history": 8,
+      "machine": "1LB2LB1RA2RA_2RB3RA0LB1LA",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 526,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 76,
+      "edges": 2170,
+      "graph_path": "build/burn17-history-closed-refinement/graph-38-h8-w2.json",
+      "graph_sha256": "4bae9a17ac812711270a391d53338da80a61ba6808a241fb1f87d46841f28e17",
+      "history": 8,
+      "machine": "1LB2LB0RA0RB_2RB2LB3LB1RA",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 685,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 225,
+      "edges": 1237,
+      "graph_path": "build/burn17-history-closed-refinement/graph-11-h16-w2.json",
+      "graph_sha256": "262b652e422dbdb5ba9652906b50c9498a7660f19919b13e28461267da7b0f06",
+      "history": 16,
+      "machine": "1LB0LB0LA3RB_1RB3LA2RB2RA",
+      "maximum_encoded_cell_bits": 51,
+      "nodes": 728,
+      "width": 2
+    },
+    {
+      "distinct_history_cells": 187,
+      "edges": 4162,
+      "graph_path": "build/burn17-history-closed-refinement/graph-18-h8-w2.json",
+      "graph_sha256": "1cbc41020b23c2d9f7134bde665138429d7e50ec38d900100378c034cda8a64a",
+      "history": 8,
+      "machine": "1LB2RA3RB1LA_2RB2LA3LB1RA",
+      "maximum_encoded_cell_bits": 27,
+      "nodes": 1486,
+      "width": 2
+    }
+  ],
+  "selected_range": [
+    16,
+    20
+  ],
+  "sort_key": [
+    "nodes",
+    "history",
+    "width",
+    "machine"
+  ]
+}

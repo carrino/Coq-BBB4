@@ -1,0 +1,38 @@
+{
+  "descriptor": {
+    "board": "weighted_board",
+    "discharged": "weighted_families_discharged",
+    "load_paths": [
+      {
+        "namespace": "BBB24Weighted",
+        "path": "build/weighted/pilot-kernel"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "format": "json_rows",
+        "path": "research/weighted-pilot-machines.json"
+      }
+    ],
+    "module": "BBB24Weighted.WeightedCloseout",
+    "nonhalt": "weighted_board_nonhalt",
+    "proof_source": "build/weighted/pilot-kernel/WeightedCloseout.v",
+    "small_sound": "weighted_board_small_sound",
+    "sound": "weighted_board_sound",
+    "was_pending": "weighted_board_was_pending"
+  },
+  "families_discharged": 110,
+  "inputs": {
+    "bootstrap_sha256": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "certified_board_sha256": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "closeout_sha256": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "source_report_sha256": "0cbd5e56c785293296bbdfdb45f8567878c01ba375ad4556244f48b39711ba39",
+    "wrapper_tool_sha256": "3dc573e6988f409d50cc1024468e3795e5f8c281317ef5548e76e0253f60a369"
+  },
+  "inventory_sha256": "eedf6404746a27b7bcb5cc7738b69198396839d0cb4e9de14363425e90feb333",
+  "proof_artifacts_sha256": {
+    "WeightedCloseout.v": "437a4c662c5cce129edde81e38b85b6a9d6f6b6295e39aebdc045c5b972de342",
+    "WeightedCloseout.vo": "9526343dd74fd8d8ac51bddd9f7a49e3687c4151d3dbab4cdf6b1439473b50ab"
+  },
+  "validation": "coqc plus recursive coqchk"
+}

@@ -1,0 +1,94 @@
+{
+  "A_gate_cost": {
+    "constant": 3,
+    "slope": 30
+  },
+  "B_gate_cost": {
+    "constant": 1,
+    "slope": 30
+  },
+  "boundary_guard": "A right gate requires left support2; both right gates require the terminal right tag1.",
+  "context_max_length": 2,
+  "controls": {
+    "A_gate": 7056,
+    "B_gate": 7056,
+    "actual_entry": 1,
+    "boundary_programs": 231,
+    "left_scan": 3528,
+    "main_returns": 16,
+    "negative_guards": 4,
+    "right_scan": 3528,
+    "rows": 3696
+  },
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "identity_negative_controls": [
+    "1LB2LA3RA0RA_2RB2RA3LA1LB",
+    "1LB2LA3RA0RB_2RB2RA3LA1LA"
+  ],
+  "invariant": "A0, empty right, nearest-first left(332330202020332330)^n22; blank entry n0 at3",
+  "main_cost": {
+    "constant": 577,
+    "slope": 1056
+  },
+  "metadata_revision": 1,
+  "phase_costs": [
+    {
+      "constant": 5,
+      "slope": 96
+    },
+    {
+      "constant": 11,
+      "slope": 96
+    },
+    {
+      "constant": 31,
+      "slope": 96
+    },
+    {
+      "constant": 43,
+      "slope": 96
+    },
+    {
+      "constant": 51,
+      "slope": 96
+    },
+    {
+      "constant": 81,
+      "slope": 96
+    },
+    {
+      "constant": 47,
+      "slope": 96
+    },
+    {
+      "constant": 69,
+      "slope": 96
+    },
+    {
+      "constant": 87,
+      "slope": 96
+    },
+    {
+      "constant": 55,
+      "slope": 96
+    },
+    {
+      "constant": 97,
+      "slope": 96
+    }
+  ],
+  "programs_report": "research/burn27-s040-word-cycle-programs.json",
+  "programs_sha256": "f167789ee923b53a52ba0cf2f008213a82c5133d7f89dd2ebdb935e75467f467",
+  "rows": [
+    {
+      "code": 2356480420,
+      "machine": "1LB2LA3RA0RB_2RB2RA3LA1LB"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "source_sha256": {
+    "tools/burn10_marker_history_pilot.py": "fe18392d076647eb5a118f66d262351dea9db436dc3780eecf640ce727d4f33c",
+    "tools/check_burn27_s040_word_cycle_native.py": "5c9c8d89438cba542270aa066f706a3bfd75521902f2327e5b41e1154d612457",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

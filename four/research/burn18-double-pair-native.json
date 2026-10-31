@@ -1,0 +1,52 @@
+{
+  "checked_state_families": 0,
+  "rows": [
+    {
+      "actual_entry_steps": 35,
+      "arbitrary_context_checks": 24717,
+      "code": 1879401260,
+      "context_max_length": 2,
+      "initial_main": {
+        "digits": [],
+        "k": 0,
+        "mode": false
+      },
+      "machine": "1LB2LB1RA0RA_2RB3RA2LB1LA",
+      "main_max_bits": 6,
+      "main_max_k": 4,
+      "main_returns": 1270,
+      "negative_controls": [
+        "left1133 reaches B2 with no1/3 on the left",
+        "left13 reaches B2 with no1/3 on the left"
+      ],
+      "repeat_max_length": 6,
+      "two": false
+    },
+    {
+      "actual_entry_steps": 33,
+      "arbitrary_context_checks": 24717,
+      "code": 1879440564,
+      "context_max_length": 2,
+      "initial_main": {
+        "digits": [],
+        "k": 0,
+        "mode": false
+      },
+      "machine": "1LB2LB1RA2RA_2RB3RA2LB1LA",
+      "main_max_bits": 6,
+      "main_max_k": 4,
+      "main_returns": 1270,
+      "negative_controls": [
+        "left1133 reaches B2 with no1/3 on the left",
+        "left13 reaches B2 with no1/3 on the left"
+      ],
+      "repeat_max_length": 6,
+      "two": true
+    }
+  ],
+  "scope": "Finite paired-counter controls and exact entries; no kernel proof credit.",
+  "source_sha256": {
+    "tools/check_burn18_double_pair_native.py": "bf23f885b292952c6a6aa9a76f65dd83bdb26b472bbc4cfae0b32e78615980cb",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

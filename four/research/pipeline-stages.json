@@ -1,0 +1,5 @@
+[
+  {"mode": "ng", "size": 2, "anchor": 128, "fuel": 100, "extra": 4},
+  {"mode": "ng", "size": 3, "anchor": 128, "fuel": 200, "extra": 4},
+  {"mode": "rw", "size": 2, "anchor": 128, "fuel": 128, "extra": 2}
+]

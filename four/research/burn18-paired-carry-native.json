@@ -1,0 +1,48 @@
+{
+  "checked_state_families": 0,
+  "rows": [
+    {
+      "actual_entry_steps": 32,
+      "arbitrary_context_checks": 24717,
+      "bounce": false,
+      "code": 3928607508,
+      "initial_main": {
+        "ds": [
+          1
+        ],
+        "k": 2
+      },
+      "machine": "1LB2RA0RA1RA_3RB3LA2LB2LB",
+      "main_returns": 9555,
+      "negative_controls": [
+        "zero sweep with right-boundary0",
+        "empty carry with nonblank left extension"
+      ],
+      "zero_cost": 3
+    },
+    {
+      "actual_entry_steps": 34,
+      "arbitrary_context_checks": 24717,
+      "bounce": true,
+      "code": 4749284854,
+      "initial_main": {
+        "ds": [
+          1
+        ],
+        "k": 2
+      },
+      "machine": "1LB2RA0RA1RA_3RB3LA2LB2RB",
+      "main_returns": 9555,
+      "negative_controls": [
+        "zero sweep with right-boundary0",
+        "empty carry with nonblank left extension"
+      ],
+      "zero_cost": 5
+    }
+  ],
+  "scope": "Bounded controls for paired carry macros. No formal proof credit.",
+  "source_sha256": {
+    "tools/check_burn18_paired_carry_native.py": "f11e05ec86ea9ce51ba9e3f5ccbdd3cdfd850b334c22ccf94e2620fc4158b8b9",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}

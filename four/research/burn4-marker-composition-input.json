@@ -1,0 +1,29 @@
+{
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 45010956,
+      "fuel": 16384,
+      "history": 5,
+      "machine": "1LB1LA2RA3RB_2RB3RA0LB0LA",
+      "marker_mask": 2,
+      "rounds": 32,
+      "weights": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "width": 3
+    }
+  ],
+  "scope": "One mixed marker/history state-zero witness; no instruction claim. Outside the 30-board checkpoint.",
+  "selection_report": "research/burn4-marker-composition-selection.json",
+  "selection_sha256": "86df667b4fe69f36fc33f13203534e5b4a9b3a4e0bc7a6a791e925a864181254",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn4-marker-composition/CompositionBoard.v": "3572974ee848863fe59ddce918295cb7536fc273dabbe84db705f80c946fe769",
+    "proof-sources/burn4-marker-composition/CompositionExample.v": "6fff5303bb0e7132a35b30358e485635ba35cdadad12d12f558c6b58e6d73ebf",
+    "proof-sources/burn4-marker-composition/MarkerHistory.v": "30989efb3b278b24df9762803dcad0f71351c5b116e65e3ea5edf10e2273d845"
+  }
+}

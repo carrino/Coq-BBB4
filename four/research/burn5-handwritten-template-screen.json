@@ -1,0 +1,816 @@
+{
+  "excluded_ternary_rows": 14,
+  "original_residual_rows": 31495,
+  "prefix_limit_per_match": 4096,
+  "scope": "Untrusted deterministic template screen; no proof or discharge claim.",
+  "screened_rows": 31481,
+  "sources_sha256": {
+    "build/burn3-burndown/both-remaining.txt": "b153563602875c65359bde7630edf03b113e58ba15a1998b5dccd5e20bedcc29",
+    "research/burn3-burndown-summary.json": "5b30c3b61d79408446e0a04a0f601b3522a0c41ab7265c7229679c3253e5147b",
+    "research/burn3-pair-capacity-checked.json": "b06bce60264277fdfc765df584b7fe402e4618ca5e5a9f1699dd7ec97f8ba2e5",
+    "research/burn3-pair-capacity/PairCapacity.v": "42200838d50a6b0752fde350a7628390ef675f26e791a65c177f636458d1e5c0",
+    "research/burn3-tail-invariant-checked.json": "6846050e857dd0ea725e9270ca40b1d2ed171bec7b0875e7c5fc954072b1ade5",
+    "research/burn3-tail-invariant/TailInvariant.v": "58e5572cfb2e389b8fc630b3a65eb2a88cde90d6ed4b42e7cb85d3d76e21a8f5",
+    "research/burn4-ternary-counter-machines.json": "7f2e1caeceb4580507d639611af17a7e9367577f610d6adcb8b937e0ab9f7f82",
+    "research/burn4-ternary-swapped-machines.json": "a9dbfa9f9e5e7fa297b7d02314a651839843717d7791a2ea52886239dcf55620",
+    "research/burn4-ternary-template-machines.json": "3e5dc17bb577e2ef3010b30db809f1fa584fe0d6f4747879b00b1966bd500786",
+    "tools/screen_burn5_handwritten_templates.py": "a24ba80be43203db105501081e2d5c69b151766f3b316b2d9b42928d079cf8e8"
+  },
+  "templates": [
+    {
+      "image_patterns": 24,
+      "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+      "matched_ids": 22,
+      "matches": [
+        {
+          "entry_step": 82,
+          "machine": "1LB2LA1RB3RB_3RA0LB3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            1,
+            [
+              1,
+              1,
+              3
+            ],
+            3,
+            [
+              1
+            ]
+          ],
+          "phase": {
+            "constructor": "turn",
+            "dormant_left_suffix": [],
+            "k": 1
+          },
+          "simulated_steps": 82,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 16,
+          "machine": "1LB2LA1RB3RB_3RA0RA3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            0,
+            [
+              3
+            ],
+            1,
+            [
+              2,
+              2,
+              2
+            ]
+          ],
+          "phase": {
+            "constructor": "reset",
+            "digits": [
+              2
+            ],
+            "dormant_left_suffix": [],
+            "j": 1,
+            "k": 1,
+            "l": 0
+          },
+          "simulated_steps": 16,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 28,
+          "machine": "1LB2LA1RB3RB_3RA1LB3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            1,
+            [
+              1,
+              1,
+              3
+            ],
+            3,
+            [
+              1
+            ]
+          ],
+          "phase": {
+            "constructor": "turn",
+            "dormant_left_suffix": [],
+            "k": 1
+          },
+          "simulated_steps": 28,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 9,
+          "machine": "1LB2LA1RB3RB_3RA1RA3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            0,
+            [
+              1,
+              3
+            ],
+            1,
+            []
+          ],
+          "phase": {
+            "constructor": "reset",
+            "digits": [],
+            "dormant_left_suffix": [],
+            "j": 0,
+            "k": 1,
+            "l": 1
+          },
+          "simulated_steps": 9,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 12,
+          "machine": "1LB2LA1RB3RB_3RA2LA3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            1,
+            [
+              3
+            ],
+            3,
+            [
+              1
+            ]
+          ],
+          "phase": {
+            "constructor": "turn",
+            "dormant_left_suffix": [],
+            "k": 0
+          },
+          "simulated_steps": 12,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 56,
+          "machine": "1LB2LA1RB3RB_3RA2LB3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            0,
+            [
+              1,
+              1,
+              1,
+              3
+            ],
+            3,
+            [
+              2,
+              2
+            ]
+          ],
+          "phase": {
+            "constructor": "marker",
+            "digits": [
+              2
+            ],
+            "dormant_left_suffix": [
+              1,
+              1,
+              1,
+              3
+            ]
+          },
+          "simulated_steps": 56,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 17,
+          "machine": "1LB2LA1RB3RB_3RA2RA3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            0,
+            [
+              1,
+              3
+            ],
+            3,
+            []
+          ],
+          "phase": {
+            "constructor": "marker",
+            "digits": [],
+            "dormant_left_suffix": [
+              1,
+              3
+            ]
+          },
+          "simulated_steps": 17,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 25,
+          "machine": "1LB2LA1RB3RB_3RA2RB3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            0,
+            [
+              1,
+              3
+            ],
+            3,
+            [
+              3,
+              2
+            ]
+          ],
+          "phase": {
+            "constructor": "marker",
+            "digits": [
+              3
+            ],
+            "dormant_left_suffix": [
+              1,
+              3
+            ]
+          },
+          "simulated_steps": 25,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 10,
+          "machine": "1LB2LA1RB3RB_3RA3LA3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            1,
+            [
+              3
+            ],
+            3,
+            [
+              1
+            ]
+          ],
+          "phase": {
+            "constructor": "turn",
+            "dormant_left_suffix": [],
+            "k": 0
+          },
+          "simulated_steps": 10,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 13,
+          "machine": "1LB2LA1RB3RB_3RA3LB3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            0,
+            [
+              1,
+              1
+            ],
+            3,
+            []
+          ],
+          "phase": {
+            "constructor": "marker",
+            "digits": [],
+            "dormant_left_suffix": [
+              1,
+              1
+            ]
+          },
+          "simulated_steps": 13,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 10,
+          "machine": "1LB2LA1RB3RB_3RA3RB3LA1RA",
+          "mirror": false,
+          "normalized_configuration": [
+            1,
+            [
+              3,
+              3,
+              3
+            ],
+            0,
+            []
+          ],
+          "phase": {
+            "constructor": "front_B",
+            "dormant_left_suffix": [
+              3,
+              3
+            ],
+            "k": 0
+          },
+          "simulated_steps": 10,
+          "state_exchange": false,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "entry_step": 37,
+          "machine": "1LB2LB0LB1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            0,
+            [
+              3
+            ],
+            1,
+            [
+              2,
+              2,
+              2,
+              2,
+              2
+            ]
+          ],
+          "phase": {
+            "constructor": "reset",
+            "digits": [
+              2,
+              2
+            ],
+            "dormant_left_suffix": [],
+            "j": 1,
+            "k": 1,
+            "l": 0
+          },
+          "simulated_steps": 37,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "entry_step": 147,
+          "machine": "1LB2LB0RA1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            1,
+            [
+              1,
+              1,
+              3
+            ],
+            3,
+            [
+              1
+            ]
+          ],
+          "phase": {
+            "constructor": "turn",
+            "dormant_left_suffix": [],
+            "k": 1
+          },
+          "simulated_steps": 147,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "entry_step": 25,
+          "machine": "1LB2LB1LA1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            1,
+            [
+              3,
+              3,
+              1,
+              1,
+              3
+            ],
+            0,
+            []
+          ],
+          "phase": {
+            "constructor": "front_B",
+            "dormant_left_suffix": [
+              3,
+              1,
+              1,
+              3
+            ],
+            "k": 0
+          },
+          "simulated_steps": 25,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "entry_step": 32,
+          "machine": "1LB2LB1RA1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            0,
+            [
+              1,
+              1,
+              3,
+              1
+            ],
+            3,
+            []
+          ],
+          "phase": {
+            "constructor": "marker",
+            "digits": [],
+            "dormant_left_suffix": [
+              1,
+              1,
+              3,
+              1
+            ]
+          },
+          "simulated_steps": 32,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "entry_step": 31,
+          "machine": "1LB2LB1RB1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            1,
+            [
+              1,
+              1,
+              3
+            ],
+            3,
+            [
+              1
+            ]
+          ],
+          "phase": {
+            "constructor": "turn",
+            "dormant_left_suffix": [],
+            "k": 1
+          },
+          "simulated_steps": 31,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "entry_step": 25,
+          "machine": "1LB2LB2LA1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            1,
+            [
+              1,
+              1,
+              1,
+              1,
+              3
+            ],
+            0,
+            []
+          ],
+          "phase": {
+            "constructor": "front_B",
+            "dormant_left_suffix": [],
+            "k": 2
+          },
+          "simulated_steps": 25,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "entry_step": 24,
+          "machine": "1LB2LB2LB1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            0,
+            [
+              1,
+              1,
+              1,
+              3
+            ],
+            1,
+            []
+          ],
+          "phase": {
+            "constructor": "reset",
+            "digits": [],
+            "dormant_left_suffix": [],
+            "j": 0,
+            "k": 2,
+            "l": 3
+          },
+          "simulated_steps": 24,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "entry_step": 52,
+          "machine": "1LB2LB3LA1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            0,
+            [
+              1,
+              1,
+              1,
+              3
+            ],
+            3,
+            [
+              3,
+              2
+            ]
+          ],
+          "phase": {
+            "constructor": "marker",
+            "digits": [
+              3
+            ],
+            "dormant_left_suffix": [
+              1,
+              1,
+              1,
+              3
+            ]
+          },
+          "simulated_steps": 52,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "entry_step": 44,
+          "machine": "1LB2LB3LB1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            0,
+            [
+              1,
+              1,
+              1,
+              3
+            ],
+            3,
+            []
+          ],
+          "phase": {
+            "constructor": "marker",
+            "digits": [],
+            "dormant_left_suffix": [
+              1,
+              1,
+              1,
+              3
+            ]
+          },
+          "simulated_steps": 44,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "entry_step": 51,
+          "machine": "1LB2LB3RA1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            1,
+            [
+              3,
+              1,
+              1,
+              1,
+              3
+            ],
+            3,
+            [
+              1
+            ]
+          ],
+          "phase": {
+            "constructor": "turn",
+            "dormant_left_suffix": [
+              1,
+              1,
+              1,
+              3
+            ],
+            "k": 0
+          },
+          "simulated_steps": 51,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        },
+        {
+          "entry_step": 39,
+          "machine": "1LB2LB3RB1RB_2RA1LA3RB2LA",
+          "mirror": true,
+          "normalized_configuration": [
+            1,
+            [
+              1,
+              1,
+              3
+            ],
+            3,
+            [
+              1
+            ]
+          ],
+          "phase": {
+            "constructor": "turn",
+            "dormant_left_suffix": [],
+            "k": 1
+          },
+          "simulated_steps": 39,
+          "state_exchange": true,
+          "status": "invariant_entry",
+          "symbol_map": [
+            0,
+            2,
+            3,
+            1
+          ]
+        }
+      ],
+      "name": "paired_digit_tail",
+      "quiet": [
+        5
+      ],
+      "report": "research/burn3-tail-invariant-checked.json",
+      "source": "research/burn3-tail-invariant/TailInvariant.v",
+      "support": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ],
+      "total_simulated_steps": 785
+    },
+    {
+      "image_patterns": 24,
+      "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+      "matched_ids": 1,
+      "matches": [
+        {
+          "machine": "1LB2RB0RA3RB_1RA2LB3LB0LB",
+          "mirror": true,
+          "simulated_steps": 0,
+          "state_exchange": true,
+          "status": "exact_table_image",
+          "symbol_map": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "name": "pair_capacity",
+      "quiet": [],
+      "report": "research/burn3-pair-capacity-checked.json",
+      "source": "research/burn3-pair-capacity/PairCapacity.v",
+      "support": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "total_simulated_steps": 0
+    }
+  ]
+}

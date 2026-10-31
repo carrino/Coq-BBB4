@@ -1,0 +1,116 @@
+{
+  "audit_seconds": 40.691,
+  "checked_instruction_families": 0,
+  "checked_modules": 264,
+  "checked_state_families": 1,
+  "compile_seconds": {
+    "Board": 1.168,
+    "Example00": 0.967,
+    "Inventory": 0.766,
+    "Regression": 0.315,
+    "Return": 0.867,
+    "S062Core": 0.566
+  },
+  "descriptor": {
+    "board": "board",
+    "exact_inventory_theorem": "BBB24Burn23S062Counter.Inventory.inventory_exact",
+    "id": "burn23_s062_counter",
+    "instruction_bound": null,
+    "inventories": [
+      {
+        "format": "rows",
+        "path": "research/burn23-s062-counter-machines.json"
+      }
+    ],
+    "load_paths": [
+      {
+        "namespace": "BBB24Burn23S062Counter",
+        "path": "build/burn23-s062-counter/proof"
+      }
+    ],
+    "module": "BBB24Burn23S062Counter.Inventory",
+    "proof_source": "build/burn23-s062-counter/proof/Inventory.v",
+    "rows": 1,
+    "scope": "state",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "state_bound": 0,
+    "was_pending": "was_pending"
+  },
+  "inputs_sha256": {
+    "research/burn23-s062-counter-native.json": "8dd092ace2f16c605b36212fe4ccc9f159993ce9f300f2e52c17c7964ad66d57",
+    "research/burn23-s062-counter-proof-input.json": "6b88d107aa7376c3395177ea5343f556246785b79850fda25dd765b15236642a"
+  },
+  "inventory_sha256": "ffdb1e9577145f174e5c7d323f020761a811df0153ae3b0f35dadad7ba4493c7",
+  "kernel_audit": "Full recursive coqchk including regressions.",
+  "kernel_receipt": "build/burn23-s062-counter/proof/kernel-audit.json",
+  "kernel_receipt_sha256": "2c57b4e2f3e4c79f92015e3b0053643f707c72afc29c4243029a59be58380e21",
+  "object_sha256": {
+    "build/burn23-s062-counter/proof/Board.vo": "b583c8b4e280a613183004a74eadc975d625fe86da78867514db221ce671d875",
+    "build/burn23-s062-counter/proof/Example00.vo": "5fa94f0c900e2169ef29a857e43374d19b93940e634789da6081abcbdcc242bd",
+    "build/burn23-s062-counter/proof/Inventory.vo": "dd50eb3d57f334f37e9c57321c13b7d2bce67d06955bdeb2f0669479a2bbc773",
+    "build/burn23-s062-counter/proof/Regression.vo": "f400cd0683ff00cc04dcaaf2163714edd4fa8a58446c96d7168ad003fd955a80",
+    "build/burn23-s062-counter/proof/Return.vo": "52eab1e1f2c9e09c94931ca306582747e3299e290cc22d03e4fcac3859e09909",
+    "build/burn23-s062-counter/proof/S062Core.vo": "f92fd4dc89e73746deed5c7f90f4cb471c53416d0f3ae9df828bb6078ba44aad"
+  },
+  "reused_modules": 0,
+  "scope": "Exact complete S062 protected-counter state-zero family, every completion; no instruction claim.",
+  "source_sha256": {
+    "build/burn23-s062-counter/proof/Board.v": "4d83e5c83fe0a86e72bce0aa4a0e80d95dd6f33b0a87bf8fbbe1a84a0ff228ab",
+    "build/burn23-s062-counter/proof/Example00.v": "66304701ea0db517445da4ef0b5543d8e55c6afefebfb31edb7bb9bc64e813a8",
+    "build/burn23-s062-counter/proof/Inventory.v": "23e4b021357aefd861c87705cbf9f4206166a8639a0376116565604d8cf50d81",
+    "build/burn23-s062-counter/proof/Regression.v": "fe733aecabe97b96ca12368305789b488f447189540231d16242c33dcc2a225a",
+    "build/burn23-s062-counter/proof/Return.v": "d95e194a9199ddf0b09516d5cb003dd65a548ae41a657bd888971d32a1cdf097",
+    "build/burn23-s062-counter/proof/S062Core.v": "cf95cd50711fe6195a408ab6e9338f74bd25867ad23536d962535282c7667541",
+    "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+    "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+    "theories/BoardManifest.v": "ee34d205828c4980781b16c9f8460209326d5d0f342423bd1b714bcfa6dd82c3",
+    "theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "theories/CensusUnion.v": "d4e178b18b2c8db7538161d74833c1998c0ed3bea8f27ef58b76741049026fab",
+    "theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+    "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+    "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+    "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+    "theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+    "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+    "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+    "theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+    "theories/DualCloseout.v": "927e47c77c537ff99ea06a044df5b74b20d86da291d9e21c96a311addd1978c2",
+    "theories/FamilyTransport.v": "08a9435900fb92864e3741ad9db2c90fecd386cb727cb1b6da2aa42fa1b67a8d",
+    "theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+    "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+    "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+    "theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+    "theories/OrbitCloseout.v": "f7005d5ca6ce0d3e64acdda425704eb31226192fc6bf2ae3eff71eb4be230556",
+    "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+    "theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+    "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+    "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+    "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+    "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+    "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+    "theories/Shadow.v": "6c68cae389ad7b9198dba2bd2d30dc8403bfe6f51c439570dfa4610dd863e160",
+    "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "theories/StateOnlyCloseout.v": "afb65dbfc17f3eaa495a5648e6cf024137ec360d4d573b38a563e685c0dce5d2",
+    "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+    "theories/Symmetry.v": "ff83de1ebfb0f8e210728e383ca1a413ddb99e19879e6caf95fb9822ced127e6",
+    "tools/check_burn23_s062_counter.py": "a9123e9b948fb60f906bf6a218a0811a5e1329e9d0ce05b895400856b08f3c70",
+    "tools/check_burn9_context_marker.py": "f4338a5701b14ec033b6b151cf413c2bcac76cdcfd02bf714ce2b180fc978612",
+    "tools/check_campaign.py": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+    "tools/check_shadow_links.py": "342b0c36d050f727ad5478af1b68f67d9c3827de984835b0bf6e60b5b657c9ca",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "tools/kernel_audit_cache_v3.py": "0323d125e53534efe41ce5c675ec3189537b6568cbf10fe057e32810835e9e0f"
+  },
+  "template_sha256": {
+    "proof-sources/burn23-s062-counter/Regression.v": "fe733aecabe97b96ca12368305789b488f447189540231d16242c33dcc2a225a",
+    "proof-sources/burn23-s062-counter/Return.v": "d95e194a9199ddf0b09516d5cb003dd65a548ae41a657bd888971d32a1cdf097",
+    "proof-sources/burn23-s062-counter/S062Core.v": "cf95cd50711fe6195a408ab6e9338f74bd25867ad23536d962535282c7667541"
+  }
+}

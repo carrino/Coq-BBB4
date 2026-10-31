@@ -1,0 +1,18 @@
+{
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "metadata_revision": 1,
+  "preserved_pins_sha256": "4c05e8ccaf7a8839e794606dad0ee415beda4c01814d5e6b5d76bae9825dafd1",
+  "rows": [
+    {
+      "code": 1273477485,
+      "machine": "1LB2LA2RB1RA_3RB3LA0LB0RB"
+    }
+  ],
+  "selection_report": "research/burn31-s036-native.json",
+  "selection_sha256": "9d0904dd0ea861ffd36c47ae46a5e4b813a61d4ed7d3b74b6cd16ec3def27f0e",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn31-s036/Regression.v": "aaca8f3229e9de04cf7b72e061456d5b71f5e89a213f7e0bbe700d1c4f5990b7",
+    "proof-sources/burn31-s036/WordCycle.v": "2a56bca7fc8d9a9e11eb02975182306307fc335e921365eef8f04f3b849f05c4"
+  }
+}

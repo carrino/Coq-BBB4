@@ -1,0 +1,14 @@
+{
+  "status": "untrusted_replay_seed_templates",
+  "source_replay_true": 511,
+  "source_sha256": {
+    "four/tools/affine_replay_seed_bank.py": "42969da014b186c1f38cf50651d86a36ceb9971338583aba0995dc42dd25b5b8",
+    "four/tools/affine_template_bank.py": "f3c020c7902755405c565b794f39f74928dd9bbe24dd493315b8632e8826e522"
+  },
+  "input_sha256": {
+    "replay": "de3425400ed16f16a619db6e443e4b2720ffc7e55c2e67ed2269485ae7c38050",
+    "proposal_index": "edeb0d719ad0e23764f51c33929c5bc3d61bd2ecc3096e3127d9bd527f8ec7b5"
+  },
+  "index_sha256": "6b9b3e74a0df9ba2e55b04095f7913a68b10cd6047382d33728d1590c9c30ad9",
+  "semantics": "Inherited recurring masks are heuristic filters only. A new target must independently pass ir_check."
+}

@@ -1,0 +1,77 @@
+{
+  "candidate_rows": 8,
+  "diagnostic_report_sha256": "faee4e6894e8a10cee9b1094370d7148ab1fd63b6e7e7106a38f7bcfb8e2a05e",
+  "probe_sha256": "a3c1e02a1c8edd98e8a7e00f175e8090add438bd5824090eac3728f80555325b",
+  "runs": [
+    {
+      "command": [
+        "four/build/wave3/driver-v2/probe",
+        "rw",
+        "4096",
+        "2",
+        "0",
+        "5120",
+        "2",
+        "0",
+        "5",
+        "four/build/wave3/repwl-postretry/uncut-00.txt"
+      ],
+      "log_sha256": "ed65dba259eef31fb3320e3fd9407a699e6da0a84bd93fb5579cac67b8b53e76",
+      "parameters": [
+        "4096",
+        "2",
+        "0",
+        "5120",
+        "2"
+      ],
+      "rows": 3
+    },
+    {
+      "command": [
+        "four/build/wave3/driver-v2/probe",
+        "rw",
+        "4096",
+        "3",
+        "0",
+        "5120",
+        "2",
+        "0",
+        "5",
+        "four/build/wave3/repwl-postretry/uncut-01.txt"
+      ],
+      "log_sha256": "22a660509618b7f09b2495ff7fcb26a15b94664a1d736b8df891b795cab2b31e",
+      "parameters": [
+        "4096",
+        "3",
+        "0",
+        "5120",
+        "2"
+      ],
+      "rows": 4
+    },
+    {
+      "command": [
+        "four/build/wave3/driver-v2/probe",
+        "rw",
+        "4096",
+        "4",
+        "0",
+        "5120",
+        "2",
+        "0",
+        "5",
+        "four/build/wave3/repwl-postretry/uncut-02.txt"
+      ],
+      "log_sha256": "4f4d9b83316362cd56d82455b8c6c19873f6ee4e09e2e67bf088f364e3d46fd4",
+      "parameters": [
+        "4096",
+        "4",
+        "0",
+        "5120",
+        "2"
+      ],
+      "rows": 1
+    }
+  ],
+  "status": "All diagnostic pilot candidates also accepted by the ordinary uncut extracted checker. Kernel replay remains required."
+}

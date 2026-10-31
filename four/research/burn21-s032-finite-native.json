@@ -1,0 +1,743 @@
+{
+  "direct_prefix_checkpoints": [
+    {
+      "nonzero_cells": 0,
+      "position": 0,
+      "state": 0,
+      "step": 0,
+      "word_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "nonzero_cells": 5,
+      "position": -4,
+      "state": 0,
+      "step": 22,
+      "word_sha256": "a1c34819bf00075071c60d72cd64304d8b911aadf6ce95dedfcc2e2a57a6cd46"
+    },
+    {
+      "nonzero_cells": 8,
+      "position": -7,
+      "state": 0,
+      "step": 47,
+      "word_sha256": "55ac37d8b1dcf3c06b835fe0ff616049d7fe80971043b00d61b9b98f180a538e"
+    },
+    {
+      "nonzero_cells": 11,
+      "position": -10,
+      "state": 0,
+      "step": 78,
+      "word_sha256": "9aa43e6bca4131d67a35bccfe9091dcca9b445fef70e93e4fc74c55b0de00b7d"
+    },
+    {
+      "nonzero_cells": 16,
+      "position": -14,
+      "state": 0,
+      "step": 122,
+      "word_sha256": "8cc4cd4d2ad85478c3f3f5c781317cd0a622262db4f997e181b2873b140b5f51"
+    },
+    {
+      "nonzero_cells": 34,
+      "position": -32,
+      "state": 0,
+      "step": 422,
+      "word_sha256": "1ef79955d7a1295e5ba426157a0c1b091b4dc5e94621f8fe3e637d0b384ece0c"
+    },
+    {
+      "nonzero_cells": 37,
+      "position": -36,
+      "state": 0,
+      "step": 510,
+      "word_sha256": "00b34aa7b24226e86350da664b46b6c7f26493084a97c658f86bee396c931c60"
+    },
+    {
+      "nonzero_cells": 88,
+      "position": -87,
+      "state": 0,
+      "step": 2295,
+      "word_sha256": "9e5d7d7f975575e089e01a5a5d3850cf2162b2c9278e793fc113b4eb63ac40e9"
+    },
+    {
+      "nonzero_cells": 93,
+      "position": -91,
+      "state": 0,
+      "step": 2491,
+      "word_sha256": "25d8c018b8b2eeea8a7598d2e14cc3c49a497eaf7977d87903550d45a3aebd1a"
+    },
+    {
+      "nonzero_cells": 225,
+      "position": -223,
+      "state": 0,
+      "step": 13051,
+      "word_sha256": "551d527d4dd0e68d3800975b17a49d2c84e936204ec89f02cda0a5e9e266f590"
+    },
+    {
+      "nonzero_cells": 228,
+      "position": -227,
+      "state": 0,
+      "step": 13519,
+      "word_sha256": "d53be1aee56a669543da2809e88b91e1208bd68359cb7d7168db7eff90766fc7"
+    },
+    {
+      "nonzero_cells": 564,
+      "position": -563,
+      "state": 0,
+      "step": 78479,
+      "word_sha256": "8133daf09b4d9ebea36973e34cf5d6e46c408c5c6ac1a0779b935a6445ceb54a"
+    },
+    {
+      "nonzero_cells": 569,
+      "position": -567,
+      "state": 0,
+      "step": 79625,
+      "word_sha256": "891157666264c60cda649b427b79af6d41720e55f4078f7857e68f4511a866b0"
+    },
+    {
+      "nonzero_cells": 1415,
+      "position": -1413,
+      "state": 0,
+      "step": 482885,
+      "word_sha256": "5e752f7bc534e015a9f70469a76101da6712b01df13913ef6a505fd61d20fdd9"
+    },
+    {
+      "nonzero_cells": 1418,
+      "position": -1416,
+      "state": 0,
+      "step": 485726,
+      "word_sha256": "b1b603a4161dcfbdb28d92faaf330ffae7506bada754f6e97894d38b4cad3b13"
+    },
+    {
+      "nonzero_cells": 1421,
+      "position": -1419,
+      "state": 0,
+      "step": 488579,
+      "word_sha256": "a44ec945b0ba4d02d2dd9f4f85a33e3da6f10599d44953d82bf72176e47bb3da"
+    },
+    {
+      "nonzero_cells": 1426,
+      "position": -1423,
+      "state": 0,
+      "step": 491443,
+      "word_sha256": "8d344009b40d74b132cbfd71c258fe47577795e3b93326d9d16cc9c3251d1a34"
+    }
+  ],
+  "direct_prefix_steps": 491443,
+  "escape_steps": 67093892759901295,
+  "final_cut": {
+    "accumulator": 530843041,
+    "right": [
+      3
+    ],
+    "step": 67093892229058240
+  },
+  "final_symbolic_left": "2 :: 1^530843044",
+  "last_A": 67093892759901294,
+  "macro_edges": 53,
+  "macro_trace": [
+    {
+      "a": 0,
+      "b": null,
+      "duration": 22,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 0,
+      "rule": "blank",
+      "step": 0
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 25,
+      "j": 0,
+      "k": 2,
+      "mode": "C",
+      "round": 1,
+      "rule": "bulk",
+      "step": 22
+    },
+    {
+      "a": 7,
+      "b": 1,
+      "duration": 31,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 2,
+      "rule": "one",
+      "step": 47
+    },
+    {
+      "a": 11,
+      "b": null,
+      "duration": 44,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 3,
+      "rule": "blank",
+      "step": 78
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 300,
+      "j": 0,
+      "k": 13,
+      "mode": "C",
+      "round": 4,
+      "rule": "bulk",
+      "step": 122
+    },
+    {
+      "a": 32,
+      "b": 1,
+      "duration": 88,
+      "j": 0,
+      "k": 1,
+      "mode": "C",
+      "round": 5,
+      "rule": "three_one",
+      "step": 422
+    },
+    {
+      "a": 2,
+      "b": 0,
+      "duration": 1785,
+      "j": 1,
+      "k": 34,
+      "mode": "C",
+      "round": 6,
+      "rule": "bulk",
+      "step": 510
+    },
+    {
+      "a": 87,
+      "b": 0,
+      "duration": 196,
+      "j": 1,
+      "k": 0,
+      "mode": "C",
+      "round": 7,
+      "rule": "zero",
+      "step": 2295
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 10560,
+      "j": 1,
+      "k": 89,
+      "mode": "C",
+      "round": 8,
+      "rule": "bulk",
+      "step": 2491
+    },
+    {
+      "a": 222,
+      "b": 1,
+      "duration": 468,
+      "j": 1,
+      "k": 1,
+      "mode": "C",
+      "round": 9,
+      "rule": "three_one",
+      "step": 13051
+    },
+    {
+      "a": 2,
+      "b": 0,
+      "duration": 64960,
+      "j": 2,
+      "k": 224,
+      "mode": "C",
+      "round": 10,
+      "rule": "bulk",
+      "step": 13519
+    },
+    {
+      "a": 562,
+      "b": 0,
+      "duration": 1146,
+      "j": 2,
+      "k": 0,
+      "mode": "C",
+      "round": 11,
+      "rule": "zero",
+      "step": 78479
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 403260,
+      "j": 2,
+      "k": 564,
+      "mode": "C",
+      "round": 12,
+      "rule": "bulk",
+      "step": 79625
+    },
+    {
+      "a": 1412,
+      "b": 1,
+      "duration": 2841,
+      "j": 2,
+      "k": 0,
+      "mode": "C",
+      "round": 13,
+      "rule": "one",
+      "step": 482885
+    },
+    {
+      "a": 1416,
+      "b": null,
+      "duration": 2853,
+      "j": 0,
+      "k": 2,
+      "mode": "C",
+      "round": 14,
+      "rule": "bulk",
+      "step": 485726
+    },
+    {
+      "a": 1421,
+      "b": null,
+      "duration": 2864,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 15,
+      "rule": "blank",
+      "step": 488579
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 2541825,
+      "j": 0,
+      "k": 1423,
+      "mode": "C",
+      "round": 16,
+      "rule": "bulk",
+      "step": 491443
+    },
+    {
+      "a": 3557,
+      "b": 1,
+      "duration": 7138,
+      "j": 0,
+      "k": 1,
+      "mode": "C",
+      "round": 17,
+      "rule": "three_one",
+      "step": 3033268
+    },
+    {
+      "a": 2,
+      "b": 0,
+      "duration": 15859785,
+      "j": 1,
+      "k": 3559,
+      "mode": "C",
+      "round": 18,
+      "rule": "bulk",
+      "step": 3040406
+    },
+    {
+      "a": 8897,
+      "b": 0,
+      "duration": 8919,
+      "j": 1,
+      "k": 1,
+      "mode": "C",
+      "round": 19,
+      "rule": "bridge303",
+      "step": 18900191
+    },
+    {
+      "a": 8903,
+      "b": null,
+      "duration": 8909,
+      "j": 0,
+      "k": 0,
+      "mode": "Q",
+      "round": 20,
+      "rule": "Qblank",
+      "step": 18909110
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 99146025,
+      "j": 0,
+      "k": 8902,
+      "mode": "C",
+      "round": 21,
+      "rule": "bulk",
+      "step": 18918019
+    },
+    {
+      "a": 22257,
+      "b": 1,
+      "duration": 44531,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 22,
+      "rule": "one",
+      "step": 118064044
+    },
+    {
+      "a": 22261,
+      "b": null,
+      "duration": 44544,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 23,
+      "rule": "blank",
+      "step": 118108575
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 619718425,
+      "j": 0,
+      "k": 22263,
+      "mode": "C",
+      "round": 24,
+      "rule": "bulk",
+      "step": 118153119
+    },
+    {
+      "a": 55657,
+      "b": 1,
+      "duration": 111338,
+      "j": 0,
+      "k": 1,
+      "mode": "C",
+      "round": 25,
+      "rule": "three_one",
+      "step": 737871544
+    },
+    {
+      "a": 2,
+      "b": 0,
+      "duration": 3872822785,
+      "j": 1,
+      "k": 55659,
+      "mode": "C",
+      "round": 26,
+      "rule": "bulk",
+      "step": 737982882
+    },
+    {
+      "a": 139147,
+      "b": 0,
+      "duration": 139169,
+      "j": 1,
+      "k": 1,
+      "mode": "C",
+      "round": 27,
+      "rule": "bridge303",
+      "step": 4610805667
+    },
+    {
+      "a": 139153,
+      "b": null,
+      "duration": 139159,
+      "j": 0,
+      "k": 0,
+      "mode": "Q",
+      "round": 28,
+      "rule": "Qblank",
+      "step": 4610944836
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 24205490400,
+      "j": 0,
+      "k": 139152,
+      "mode": "C",
+      "round": 29,
+      "rule": "bulk",
+      "step": 4611083995
+    },
+    {
+      "a": 347882,
+      "b": 1,
+      "duration": 695781,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 30,
+      "rule": "one",
+      "step": 28816574395
+    },
+    {
+      "a": 347886,
+      "b": null,
+      "duration": 695794,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 31,
+      "rule": "blank",
+      "step": 28817270176
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 151286054560,
+      "j": 0,
+      "k": 347888,
+      "mode": "C",
+      "round": 32,
+      "rule": "bulk",
+      "step": 28817965970
+    },
+    {
+      "a": 869722,
+      "b": 1,
+      "duration": 1739461,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 33,
+      "rule": "one",
+      "step": 180104020530
+    },
+    {
+      "a": 869726,
+      "b": null,
+      "duration": 1739474,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 34,
+      "rule": "blank",
+      "step": 180105759991
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 945542189760,
+      "j": 0,
+      "k": 869728,
+      "mode": "C",
+      "round": 35,
+      "rule": "bulk",
+      "step": 180107499465
+    },
+    {
+      "a": 2174322,
+      "b": 1,
+      "duration": 4348661,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 36,
+      "rule": "one",
+      "step": 1125649689225
+    },
+    {
+      "a": 2174326,
+      "b": null,
+      "duration": 4348674,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 37,
+      "rule": "blank",
+      "step": 1125654037886
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 5909649557760,
+      "j": 0,
+      "k": 2174328,
+      "mode": "C",
+      "round": 38,
+      "rule": "bulk",
+      "step": 1125658386560
+    },
+    {
+      "a": 5435822,
+      "b": 1,
+      "duration": 10871661,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 39,
+      "rule": "one",
+      "step": 7035307944320
+    },
+    {
+      "a": 5435826,
+      "b": null,
+      "duration": 10871674,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 40,
+      "rule": "blank",
+      "step": 7035318815981
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 36935336915260,
+      "j": 0,
+      "k": 5435828,
+      "mode": "C",
+      "round": 41,
+      "rule": "bulk",
+      "step": 7035329687655
+    },
+    {
+      "a": 13589572,
+      "b": 1,
+      "duration": 27179161,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 42,
+      "rule": "one",
+      "step": 43970666602915
+    },
+    {
+      "a": 13589576,
+      "b": null,
+      "duration": 27179174,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 43,
+      "rule": "blank",
+      "step": 43970693782076
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 230845923668385,
+      "j": 0,
+      "k": 13589578,
+      "mode": "C",
+      "round": 44,
+      "rule": "bulk",
+      "step": 43970720961250
+    },
+    {
+      "a": 33973947,
+      "b": 1,
+      "duration": 67947911,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 45,
+      "rule": "one",
+      "step": 274816644629635
+    },
+    {
+      "a": 33973951,
+      "b": null,
+      "duration": 67947924,
+      "j": 0,
+      "k": 0,
+      "mode": "C",
+      "round": 46,
+      "rule": "blank",
+      "step": 274816712577546
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 1442787107862400,
+      "j": 0,
+      "k": 33973953,
+      "mode": "C",
+      "round": 47,
+      "rule": "bulk",
+      "step": 274816780525470
+    },
+    {
+      "a": 84934882,
+      "b": 1,
+      "duration": 169869788,
+      "j": 0,
+      "k": 1,
+      "mode": "C",
+      "round": 48,
+      "rule": "three_one",
+      "step": 1717603888387870
+    },
+    {
+      "a": 2,
+      "b": 0,
+      "duration": 9017418999465660,
+      "j": 1,
+      "k": 84934884,
+      "mode": "C",
+      "round": 49,
+      "rule": "bulk",
+      "step": 1717604058257658
+    },
+    {
+      "a": 212337212,
+      "b": 0,
+      "duration": 424674446,
+      "j": 1,
+      "k": 0,
+      "mode": "C",
+      "round": 50,
+      "rule": "zero",
+      "step": 10735023057723318
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "duration": 56358867684974385,
+      "j": 1,
+      "k": 212337214,
+      "mode": "C",
+      "round": 51,
+      "rule": "bulk",
+      "step": 10735023482397764
+    },
+    {
+      "a": 530843037,
+      "b": 1,
+      "duration": 1061686091,
+      "j": 1,
+      "k": 0,
+      "mode": "C",
+      "round": 52,
+      "rule": "one",
+      "step": 67093891167372149
+    },
+    {
+      "a": 530843041,
+      "b": null,
+      "j": 0,
+      "k": 1,
+      "mode": "C",
+      "round": 53,
+      "step": 67093892229058240
+    }
+  ],
+  "proof_method": "53 binary-count instantiations of universally proved cut macros; symbolic repeats and counts remain opaque.",
+  "rows": [
+    {
+      "code": 1684925051,
+      "machine": "1LB2LA1RA2RB_2RB3LB0LB1LA"
+    }
+  ],
+  "scope": "Compressed transcript from universal cut formulas; independent direct sparse prefix and terminal guard controls. No proof credit.",
+  "seconds": 0.062769,
+  "source_sha256": {
+    "tools/check_burn21_s032_finite_native.py": "4fe8e135a42fafbfb77381ef7e0338694d9a7d508eb4e9c15e5777d13e9e6965",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "synthetic_exposed_three_controls": 13
+}

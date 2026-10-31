@@ -1,0 +1,852 @@
+{
+  "capture": {
+    "certificates_bytes": 16869108,
+    "certificates_sha256": "85c02b438aff4095ed30d37091454c35739f1f4bc2de29b1088f92e39e93e1f1",
+    "covered": 410338673,
+    "elapsed_seconds": 5.244,
+    "expected": 410338673,
+    "fuel": 256,
+    "instr_witness": "0LB3RA1LA0RB_1RA2LB2RA3LB",
+    "leaves": {
+      "cycle": 40261,
+      "halt": 20287,
+      "translated": 200619,
+      "unresolved": 63426
+    },
+    "max_instr": 207,
+    "max_state": 114,
+    "nodes": 324593,
+    "residual_sha256": "4e7a25f1b57086896e77b2e0fa686be8d207cac4dedf3f70ab3ea1a5206867ee",
+    "seconds": 5.21746,
+    "state_witness": "0LB3LB3RA---_1RA2LB0LA1RB",
+    "states": 2,
+    "symbols": 4,
+    "weighted": {
+      "cycle": 34915333,
+      "halt": 30338767,
+      "translated": 342242427,
+      "unresolved": 2842146
+    },
+    "window": 64
+  },
+  "maximum_nodes": 16385,
+  "minimum_nodes": 4097,
+  "native_parameters": {
+    "fuel": 256,
+    "max_nodes": 10000000,
+    "states": 2,
+    "symbols": 4,
+    "window": 64
+  },
+  "pilot_unit": 5,
+  "plan": {
+    "modules": [
+      {
+        "represented_nodes": 14033,
+        "units": [
+          0
+        ]
+      },
+      {
+        "represented_nodes": 12322,
+        "units": [
+          1,
+          2
+        ]
+      },
+      {
+        "represented_nodes": 11074,
+        "units": [
+          3,
+          4
+        ]
+      },
+      {
+        "represented_nodes": 13681,
+        "units": [
+          5
+        ]
+      },
+      {
+        "represented_nodes": 16259,
+        "units": [
+          6,
+          7,
+          8
+        ]
+      },
+      {
+        "represented_nodes": 13426,
+        "units": [
+          9,
+          10
+        ]
+      },
+      {
+        "represented_nodes": 3713,
+        "units": [
+          11
+        ]
+      },
+      {
+        "represented_nodes": 13681,
+        "units": [
+          12
+        ]
+      },
+      {
+        "represented_nodes": 16259,
+        "units": [
+          13,
+          14,
+          15
+        ]
+      },
+      {
+        "represented_nodes": 13426,
+        "units": [
+          16,
+          17
+        ]
+      },
+      {
+        "represented_nodes": 3713,
+        "units": [
+          18
+        ]
+      },
+      {
+        "represented_nodes": 13681,
+        "units": [
+          19
+        ]
+      },
+      {
+        "represented_nodes": 10002,
+        "units": [
+          20,
+          21
+        ]
+      },
+      {
+        "represented_nodes": 14033,
+        "units": [
+          22
+        ]
+      },
+      {
+        "represented_nodes": 12322,
+        "units": [
+          23,
+          24
+        ]
+      },
+      {
+        "represented_nodes": 11074,
+        "units": [
+          25,
+          26
+        ]
+      },
+      {
+        "represented_nodes": 13681,
+        "units": [
+          27
+        ]
+      },
+      {
+        "represented_nodes": 16259,
+        "units": [
+          28,
+          29,
+          30
+        ]
+      },
+      {
+        "represented_nodes": 13426,
+        "units": [
+          31,
+          32
+        ]
+      },
+      {
+        "represented_nodes": 3713,
+        "units": [
+          33
+        ]
+      },
+      {
+        "represented_nodes": 13681,
+        "units": [
+          34
+        ]
+      },
+      {
+        "represented_nodes": 16259,
+        "units": [
+          35,
+          36,
+          37
+        ]
+      },
+      {
+        "represented_nodes": 13426,
+        "units": [
+          38,
+          39
+        ]
+      },
+      {
+        "represented_nodes": 3713,
+        "units": [
+          40
+        ]
+      },
+      {
+        "represented_nodes": 13681,
+        "units": [
+          41
+        ]
+      },
+      {
+        "represented_nodes": 10002,
+        "units": [
+          42,
+          43
+        ]
+      },
+      {
+        "represented_nodes": 14098,
+        "units": [
+          44,
+          45
+        ]
+      }
+    ],
+    "root": "blank",
+    "root_unit": 45,
+    "units": [
+      {
+        "compact_bytes": 162667,
+        "compact_sha256": "dccc6ea985f8637093f5dc7730347fc6ce345fb8df5139b4ffe8f7a80df9bf07",
+        "dag_nodes": 5201,
+        "direct_dependencies": [],
+        "gzip_bytes": 58744,
+        "gzip_sha256": "28355929dfc1bccb789a60750947ebee0ebb8fbbfc282d851ce58036f842ecdb",
+        "id": 0,
+        "local_unresolved": 2608,
+        "machine": "0LB---------_1RA1LB------",
+        "represented_nodes": 14033
+      },
+      {
+        "compact_bytes": 81531,
+        "compact_sha256": "96d475c00608f4caab3de9cd9757ba8eff0d5ca1568c3a1024db8d891e6c8cbb",
+        "dag_nodes": 2928,
+        "direct_dependencies": [],
+        "gzip_bytes": 29101,
+        "gzip_sha256": "24010c0b863047135103761c6fa89c0a48d472139713d864327200b012eb710b",
+        "id": 1,
+        "local_unresolved": 1314,
+        "machine": "0LB---3LA---_1RA2LB------",
+        "represented_nodes": 6257
+      },
+      {
+        "compact_bytes": 85855,
+        "compact_sha256": "6d0710546504b6008d451613e43e455f8576fa04273bc2d7cf3949ed6c08c7e4",
+        "dag_nodes": 3221,
+        "direct_dependencies": [],
+        "gzip_bytes": 29491,
+        "gzip_sha256": "e8036203d4c30bb88078b14c26dcfbc54c9d73c2b2acd41b0e9077345af07974",
+        "id": 2,
+        "local_unresolved": 1382,
+        "machine": "0LB---3RA---_1RA2LB------",
+        "represented_nodes": 6065
+      },
+      {
+        "compact_bytes": 98932,
+        "compact_sha256": "9aced1759723d8110ee160c265940356b2ccb09d940841f6aaa78fb09f4e7df2",
+        "dag_nodes": 3623,
+        "direct_dependencies": [],
+        "gzip_bytes": 34083,
+        "gzip_sha256": "30f318bc8d6b0e02063549bb946874cacb8230268e94154ed1b9bd8867fda56d",
+        "id": 3,
+        "local_unresolved": 1576,
+        "machine": "0LB---3RB---_1RA2LB------",
+        "represented_nodes": 7361
+      },
+      {
+        "compact_bytes": 53148,
+        "compact_sha256": "55665da5d4f9083bba94b5761926b8cd7eb16cf73422d0da5f20c63b664ac096",
+        "dag_nodes": 2118,
+        "direct_dependencies": [],
+        "gzip_bytes": 18438,
+        "gzip_sha256": "3ba881dd73c7398c0d562ab2c33bb1d6e858cb6a1f0a65ee82c0748641db35ac",
+        "id": 4,
+        "local_unresolved": 779,
+        "machine": "0LB---1RB---_1RA2LB------",
+        "represented_nodes": 3713
+      },
+      {
+        "compact_bytes": 166441,
+        "compact_sha256": "8571f551207068a85fcc1af2b646dcbccad0391b381fbfb21f0c024643cdd0ba",
+        "dag_nodes": 5724,
+        "direct_dependencies": [
+          4,
+          1,
+          2,
+          3
+        ],
+        "gzip_bytes": 60403,
+        "gzip_sha256": "4adb18d9d54524a0effe1640548a2a745f31e2ba569ec678f1af3ead4ff894e5",
+        "id": 5,
+        "local_unresolved": 2659,
+        "machine": "0LB---------_1RA2LB------",
+        "represented_nodes": 13681
+      },
+      {
+        "compact_bytes": 51964,
+        "compact_sha256": "e3dc0700677a1396a832e0700be1ef6272706436de4a5231e9c2e0fa366f02c3",
+        "dag_nodes": 1980,
+        "direct_dependencies": [],
+        "gzip_bytes": 17096,
+        "gzip_sha256": "3da8850cd1524ba64b86cc4ddd9d6b5e02c3dde82e8f25357ce0714e522918d4",
+        "id": 6,
+        "local_unresolved": 703,
+        "machine": "0LB---------_1RA2RA3LB---",
+        "represented_nodes": 4257
+      },
+      {
+        "compact_bytes": 66087,
+        "compact_sha256": "c07dea80ef7bd19d312478cf3d661b0e98e00edfc264d1ea3d1257473d1df847",
+        "dag_nodes": 2446,
+        "direct_dependencies": [
+          6
+        ],
+        "gzip_bytes": 22299,
+        "gzip_sha256": "a856dc32eb47900b735fd899d092bb7c67feccff55dcede7f320d7cc0fde2fb7",
+        "id": 7,
+        "local_unresolved": 854,
+        "machine": "0LB---------_1RA2RA------",
+        "represented_nodes": 5745
+      },
+      {
+        "compact_bytes": 81604,
+        "compact_sha256": "5b6e252ba928e12b67a8cb3a5213f318e577a1c75b7b5f961c1e2ee60b21ae85",
+        "dag_nodes": 2928,
+        "direct_dependencies": [],
+        "gzip_bytes": 28628,
+        "gzip_sha256": "ffc74254c6a3c18ba7cae78f112503ee2e7199301afb218d2ca944b17916ec66",
+        "id": 8,
+        "local_unresolved": 1314,
+        "machine": "0LB------2LA_1RA3LB------",
+        "represented_nodes": 6257
+      },
+      {
+        "compact_bytes": 85875,
+        "compact_sha256": "49c4edb6d911609ac778087953218e3e0e16ecaae1869c54dee67851614e4134",
+        "dag_nodes": 3221,
+        "direct_dependencies": [],
+        "gzip_bytes": 28945,
+        "gzip_sha256": "bf09163367e7299fac7a557e8352fb91878faa9fafef157346be0e74bd701250",
+        "id": 9,
+        "local_unresolved": 1382,
+        "machine": "0LB------2RA_1RA3LB------",
+        "represented_nodes": 6065
+      },
+      {
+        "compact_bytes": 98434,
+        "compact_sha256": "9d42734528ea5e9e4ffaad9e6d64a39f293e336756d61ba0795017f2a2bbbd53",
+        "dag_nodes": 3623,
+        "direct_dependencies": [],
+        "gzip_bytes": 33303,
+        "gzip_sha256": "e57227588e985ca1c5cca5cf2988e2fde0da3c8b0930bf32e67569114f004302",
+        "id": 10,
+        "local_unresolved": 1576,
+        "machine": "0LB------2RB_1RA3LB------",
+        "represented_nodes": 7361
+      },
+      {
+        "compact_bytes": 53280,
+        "compact_sha256": "6bef069d9b75d69071180fce158d91d0c5e1282e15351c4569abab5d2e8bb8b4",
+        "dag_nodes": 2118,
+        "direct_dependencies": [],
+        "gzip_bytes": 17885,
+        "gzip_sha256": "e4ef589616b8da502c85031b846d39c68ef8af82faa168409f647b8a1a7a6eba",
+        "id": 11,
+        "local_unresolved": 779,
+        "machine": "0LB------1RB_1RA3LB------",
+        "represented_nodes": 3713
+      },
+      {
+        "compact_bytes": 167147,
+        "compact_sha256": "67c00395b9698e5a67eb8ebfa2fc15d01090cde15dd8234323d292d5071387a9",
+        "dag_nodes": 5724,
+        "direct_dependencies": [
+          11,
+          8,
+          9,
+          10
+        ],
+        "gzip_bytes": 58895,
+        "gzip_sha256": "f561af5b5d78d1a745d248f3766b230d06dd3c804d44425c56b54bbd67c5c604",
+        "id": 12,
+        "local_unresolved": 2659,
+        "machine": "0LB---------_1RA3LB------",
+        "represented_nodes": 13681
+      },
+      {
+        "compact_bytes": 52030,
+        "compact_sha256": "5dfefbb5b0b8290dbef559c8bd89d919ac5b26f81b17e3212c1b8966d6bcc77d",
+        "dag_nodes": 1980,
+        "direct_dependencies": [],
+        "gzip_bytes": 17442,
+        "gzip_sha256": "518afdfae156ca99b340c0a1d4d20b96e7e27f3a5eeb15e68c9473c5ea0ba822",
+        "id": 13,
+        "local_unresolved": 703,
+        "machine": "0LB---------_1RA3RA---2LB",
+        "represented_nodes": 4257
+      },
+      {
+        "compact_bytes": 65730,
+        "compact_sha256": "fa0a649e9c0fb5d2c75cbad578e90b94705ba1aff06f1b4f32915a42c5784ecf",
+        "dag_nodes": 2446,
+        "direct_dependencies": [
+          13
+        ],
+        "gzip_bytes": 22224,
+        "gzip_sha256": "b2778469876f37eba3b5341897cb3e10526f4f509b30d87a932c60d9c4af60cb",
+        "id": 14,
+        "local_unresolved": 854,
+        "machine": "0LB---------_1RA3RA------",
+        "represented_nodes": 5745
+      },
+      {
+        "compact_bytes": 80636,
+        "compact_sha256": "7c12ddd52baabdfba19ea3771d9f05d225098827f728a2751516d60d1e10f642",
+        "dag_nodes": 2928,
+        "direct_dependencies": [],
+        "gzip_bytes": 29656,
+        "gzip_sha256": "b31596d2c7443ba1d4d79c0e938037d140f86ed9b2a612e2eb8437dfdd683520",
+        "id": 15,
+        "local_unresolved": 1314,
+        "machine": "0LB3LA------_2RA---1LB---",
+        "represented_nodes": 6257
+      },
+      {
+        "compact_bytes": 85414,
+        "compact_sha256": "4e35b3b9812ca53fd7ce59307082e4ebe82c5736c930eb4d54481ea923664d02",
+        "dag_nodes": 3221,
+        "direct_dependencies": [],
+        "gzip_bytes": 29968,
+        "gzip_sha256": "955c8250d654488b9f2acf87f1e7536c62e8533a3831ab7aa744c07a1898f343",
+        "id": 16,
+        "local_unresolved": 1382,
+        "machine": "0LB3RA------_2RA---1LB---",
+        "represented_nodes": 6065
+      },
+      {
+        "compact_bytes": 99269,
+        "compact_sha256": "660f833a7818bab5aacc835b8a022eed94f2c93eac430cc5ae85e747a5d41609",
+        "dag_nodes": 3623,
+        "direct_dependencies": [],
+        "gzip_bytes": 35049,
+        "gzip_sha256": "c442c0664a1b4b9995c6094a2a55eb930ea979d65ab8ab9dc22124deba12c64c",
+        "id": 17,
+        "local_unresolved": 1576,
+        "machine": "0LB3RB------_2RA---1LB---",
+        "represented_nodes": 7361
+      },
+      {
+        "compact_bytes": 53105,
+        "compact_sha256": "ed3840ae42760d0f4e7ad631e4b8effc946fe6dccfd87bee8cff8bd46c46a1a0",
+        "dag_nodes": 2118,
+        "direct_dependencies": [],
+        "gzip_bytes": 18501,
+        "gzip_sha256": "bb4b8f1deff2160d4b5e95b64b66626499c614d40dfd6fa5603ba4ed9e7bed70",
+        "id": 18,
+        "local_unresolved": 779,
+        "machine": "0LB2RB------_2RA---1LB---",
+        "represented_nodes": 3713
+      },
+      {
+        "compact_bytes": 165661,
+        "compact_sha256": "ff8898d25ba45c522c2e4c0d2469413d247376e2a00f247ac2e01e9ae8b696e4",
+        "dag_nodes": 5724,
+        "direct_dependencies": [
+          18,
+          15,
+          16,
+          17
+        ],
+        "gzip_bytes": 60724,
+        "gzip_sha256": "73230c38f731d9fd1650ae37f96b63a1df0b7618fb7ce5834cf19c7d37a38936",
+        "id": 19,
+        "local_unresolved": 2659,
+        "machine": "0LB---------_2RA---1LB---",
+        "represented_nodes": 13681
+      },
+      {
+        "compact_bytes": 51858,
+        "compact_sha256": "7a717ab94969880d9d8b60ca8ece0a61487743d778bec6a628182d532a16bc55",
+        "dag_nodes": 1980,
+        "direct_dependencies": [],
+        "gzip_bytes": 16941,
+        "gzip_sha256": "670799d5e555ad72c6295b7758e5d0ec3e9ae4361b114d3108284bb19472144c",
+        "id": 20,
+        "local_unresolved": 703,
+        "machine": "0LB---------_2RA3LB1RA---",
+        "represented_nodes": 4257
+      },
+      {
+        "compact_bytes": 65565,
+        "compact_sha256": "d88754ed38d6661cbd4bb5c3b3de977479fed7d1152d2d63b983af6d4e60a4d4",
+        "dag_nodes": 2446,
+        "direct_dependencies": [
+          20
+        ],
+        "gzip_bytes": 22289,
+        "gzip_sha256": "be008e643a41e3725064fb7272b40044a380ffd7acf1ede486bb7c7d663f22c0",
+        "id": 21,
+        "local_unresolved": 854,
+        "machine": "0LB---------_2RA---1RA---",
+        "represented_nodes": 5745
+      },
+      {
+        "compact_bytes": 162700,
+        "compact_sha256": "47895585bde74c965555adea882e34da7794d5e5dbef6831f2ed74978bf9f6a4",
+        "dag_nodes": 5201,
+        "direct_dependencies": [],
+        "gzip_bytes": 57155,
+        "gzip_sha256": "5c26db70d261433120b2e67db92d28af8c9d4849ca8fcd141c94ee6d3034f2cb",
+        "id": 22,
+        "local_unresolved": 2608,
+        "machine": "0LB---------_2RA---2LB---",
+        "represented_nodes": 14033
+      },
+      {
+        "compact_bytes": 80428,
+        "compact_sha256": "3f9f63514ee52ac46c9bc6af48b1a37b5f84ef5a6b1b530c3ca22f4340d4548d",
+        "dag_nodes": 2928,
+        "direct_dependencies": [],
+        "gzip_bytes": 28245,
+        "gzip_sha256": "e6dac31067165839b486d8705e9c47359e32ab8cc97827699c0de1229858022c",
+        "id": 23,
+        "local_unresolved": 1314,
+        "machine": "0LB------1LA_2RA---3LB---",
+        "represented_nodes": 6257
+      },
+      {
+        "compact_bytes": 85498,
+        "compact_sha256": "ad5073dbb42596fde1502706f07b8a5c65eb6b8fdf8b619891e5ee757714f6da",
+        "dag_nodes": 3221,
+        "direct_dependencies": [],
+        "gzip_bytes": 28640,
+        "gzip_sha256": "d4a6688826479db8709198ceed7224a1e4ba64159d3d101b19fdcb3b3a583ee9",
+        "id": 24,
+        "local_unresolved": 1382,
+        "machine": "0LB------1RA_2RA---3LB---",
+        "represented_nodes": 6065
+      },
+      {
+        "compact_bytes": 98651,
+        "compact_sha256": "13164a77b346f765eadc507d1747c1b873cc24af207445db28ef1fb44bd7c7c6",
+        "dag_nodes": 3623,
+        "direct_dependencies": [],
+        "gzip_bytes": 33053,
+        "gzip_sha256": "c52224ae49f1de7b27391c53562d554ad53ea48e8ada3b969cfc087e365bf4c4",
+        "id": 25,
+        "local_unresolved": 1576,
+        "machine": "0LB------1RB_2RA---3LB---",
+        "represented_nodes": 7361
+      },
+      {
+        "compact_bytes": 53092,
+        "compact_sha256": "2b5e487be056ad09f35ff72c258cd3a1b5a314ca860978e1631f874293560192",
+        "dag_nodes": 2118,
+        "direct_dependencies": [],
+        "gzip_bytes": 17776,
+        "gzip_sha256": "4dd0482e94de7c2b897c93fdd3e336387e0e60f43ad34c7082ef1bdc1d501aa6",
+        "id": 26,
+        "local_unresolved": 779,
+        "machine": "0LB------2RB_2RA---3LB---",
+        "represented_nodes": 3713
+      },
+      {
+        "compact_bytes": 167015,
+        "compact_sha256": "34b306946a0c87d6e2740fa1aced21979a887135ae51c99a734895680013efbf",
+        "dag_nodes": 5724,
+        "direct_dependencies": [
+          23,
+          24,
+          25,
+          26
+        ],
+        "gzip_bytes": 57531,
+        "gzip_sha256": "7359d47e7662950fba698665d42b8e16ebc6a5c07665b82721eeb69a0388f96c",
+        "id": 27,
+        "local_unresolved": 2659,
+        "machine": "0LB---------_2RA---3LB---",
+        "represented_nodes": 13681
+      },
+      {
+        "compact_bytes": 51824,
+        "compact_sha256": "fbec518735ff3d584ce4a983e783e3745f9c54b0b3f61fcf18b2775e3701c557",
+        "dag_nodes": 1980,
+        "direct_dependencies": [],
+        "gzip_bytes": 17735,
+        "gzip_sha256": "357a8b8ee217264ccc42ffc5ee08a1782d385f1d9ccf19204ca0768bcd62528b",
+        "id": 28,
+        "local_unresolved": 703,
+        "machine": "0LB---------_2RA---3RA1LB",
+        "represented_nodes": 4257
+      },
+      {
+        "compact_bytes": 65376,
+        "compact_sha256": "802bf27ed1668e5937658ff6b3bf590d0e0b96e6d01a46fdf10f57ebb0fc88ea",
+        "dag_nodes": 2446,
+        "direct_dependencies": [
+          28
+        ],
+        "gzip_bytes": 21928,
+        "gzip_sha256": "08d287a9d92a9a0a722c1f1ca8a96c25bcfa0da41faca6ba72e6930efcddf523",
+        "id": 29,
+        "local_unresolved": 854,
+        "machine": "0LB---------_2RA---3RA---",
+        "represented_nodes": 5745
+      },
+      {
+        "compact_bytes": 80962,
+        "compact_sha256": "1a3ef2f2f0a29f05950fa020642bded3f3557b7747ab0e22e44aa007a572db88",
+        "dag_nodes": 2928,
+        "direct_dependencies": [],
+        "gzip_bytes": 29418,
+        "gzip_sha256": "b191b33b71e41fd7e8951a865ed95982c31ddc52d55def5c4af4cbd35ceda8eb",
+        "id": 30,
+        "local_unresolved": 1314,
+        "machine": "0LB2LA------_3RA------1LB",
+        "represented_nodes": 6257
+      },
+      {
+        "compact_bytes": 85408,
+        "compact_sha256": "b3084994402ec78ab3ae4532ccf20ddc95e423f5dac0d9b589491843a3cd6e76",
+        "dag_nodes": 3221,
+        "direct_dependencies": [],
+        "gzip_bytes": 29817,
+        "gzip_sha256": "8537149cd94817385c636998b85bac5c3d28f1dd9f05a88818ff9192be1af00f",
+        "id": 31,
+        "local_unresolved": 1382,
+        "machine": "0LB2RA------_3RA------1LB",
+        "represented_nodes": 6065
+      },
+      {
+        "compact_bytes": 99478,
+        "compact_sha256": "35199bda8c020cb753fc17feec83b0b36c71856ef6c93fcc340e02cf45155f99",
+        "dag_nodes": 3623,
+        "direct_dependencies": [],
+        "gzip_bytes": 34735,
+        "gzip_sha256": "a32045cce3e94a34ef496ee1720da843107b9b8a0550ed80121cd4f5846fd190",
+        "id": 32,
+        "local_unresolved": 1576,
+        "machine": "0LB2RB------_3RA------1LB",
+        "represented_nodes": 7361
+      },
+      {
+        "compact_bytes": 53404,
+        "compact_sha256": "3c44b4fd5a0d37cd8c6e9034f47553ec6f6b80665ba14e464609975532db63ca",
+        "dag_nodes": 2118,
+        "direct_dependencies": [],
+        "gzip_bytes": 18614,
+        "gzip_sha256": "f8585ebe8c0f462ec30da9f38e1f7545a3dfec204bf006090b983d8cbb65738c",
+        "id": 33,
+        "local_unresolved": 779,
+        "machine": "0LB3RB------_3RA------1LB",
+        "represented_nodes": 3713
+      },
+      {
+        "compact_bytes": 166366,
+        "compact_sha256": "4770d46d2b0d8927b73577431023b9db45c54bbf139712ca38835eb9c5801729",
+        "dag_nodes": 5724,
+        "direct_dependencies": [
+          30,
+          31,
+          32,
+          33
+        ],
+        "gzip_bytes": 60159,
+        "gzip_sha256": "bcbfc9f8a3c4605595e4899716f28c0ad26b26e042c93796ad517c2c32e5ec4a",
+        "id": 34,
+        "local_unresolved": 2659,
+        "machine": "0LB---------_3RA------1LB",
+        "represented_nodes": 13681
+      },
+      {
+        "compact_bytes": 51935,
+        "compact_sha256": "cea5a0ab278bcea201a6d56ae39fd6d2ba0d15eb4cc21ceaafa854da5f6f8139",
+        "dag_nodes": 1980,
+        "direct_dependencies": [],
+        "gzip_bytes": 17388,
+        "gzip_sha256": "93beeaec064888003158133a0a4f038da3345cf88104b2bf7e5e613b5f6cf853",
+        "id": 35,
+        "local_unresolved": 703,
+        "machine": "0LB---------_3RA2LB---1RA",
+        "represented_nodes": 4257
+      },
+      {
+        "compact_bytes": 65794,
+        "compact_sha256": "6bce006d8d12a2a32c64d64bf182713ff5e94802d4276efe4929a6e9e8e86f30",
+        "dag_nodes": 2446,
+        "direct_dependencies": [
+          35
+        ],
+        "gzip_bytes": 22186,
+        "gzip_sha256": "bb971eeb93c479254ba7eca5703155420f9b87c9e624c81cd3831724599b6ec0",
+        "id": 36,
+        "local_unresolved": 854,
+        "machine": "0LB---------_3RA------1RA",
+        "represented_nodes": 5745
+      },
+      {
+        "compact_bytes": 80612,
+        "compact_sha256": "95d304e39f6f9265a97c9aff406dab738447802c38e179a325c80848cc9c331e",
+        "dag_nodes": 2928,
+        "direct_dependencies": [],
+        "gzip_bytes": 28649,
+        "gzip_sha256": "39dee16d1c4756fc64083b5b974a972e05abb62ca13b642f1e427b975daaf525",
+        "id": 37,
+        "local_unresolved": 1314,
+        "machine": "0LB---1LA---_3RA------2LB",
+        "represented_nodes": 6257
+      },
+      {
+        "compact_bytes": 85525,
+        "compact_sha256": "791c0f04d15c67862b8b265d3d2f2e6e210eba3c768163a16246690447beefeb",
+        "dag_nodes": 3221,
+        "direct_dependencies": [],
+        "gzip_bytes": 28932,
+        "gzip_sha256": "7a290c38b5bbe6418a053309c5747ad04234f60d7e5fdad804129022380b88cc",
+        "id": 38,
+        "local_unresolved": 1382,
+        "machine": "0LB---1RA---_3RA------2LB",
+        "represented_nodes": 6065
+      },
+      {
+        "compact_bytes": 98882,
+        "compact_sha256": "cb3739fed9081b0682c00455ace98e8b2f9af622ff28fd4dc4ca98f40926e3aa",
+        "dag_nodes": 3623,
+        "direct_dependencies": [],
+        "gzip_bytes": 33742,
+        "gzip_sha256": "39208c45c9a0346090e5240c79f142f632d4759f57ed6ce5b7616dd808b9abd5",
+        "id": 39,
+        "local_unresolved": 1576,
+        "machine": "0LB---1RB---_3RA------2LB",
+        "represented_nodes": 7361
+      },
+      {
+        "compact_bytes": 53228,
+        "compact_sha256": "9d86d2b0206b227733313793e6c823d52ef4974333d080799e4508e98252c36f",
+        "dag_nodes": 2118,
+        "direct_dependencies": [],
+        "gzip_bytes": 18094,
+        "gzip_sha256": "b2c7a1dd19736f18b5996ce8ada1b89ba537358156d20fe496dd721311ff55bc",
+        "id": 40,
+        "local_unresolved": 779,
+        "machine": "0LB---3RB---_3RA------2LB",
+        "represented_nodes": 3713
+      },
+      {
+        "compact_bytes": 167024,
+        "compact_sha256": "55a7535922767d0b8a7e11b0d0ff7e26cb335bf8c5223b4944af8426df39147d",
+        "dag_nodes": 5724,
+        "direct_dependencies": [
+          37,
+          38,
+          39,
+          40
+        ],
+        "gzip_bytes": 58395,
+        "gzip_sha256": "225d8dfcd1ec9936363e61415949aa173f3a7a2f8d8a3abd9da0e55d9a47156a",
+        "id": 41,
+        "local_unresolved": 2659,
+        "machine": "0LB---------_3RA------2LB",
+        "represented_nodes": 13681
+      },
+      {
+        "compact_bytes": 51773,
+        "compact_sha256": "a213beffdd7aa9d3adb2c13121bdd8f1ff71290559e42c6683eb46cdcb0ebb54",
+        "dag_nodes": 1980,
+        "direct_dependencies": [],
+        "gzip_bytes": 17757,
+        "gzip_sha256": "9a0c55e55560bbcfaa37470864f1f119f474f88d34eec7f748cd312e8d9ab246",
+        "id": 42,
+        "local_unresolved": 703,
+        "machine": "0LB---------_3RA---1LB2RA",
+        "represented_nodes": 4257
+      },
+      {
+        "compact_bytes": 65388,
+        "compact_sha256": "91d517921eb68c34decb33e2583e50bad6bb8842cc89241c09a09bb20a1be4c0",
+        "dag_nodes": 2446,
+        "direct_dependencies": [
+          42
+        ],
+        "gzip_bytes": 21872,
+        "gzip_sha256": "10ba38f5865742d193c68c243545d434fa7df104aa939993ca8c06c9c3cbd032",
+        "id": 43,
+        "local_unresolved": 854,
+        "machine": "0LB---------_3RA------2RA",
+        "represented_nodes": 5745
+      },
+      {
+        "compact_bytes": 163004,
+        "compact_sha256": "32902d596407f66c5b46c8a33fe877dec910b7f27277eb40b0894f01204d671d",
+        "dag_nodes": 5201,
+        "direct_dependencies": [],
+        "gzip_bytes": 55866,
+        "gzip_sha256": "0736432c27c8473b88f19ae5a79e66b7e34ea5882069ac43574bf86750fe2102",
+        "id": 44,
+        "local_unresolved": 2608,
+        "machine": "0LB---------_3RA------3LB",
+        "represented_nodes": 14033
+      },
+      {
+        "compact_bytes": 669,
+        "compact_sha256": "e145afd7bf64e3fbcc0098b7c04d8c5b47ddc3e40a5c3b331a06b563a4c4c751",
+        "dag_nodes": 28,
+        "direct_dependencies": [
+          0,
+          5,
+          7,
+          12,
+          14,
+          19,
+          21,
+          22,
+          27,
+          29,
+          34,
+          36,
+          41,
+          43,
+          44
+        ],
+        "gzip_bytes": 341,
+        "gzip_sha256": "31f59f3ea0212f30e04b48900545f52072a903cc8bf9f651bfa28f3bc376dbce",
+        "id": 45,
+        "local_unresolved": 0,
+        "machine": "0LB---------_------------",
+        "represented_nodes": 65
+      }
+    ]
+  },
+  "root": "blank",
+  "root_code": 1,
+  "scope": "Conditional complete blank-root state census at scoreN; unresolved frontier remains a hypothesis.",
+  "source_sha256": {
+    "four/proof-sources/burn10-state-closeout/RootBridge.v": "60c4b9fdd301c43860b8965fc9323c0548c70c7e3ba363afde171a08c28145d1",
+    "four/proof-sources/burn10-state-closeout/StateCensus.v": "a4a15ab83e80c8aa19b2effe54f9040c0b80d7a33c55ea68d9362fb0e332607d",
+    "four/proof-sources/burn10-state-closeout/StateShadow.v": "b16035a740986f949eceebb4a030364fc98c8dd440623b175d52da7a2ab555dc",
+    "four/proof-sources/burn13-state-census-join/Join.v": "7a2a9ba49ee84077a6b58099054881288d0e71f719f1e7697f848cb839ed630b",
+    "four/tools/triage.py": "f357c3babb863764d88973ab4a7ba03708e3a4ac4754aeb9e473d4a6d42428cf",
+    "tools/multisymbol/survey.cpp": "896e4f61dfb2220017fd208d518ddc203690d9aab755376df30f2ecda472f44b"
+  }
+}

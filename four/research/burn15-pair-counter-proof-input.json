@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 2843473181,
+      "machine": "1LB2LB0RA0LA_2RB3LB3RB1RA"
+    }
+  ],
+  "selection_report": "research/burn15-pair-counter-native.json",
+  "selection_sha256": "5e81005c62576a420daea68d8cda433980858558ec497b71453a35b2ac55d0b2",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn15-pair-counter/PairCounter.v": "49b42e9c6b7e1692e8164e2aefd87f12e7e797d1b84fa44b49b7d34439b8e85f",
+    "proof-sources/burn15-pair-counter/Regression.v": "8fc3683686dfe4c81d80db74dff856d4e57efdce52cf5a69446deb141cb868ba"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "status": "untrusted_full_mask_neighbor_proposals",
+  "source_full_mask_families": 268,
+  "source_families_with_target_matches": 262,
+  "matching_transformed_tables": 604,
+  "indexed_proposals": 604,
+  "target_families": 59627,
+  "compatible_targets": 2369,
+  "target_template_pairs": 3150,
+  "uncapped_target_template_pairs": 3150,
+  "cap": 8,
+  "constant_target_cells": {
+    "0": 5
+  },
+  "input_sha256": {
+    "four/build/affine-template-short7-delta/sources.tsv": "37649f8689e4c8be3801b482944a4de8bec5004d1fdc0a6b49d92f8911acafe1",
+    "four/build/weighted-v2/full-cohort.txt": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086"
+  },
+  "source_sha256": {
+    "four/tools/affine_fullmask_neighbors.py": "41524a0c59ab8feb4ae9aa1ceea49079b52962197a08a63b9e9710b30fde569d",
+    "four/tools/affine_template_bank.py": "f3c020c7902755405c565b794f39f74928dd9bbe24dd493315b8632e8826e522",
+    "four/tools/affine_template_orbits.py": "4c14340905ddee752bbeb31734a049b16763f62f37a509c07938214d3d95cb8d"
+  },
+  "index_sha256": "d52298e60d89cd223531e6fca68cdc19ecafd4f8d937470589128f69b9607d09"
+}

@@ -1,0 +1,64 @@
+{
+  "status": "untrusted_two_sided_marker_measurement",
+  "input_families": 3651,
+  "candidates": 9,
+  "new_beyond_prior": 9,
+  "rows": [
+    {
+      "machine": "1LB2RA2RA0RA_3RB1RA3LB2LB",
+      "marker_mask": 2,
+      "covered_by_prior": false
+    },
+    {
+      "machine": "1LB2RA3LB0RA_2RB1RA2LB3LB",
+      "marker_mask": 2,
+      "covered_by_prior": false
+    },
+    {
+      "machine": "1LB2RA0RA3RA_2RB1RA3LB2LB",
+      "marker_mask": 2,
+      "covered_by_prior": false
+    },
+    {
+      "machine": "1LB2RA3LB0RA_3RB1RA2LB0LB",
+      "marker_mask": 2,
+      "covered_by_prior": false
+    },
+    {
+      "machine": "1LB2RA2RB0RA_3RB1RA3LB2LB",
+      "marker_mask": 2,
+      "covered_by_prior": false
+    },
+    {
+      "machine": "1LB2RA3RA0RA_2RB1RA3LB2LB",
+      "marker_mask": 2,
+      "covered_by_prior": false
+    },
+    {
+      "machine": "1LB2RA0RA2RB_3RB1RA2LB3LB",
+      "marker_mask": 2,
+      "covered_by_prior": false
+    },
+    {
+      "machine": "1LB2RA2LB0RA_2RB1RA3LB2LB",
+      "marker_mask": 2,
+      "covered_by_prior": false
+    },
+    {
+      "machine": "1LB2RA0RA2LB_3RB1RA2LB3LB",
+      "marker_mask": 2,
+      "covered_by_prior": false
+    }
+  ],
+  "input_sha256": "64a3ec63b8887e30712342738265c272a019ed7d649681ca47dcad4863f7fd78",
+  "source_sha256": {
+    "four/tools/marker_state_walls_profile.py": "2ab746c0b2cc19285b82dccfd606932fb97d99cbac24fefebb86ec3a808c5f21",
+    "four/tools/marker_state_profile_v2.py": "998103d4757e54fd719d6d5bc2a303b27ea3eff36df12eb8e910e3e89185d005",
+    "four/tools/marker_state_potential_profile.py": "8586f8b564b3b7f764385cd647a6bec6b79cff8f4bac4897ebf1bcde1e1dd5ca",
+    "four/tools/marker_state_trail_profile.py": "53351b50731bd3232dd6438be368a9b8d993da3fb9a787c9928ec8b823b0662e",
+    "four/tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "kernel_checked": 0,
+  "census_linked": 0,
+  "scope": "State recurrence proposal only; generic checker and census replay required."
+}

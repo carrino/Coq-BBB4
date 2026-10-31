@@ -1,0 +1,11 @@
+{
+  "scope": "S066 frontier recurrence candidate selected before formalization; native evidence alone has zero proof credit.",
+  "machine": "1LB2RA0LB1RB_3RB3LA1LA2RA",
+  "main": "A0, nearest-first left2211++l, rightempty",
+  "universal_slide": "A0,left2211++l,right r -> A at first symbol of r,left22112++l,remaining right r, in11steps; arbitrary both outer contexts.",
+  "universal_return": "main(l)->main(2::l)in11steps, rightempty guard explicit",
+  "selected_original_entry": 1922128,
+  "entry_method": "Coq vm_compute checks only stateA/head0/rightempty/four-cell-leftprefix2211; unknown left tail remains existential.",
+  "recurrence": "A at every return and B one step later; both states recur arbitrarily late, so QHBound0.",
+  "new_instruction": 0
+}

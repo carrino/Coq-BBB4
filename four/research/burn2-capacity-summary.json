@@ -1,0 +1,123 @@
+{
+  "baseline_both_residual": 33361,
+  "baseline_state_residual": 2504,
+  "baseline_summary_sha256": "a224f5bebeb41173699170e8b7e86868018a2366cf3204cb19ffcd64c292767d",
+  "boards": [
+    {
+      "descriptor": {
+        "board": "board",
+        "exact_inventory_theorem": "BBB24Burn2CapacityInventory.Ordinary.inventory_exact",
+        "id": "burn2_capacity_ordinary",
+        "instruction_bound": 4096,
+        "inventories": [
+          {
+            "format": "rows",
+            "path": "research/burn2-capacity-ordinary-checked-machines.json"
+          }
+        ],
+        "load_paths": [
+          {
+            "namespace": "BBB24Burn2CapacityOrdinary",
+            "path": "build/burn2-capacity/ordinary-proof"
+          },
+          {
+            "namespace": "BBB24Burn2CapacityWeighted",
+            "path": "build/burn2-capacity/weighted-proof"
+          },
+          {
+            "namespace": "BBB24Burn2CapacityInventory",
+            "path": "build/burn2-capacity/inventory-proof"
+          }
+        ],
+        "module": "BBB24Burn2CapacityInventory.Ordinary",
+        "proof_source": "build/burn2-capacity/inventory-proof/Ordinary.v",
+        "rows": 7,
+        "scope": "both",
+        "small_sound": "small_sound",
+        "sound": "sound",
+        "state_bound": 4096,
+        "was_pending": "was_pending"
+      },
+      "inventory_sha256": "2d373a1961be8ead65f389af8ba64971fdc34e4287ee741011205a7330ee1df4",
+      "kind": "ordinary",
+      "report_sha256": "0c34795f77f3c90e76112f23663ad672055930d21b9610e8ca1c6f773c64cc12",
+      "rows": 7
+    },
+    {
+      "descriptor": {
+        "board": "board",
+        "exact_inventory_theorem": "BBB24Burn2CapacityInventory.Weighted.inventory_exact",
+        "id": "burn2_capacity_weighted",
+        "instruction_bound": 4096,
+        "inventories": [
+          {
+            "format": "rows",
+            "path": "research/burn2-capacity-weighted-checked-machines.json"
+          }
+        ],
+        "load_paths": [
+          {
+            "namespace": "BBB24Burn2CapacityOrdinary",
+            "path": "build/burn2-capacity/ordinary-proof"
+          },
+          {
+            "namespace": "BBB24Burn2CapacityWeighted",
+            "path": "build/burn2-capacity/weighted-proof"
+          },
+          {
+            "namespace": "BBB24Burn2CapacityInventory",
+            "path": "build/burn2-capacity/inventory-proof"
+          }
+        ],
+        "module": "BBB24Burn2CapacityInventory.Weighted",
+        "proof_source": "build/burn2-capacity/inventory-proof/Weighted.v",
+        "rows": 6,
+        "scope": "both",
+        "small_sound": "small_sound",
+        "sound": "sound",
+        "state_bound": 4096,
+        "was_pending": "was_pending"
+      },
+      "inventory_sha256": "d6b8e47df0534c3bb026b073d5ec09cabd16c8edebb25ef80fc39f74802abf9b",
+      "kind": "weighted",
+      "report_sha256": "81ca03704c3cecc90c1e5c9b6e10eafbb1e8e36353e2b923c020e9cc4e361efc",
+      "rows": 6
+    }
+  ],
+  "both_residual_after_this_increment_only": 33348,
+  "candidate_count": 13,
+  "checked_incremental_unique_both": 13,
+  "checked_incremental_unique_state": 1,
+  "inventory_report_sha256": "021085849afbd3acb052243cfe43f55e1fe786ac184d242c9ab593e5cba2be28",
+  "kernel_modules": 280,
+  "new_both_ids": [
+    "1LB0LB1RB3LA_2RA2LA3RB2LA",
+    "1LB0RB0LA2LA_3RA1LB1RA3LB",
+    "1LB0RB0RB2LA_2RA3LB3RB0LA",
+    "1LB1LA1RB1RB_2RA3RB1LB3LA",
+    "1LB1RA---1LB_1RB3LB3RA2RA",
+    "1LB1RA2RB2LA_3RA3LA3LA3RB",
+    "1LB1RB1LA3RA_2RA2LB3RB0LA",
+    "1LB2LB1RA1LA_1RA3RA---3LB",
+    "1LB2LB2LB3RB_1RA3LB1LB1RA",
+    "1LB2LB2RA0LB_2RB3RA3LB3RA",
+    "1LB2RA0RB3LA_1RB3RA0LA2LB",
+    "1LB2RA0RB3LB_1RA3LA2RB2LA",
+    "1LB2RA1RA2LA_0RB3LB2LB3RA"
+  ],
+  "new_state_ids": [
+    "1LB2LB1RA1LA_1RA3RA---3LB"
+  ],
+  "queue_overlap": 0,
+  "sample_rows": 54,
+  "scope": "Kernel-audited local increment to the first supplement; global upper bound remains open.",
+  "search_counts": {
+    "graph_status_closed_partial": 34,
+    "graph_status_closed_unranked": 133,
+    "graph_status_closure_open": 12,
+    "graph_status_ordinary_candidate": 7
+  },
+  "search_report_sha256": "70c7f4d2e7ec642d9855055b4b21aeb967c07b873202107226f61a27bd660905",
+  "state_residual_after_this_increment_only": 2503,
+  "summary_producer_sha256": "2a169911fb76bb944bf142f496c9fdff0e4590ca3d4c6e1cb091cb4cc90dc8a5"
+}

@@ -1,0 +1,121 @@
+{
+  "generic_report_sha256": "c7da08e977e7ecc582ddd6d12fb099dd9eaf7c24b01ec0d7ccf8dde7485f68b0",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 2480778776,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2RA3LA1RB_0RB3LB0LA1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2505575248,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2LB3RA1LB_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 4075613563,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB0LB0LA2LA_1RB3RA3RB2LB",
+      "marker_mask": 6,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 760931293,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB1LA0RB2RB_3RB2LA3RA0LB",
+      "marker_mask": 6,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 2887545545,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB0LB3LA2RB_2RB2RA0LA1RB",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 3665275349,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2RB0LB2LA_1RB3RA3RB2LA",
+      "marker_mask": 14,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    },
+    {
+      "anchor": 4096,
+      "code": 520934235,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB2RA3LB0RA_3RB2LB1LA0LB",
+      "marker_mask": 6,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "width": 2
+    }
+  ],
+  "scope": "Seven reduced-window contextual-marker state proofs; separate checkpoint10 package.",
+  "selection_report": "research/burn9-context-marker-widths-search.json",
+  "selection_sha256": "04b6c83a356ff9e334eed55a0f7ea362b01d1e8683f16873ff8f7de62f186725",
+  "state_bound": 0
+}

@@ -1,0 +1,136 @@
+{
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 779067114,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB---2LB3LB_2RB1LA3RB0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 2096710934,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB0RA------_2RB3RA0LB1LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 522349910,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB0RA---0LB_3RB2RA1LA0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 2505560968,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB0RA---0RA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 760935016,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB0RA---2RB_3RB2LA3RA0LB",
+      "marker_mask": 6,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 425863503,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB0RA---3RA_3RB2RA0LA0LB",
+      "marker_mask": 2,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 2505600340,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB1RA---2RA_2RB3LB0LB1RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 863891980,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB2RA---1RA_1RB3LB0LB0RA",
+      "marker_mask": 10,
+      "rounds": 128,
+      "weights": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "width": 3
+    }
+  ],
+  "state_bound": 0,
+  "selection_report": "research/burn10-marker-history-reduced-search.json",
+  "selection_sha256": "63677fc6af134e9bb0b78dbe5459079850542fd07168a1d4b9b043532cf5fcf6",
+  "generic_report_sha256": "b1161e50fd3a56f7b469db3293f1ae3004824801c4b0f0540c504b648a6c825b"
+}

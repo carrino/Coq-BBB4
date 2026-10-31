@@ -1,0 +1,15 @@
+{
+  "status": "untrusted_targeted_partial_prefix_measurement",
+  "input_families": 184,
+  "fuel": 100000000,
+  "reached_undefined": 0,
+  "input_sha256": "1a288dea0d6e4d7c76b79889fb0425b33f4981c4c7b970257adf6a1bc99ca046",
+  "output_sha256": "1d04a4bd45d266e659e10d4c6a1aa6bd994d5f060694f3126963d70e502bc9c6",
+  "source_sha256": "0e21d048a00c3a107bf1169ea59c993f3f9046e980a67aae2b99bd0cbf8c872e",
+  "selection": "One-undefined original families whose16 defined children pass untrusted Python versions of existing state recurrence checks; excludes the already reached late marker root.",
+  "search_steps": 18400000000,
+  "measured_seconds": 95.3352,
+  "kernel_checked": 0,
+  "census_linked": 0,
+  "accounting": "Original partial families only. A bounded no-hit result does not imply nonhalting or any global bound."
+}

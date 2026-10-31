@@ -1,0 +1,17 @@
+{
+  "description": "Targets entering separate-table weighted closures; compact references select untrusted certificates, and every target is kernel checked.",
+  "registry_sha256": "816bfd97ced88ce0fca74f08f45372f3dc10c3d6e4df7865bc05e785a07b5114",
+  "baseline_survivor_sha256": "b5f00134e1d1943fa611b8afab04b888a03d7f380b58bd760e4e639761d7e086",
+  "exclusion_inputs_sha256": {"build/weighted-stream/ordinary024_029/exclusions.json": "35a21c21340a3a642edee00b88ded3e82940296f003d60c78c3d21e4df5f73ce"},
+  "selection": {"candidate_cores": 410, "candidate_pairs": 1658, "checker_selected_cores": 6, "context_cache_hits": 22632, "context_cache_limit": 128, "context_cache_misses": 478, "max_boot": 4096, "native_probe": {"child_cpu_seconds": 1.7221069999999998, "extracted_sha256": {"ml": "428f00f47dec1bfd89caa05bafba6b7b9a9e6db12c9b710f834df8f9d765fce1", "mli": "20b1b7c3ad425c3bf10deb0cd2f616224320ecbf114e8ede21766f947be6ed81"}, "kind": "untrusted extracted OCaml with data reader; all successes subsequently replayed in Coq", "parts": 1, "selector_sha256": "c2cf2e320d1aeb3bd7bdaa09661a746ac5ec94bf39b804878ed5e7c5b4a172ab", "wall_seconds": 3.7495886940014316}, "pattern_keys": 8584, "probe_candidates": 6, "selected_cores": 6, "source_masks": 47, "source_templates": 2603, "used_templates": 6},
+  "columns": ["machine", "source_certificate", "permutation", "state_swap", "mirrored", "boot"],
+  "rows": [
+    ["1LB2RB0LB1RB_1RA3LB2LA0RA",720,"132",true,true,4],
+    ["1LB2RA0RA3RB_1RA2LA3LB1LB",855,"123",true,false,8],
+    ["1LB2LB1RB0RA_2RA0LB3LB0LA",1048,"231",true,true,0],
+    ["1LB2RA3RA3LB_3RA2LB1LA1RA",1135,"312",true,true,16],
+    ["1LB2LA3LB3RB_2RA1RB1LA---",1630,"123",false,false,16],
+    ["1LB2RB2LA---_2RA3RA1RB3LA",1630,"213",true,true,8]
+  ],
+  "selection_target_inventory": "build/weighted-v2/full-cohort.txt"
+}

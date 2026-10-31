@@ -1,0 +1,79 @@
+{
+  "canonical_cores": 106,
+  "symbol_images_included": false,
+  "selection": {
+    "candidate_pairs": 923,
+    "candidate_cores": 742,
+    "selected_cores": 527,
+    "used_templates": 98,
+    "max_boot": 4096,
+    "excluded_previously_selected_cores": 421,
+    "checker_selected_cores": 106
+  },
+  "descriptor": {
+    "module": "BBB24WeightedSuffixPilot.WeightedSuffixAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 4096,
+    "proof_source": "build/weighted-suffix/pilot/WeightedSuffixAll.v",
+    "load_paths": [
+      {
+        "path": "build/weighted-suffix/pilot",
+        "namespace": "BBB24WeightedSuffixPilot"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/weighted-suffix-pilot-input.json",
+        "format": "json_columns"
+      }
+    ],
+    "audited_report": "research/weighted-suffix-pilot-summary.json"
+  },
+  "validation": "coqc plus incremental coqchk",
+  "inputs": {
+    "research/weighted-pilot-certificates.jsonl": "3f2a8fd2c03b61df97bf63e2beec40da59d721ca77360ddf36ec4a522683a3be",
+    "research/weighted-suffix-pilot-input.json": "b5a6ed2e3ac6beac4811fa94f0bbd0b64a4655555a3dbec602070c0d5ae45ea8",
+    "tools/check_weighted_suffix.py": "136f0c8c5ab42e629952b53e759c32ae9c7dc1afdb655b29734902d2cf9dcb45",
+    "tools/check_weighted_reuse.py": "dbc331b2a55cee1509166bd4a0013da9c9adc3f02d29ba7be44878ac09c0eeb5",
+    "tools/weighted_reuse_search.py": "2ee6f34ed9f9ebb2df7d001ae81bf2af8cb1b66c875eb3aec053023d3149f23b",
+    "tools/weighted_render.py": "e203d1d2964cece3f053f7cf9b2184931ad5cc3bb525d2f2a52699cc716d166f",
+    "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e",
+    "theories/WeightedSuffix.v": "133c53c81237517bce7f6baf327843fed63217a950ba2017f436023b780d2d93",
+    "theories/WeightedSuffixRegression.v": "624980e962f72c1e3a01766cc9182d6903ad7a6171e765ee9381db4b807dd033"
+  },
+  "audit_receipt": "build/weighted-suffix/pilot/audit.json",
+  "audit_receipt_sha256": "a055bd7e966641b8d21d70548e43f702e48a0e3ff4db00d974de912fecb5e347",
+  "ledger_sha256": "03c6c889dfe0ce938ff38e5676e315c14d9faf9106e49a0e1f9afb27b634ac68",
+  "proof_source_sha256": {
+    "Template0000.v": "cfce8c387db9247149bffc194aa2f884d54a43a447e37e3e2e3e32d8b517d651",
+    "Template0001.v": "a5bce476899ceda73c377df6fa30f29022908af5bcd250c4b36a1c966d78c5f4",
+    "Template0002.v": "ce81647adee2014f6999489fc3b4ff3a83fdf5344d47029b41451df429c67b9c",
+    "Template0003.v": "3d2c0efe7247ffb4d8a8552d295116b8c8000d99da882f71f695a45cab218fdc",
+    "Template0004.v": "1f35645f5ee7046925963451e3f2db3cb8c8ebb4d8f3aa6d4958473eca6cfddf",
+    "Template0005.v": "64b39393b5d64e2f9adf0fc2ac4b735677e4f76895154464cb814f9f0de36375",
+    "Template0006.v": "9cbc4f37d446cac8c50e5bb2351b0d22ca1c42e749a9aabc4250338d71c3462e",
+    "Template0007.v": "2ca6ad487f52b4778eaea88d38eed3d3381fe727338c0a2f70614db56569a33b",
+    "Template0008.v": "13f8429aa61dea9e4ab73892e58c23668547808799261cb892b662150ae17dfb",
+    "Template0009.v": "deb133b7a06e2b11505db747cf350330cb5c914292d8f97abe1df566b575c96b",
+    "Template0010.v": "2b00a2c89501f7a8ccf4b2d9fd97ea679251509794a07a9f480757479bd07608",
+    "Template0011.v": "8fbc24c57b27eb1f2b48bd4e08a47bf82aca3c350438c1515273cff7f1362388",
+    "Template0012.v": "45566fdc7fe638b57d17975becfa2475a6c4537152dee0cdba94656a114b3efd",
+    "Template0013.v": "dd07fcf7628f08dcdb2d315a1c4fbbd8f0531d2605b9dc28dcad5f90580267a1",
+    "Template0014.v": "2c528c458a2ec48f473d673876100392e999c840591fcfdaaf6f8614ef1b8e61",
+    "Template0015.v": "9ba20532b06d3705b862ac757bf787dc12a8549f5a4edd69d904e5c8e6900fb6",
+    "Template0016.v": "4d4c20a5cf3774bdc00fdef1c8c3ff80be370470570748179b6d2db58dbab3c6",
+    "Template0017.v": "9af6b70aee4ac392a03df2341ac0b75f988338c790275cc3908d7cd32ad3e0b0",
+    "Template0018.v": "0936483539617af2811fa82fda45a7ab0133b59590fc6d0db9e34bbecdbe3cfe",
+    "Template0019.v": "d09c27d28371fb4d82ee301b409813349baee8898c45e34fd62dab3d9fa4c279",
+    "Template0020.v": "4b09e09f41bd5512956955f1ab6f5d0f1ca0c72ade1eb5f4251eab23a8af4e33",
+    "Template0021.v": "9f6e61676f709befd0484499e605267c7d9b1d5f0d6203104d87f375a9e904a6",
+    "Template0022.v": "3aea5c86140188399146cbd00fcfcac21889934c873b83a05bdc2d6fb48255af",
+    "WeightedSuffixAll.v": "076981139452a7b5c84798aaeb557ad2972e2c14e400e5b031baaf8f3c4f1e9d"
+  },
+  "note": "Incremental receipts must be included in a final recursive combined audit before publishing an updated census total."
+}

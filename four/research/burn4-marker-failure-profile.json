@@ -1,0 +1,6024 @@
+{
+  "scope": "Untrusted structural failure classification; new entry-marker rows are candidates only.",
+  "input_rows": 667,
+  "failure_counts": {
+    "partial_table": 63,
+    "marker_preservation": 592,
+    "capacity_inequalities": 11,
+    "other_state_uniform_reachability": 1
+  },
+  "entry_marker_candidates": 121,
+  "entry_candidates_touching_history_timeouts": 15,
+  "source_sha256": {
+    "research/burn4-history-input.txt": "68cb79c438fe81efecb8823338dc06d6dd106b3da3beed5432e9b243e2971de8",
+    "research/burn4-history-input-manifest.json": "35d20e97593cebfd8002a4b59007a967d55b22186d162552b18fb60b6204470b",
+    "research/burn3-relaxed-marker-search.json": "e5eac2f52522ed9029929a51c260165ad50748d5b1dddee0fcafd07fc0126c2c",
+    "proof-sources/burn3-relaxed-marker/RelaxedMarker.v": "3680893220c7c35aa404445b63d89e0556a44fdd43343635239d935b946e2c0d",
+    "tools/search_burn3_relaxed_marker.py": "0bb678bdd5f9bfed4788511fda9a1f0d573a0abe5724e7e6f37c3f3f17f5320d"
+  },
+  "rows": [
+    {
+      "machine": "1LB2RA3RB---_1RB3RA2LB0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA2LB2RB_3RB1LA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LA2LA_1RB3RA1RA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RB0RA_1RB3RA0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA2RA_2RB3LB0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB0LA2LB_3RB1LA2RB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA1RA_2RB3RA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA1RB0RA_2RB1RA3LA3RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3LB2LA_2RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB0LB0RB_2RB3RA3LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA0LB_3RB3LA1RA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3LA1RB_0RB3LB0LA1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB0RA1RB_3RB2LA3RA1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA1RB2RA_0RB3RA3LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_2RB3LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RA1RA0RA_2RB1LA3LB2LB",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA3RB_2RB2RA2RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA1LB2LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB1RA2RA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0LB3RA_3RB2LB1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3LA3RB_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA------_2RB3LB0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB0LB2RA_1RB3LB2LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3LB1RA_1RB3LA0LB1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA2LB---_2RB3LA0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3RA2LB_1RB2LA0LB0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB3LB_1RB2RA0LA3RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB2LB1RB_3RB1LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB---1RB_3RB1LA0LB2RB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB1RB2LA_3RB3RA1RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB3RB_1RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LB0RA_2RB3RA1RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA0RA2LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RA0LA2LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA1RB1LA_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA0RA_3RB2RA1LB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA1RB0LA_1RB3RA0RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_3RB2LA2RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA2RA_2RB0LB3LB0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0RB3RA_3RB2LB1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA3RA_3RB2LA0LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA0LB2RB_3RB1LA2RA3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA2RA2RB_3RB1LA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA0RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA1RB0LA_2RB3RA3RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA---2RA_3RB3LA0LB1LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA1RA2LA_2RB3LB0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3LB3RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB1RA2RA_2RB3RA0LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB3RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA3LB_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA0LB3RA_2RB1LA3RB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA1RB2LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0RA1RA_1RB3LB0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3LB1RA_3RB2RA3LA2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA0RA_2RB3RA2LB1LA",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA2RB_3RB1LB3LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RB1RB_2RB1LA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA2RA_2RB1LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB0LA_0RB3RA1RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0LA1RA_3RB3LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA0RA2LB_3RB3LA2RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RA---2RB_3RB2LA3RA0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA1RB3LA_3RB2RA2LA2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB3LB_1RB2RA0LA2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0LB1RA_1RB3LB2LB0RA",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA1RB_3RB2RA2LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA1RA_2RB3LB0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB2RA2LA_3RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA2RB2LB_0RB3LB1LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB2LA2LB_3RB3RA1RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0LA2LB_3RB1LA2RB1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2LB1RB_2RB1LA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0LA0RB_1RB3RA2RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB1RB_1RB3RA0LA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB2LA1RB_3RB3RA0LA3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA2RA_3RB3LA0LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA1RB2RA_3RB2RA0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB0LB_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_2RB3LA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA3RA_2RB3LA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA1LB1RB_3RB3RA0RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB3LA_3RB2RA3RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB3RB_2RB2RA0RA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB1LA1LA_2RB2RA3LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3LB2RB_0RB3LB1LA1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3LA2RA_1RB2RA2LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB0RA_2RB2RA3LA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB1RA_3RB2RA1LB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB2LA0RA_3RB3RA0RB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA1RA_3RB0LB3LA3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA3RB_2RB2RA1LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA3RB_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3RA0LA_2RB2LA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB3LA2RA_2RB3RA3RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---2LB3LB_2RB1LA3RB0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB0LB_1RB3RA3LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RA3RB_1RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RA0RA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA2RB---_1RB3RA0LA2LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1RB2LA_3RB3RA0LA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA1RA3RA_2RB3LA0LB2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB1RB3LB_3RB1LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB1RA_3RB3LA0LB0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1LA---2LB_3RB1RA0LB2RB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RA1LB_2RB3LB0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA0LA1RB_3RB3RA2RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RB2RB_3RB1LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA0LA_2RB3RA0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA0LA_2RB3RA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RA1RB2LA_2RB3LA0LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1LA0LB1RB_2RB2LA3RA0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0RB3LA_3RB2RA3LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RB2RB_2RB1LA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA1RA2LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB1LA0RB_3RB3RA2RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA1RB_2RB3RA0LB0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA3RA_2RB3LA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LB1LA1RA_3RB2LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA1LA_2RB3RA0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA2LA_0RB3LB3RB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB0LA2LB_3RB1LA2RB1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA0RB_2RB2RA3LA1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA2LB---_2RB3RA0LB1LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA3RA_2RB3LA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA1RA_3RB2LA3RB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA0RB_2RB2RA3LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA3RB_1RB2RA0LA3RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3LB1RA_3RB3LA0LB1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA3LB_1RB2RA0LA0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA1RB2RA_2RB3LA0RB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB1RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2LA3RB_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB1RB2LA_3RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA0RB_1RB3RA0RA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RB3LA_3RB2RA0LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3RB1RA_3RB3LA0RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LB3RA_3RB1LA2RA2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RB2LA_1RB3RA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA0RA_3RB1RA0LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3RA1RA_2RA3LB---0LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0RA1RA_3RB3LA2LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB0LA2LA_1RB3RA3RB2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0LB3LB_3RB2LA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA1LA2LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0LB2LA_2RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB1LA1LA_2RB3RA0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA3LB_2RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0RA---_3RA---1LB2LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB2LB_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RB1LA_2RB3RA2LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA1LB_2RB3RA0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB0RA0RB_2RB2LB3LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LB2LB_2RB1LA3RB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LB2RA_2RB1LA3RB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA1LB_2RB3RA0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LB1RA_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA3LA2RB_1RB2LB3RA0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0LA2LA_1RB3RA2RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3RB0LB_1RB2LA3RA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA2RB_1RB3RA3RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1RB1LB_3RB2RA0LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB1LA1LB_2RB3RA0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA3RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB3RA2LA_2RB1RA0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA1RA_2RB3LA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2LB0LA_2RB3LB1RB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB0LA1RB_3RB2RA2LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3RB2LA_1RB3RA0LA3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA0RB_0RB1RA3LA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB2LA_0RB2RA3RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA3LB2RA_2RB0LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA3LA2RB_3RB2RA2LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA0RA_2RB3RA2LB3LA",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB2RA_1RB3RA0LA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0LB1RA_3RB2LB1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---2LA3RB_2RB3RA3LA0LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA0LA_2RB3RA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB0RB0LA_1RB3RA0RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA1RB_2RB3RA1RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0LA2LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1LA3RB_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RB0LB_1RB3RA1RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB1LA_1RB3RA3LA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA0LB2RB_3RB2LA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_3RB3LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RB0LA3LB_1RB3RA2LA1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA3LB_1RB2RA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3LB2RA_3RB3LA0LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB2LA0RB_1RB3RA1RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB1LA2RA_0RB3RA3LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA1LB_2RB3RA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB3RA---_3RB2LB1RA0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB3LA2RA_2RB3RA2LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB1RA3RB_3RB2RA0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB2RA2LA_3RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB3LA2LB_3RB3RA1RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA3RA2RA_2RB1LA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB0RB0LA_1RB3RA3RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA---1LA_2RB3LB0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB3LA_3RB2RA0LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RA2RB_2RB3LB0LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA3RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LA2RA_1RB3LB2LA0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1RB3LA_3RB2RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0RB3LB_3RB2RA3RA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA1RB_0RB3LB1LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB0LA_2RB3RA1RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB1RA2LA_3RB2RA0LA---",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB------2LB_3RB1LA0LB2RB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA2RA3RA_2RB1LA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3RB2RB_1RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_0RB2RA3LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1LA2RA3RB_2RB3RA0LB0LA",
+      "reason": "other_state_uniform_reachability",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB1RB2LA_3RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA3LA2RB_0RB2RA3LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RA1LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RB3LA2RA_2RB3RA0RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---2LA3RB_2RB3RA0LA2LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1LA0RB1RB_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA---1RA_1RB3LB0LB0RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA---3RA_3RB2RA0LA0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB2RB_1RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB0LA2RA_3RB3RA0LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA2RA2LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3LA2RA_3RB3LA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA---2RA_2RB3LB0LB3RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA2RA_3RB3LA0LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RA0LB---_2RB3LA0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB1LA_0RB1RA0RA3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA2RA_3RB1RA1LB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RA0LB0LB_2RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3LB1RA_1RB3LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB2LA0LB_3RB1LA0LA3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA2RA3RA_2RB3LA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3LA3RB_1RB3RA2RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA---0RA_2RB3LB0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB2RA_3RB3LA0RA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB1RB3LA_3RB2RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA0LA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB2RA3RA_2RB3LA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA3RA_2RB3LA0LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA2RA_3RB2LA0LB0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RB1RA3LA_2RB3LB0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA0RA_1RB3RA0RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA1RA_2RB3LA0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA------_2RB3RA0LB1LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA---_2RB3RA0LB1LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB2LA0LA_3RB3RA1RB2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA0LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA3LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3RA2RA_1RB2LA0LB0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RB0LA2RA_1RB3LB2LA0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0LB2LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LB1RB_3RB1LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB2LA_1RB3RA0LA1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1LA2LB_2RB3RA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA1RB2LA_1RB3RA0RB3LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA1LB_2RB3RA0LB0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB---2RB2LA_3RB2RA3LA0LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LA3RA_3RB2RA1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA1RA_2RB3LB0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RA3RA2RA_2RB2LA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RA---0LB_3RB2RA1LA0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_2RB2LA1RB3LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB2RA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LB0RB_3RB3RA2RA0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB3RB_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RB3LB_2RB1LA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0LA1RA_3RB3LA0LB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RB3LA2RA_2RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB1RB_2RB3RA0LA3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_3RB2LA1RA3LB",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LB2RB_0RB3LB3LA1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA2RB2RA_3RB3LB1LA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1RB2LA_3RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LB2RA_3RB3LA0LA1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---0RA1RA_3RB0LB3LA2LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1LA0LA_0RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3LB0RA_3RB2LB1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0LB2LB_2RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA1LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1LB1RA2RA_3RB2LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3RA2RA_1RB2RA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LB3LA2RB_2RB2RA0LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA---0LB_3RB2RA0LA1LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3LB1RA_3RB2LB1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB1RB_3RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB0RB3LA_1RB3LB0LA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1LA3RB2RB_2RB3LA0LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA0LB_1RB1RA1RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA0LB_1RB2RA3LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1LB2RA_3RB1RA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RA---0RB_2RB3LB0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB1RB2RB_3RB1LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA1RA_3RB2RA1LB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RB0LA2LA_1RB2RA3LA3RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB3LA2RA_2RB3RA2RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LA3LB_3RB2LB1RA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA0LB2RB_3RB3LA0RA1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA0LB2RA_3RB3LA0LA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3RB2LB_2RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA3RA_2RB3LA0LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB3LA_1RB3LB0LA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA3LB_1RB2RA0LA3RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA3LA2RB_1RB2RA1LB0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA3RB_1RB2RA0LA3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_3RB3LA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3RA1RB_0RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA2LA_2RB3LB3RB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA0LA_2RB3RA0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA0RA0LA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RB0LA0LB_3RB1LA2RA3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB3RA_3RB1LA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB1RB3LB_3RB1LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LA3LB_3RB1LA1RB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA2RA_3RB3LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1LA2RB2RA_3RB0LA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA1RB3LB_3RB2LA1RA0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_2RB2RA3LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB3RA2RA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---2RB2LA_3RB3RA3LA0LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB3LB2RB_3RB1LA1RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA3RB_2RB2RA0LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB0LA_0RB3RA3LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3RB3LA_1RB2RA2LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA0LA_2RB3LB0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB3RB2LA_1RB3RA0RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA1LB2LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA1RB3RA_3RB2RA0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0LB0RA_2RB3RA3LA3LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0LB1RA_2RB2RA3LB0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA3RB_1RB2RA0LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA3RB_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0RA0LB_1RB2LA3RA3LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3LA2RA_2RB3RA1RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LA2LB_3RB1LA2RB1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3RA---_3RA---0LB2LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0LB0RA_2RB2LA3RA1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB2RA_1RB3LB0LA1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB0LB1LB_2RB3RA1LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB3RB_1RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB1RA_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA1LB_2RB3LB0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA1RA2RA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RA0LB2RB_3RB3LA1RA1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB2LB0LA_2RB1LA3RB1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA3LB_2RB3LA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RB1RB2LA_3RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB2RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB1LB_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RB3LA_3RB2RA3RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB2RB_1RB2RA0LA---",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA3LB2RB_3RB1LA3LB1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA2RA3RA_2RB1RA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA2RA1RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB0LB0RB_2RB1LB3LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA1RB2LB_0RB3LB0LA1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA3RB_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3LA1RB_3RB2RA2LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA2RA_3RB3LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB2LB0LA_2RB3LA0RB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB0RA_1RB3LB0LA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LA2LA_1RB3LB2LA0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1LB0RB_2RB3LB1RB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB3RB_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB0RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA0RA_3RB2LB2RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RA3RA---_2RB2LA0LB2RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0LB---_1RB3RA2RB2LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA2LB3RA_3RB1LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LA0LB_3RB1LA3RA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_3RB2LA1RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA1RB1RA_3RB3LA0LB3LB",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB3RA_3RB2RA0LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA2LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB3LA_1RB3RA3RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LA2LA_1RB3RA3RB2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA3RA_3RB3LA2RB2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA1LA1RB_2RB3RA3LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB0LA3RB_1RB3LA2RB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB---0RB_2RB3LB1RB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_3RB2LA0RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA0RA_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA2RB2LA_3RB2RA3LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0RA0LB_3RB2RA3LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB2RA_3RB2RA1LB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA1RA_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3LA2RB_0RB3RA0LA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA0RA_3RB1LA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RA0LB2RA_3RB3LA1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA---0LB_1RB2RA3LB1LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA2RA_2RB3RA2LB1LA",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA2RB1LA_0RB2LB3LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RB1RB_2RB1LA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA3RB_1RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB2RA_3RB0LA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB2LB1RB_2RB1LA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA1RA_2RB3LB0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA0LB2RA_3RB3LA1RB0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA2LB3RA_2RB1LA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA3RA_3RB2RA0LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA2LA2LB_3RB3RA1RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA2RA2LA_2RB3LB0LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA2RB2LA_1RB3RA0LA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA1RA_2RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB1LA_0RB1RA0RA1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB1RA_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1RA1RB_2RB3LB0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA3RB_1RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA2RB2LA_3RB1RA0LA---",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA---_2RB3RA0LB1LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3LB2LA_0RB2RA1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB1RA2LA_3RB3RA0LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0LA3RA_3RB2LB1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RB1LA2RA_3RB3LA0LA0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0RA3RA_2RB3LA0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3RB0LA_1RB3RA2RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA1RB_3RB2LB0LA1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA0RA_2RB1RA3LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RA0RA1RA_3RB3LA2LB2LB",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB2RB2LA_3RB3RA1RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA2RA2LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB2RA3RA_3RB1RA0LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RB3LA2RA_2RB3RA1RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA0RA_3RB1RA2LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3LA1RB_2RB3RA3RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB0LA0RA_3RB3RA1RB2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB1RA2LA_3RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA2RA2RA_3RB2LA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB3RA1RA_3RB3LA0RB2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RA3RB_0RB3LB1RA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB0LA0RB_1RB2LA3RA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB3LB_1RB2RA0LA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB2LA_2RB2LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA0RA_3RB1RA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA1RB3RB_1RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3LA2RA_3RB3RA1RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB1LA3RB_3RB3RA1RB2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA---0LB_3RB3LA1LA2RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA2LB_3RB3RA1RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1RB2LB_2RB3RA1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RA3RB_1RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA0RA_3RB1RA0LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RA---0LB_2RB3LB0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA3RA2RA_2RB3LB0LB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB0RA1RA_2RB0LB3LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA1LA2LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB---0LA2LB_3RB1LA2RB3RB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0LB1RA_1RB3LA2LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0LB2LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA3LB_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3LA0RA_2RB3RA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA1RB3LA_2RB3RA2LA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0LA1RA_3RB2LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB0LA1RB_0RB3RA2RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0LB0RB_2RB2RA3LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA3RB_1RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA0LA0LB_3RB2RA2LB1LB",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3RA3LB_1RB2LA0LB0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LA1LA_1RB3LB2LA0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA2LB_1RB3RA3RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA1LA1RB_2RB2LB3LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA0LB2RB_3RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0RB3LB_3RB1LB3RA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1RB3LA_3RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA1RA_2RB3LA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3RA2LB_2RB2LA0LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA1RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RA0LA0RA_3RB2LB2RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3LA1RB_2RB3RA0RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---0LA2LB_3RB1LA2RB0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA3RA_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RB0LB2LA_1RB3RA3RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0RA2RA_2RB0LB3LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA2LB_3RB1LA2RB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA---_3RB2LB1RA0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA3LB_2RB3RA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB3LA3RA_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RA1LB2RB_3RB3LA3LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0LB2RB_1RB2RA3LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RB0LB_1RB3RA0RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA3RB_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3LA0RA_3RB2LB1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB---1LB2RA_3RB2LA0LB2RB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA3RB_2RB2RA3RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA0RA_3RB1RA1LB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA0RB2LA_2RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB2RA2LA_2RB2RA3LB1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA1RB_0RB3RA2RA1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA3RA_3RB2RA0LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RA3LB1RA_1RB3LA0LB3LB",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA2RA2LB_2RB3LB0LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RA2RA3RA_2RB3LA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA0LB1RB_3RB3RA0RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA---2RA_2RB0LB3LB0RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---2RB2LA_3RB3RA0LA2LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_3RB2RA3LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA0RB1RA_3RB3LA1RA0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA0LA_2RB3LB3RB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA0RA_2RB3LB0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RA3RA3LB_2RB2LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RB1RB2LA_3RB2RA0LA---",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA3RA2RB_2RB2LA0LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RB1LA_2RB3RA0LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3RB0LB_2RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0RA2LA_1RB3RA3LA1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LA2RA_1RB3LB2LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA1RA2LA_2RB0LB3LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB0RA_2RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA2RA2LA_2RB3LB0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB3LA3RA_3RB1RA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0RB3LA2RA_2RB3RA2RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA3LA2RB_1RB2RA2LB0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA3RB_1RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA---_2RB3RA0LB0LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA---2RA_2RB3LB0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA1RA_3RB3LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB0LA1RA_3RB3LA3LB0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB3LA2RA_2RB3RA2LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---3LA2LB_3RB1LA2RB0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1LA1RA_3RB3LA3LB0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LB2RB_3RB1LA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB1LA2LA_1RB2RA3LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3RA2RB_1RB2LA0LB0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1LA_2RB2LA3RB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---2LB2RB_2RB1LA3RB0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA0LB_2RB1LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3LA0LB_1RB3RA3RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB3LA2RA_2RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB3LA_1RB2RA0LA3RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA1RA_1RB3LB0LB0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB---1RB_3RB1LA0LB2RB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB1RA2LA_3RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA3RA_3RB1RA1LB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RB2LA0LA_1RB3RA3RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA1RB2LB_2RB3LB1RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB3LA_3RB2RA0LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA2RA_2RB3LA0LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_3RB3LA2RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB1RB1RA_1RB3LA3RA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA2LB_3RB1LA0RB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LB2RA_2RB1LA3RB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1LA0RB2RB_3RB2LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA2RA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RB1LA3RA_1RB3LA2LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2LA3RB_1RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1LA1RA_3RB2LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA2RB_3RB3RA1RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA1LB_2RB3RA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA2RA3LB_2RB3LB0LB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2RB0LA1RB_2RB3RA1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---2RB2LA_3RB3RA0LA2LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3RB1LA_2RB2LA3LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA3LB_2RB3RA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3RB2RB_1RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB0LA_2RB2RA3LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB0LA_1RB2RA3LA3RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1LA0LA_2RB3RA3LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA1LB_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA1RB3RA_1RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA3RA_2RB3RA0LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA2RB---_1RB3RA3LA0LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1LB1LA_3RB2RA3LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA2RA_2RB1RA1RB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0LB1RB_3RB3LA1LA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA---_2RB3LB0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA2RA2RA_3RB1LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RA0LB2RB_3RB2LA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3LA0LA_1RB2RA2LA3RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB---2LB3LB_2RB1LA3RB0LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA1RB_3RB2RA2LB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0RA1RB_1RB3RA3LA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1RB2LA_3RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA---_3RB2RA1LB0LB",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_3RB2LA3RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0RA1RA_3RB0LB1LA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA3RA_3RB1LA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA1RB3LB_3RB1LA0LB2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB1LA_2RB3RA3LA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0RA2LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RA1RA2LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB2RB_3RB3RA0LA3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1RB2LA_3RB3RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA2RA_3RB3LB0LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RA---0LA_2RB3LB0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA2LA_3RB2RA0LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1LA0RB2RB_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RA3RB_1RB3RA0LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA1RB_2RB3RA3RB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RA2LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA2RA_3RB3LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB1RB0LB_2RB1LA3RB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0LA1RB_3RB1LA3LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA1RB_2RB3RA3LB0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1LA_2RB1LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA2LA_2RB1RA1RB3LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA2LA2RB_3RB3RA1RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA3RA_1RB3LA0RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB3RA0RA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB1LA2RB_3RB2RA3LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0RB2LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB0LA_0RB2RA3LA3RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB1RA0LB_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LB2RB_3RB1LA2RA2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA2RB_1RB3RA0RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0RB0LA_2RB3LA0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3LA2RB_0RB3LB0LA1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB1RA_0RB2LB3LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LB2RA_3RB3LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RA2LB_3RB1LA0RB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA0RA_3RB2RA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB1RB1RB3LA_3RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA---0RA_2RB3LB0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA0RB_1RB3RA3LB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LA3RB_1RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA---_2RB2LA0LB2RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1LA0LB2RA_3RB0LA3RA2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LB1RB2RB_3RB3LA3LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA2RB_1RB3RA0RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA0LA3RA_3RB2LB1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB3LB3RA_3RB2LB1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0RB3LB_3RB3LB3RA2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RB3LA_1RB2RA0LA2RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3LA1RB_2RB3RA0RA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0LB1RA_2RB2RA3LB1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA1RA_3RB2LA2RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3RA1RA_2RB3LA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB3LB3RA_3RB2RA1LB0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LB2RB_0RB3RA1RA3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0RA0LB2RA_1RB3LB2LB1LA",
+      "reason": "capacity_inequalities",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB3RB2RA_3RB3LA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA0LB_3RB2RA3LA1RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB0RA1RA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA1RB2LA_2RB2RA3LA3RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB0LA2RA_3RB3LA0LB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA1RB1LA_1RB3RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB1RB_1RB3RA0LA1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3RA0RB_2RB1RA0LB1LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA2RA_2RB3RA0RB1LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA---2RA_2RB3LB0LB1RA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA0LB0RB_2RB3LA1RB2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA3RA3RB_1RB2RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB0RA3LA_3RB2RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA1LB1RB_3RB3RA2RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB3LA3RA_3RB1RA0LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB0LB3RA_1RB3RA3RB2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LB2RA1RA_3RB3LA3RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LA3LA1RB_2RB3RA0LB0RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB1RA3LA_3RB2RA3LA0LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RB1RA3LA_3RB2RA0LA2LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB2LA_1RB3RA0LA3LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RA3RA0RB_1RB2LA0LB0RB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "timeout",
+        "timeout"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LB2RB_3RB1LA3RA2RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB0LA0LB0LB_2RB1LA3RB3RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2RB1RB1LB_2RB3RA1LA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA0LA3RA_3RB2LB2RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB0RA1RA_3RB3LA1RA0LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB0LA1RB2LA_3RB3RA2RB3LA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB1RA2RA2LA_2RB3LB0LB1RA",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": true
+    },
+    {
+      "machine": "1LB2LB2LA0LA_3RB3RA1RB2LB",
+      "reason": "marker_preservation",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    },
+    {
+      "machine": "1LB2LA2RB---_1RB2RA3LA0LA",
+      "reason": "partial_table",
+      "history_statuses": [
+        "rejected",
+        "rejected"
+      ],
+      "entry_marker_candidate": false
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "metadata_revision": 1,
+  "normalizer_parent_sha256": "4b43d3e48f8ea0fd874c2d357c7741dc0650213944537d03e16f682c5ebf57cf",
+  "rows": [
+    {
+      "code": 2625202922,
+      "machine": "1LB0RA0LB2RB_3RB3LA1RA1RA"
+    }
+  ],
+  "selection_report": "research/burn42-s016-native.json",
+  "selection_sha256": "8942863bd4bc0d11257605efda99ee80277b44d06cad64a57240964ac1d24baa",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn42-s016/Normalizer.v": "4b43d3e48f8ea0fd874c2d357c7741dc0650213944537d03e16f682c5ebf57cf",
+    "proof-sources/burn42-s016/Regression.v": "efc305ebea76b82caa8fdc1c7a460958686c3fa0caf6585ed108af597fead98b",
+    "proof-sources/burn42-s016/S016.v": "3344f9153a91d12541a5a5718421d1e4fc4c65d5754edfedbdaaa40edd701c1e"
+  }
+}

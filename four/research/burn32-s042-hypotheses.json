@@ -1,0 +1,14 @@
+{
+  "checker": "Affine expressions c+a*x+b*y over natural valuations; unknown zero and parity tests reject. Soundness proved against exact csteps, with arbitrary outer scan contexts.",
+  "entry": "Exactly 12565 primitive steps from c0 give n=42.",
+  "family": "A0 with empty right and nearest-first left 20\u00b73^13\u00b720\u00b73^3\u00b70\u00b73^(2n+3)\u00b70\u00b73^9\u00b70, n any natural.",
+  "initial_observation": "Existing saved cuts 25,34,43 had identical shape with variable a=87,309,975; selected return a -> 3a+48 before writing Coq programs.",
+  "loop1": "F(k+1,m) -> F(k,m+1) in 38 run-block actions; initial k=n+6,m=0.",
+  "loop2": "G(k+1,m) -> G(k,m+1) in 36 run-block actions; initial k=n+6,m=0.",
+  "machine": "1LB2LA3RB2LA_0RB2RA3RA0LA",
+  "negative": "Synthetic A0,left203330,rightempty enters permanent B after43; it is excluded by the selected fixed family.",
+  "new_instruction": 0,
+  "scope": "S042 affine run-block return hypothesis communicated to root before formalization; finite observations alone carry zero proof credit.",
+  "state_bound": 0,
+  "universal_return": "A positive finite return sends n -> 3n+27. Five finite symbolic scan checks are composed with two universally quantified counter-loop inductions."
+}

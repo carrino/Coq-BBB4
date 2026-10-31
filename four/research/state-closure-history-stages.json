@@ -1,0 +1,8 @@
+[
+  {"mode":"hist","size":2,"anchor":128,"fuel":2048,"extra":8,"history":3},
+  {"mode":"hist","size":2,"anchor":128,"fuel":4096,"extra":8,"history":4},
+  {"mode":"hist","size":3,"anchor":512,"fuel":4096,"extra":8,"history":3},
+  {"mode":"hist","size":2,"anchor":4096,"fuel":4096,"extra":16,"history":2},
+  {"mode":"hist","size":2,"anchor":4096,"fuel":8192,"extra":16,"history":3},
+  {"mode":"hist","size":2,"anchor":4096,"fuel":8192,"extra":16,"history":4}
+]

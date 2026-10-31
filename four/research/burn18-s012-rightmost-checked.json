@@ -1,0 +1,114 @@
+{
+  "audit_seconds": 40.892,
+  "checked_instruction_families": 0,
+  "checked_modules": 265,
+  "checked_state_families": 1,
+  "compile_seconds": {
+    "Board": 1.321,
+    "Example00": 1.118,
+    "Inventory": 1.119,
+    "Regression": 0.365,
+    "RightmostOne": 0.967
+  },
+  "descriptor": {
+    "board": "board",
+    "exact_inventory_theorem": "BBB24Burn18S012Rightmost.Inventory.inventory_exact",
+    "id": "burn18_s012_rightmost",
+    "instruction_bound": null,
+    "inventories": [
+      {
+        "format": "rows",
+        "path": "research/burn18-s012-rightmost-machines.json"
+      }
+    ],
+    "load_paths": [
+      {
+        "namespace": "BBB24Burn18S012Rightmost",
+        "path": "build/burn18-s012-rightmost/proof"
+      }
+    ],
+    "module": "BBB24Burn18S012Rightmost.Inventory",
+    "proof_source": "build/burn18-s012-rightmost/proof/Inventory.v",
+    "rows": 1,
+    "scope": "state",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "state_bound": 0,
+    "was_pending": "was_pending"
+  },
+  "inputs_sha256": {
+    "research/burn18-s012-rightmost-native.json": "5920ead1867b932b1ea5b72b1a79d47a2d8a26e9f724d37f87e7f0834545722e",
+    "research/burn18-s012-rightmost-proof-input.json": "fca28e9c6dad809bccb3ce4b32344f258c7e6a6f3bcf43c366a8577b8efc203c"
+  },
+  "inventory_sha256": "b3d8d66956257d3cf40596d1b0baa1f6ce33eec4327db980766cb1f7a3d3c37f",
+  "kernel_audit": "Full recursive coqchk including regressions.",
+  "kernel_receipt": "build/burn18-s012-rightmost/proof/kernel-audit.json",
+  "kernel_receipt_sha256": "152d355cb031d5e1fa5152d9cbb001568a238fe69a2c4068b3fc802bb0d075b9",
+  "object_sha256": {
+    "build/burn18-s012-rightmost/proof/Board.vo": "501272f7d13711a21bdd28be55d60055862309e7cd3286eb0a5ea931a9b6dd4f",
+    "build/burn18-s012-rightmost/proof/Example00.vo": "bc203eb63526bd2235cf3bf4f3733de3b485d06af0629cc3b255f86b39575d6a",
+    "build/burn18-s012-rightmost/proof/Inventory.vo": "71b4779eb02d55d7f2f5e99f36a1a804a52537eab3a0c2c0ef5d9eccc9a7f04e",
+    "build/burn18-s012-rightmost/proof/Regression.vo": "65b03518b86f8f88f05b50b14b117e15ab5e19cf3018fc29391f542ad25b1b77",
+    "build/burn18-s012-rightmost/proof/RightmostOne.vo": "7f3ecac78c847952da21f57017684fa0df2d8035a79ea063fe440b0b00a1a109"
+  },
+  "reused_modules": 0,
+  "scope": "Exact complete S012 rightmost-marker machine state-zero family, every completion; no instruction claim.",
+  "source_sha256": {
+    "build/burn18-s012-rightmost/proof/Board.v": "07d989d576e43f1b7d89e0b5614d535aed12c1df74f3d1bfd74bb0c9aecb28c5",
+    "build/burn18-s012-rightmost/proof/Example00.v": "62d270d84e1678ddcc2f17ae110904b9e2ff2c3d8eabac4a06993dcb08102d5c",
+    "build/burn18-s012-rightmost/proof/Inventory.v": "6ea7c8e9985b8ed36b988773883d4f46f441dd8a57ff3b080aa4a588bebc2208",
+    "build/burn18-s012-rightmost/proof/Regression.v": "726cb1260c19fd14638cab3efa1c499fcfd38dd3c3491ed9018ef00e3de051c9",
+    "build/burn18-s012-rightmost/proof/RightmostOne.v": "1f6a3ad21a3741ad547ef0e673756dbd92e692291a63d5cd99015faedb1c75d5",
+    "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+    "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+    "theories/BoardManifest.v": "ee34d205828c4980781b16c9f8460209326d5d0f342423bd1b714bcfa6dd82c3",
+    "theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "theories/CensusUnion.v": "d4e178b18b2c8db7538161d74833c1998c0ed3bea8f27ef58b76741049026fab",
+    "theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+    "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+    "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+    "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+    "theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+    "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+    "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+    "theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+    "theories/DualCloseout.v": "927e47c77c537ff99ea06a044df5b74b20d86da291d9e21c96a311addd1978c2",
+    "theories/FamilyTransport.v": "08a9435900fb92864e3741ad9db2c90fecd386cb727cb1b6da2aa42fa1b67a8d",
+    "theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+    "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+    "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+    "theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+    "theories/OneStateReach.v": "412e37f661f7583e2685b910d077c2c1eb734840e2264db10f1700616f5d037b",
+    "theories/OrbitCloseout.v": "f7005d5ca6ce0d3e64acdda425704eb31226192fc6bf2ae3eff71eb4be230556",
+    "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+    "theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+    "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+    "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+    "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+    "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+    "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+    "theories/Shadow.v": "6c68cae389ad7b9198dba2bd2d30dc8403bfe6f51c439570dfa4610dd863e160",
+    "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "theories/StateOnlyCloseout.v": "afb65dbfc17f3eaa495a5648e6cf024137ec360d4d573b38a563e685c0dce5d2",
+    "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+    "theories/Symmetry.v": "ff83de1ebfb0f8e210728e383ca1a413ddb99e19879e6caf95fb9822ced127e6",
+    "theories/TotalCompletion.v": "45fe012cff63886641e3b4a091ca9f2d80c071075d6f2b4cfc68f94137e8bbad",
+    "tools/check_burn18_s012_rightmost.py": "87afefebca3295610d8dc2851929e964bb0bc79004fa46026b0776539d5d0385",
+    "tools/check_burn9_context_marker.py": "f4338a5701b14ec033b6b151cf413c2bcac76cdcfd02bf714ce2b180fc978612",
+    "tools/check_campaign.py": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+    "tools/check_shadow_links.py": "342b0c36d050f727ad5478af1b68f67d9c3827de984835b0bf6e60b5b657c9ca",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "tools/kernel_audit_cache_v3.py": "0323d125e53534efe41ce5c675ec3189537b6568cbf10fe057e32810835e9e0f"
+  },
+  "template_sha256": {
+    "proof-sources/burn18-s012-rightmost/Regression.v": "726cb1260c19fd14638cab3efa1c499fcfd38dd3c3491ed9018ef00e3de051c9",
+    "proof-sources/burn18-s012-rightmost/RightmostOne.v": "1f6a3ad21a3741ad547ef0e673756dbd92e692291a63d5cd99015faedb1c75d5"
+  }
+}

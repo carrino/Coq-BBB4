@@ -1,0 +1,151 @@
+{
+  "candidate_rows": 14,
+  "candidate_tsv_sha256": "03b2f7498b686dc6966ef78a40731ce7a07320919a716a98097096c275f5868c",
+  "instruction_kernel_checked_rows": 0,
+  "manifest": {
+    "extraction_sha256": "fb016052caee0b39695ab60f4daba0be5f3499e6afd3c484bdbfa98c47ecff1f",
+    "input_manifest_sha256": "eafecd26f52459f0e14b5981b27dc3b7771cd27ba8544984b709b686d5b7f74d",
+    "input_rows": 139,
+    "input_sha256": "af6bef0633091bb0975ddd5e6fcff854e61f292d2e9b19bf01cc1b061a5f509d",
+    "instruction_bound": null,
+    "probe_sha256": "246a2cbd9105b6142923319574c84f880cd13944475984974bfe11ef91542d79",
+    "scope": "state only",
+    "selected_rows": 139,
+    "selected_sha256": "af6bef0633091bb0975ddd5e6fcff854e61f292d2e9b19bf01cc1b061a5f509d",
+    "selection": "all rows ordered by SHA256(machine UTF-8)",
+    "source_sha256": {
+      "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+      "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+      "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+      "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+      "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+      "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+      "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+      "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+      "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+      "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+      "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+      "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+      "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+      "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+      "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+      "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+      "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+      "theories/StateBounds.v": "2892c4dc4dea327dcef826fd35912e3df6ff60436dc1d520811e9729a456d224",
+      "theories/StateRepWL.v": "2c624ce0c2215f8b5bbd5be4c14936008cb044eb0bdfb2042f92c3fd84dc10b8",
+      "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+      "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+      "tools/ExtractStateRepWL.v": "257c6f6b05da1a6c9fc6a7c5beff48c33bbe93a95858ed123a6d239a3041bd18",
+      "tools/check_shadow_links.py": "342b0c36d050f727ad5478af1b68f67d9c3827de984835b0bf6e60b5b657c9ca",
+      "tools/pipeline_sweep.py": "16de1d015366a4a2ca10adfe0751abd5351cb67df1f8f28dc602926663493f0d",
+      "tools/state_repwl_probe.ml": "b4cf90b02b54a1ebe2ab8cd777d2fd8479bf3b051df4d44e3d1a745ad6886742",
+      "tools/state_repwl_sweep.py": "7169dbeac5d659541a097a3645e29285892d8a1c5e64a08a3b07de531c20e387"
+    },
+    "stages": [
+      {
+        "anchor": 128,
+        "extra": 2,
+        "fuel": 256,
+        "history": 0,
+        "mode": "rw",
+        "size": 1
+      },
+      {
+        "anchor": 128,
+        "extra": 2,
+        "fuel": 256,
+        "history": 0,
+        "mode": "rw",
+        "size": 2
+      },
+      {
+        "anchor": 4096,
+        "extra": 2,
+        "fuel": 512,
+        "history": 0,
+        "mode": "rw",
+        "size": 1
+      },
+      {
+        "anchor": 4096,
+        "extra": 2,
+        "fuel": 512,
+        "history": 0,
+        "mode": "rw",
+        "size": 2
+      }
+    ],
+    "state_bound": 4096,
+    "timeout_seconds_per_stage_row": 0.5
+  },
+  "not_accepted_rows": 125,
+  "not_accepted_sha256": "4c165774b2eba40cd2a60ed61b325f79201a4ffd644a9e56c78a3d9b177b77fb",
+  "results": [
+    {
+      "anchor": 128,
+      "extra": 2,
+      "fuel": 256,
+      "history": 0,
+      "mode": "rw",
+      "results_sha256": "d4fdcd97cb93e49187e48f197856e3e297ee55914f97a57465b9bdedefaedf27",
+      "rows": 139,
+      "size": 1,
+      "stage": 0,
+      "statuses": {
+        "candidate": 5,
+        "rejected": 134
+      },
+      "sum_row_seconds": 3.278854
+    },
+    {
+      "anchor": 128,
+      "extra": 2,
+      "fuel": 256,
+      "history": 0,
+      "mode": "rw",
+      "results_sha256": "3ef32f901640962a57f8554c4c5fa9e821deb90cfbce28d99c1ed9a5b9836f28",
+      "rows": 134,
+      "size": 2,
+      "stage": 1,
+      "statuses": {
+        "rejected": 134
+      },
+      "sum_row_seconds": 0.799573
+    },
+    {
+      "anchor": 4096,
+      "extra": 2,
+      "fuel": 512,
+      "history": 0,
+      "mode": "rw",
+      "results_sha256": "c182d123d0041295295a96092e04a7ae9909bb5c503b1044bada2e9dbca34b33",
+      "rows": 134,
+      "size": 1,
+      "stage": 2,
+      "statuses": {
+        "candidate": 3,
+        "rejected": 124,
+        "timeout": 7
+      },
+      "sum_row_seconds": 18.468422
+    },
+    {
+      "anchor": 4096,
+      "extra": 2,
+      "fuel": 512,
+      "history": 0,
+      "mode": "rw",
+      "results_sha256": "778d9b0c2b275d7124b9e9d6eae5d56d6578e3f26d4367f87a6553833bfaf4a3",
+      "rows": 131,
+      "size": 2,
+      "stage": 3,
+      "statuses": {
+        "candidate": 6,
+        "rejected": 125
+      },
+      "sum_row_seconds": 6.689206
+    }
+  ],
+  "scope": "Untrusted state-only search; no kernel replay or instruction-bound claims.",
+  "state_kernel_checked_rows": 0
+}

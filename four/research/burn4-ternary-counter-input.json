@@ -1,0 +1,44 @@
+{
+  "bundle": {
+    "bytes": 793,
+    "path": "research/burn4-ternary-counter-certificates.json",
+    "rows": 1,
+    "sha256": "d12319e5b7f6f06f94d765e6810e139731fff4b5bada2c0f54b948decb7bbfec"
+  },
+  "counter_entry_step": 11,
+  "format": "BBB24 concrete ternary counter plus five-target weighted recurrence v1",
+  "instruction_bound": 4,
+  "last_firing_configuration_step": 3,
+  "last_firing_instruction": [
+    1,
+    3
+  ],
+  "machine": "1LB2LB3LB2RA_3RA1RA1LB1RB",
+  "quiet_from": 4,
+  "quiet_instructions": [
+    [
+      1,
+      0
+    ],
+    [
+      1,
+      3
+    ]
+  ],
+  "return_gap": "3^(n+2)-2",
+  "selected_rows": 1,
+  "selection_provenance": {
+    "scope": "Historical discovery provenance only; replay uses the compact bundle and theorem sources.",
+    "source": "build/burn2-capacity/row-005/variants.jsonl",
+    "source_sha256": "5b7d04645c728da9ec599679a26583aabd9edd9f8d783371a043bffb2dba2389",
+    "variant_index": 0
+  },
+  "state_bound": 0,
+  "targets": [
+    1,
+    2,
+    3,
+    5,
+    6
+  ]
+}

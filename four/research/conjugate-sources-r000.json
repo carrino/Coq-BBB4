@@ -1,0 +1,89 @@
+{
+  "description": "Only proved nonhalting boards may supply conjugacy sources; the sole branching/halting late-cycle family is excluded.",
+  "source_bound": 65537,
+  "output_bound": 131072,
+  "sources": [
+    {
+      "module": "BBB24Transport.FamilyTransportCloseout",
+      "board": "transport_board",
+      "nonhalt": "transport_board_nonhalt",
+      "small_sound": "transport_board_small_sound",
+      "sound": "transport_board_sound",
+      "was_pending": "transport_board_was_pending",
+      "bound": 4097,
+      "proof_source": "build/family-transport/FamilyTransportCloseout.v",
+      "machine_inputs": [
+        {
+          "path": "research/family-transport-input.json",
+          "format": "transport_images"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-batch",
+          "namespace": "BBB24Batch"
+        },
+        {
+          "path": "build/affine-closeout",
+          "namespace": "BBB24AffineCloseout"
+        },
+        {
+          "path": "build/closure-batch",
+          "namespace": "BBB24ClosureBatch"
+        },
+        {
+          "path": "build/family-transport",
+          "namespace": "BBB24Transport"
+        }
+      ],
+      "audited_report": "research/family-transport-summary.json"
+    },
+    {
+      "board": "weighted_board",
+      "discharged": "weighted_families_discharged",
+      "load_paths": [
+        {
+          "namespace": "BBB24Weighted",
+          "path": "build/weighted/pilot-kernel"
+        }
+      ],
+      "machine_inputs": [
+        {
+          "format": "json_rows",
+          "path": "research/weighted-pilot-machines.json"
+        }
+      ],
+      "module": "BBB24Weighted.WeightedCloseout",
+      "nonhalt": "weighted_board_nonhalt",
+      "proof_source": "build/weighted/pilot-kernel/WeightedCloseout.v",
+      "small_sound": "weighted_board_small_sound",
+      "sound": "weighted_board_sound",
+      "was_pending": "weighted_board_was_pending",
+      "bound": 4096,
+      "audited_report": "research/weighted-pilot-closeout.json"
+    },
+    {
+      "module": "BBB24LateCycles.full65536.NonHalt",
+      "board": "cycle_source_board",
+      "nonhalt": "cycle_source_board_nonhalt",
+      "small_sound": "cycle_source_board_small_sound",
+      "sound": "cycle_source_board_sound",
+      "was_pending": null,
+      "bound": 65537,
+      "proof_source": "build/late-cycle-proofs/full65536/NonHalt.v",
+      "machine_inputs": [
+        {
+          "path": "research/late-cycles-full65536.json",
+          "format": "root_cycle_rows"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/late-cycle-proofs",
+          "namespace": "BBB24LateCycles"
+        }
+      ],
+      "audited_report": "research/late-cycles-full65536-sources.json"
+    }
+  ]
+}

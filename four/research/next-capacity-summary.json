@@ -1,0 +1,127 @@
+{
+  "baseline_both_residual": 33492,
+  "baseline_state_residual": 2758,
+  "boards": [
+    {
+      "checked_rows": 1,
+      "descriptor": {
+        "board": "board",
+        "exact_inventory_theorem": "BBB24NextCapacityInventory.Capacity.inventory_exact",
+        "id": "next_capacity",
+        "instruction_bound": 4096,
+        "inventories": [
+          {
+            "format": "rows",
+            "path": "research/next-capacity-capacity-checked-machines.json"
+          }
+        ],
+        "load_paths": [
+          {
+            "namespace": "BBB24NextCapacity",
+            "path": "build/next-capacity/capacity-proof"
+          },
+          {
+            "namespace": "BBB24NextPortfolio",
+            "path": "build/next-capacity/portfolio-proof"
+          },
+          {
+            "namespace": "BBB24NextCapacityInventory",
+            "path": "build/next-capacity/inventory-proof"
+          }
+        ],
+        "module": "BBB24NextCapacityInventory.Capacity",
+        "proof_source": "build/next-capacity/inventory-proof/Capacity.v",
+        "rows": 1,
+        "scope": "both",
+        "small_sound": "small_sound",
+        "sound": "sound",
+        "state_bound": 4096,
+        "was_pending": "was_pending"
+      },
+      "inventory": "research/next-capacity-capacity-checked-machines.json",
+      "inventory_sha256": "6ce33ecfae9e4e7378ded21830b691c751599cd1105a772c14a6f519edd11b52",
+      "kernel_receipt": "build/next-capacity/capacity-proof/kernel-audit.json",
+      "kernel_receipt_sha256": "6f069bf3a3325a4c0cc96a883e23a7657928cc8abe35c5b8b480bd2c4a953682",
+      "kind": "capacity",
+      "report": "research/next-capacity-capacity-check.json",
+      "report_sha256": "9bb53879a5527cbfe6460cc14ab3368a6dab873114b522a3d9cb3f07124e4457"
+    },
+    {
+      "checked_rows": 4,
+      "descriptor": {
+        "board": "board",
+        "exact_inventory_theorem": "BBB24NextCapacityInventory.Portfolio.inventory_exact",
+        "id": "next_portfolio",
+        "instruction_bound": 4096,
+        "inventories": [
+          {
+            "format": "rows",
+            "path": "research/next-capacity-portfolio-checked-machines.json"
+          }
+        ],
+        "load_paths": [
+          {
+            "namespace": "BBB24NextCapacity",
+            "path": "build/next-capacity/capacity-proof"
+          },
+          {
+            "namespace": "BBB24NextPortfolio",
+            "path": "build/next-capacity/portfolio-proof"
+          },
+          {
+            "namespace": "BBB24NextCapacityInventory",
+            "path": "build/next-capacity/inventory-proof"
+          }
+        ],
+        "module": "BBB24NextCapacityInventory.Portfolio",
+        "proof_source": "build/next-capacity/inventory-proof/Portfolio.v",
+        "rows": 4,
+        "scope": "both",
+        "small_sound": "small_sound",
+        "sound": "sound",
+        "state_bound": 4096,
+        "was_pending": "was_pending"
+      },
+      "inventory": "research/next-capacity-portfolio-checked-machines.json",
+      "inventory_sha256": "5f2d6a476ffcc21c481f526dda68d0e41efccc81b8c6c521c6d9c72daf866b4f",
+      "kernel_receipt": "build/next-capacity/portfolio-proof/kernel-audit.json",
+      "kernel_receipt_sha256": "d6e8090e1e3d8f8721789d67bb3caa91f532abfe35bf10cb8b2e80b95af2c7f1",
+      "kind": "portfolio",
+      "report": "research/next-capacity-portfolio-check.json",
+      "report_sha256": "0e877aad84f1afdb658782476db9de4baedf07718877b392d7ce81a7618227f2"
+    }
+  ],
+  "both_residual_after_this_increment_only": 33487,
+  "candidate_count": 5,
+  "checked_incremental_unique_both": 5,
+  "checked_incremental_unique_state": 1,
+  "exact_inventory_report": "research/next-capacity-inventory-check.json",
+  "exact_inventory_report_sha256": "6ab8849991aa7528d3b03814c17cb34f803fbd331bac2b5e8207eb53760963d8",
+  "graphs_solved": 256,
+  "new_both_ids": [
+    "1LB0LB0RB2RB_2RA3LA3LB1RB",
+    "1LB1RA3LA2RB_0RA3LA2RB2LA",
+    "1LB2LA2LB1RA_3RB2RA3LB2RA",
+    "1LB2RA3RA1LA_0RA3LB3LB1RB",
+    "1LB2RA3RA1LA_3RA0LB1RB2LA"
+  ],
+  "new_state_ids": [
+    "1LB2LA2LB1RA_3RB2RA3LB2RA"
+  ],
+  "queue_overlap": 0,
+  "sample_rows": 128,
+  "scope": "Audited local increment to the frozen campaign baseline; no global census claim.",
+  "search_report": "research/next-capacity-search-report.json",
+  "search_report_sha256": "916d718832bf91bce750c84da1d6e72709332ecb560f950e2bdd370acaa3bf18",
+  "search_resource_outcomes": {
+    "lp_target_timeouts": 0,
+    "machine_wall_timeouts": 0,
+    "native_closed_partial_graphs_retained": 13,
+    "proof_worker_address_space_limit_bytes": 2147483648,
+    "python_worker_peak_rss_kib_excluding_native_child": 75588,
+    "search_worker_address_space_limit_bytes": 1610612736,
+    "worker_failures": 0
+  },
+  "state_residual_after_this_increment_only": 2757,
+  "summary_producer_sha256": "708a97531edc6405183d5f252c74866273d8e2be753bb8c6ab0cbae533198d5e"
+}

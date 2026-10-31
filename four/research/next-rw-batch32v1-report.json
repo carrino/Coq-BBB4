@@ -1,0 +1,401 @@
+{
+  "attempt_counts": {
+    "compiled": 32
+  },
+  "attempted_rows": 32,
+  "attempts": [
+    {
+      "machine": "1LB1LB0RB1RA_3RA2LB3LB1RB",
+      "nodes": null,
+      "seconds": 8.532,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1RA0LB0RB_2RA3LA3RA2LA",
+      "nodes": null,
+      "seconds": 4.755,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RA3LA1RA_0RB3LB0LA1RA",
+      "nodes": null,
+      "seconds": 5.19,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB0RB1LA3LA_2RB3RA3LA0LB",
+      "nodes": null,
+      "seconds": 10.566,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1RA0LB2RA_3RA3LA0RB3LA",
+      "nodes": null,
+      "seconds": 4.237,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1RB0RA1RB_3RA2LA3RA2LB",
+      "nodes": null,
+      "seconds": 3.43,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB0RB---1LA_2RA3RB1LB0LA",
+      "nodes": null,
+      "seconds": 2.275,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1RA0RA2RA_1RB3LB2LA2RA",
+      "nodes": null,
+      "seconds": 7.243,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2LB3RA1RA_2RA3LA1RB3LB",
+      "nodes": null,
+      "seconds": 6.338,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1LB1RB2RA_2RB3RA2LB3LA",
+      "nodes": null,
+      "seconds": 4.278,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1RA2RB2LA_1RA3LB0LB1LB",
+      "nodes": null,
+      "seconds": 10.97,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2LA1RA2RB_3RA3LB0LA2RB",
+      "nodes": null,
+      "seconds": 7.499,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1RA2LB2RA_1RA3LB3RB0LA",
+      "nodes": null,
+      "seconds": 8.699,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RB3LB1RA_1RA0LA2LA2LB",
+      "nodes": null,
+      "seconds": 18.876,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2LB3RA1RA_1RB1RA2RA1LA",
+      "nodes": null,
+      "seconds": 11.962,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RA1LA0LA_3RB1RA2LB0LA",
+      "nodes": null,
+      "seconds": 26.76,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RA3LA3RB_0RA0LA1LA2LA",
+      "nodes": null,
+      "seconds": 3.126,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1LA0LA2RB_3RB0LB3LB2RA",
+      "nodes": null,
+      "seconds": 8.643,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1LA2LB2RA_3RB1RA3RB3LA",
+      "nodes": null,
+      "seconds": 2.372,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RB3RB0LA_1RA2LA0RB3LB",
+      "nodes": null,
+      "seconds": 6.789,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB0LB0LB2RB_1RB3RA0RB3LA",
+      "nodes": null,
+      "seconds": 8.898,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RB0LA0RB_3RA1RA2RB0LA",
+      "nodes": null,
+      "seconds": 5.338,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RB0RA2RA_3RB3RA1LA2LB",
+      "nodes": null,
+      "seconds": 5.739,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RA1RB2LB_3RA1LA3LB2RA",
+      "nodes": null,
+      "seconds": 5.335,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2LA1RB2RA_0RB3LB3LA2RA",
+      "nodes": null,
+      "seconds": 6.357,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RB2LA3LA_1RA0LA3LB0RA",
+      "nodes": null,
+      "seconds": 7.347,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB1LA1LB2RB_3RA0RB0LB0LA",
+      "nodes": null,
+      "seconds": 3.377,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RB2LB0RB_1RA3LB2LA0LA",
+      "nodes": null,
+      "seconds": 14.567,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2LB3RA2RB_0RA2RA0LB3LA",
+      "nodes": null,
+      "seconds": 11.26,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RA1LA2LB_0RA3RA3RB0LA",
+      "nodes": null,
+      "seconds": 3.428,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RB1LA0LB_3RB2LB3LA3RA",
+      "nodes": null,
+      "seconds": 4.732,
+      "status": "compiled"
+    },
+    {
+      "machine": "1LB2RA3RB1RA_0RA2LB3LB2RA",
+      "nodes": null,
+      "seconds": 3.327,
+      "status": "compiled"
+    }
+  ],
+  "audit_log_sha256": "60f9314245b42ec9445594f81d9a65911f1649690c53ff7873d9e9eb60f02e21",
+  "audit_receipt": "build/next-rw/audits/Batch32V1.json",
+  "audit_receipt_sha256": "42ddf2f0497f2ade2fdf835b7aa3493b9eca06c5269ece766d727b5d75c8f7dc",
+  "board_descriptor": {
+    "board": "board",
+    "id": "NextRWBatch32V1",
+    "instruction_bound": 4096,
+    "inventories": [
+      {
+        "format": "columns",
+        "order": "input",
+        "path": "research/next-rw-batch32v1-board-input.json"
+      }
+    ],
+    "load_paths": [
+      {
+        "namespace": "BBB24NextRW",
+        "path": "build/next-rw"
+      }
+    ],
+    "module": "BBB24NextRW.Batch32V1All",
+    "rows": 32,
+    "scope": "both",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "state_bound": 4096,
+    "was_pending": "was_pending"
+  },
+  "board_input_sha256": "a311b8dc69c7d1bd7eb1fd64dff50efbc0afdd81f8e9f35df090c7bb7efe53f1",
+  "budgets": {
+    "audit_seconds": 1200,
+    "coq_seconds_per_row": 45,
+    "memory_limit_bytes": 3221225472
+  },
+  "checked_families": 32,
+  "discharge_theorem": "BBB24NextRW.Batch32V1All.discharged",
+  "generated_sha256": {
+    "build/next-rw/Batch32V1All.v": "f8ff672a432400b1d02cacf633980232450c3d6108db30d02ae6f6d43844df92",
+    "build/next-rw/DirectRow0018c0f0744c9b2c.v": "acec29c06864e29a451c7ab11d48986c9a184ea6d48c224e0e2c3f20288e0dd5",
+    "build/next-rw/DirectRow00196969d9946869.v": "5e8acef724d51e89a6f220b3e51590bb07705e8d55ad1c5fa789ae80c89c516b",
+    "build/next-rw/DirectRow00348fde472333b7.v": "a303cf87eacb224834c8b36822efee890c2e4ab14214bc3a7599f8fa89b5685a",
+    "build/next-rw/DirectRow0034ace305039ade.v": "e6468ff8952d9ad86dfe906a747738d252785dcdc0e1d296184b42d96309c8af",
+    "build/next-rw/DirectRow003f5ff406231cc4.v": "42fa4c4da2b35d2e9c1b548fdb9e9aa784c8721b111bbab6108b0d1f360719c6",
+    "build/next-rw/DirectRow007057dd625e16b0.v": "63133aa4957f8d5789a1789c5aafa605ed7cba9dfe224c53b18e54cc74b64342",
+    "build/next-rw/DirectRow0085d1158e8e4b77.v": "d535e9f5a984f0a123ad50522e68a59d6c9ae21fcf4c54c715d4a39b3f83a037",
+    "build/next-rw/DirectRow008d33f8b30186f1.v": "389a9f9c7841cd14f5867deea9f4845cf3e2c0b0d6b6fc6fea9f3bf683a417f2",
+    "build/next-rw/DirectRow00b1d511e887f9f2.v": "1d32cf2b2e01f6f0f2fa8eec3970d8caf74edc3ca946a5cf7d8c4c87ad7ca415",
+    "build/next-rw/DirectRow00bb7d8edeb4d2eb.v": "cb9a29163e4b43876562d93c7c297beb3797fe24ef9f8bd8eb87dc4c0407159e",
+    "build/next-rw/DirectRow00f24384fe33f4d7.v": "26e7236831d1d6788f5e6f9034742ff3e9fb92b5dcaeea9a02c59fad9da764dc",
+    "build/next-rw/DirectRow0128f26598d54a76.v": "a031447a29419679513ad79166ae49d7117c022ff63fb44e548096a469ae3706",
+    "build/next-rw/DirectRow0147578fd1323186.v": "f34d04450066d6c0f808ad644435a0606f7cacd964dd35152c309eaace34bf4e",
+    "build/next-rw/DirectRow01501d672d908062.v": "20782f5598fd58cb6f2473629f3ca14306e3b887afb05b65e0fd8897b53e6e20",
+    "build/next-rw/DirectRow01555d3f736eef4e.v": "61ebca15e9288453d2931e8af14954fdba26802094e390202d1decb3af793bd9",
+    "build/next-rw/DirectRow016a48a59f3af392.v": "e6d6824529ad736300f5bae67dffd84e05a12a527fb70b16abf8f2c5fae4728d",
+    "build/next-rw/DirectRow0177da9c22146575.v": "6b3d8ef458df1fd2c18f10ee0a4436d47c879554b4db5e15eb6abbc73b72a976",
+    "build/next-rw/DirectRow018674796939ce6c.v": "b14082cdf3d518b7904859ae4463ce381d34786f8e292b5d75ddb28fa29569f1",
+    "build/next-rw/DirectRow01867b322d283c13.v": "bd0c7bc5109f41b24668ab846c25e8154568891367e45070b0af8bdcdc4025b1",
+    "build/next-rw/DirectRow0191aa4263fe8f44.v": "f6ac013db0f8ed941407f49ec500763ded3fa7838140ed99f150b37c084d0bae",
+    "build/next-rw/DirectRow01fa80f8c43daf28.v": "a2db22ace989cd4bcbf70a0c16297858b9b57bb956d65a63e1c586cd059f2e90",
+    "build/next-rw/DirectRow0209121e718dfd91.v": "a41964d759824ac50bdbdfb7c641692b25afcc115fa8e322ffd513bf24b30383",
+    "build/next-rw/DirectRow02201e88e1bdb80c.v": "99256f0f5e0bb9d46a67987badeb2fff6f64bd5f8da56b8d09e3a5cfbcbb6fa2",
+    "build/next-rw/DirectRow0237422ba6cc0f32.v": "f5f1127435d514b00f2ab460364190ac763ae910f3921808c71f545271c0fcb4",
+    "build/next-rw/DirectRow0250f5ba50e7a90f.v": "25c7e05edcb854c05d9d27b87b1d9881e501555092df2164f6247db5ca222316",
+    "build/next-rw/DirectRow02573f5d64c19300.v": "b8091744aa7c7e5db5b337b07325c4bb79ffe7e38a1cd64dbbdc225438c414ce",
+    "build/next-rw/DirectRow025b3f65e9b3a089.v": "156a962a265c54f655fbccf53ceee199d277e9fc384f160ef7a163e51ccf616b",
+    "build/next-rw/DirectRow025f25ea551880b6.v": "0be2d79796f979116e42a910693ceca3dcc52d5d3dd67a846cb863dd5914212d",
+    "build/next-rw/DirectRow026d1942cf784169.v": "dd858658ad7dd4902c68cbfca6b1dc74c7492cd9052fdafd1752272b46074c2d",
+    "build/next-rw/DirectRow0273fe73481c8ca8.v": "23e3b65e955cdea21ea13dece6b482558e4847c8e3927a95e898e307f2b3176f",
+    "build/next-rw/DirectRow0278001f88fdc1da.v": "be3f0fedbd4eb28012b4b9db1160e2bfd231a1c470cbd297435bc28afebc2532",
+    "build/next-rw/DirectRow02ae0f4f3649babe.v": "461adc9a7a89a18a0f9acd2922841cec7baa27ad501cadade5ea4a5590344817"
+  },
+  "inventory_theorem": "BBB24NextRW.Batch32V1All.inventory_exact",
+  "method": "direct rw_check",
+  "native_attempt_counts": {},
+  "new_state_families": 1,
+  "object_sha256": {
+    "build/next-rw/Batch32V1All.vo": "c0bee852152c9e51fc5ed04068b907f35536e9a69f4ee5a89701049c6c5b8aee",
+    "build/next-rw/DirectRow0018c0f0744c9b2c.vo": "c1b1a497d9f88998c082e4918aa58e353bf7ddd7f39db520c3a0474f199b5d34",
+    "build/next-rw/DirectRow00196969d9946869.vo": "5f2609797d374ef583b30472ad741fc639cf76e0c13294496269784409347c40",
+    "build/next-rw/DirectRow00348fde472333b7.vo": "745c53f822f1b3d28ca8996bd3b10abd8ac072c50081482f8cc5e54665b5220a",
+    "build/next-rw/DirectRow0034ace305039ade.vo": "4bc0e9bcaecfae7d1a72bb2cb5fa22687d3f56667849b028597c3d5270e1694b",
+    "build/next-rw/DirectRow003f5ff406231cc4.vo": "3756fd773b18a7e5dd8d42bc3653afd8f0d2ead188784b3046be16b25ab0ac16",
+    "build/next-rw/DirectRow007057dd625e16b0.vo": "585f8c3019a3c6a7c432dd9dec7b5acdf39ef49f4c463572b8d49bdfcc7f07b6",
+    "build/next-rw/DirectRow0085d1158e8e4b77.vo": "6187a6f16505a766ed60b209ddc4cc16d839a939fcd434485939704d3ae57026",
+    "build/next-rw/DirectRow008d33f8b30186f1.vo": "748f6933d57b09488fb6a04bd13ecb0d474d972b767db4b78be6a4677f8472d8",
+    "build/next-rw/DirectRow00b1d511e887f9f2.vo": "3e8dc18e27e74c05c9524ea7440aefcfa37688f2d9eab8cca17aa3504502ee5d",
+    "build/next-rw/DirectRow00bb7d8edeb4d2eb.vo": "961cc8d49e4922fd12f5cd8e906047e44e6ed7014f22cef168b41177d3df05a6",
+    "build/next-rw/DirectRow00f24384fe33f4d7.vo": "7e06f509cdd78098b392432efa175e574aaa5e6af412a62cfa3cb49f11e531a9",
+    "build/next-rw/DirectRow0128f26598d54a76.vo": "208795bc99e50d3420fd451bab5aaf48efd9111d6315ffdbe7bf3c0dfbab5871",
+    "build/next-rw/DirectRow0147578fd1323186.vo": "d5b0e4fd762451672fff1d39add1435e10e2898c06de2619aa15f24e29e03cc2",
+    "build/next-rw/DirectRow01501d672d908062.vo": "0685aa1dab82a33cfcee299e4d6cc333bd3d2bc6b1e8f328bcec093c8fcb985b",
+    "build/next-rw/DirectRow01555d3f736eef4e.vo": "458b9a77d82a4b75cd45337921486e3495b17aacdd62bc5151143facae499c47",
+    "build/next-rw/DirectRow016a48a59f3af392.vo": "40d2799768cc370ac5dbb8bf7ab9d26fc2adec641e1e0771044299a47bf20ac6",
+    "build/next-rw/DirectRow0177da9c22146575.vo": "57a0696c38aa99e8c6695bafa48197522f16d619675b9a6f6bf7233a00ee2395",
+    "build/next-rw/DirectRow018674796939ce6c.vo": "a98a4d538a215391e99cbe8de1c5898d9910e31bf108809dfb938460f43954ad",
+    "build/next-rw/DirectRow01867b322d283c13.vo": "e296e3605f2ea866b7de4b02e91471ad082900be7b25a19fc6739024d35511a4",
+    "build/next-rw/DirectRow0191aa4263fe8f44.vo": "c25ec23ab82bfa74b37535efc056df65fe8df9ffb7da7fe88fca79959a083349",
+    "build/next-rw/DirectRow01fa80f8c43daf28.vo": "7c394459ee5a447483da3ec7de6ad3f26d54590c5a061fdefd5ef31afda36396",
+    "build/next-rw/DirectRow0209121e718dfd91.vo": "4114428d9d7fc6a6b58193c596f8c54a9ceed9ac2f3e10889371c566927d3969",
+    "build/next-rw/DirectRow02201e88e1bdb80c.vo": "78962aa176d8a48cd4de0cccda1e71542594b1b7f5353997babac3a144b15f1a",
+    "build/next-rw/DirectRow0237422ba6cc0f32.vo": "b77fc63a73312070fb854c62172d2504850ee6b13003d540953a384e993baa5a",
+    "build/next-rw/DirectRow0250f5ba50e7a90f.vo": "d44a2f0710822ab3aa47db6445a27aec75442588a598ca9337c853e7bf9d34bc",
+    "build/next-rw/DirectRow02573f5d64c19300.vo": "40db31ff003c334b274a0a206f94c231291544998061ee7afc68404dd94acb6b",
+    "build/next-rw/DirectRow025b3f65e9b3a089.vo": "2809a4cbc206ed66f065c6127aab77bb11b3381ac88bb317d46712dbe7b8588a",
+    "build/next-rw/DirectRow025f25ea551880b6.vo": "2e3d2279d48165ce3294bbd66512ec0e34a33e66ce893f973c8c0a9b6d300693",
+    "build/next-rw/DirectRow026d1942cf784169.vo": "ba9b688781445e213627c22e3d36f007853557a747536258ba96a66720137b63",
+    "build/next-rw/DirectRow0273fe73481c8ca8.vo": "7bc4ca8dc4768e5998adec1677b565750c7322695ac026a278ffdc2107af60d0",
+    "build/next-rw/DirectRow0278001f88fdc1da.vo": "909876274e79bac6097461056048b8352b91726d708016d142d18d9834f43d0c",
+    "build/next-rw/DirectRow02ae0f4f3649babe.vo": "c8ea6a76542141875fd1be8133e25e1594737dba13f55e03b39ad9f6e122ede3"
+  },
+  "queue_input_sha256": "ba42e0be23ca75960a26ba372ed8feab0a46ce8b3298a297b59d8f92f562ad29",
+  "remaining_rw_obligations": 2801,
+  "scope": "Both bounds for every completion; original census leaf weights unchanged",
+  "source_sha256": {
+    "build/next-rw/Batch32V1All.v": "f8ff672a432400b1d02cacf633980232450c3d6108db30d02ae6f6d43844df92",
+    "build/next-rw/DirectRow0018c0f0744c9b2c.v": "acec29c06864e29a451c7ab11d48986c9a184ea6d48c224e0e2c3f20288e0dd5",
+    "build/next-rw/DirectRow00196969d9946869.v": "5e8acef724d51e89a6f220b3e51590bb07705e8d55ad1c5fa789ae80c89c516b",
+    "build/next-rw/DirectRow00348fde472333b7.v": "a303cf87eacb224834c8b36822efee890c2e4ab14214bc3a7599f8fa89b5685a",
+    "build/next-rw/DirectRow0034ace305039ade.v": "e6468ff8952d9ad86dfe906a747738d252785dcdc0e1d296184b42d96309c8af",
+    "build/next-rw/DirectRow003f5ff406231cc4.v": "42fa4c4da2b35d2e9c1b548fdb9e9aa784c8721b111bbab6108b0d1f360719c6",
+    "build/next-rw/DirectRow007057dd625e16b0.v": "63133aa4957f8d5789a1789c5aafa605ed7cba9dfe224c53b18e54cc74b64342",
+    "build/next-rw/DirectRow0085d1158e8e4b77.v": "d535e9f5a984f0a123ad50522e68a59d6c9ae21fcf4c54c715d4a39b3f83a037",
+    "build/next-rw/DirectRow008d33f8b30186f1.v": "389a9f9c7841cd14f5867deea9f4845cf3e2c0b0d6b6fc6fea9f3bf683a417f2",
+    "build/next-rw/DirectRow00b1d511e887f9f2.v": "1d32cf2b2e01f6f0f2fa8eec3970d8caf74edc3ca946a5cf7d8c4c87ad7ca415",
+    "build/next-rw/DirectRow00bb7d8edeb4d2eb.v": "cb9a29163e4b43876562d93c7c297beb3797fe24ef9f8bd8eb87dc4c0407159e",
+    "build/next-rw/DirectRow00f24384fe33f4d7.v": "26e7236831d1d6788f5e6f9034742ff3e9fb92b5dcaeea9a02c59fad9da764dc",
+    "build/next-rw/DirectRow0128f26598d54a76.v": "a031447a29419679513ad79166ae49d7117c022ff63fb44e548096a469ae3706",
+    "build/next-rw/DirectRow0147578fd1323186.v": "f34d04450066d6c0f808ad644435a0606f7cacd964dd35152c309eaace34bf4e",
+    "build/next-rw/DirectRow01501d672d908062.v": "20782f5598fd58cb6f2473629f3ca14306e3b887afb05b65e0fd8897b53e6e20",
+    "build/next-rw/DirectRow01555d3f736eef4e.v": "61ebca15e9288453d2931e8af14954fdba26802094e390202d1decb3af793bd9",
+    "build/next-rw/DirectRow016a48a59f3af392.v": "e6d6824529ad736300f5bae67dffd84e05a12a527fb70b16abf8f2c5fae4728d",
+    "build/next-rw/DirectRow0177da9c22146575.v": "6b3d8ef458df1fd2c18f10ee0a4436d47c879554b4db5e15eb6abbc73b72a976",
+    "build/next-rw/DirectRow018674796939ce6c.v": "b14082cdf3d518b7904859ae4463ce381d34786f8e292b5d75ddb28fa29569f1",
+    "build/next-rw/DirectRow01867b322d283c13.v": "bd0c7bc5109f41b24668ab846c25e8154568891367e45070b0af8bdcdc4025b1",
+    "build/next-rw/DirectRow0191aa4263fe8f44.v": "f6ac013db0f8ed941407f49ec500763ded3fa7838140ed99f150b37c084d0bae",
+    "build/next-rw/DirectRow01fa80f8c43daf28.v": "a2db22ace989cd4bcbf70a0c16297858b9b57bb956d65a63e1c586cd059f2e90",
+    "build/next-rw/DirectRow0209121e718dfd91.v": "a41964d759824ac50bdbdfb7c641692b25afcc115fa8e322ffd513bf24b30383",
+    "build/next-rw/DirectRow02201e88e1bdb80c.v": "99256f0f5e0bb9d46a67987badeb2fff6f64bd5f8da56b8d09e3a5cfbcbb6fa2",
+    "build/next-rw/DirectRow0237422ba6cc0f32.v": "f5f1127435d514b00f2ab460364190ac763ae910f3921808c71f545271c0fcb4",
+    "build/next-rw/DirectRow0250f5ba50e7a90f.v": "25c7e05edcb854c05d9d27b87b1d9881e501555092df2164f6247db5ca222316",
+    "build/next-rw/DirectRow02573f5d64c19300.v": "b8091744aa7c7e5db5b337b07325c4bb79ffe7e38a1cd64dbbdc225438c414ce",
+    "build/next-rw/DirectRow025b3f65e9b3a089.v": "156a962a265c54f655fbccf53ceee199d277e9fc384f160ef7a163e51ccf616b",
+    "build/next-rw/DirectRow025f25ea551880b6.v": "0be2d79796f979116e42a910693ceca3dcc52d5d3dd67a846cb863dd5914212d",
+    "build/next-rw/DirectRow026d1942cf784169.v": "dd858658ad7dd4902c68cbfca6b1dc74c7492cd9052fdafd1752272b46074c2d",
+    "build/next-rw/DirectRow0273fe73481c8ca8.v": "23e3b65e955cdea21ea13dece6b482558e4847c8e3927a95e898e307f2b3176f",
+    "build/next-rw/DirectRow0278001f88fdc1da.v": "be3f0fedbd4eb28012b4b9db1160e2bfd231a1c470cbd297435bc28afebc2532",
+    "build/next-rw/DirectRow02ae0f4f3649babe.v": "461adc9a7a89a18a0f9acd2922841cec7baa27ad501cadade5ea4a5590344817",
+    "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+    "theories/AdvancedPipeline.v": "bbc466a07904b22cba918b290aff287cfaad6b3cdd326d72a99ef93c10d1fe24",
+    "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+    "theories/BoardManifest.v": "ee34d205828c4980781b16c9f8460209326d5d0f342423bd1b714bcfa6dd82c3",
+    "theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "theories/CensusUnion.v": "d4e178b18b2c8db7538161d74833c1998c0ed3bea8f27ef58b76741049026fab",
+    "theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+    "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+    "theories/Checkers/FiniteNGram.v": "786ba3d650b1ac4ddb2a630a46a5526d4fabc3cdb9207ca2a1576a6d0d3e3697",
+    "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+    "theories/Checkers/NGramHist.v": "5976b6f0267b4cf70f3e96e33ce633484062780aa6e24d83581cb6c9ebee9488",
+    "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+    "theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+    "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+    "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+    "theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+    "theories/FiniteCensus.v": "7aacff3e2be77c06239992a0361ca8bbdd13265b9ed26ffd4377e976e7404524",
+    "theories/FiniteRankSearch.v": "e5f380a603f81f42a07c13805062eee79e96b163d75c2f1d09befafda0ccac45",
+    "theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+    "theories/HistCensus.v": "f6f42a2dfc76fb95f552b1569c414d13e9702a3a04234f0b33c114e3165b9c89",
+    "theories/HistRankSearch.v": "ee92b8f518f520c703adf0e9b58f9e00bb03e693a3df4faf0f167c842886249d",
+    "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+    "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+    "theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+    "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+    "theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+    "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+    "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+    "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+    "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+    "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+    "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "theories/StateBounds.v": "2892c4dc4dea327dcef826fd35912e3df6ff60436dc1d520811e9729a456d224",
+    "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+    "tools/check_closure_wave.py": "aea6d6247d2049dd6edb0bc9347a095258f74b05b56e57e50c1d701a25b8a134",
+    "tools/check_next_rw.py": "71bda03722455a9cd763b3aed4bb8ce8041800ddad0629da9df343a2e71ce9ac",
+    "tools/check_shadow_links.py": "342b0c36d050f727ad5478af1b68f67d9c3827de984835b0bf6e60b5b657c9ca",
+    "tools/check_state_repwl_batch.py": "0c9ce2ba9218da5150c64b41c0433ca94652141b4f4e55f914d1b2f15d9fcce3",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479",
+    "tools/kernel_audit_cache.py": "861101dcb5d963343ea92c96c67830c04c84972e989f833baf04dacb7686510e",
+    "tools/next_rw_certificate.v": "698e1aa93dbae28e834e0ce28bb95cf37f429a2a13b6e0f1d0d062077c51a2de",
+    "tools/next_rw_producer.ml": "8344fd21f8e468eab81b26ba13ca7be92c852efbe3da6acbec9a3e5a115bbbb2"
+  },
+  "status": "Recursive kernel audit passed; exact inventory and pending membership checked",
+  "unattempted_rows": 2801,
+  "witness_input": null,
+  "witness_input_sha256": null
+}

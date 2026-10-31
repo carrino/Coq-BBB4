@@ -1,0 +1,33 @@
+{
+  "status": "Untrusted cycle/census search; proof counts require the separate checked report.",
+  "parameters": {
+    "fuel": 262144,
+    "nodes_per_original_family": 256,
+    "candidate_bound": 262145,
+    "algorithm": "Brent checkpoints, normalized ray hashes, exact tape confirmation; no fixed period window"
+  },
+  "input_sha256": "5e63b1d4600829d742c8b62ba8ea6857e4ecba92df151ff50fee8c773563af0e",
+  "results_sha256": "cf00a733840364b222991fb9c8757c21088b1b7c97800ec160b43985765b23b7",
+  "search_source_sha256": "30c55cfd8b5a7772e8127726d306c22e2412058f9bf95fa374507f79b141de37",
+  "original_families": 120149,
+  "concrete_families": 111535,
+  "partial_families": 8614,
+  "candidate_closed_original_families": 54,
+  "candidate_concrete_families": 54,
+  "candidate_partial_families": 0,
+  "certificate_roots": {
+    "C": 54
+  },
+  "pending_original_families": 120095,
+  "original_families_reaching_undefined": 17,
+  "expanded_defined_children": 272,
+  "anchor_histogram": {
+    "65535": 35,
+    "131071": 18,
+    "262143": 1
+  },
+  "largest_candidate_period": 103675,
+  "simulated_steps": 31544971424,
+  "seconds": 345.488,
+  "accounting": "Expanded children are search work, not additional original families. Each branching proof also covers the None/halting choice."
+}

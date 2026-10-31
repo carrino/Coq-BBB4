@@ -1,0 +1,23 @@
+{
+  "status": "untrusted_search_recovery",
+  "original_completed_rows": 9718,
+  "original_selected_rows": 9858,
+  "original_failure": "Asynchronous Template_timeout after the protected tail check",
+  "recovered_full_rows": 9858,
+  "old_positive": 129,
+  "new_positive": 129,
+  "union_positive": 129,
+  "inputs_sha256": {
+    "four/build/affine-template-budget/short2113/manifest.json": "a465296df0b80d49463d2c605eab508ec2544bbf181120f78718ec91ac5146f3",
+    "four/build/affine-template-budget/short2113/replay.tsv": "f795dbb14207ec29e8796ec0b42c303aea63895e1732bbcac3075989d7d9e8b1",
+    "four/build/affine-template-budget-v2/short2113/manifest.json": "e9b698d605907179ace4fd81a8a528740860462228e66913dae298bf03e214ae",
+    "four/build/affine-template-budget-v2/short2113/replay.tsv": "da8246894f821ef09ad046db9aa206a99c5caef61eeb8fbd40a6d9ac1c248037"
+  },
+  "source_sha256": {
+    "four/tools/affine_template_budget_probe_v2.ml": "f68668d26b0efcb506c6d837b213b9991e09877b40fe7ebc073647269605eb01",
+    "four/tools/affine_template_budget_sweep_v2.py": "a975e64db692bd102298d3441d973474ac208582ad01ec66eecf3e9c32905c9b"
+  },
+  "kernel_checked": 0,
+  "census_linked": 0,
+  "accounting": "The old partial search is preserved. The new guarded-timer search completed the same9858 selected targets. Positives are proposals requiring the unchanged Coq affine checker and original census membership."
+}

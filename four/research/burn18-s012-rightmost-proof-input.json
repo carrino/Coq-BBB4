@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 2284387823,
+      "machine": "1LB0RA0LA0LB_3RB2RA2LB1LB"
+    }
+  ],
+  "selection_report": "research/burn18-s012-rightmost-native.json",
+  "selection_sha256": "5920ead1867b932b1ea5b72b1a79d47a2d8a26e9f724d37f87e7f0834545722e",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn18-s012-rightmost/Regression.v": "726cb1260c19fd14638cab3efa1c499fcfd38dd3c3491ed9018ef00e3de051c9",
+    "proof-sources/burn18-s012-rightmost/RightmostOne.v": "1f6a3ad21a3741ad547ef0e673756dbd92e692291a63d5cd99015faedb1c75d5"
+  }
+}

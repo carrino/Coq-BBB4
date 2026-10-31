@@ -1,0 +1,17 @@
+{
+  "frozen_checkpoint_sha256": "a99ef3991f68ae537039424b5c8a6e7bf762a32e9cba22fa120c93daeef2c709",
+  "metadata_revision": 2,
+  "rows": [
+    {
+      "code": 3883216726,
+      "machine": "1LB0LB1LA3RB_3RB3RA1RB2LB"
+    }
+  ],
+  "selection_report": "research/burn20-run-sibling-native.json",
+  "selection_sha256": "1b5d8710abd4ffffd9df57219b78fadaac0aaaa20d5fda82adadb4058cffcead",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn20-run-sibling/Regression.v": "e2e22b792543d54e6b15c2fa3a699fcad4bf0a9f65c0540673f4f1bb11212889",
+    "proof-sources/burn20-run-sibling/RunSibling.v": "22e9a4697516e36935f465076eb95b1269f07882052000cf8335d857f05f0793"
+  }
+}

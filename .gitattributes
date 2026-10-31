@@ -8,3 +8,6 @@
 # hashes on-disk bytes of the .v inputs, so CRLF checkouts would falsely
 # invalidate CENSUS_VO_HASH.
 * text=auto eol=lf
+
+# A final empty TSV column is data, so its separating tab is intentional.
+*.tsv whitespace=-blank-at-eol

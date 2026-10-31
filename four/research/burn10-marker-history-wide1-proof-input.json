@@ -1,0 +1,24 @@
+{
+  "rows": [
+    {
+      "machine": "1LB0RA---0LB_3RB3LA1LA2RA",
+      "code": 4218237681,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "marker_mask": 10,
+      "history": 4,
+      "width": 5,
+      "anchor": 4096,
+      "fuel": 131072,
+      "rounds": 128
+    }
+  ],
+  "state_bound": 0,
+  "selection_report": "research/burn10-marker-history-wide1-selection.json",
+  "selection_sha256": "13de72653617567426eff5ca730020e0fc374bab4633f71f8e165a9ba1283d8c",
+  "generic_report_sha256": "b1161e50fd3a56f7b469db3293f1ae3004824801c4b0f0540c504b648a6c825b"
+}

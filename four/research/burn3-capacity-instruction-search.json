@@ -1,0 +1,225 @@
+{
+  "candidates": [
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 32,
+      "fuel": 16384,
+      "history": 3,
+      "machine": "1LB2RB1RA1RB_2RA3LB2LB0LA",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 4096,
+      "bound": 4096,
+      "extra": 32,
+      "fuel": 16384,
+      "history": 3,
+      "machine": "1LB2RB2RB2LA_3RA0LA0RB3LB",
+      "mode": "hist",
+      "size": 4
+    }
+  ],
+  "remaining": [
+    "1LB2RA2LA0LB_0RB3RA3RB1LA",
+    "1LB2LA1RB3RB_3RA1RB3LA1RA",
+    "1LB2RA3RA0RA_1RA2LA0LB3LA"
+  ],
+  "results": [
+    {
+      "output_sha256": "9a0f6e7f0de88cee3da116aa22a04dfd1410b117febf3c75a3fa8136a4ad3338",
+      "rows": [
+        {
+          "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+          "seconds": 0.077339,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+          "seconds": 1.133668,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2RB1RA1RB_2RA3LB2LB0LA",
+          "seconds": 0.182914,
+          "status": "candidate"
+        },
+        {
+          "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+          "seconds": 0.073999,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2RB2RB2LA_3RA0LA0RB3LB",
+          "seconds": 0.088052,
+          "status": "candidate"
+        }
+      ],
+      "stage": {
+        "anchor": 4096,
+        "extra": 32,
+        "fuel": 16384,
+        "history": 3,
+        "mode": "hist",
+        "size": 4
+      }
+    },
+    {
+      "output_sha256": "f0a37d08726ee932003a28b0fb90ec69ecd31a30031d207fa09b54e293134d68",
+      "rows": [
+        {
+          "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+          "seconds": 0.235846,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+          "seconds": 0.65665,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+          "seconds": 1.121961,
+          "status": "rejected"
+        }
+      ],
+      "stage": {
+        "anchor": 4096,
+        "extra": 32,
+        "fuel": 16384,
+        "history": 5,
+        "mode": "hist",
+        "size": 3
+      }
+    },
+    {
+      "output_sha256": "331fa642abde0ea2bb339a87c874906f44c799afe1dde37ca92c34d0ed48a57d",
+      "rows": [
+        {
+          "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+          "seconds": 0.093793,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+          "seconds": 2.000034,
+          "status": "timeout"
+        },
+        {
+          "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+          "seconds": 0.013412,
+          "status": "rejected"
+        }
+      ],
+      "stage": {
+        "anchor": 4096,
+        "extra": 32,
+        "fuel": 16384,
+        "history": 2,
+        "mode": "hist",
+        "size": 5
+      }
+    },
+    {
+      "output_sha256": "fc3b9d462ba0e46e7612b164e7726fb71487bc51f706eded05ae48c05fd52002",
+      "rows": [
+        {
+          "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+          "seconds": 0.464362,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+          "seconds": 0.418465,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+          "seconds": 2.000044,
+          "status": "timeout"
+        }
+      ],
+      "stage": {
+        "anchor": 4096,
+        "extra": 32,
+        "fuel": 16384,
+        "history": 8,
+        "mode": "hist",
+        "size": 2
+      }
+    },
+    {
+      "output_sha256": "bf3d2b1c0027c2a87ac30f14b1dbab0d68546e131100ed59e2867b8c10d9011c",
+      "rows": [
+        {
+          "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+          "seconds": 0.082639,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+          "seconds": 0.047682,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+          "seconds": 0.060894,
+          "status": "rejected"
+        }
+      ],
+      "stage": {
+        "anchor": 4096,
+        "extra": 2,
+        "fuel": 8192,
+        "history": 0,
+        "mode": "rw",
+        "size": 7
+      }
+    },
+    {
+      "output_sha256": "1a58c9f532a849c5b6ba9bc4399afdbd10def3078fc69dfdcde13d7fe79e3440",
+      "rows": [
+        {
+          "machine": "1LB2RA2LA0LB_0RB3RA3RB1LA",
+          "seconds": 0.125795,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2LA1RB3RB_3RA1RB3LA1RA",
+          "seconds": 0.085037,
+          "status": "rejected"
+        },
+        {
+          "machine": "1LB2RA3RA0RA_1RA2LA0LB3LA",
+          "seconds": 0.039815,
+          "status": "rejected"
+        }
+      ],
+      "stage": {
+        "anchor": 4096,
+        "extra": 3,
+        "fuel": 8192,
+        "history": 0,
+        "mode": "rw",
+        "size": 4
+      }
+    }
+  ],
+  "scope": "Untrusted candidate search; no proof claims.",
+  "selected": [
+    "1LB2RA2LA0LB_0RB3RA3RB1LA",
+    "1LB2LA1RB3RB_3RA1RB3LA1RA",
+    "1LB2RB1RA1RB_2RA3LB2LB0LA",
+    "1LB2RA3RA0RA_1RA2LA0LB3LA",
+    "1LB2RB2RB2LA_3RA0LA0RB3LB"
+  ],
+  "sources_sha256": {
+    "build/wave3/driver-v2/probe": "a3c1e02a1c8edd98e8a7e00f175e8090add438bd5824090eac3728f80555325b",
+    "research/burn3-capacity-instruction-diagnostics.json": "a12abe6cbc96fa38a6805411e8681615eecc625990c90304b3f2a056d2657917",
+    "tools/advanced_probe_v2.ml": "25729f71f7750f9ac3d73a4628e5870f4e7166992d0e6d6dea15e452b0d4c413",
+    "tools/search_burn3_capacity_instructions.py": "6f2df0dd85cfed0c084ba49cba1501ef5acfca4f6d267cbecebde23a814a9709"
+  },
+  "timeout_per_stage_row": 2,
+  "workers": 1
+}

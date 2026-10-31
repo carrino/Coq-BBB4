@@ -1,0 +1,57 @@
+{
+  "status": "compiled_queued_campaign_audit",
+  "checked_canonical_cores": 0,
+  "compiled_canonical_cores": 273,
+  "descriptor": {
+    "module": "BBB24WeightedPrefixPools001_006P0008.PrefixAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 4096,
+    "proof_source": "build/weighted-stream-prefix/pools001_006_prefix0008/PrefixAll.v",
+    "load_paths": [
+      {
+        "path": "build/weighted-stream/pools001_006",
+        "namespace": "BBB24WeightedStreamPools001_006"
+      },
+      {
+        "path": "build/weighted-stream-prefix/pools001_006_prefix0008",
+        "namespace": "BBB24WeightedPrefixPools001_006P0008"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/weighted-stream-prefix/pools001_006_prefix0008-input.json",
+        "format": "json_columns"
+      }
+    ],
+    "compiled_report": "research/weighted-stream-prefix/pools001_006_prefix0008-compiled.json"
+  },
+  "input_sha256": "146464fe7eb6c51730ff81614a69daf313eb35c2c928223be24e13ffe2810bee",
+  "source_artifacts_sha256": {
+    "build/weighted-stream/pools001_006/Part0000.v": "42c2a68d5186d1e68d38cda36873728bf5840b84775f623161390598a2a423b2",
+    "build/weighted-stream/pools001_006/Part0000.vo": "ca9c8794bb69300f2697bbf543fc2675c85834396c932d0e4a3b104655095b1d",
+    "build/weighted-stream/pools001_006/Part0001.v": "c4ce62dafba5c24356d658e123539b969b6becab9309510ec53a2963f5b659ec",
+    "build/weighted-stream/pools001_006/Part0001.vo": "03befc5d76c6bca79a909dfb828fef66ca0c152d57212487ef6392d13ba48bef",
+    "build/weighted-stream/pools001_006/Part0002.v": "a981634f03eae4c9948935fd789f4a85eb5af5c36e637524c4cdb8aa8d82e370",
+    "build/weighted-stream/pools001_006/Part0002.vo": "bfcf9b65931b14dd967ad3a028301ee1c27a573edcf62900f08ec2f171759627",
+    "build/weighted-stream/pools001_006/Part0003.v": "2c4ccf2452ddb8d9a1486d17314bba6c8be0cb877e9aa7549f8ec80659795355",
+    "build/weighted-stream/pools001_006/Part0003.vo": "bfa35436fd5138d33579279166d3f285bd33c7525eaee7e36386d923243ffee1",
+    "build/weighted-stream/pools001_006/Part0004.v": "e3bf32885c8fd32b1e54750e52c31b8dd60d172ee2d25da22e12a7165ea22543",
+    "build/weighted-stream/pools001_006/Part0004.vo": "62d224b013c8c6ed06b4a7c5ba6923703b3581fb96a873f4695ddc9cc9a7442b",
+    "build/weighted-stream/pools001_006/Part0005.v": "b0553261af9dc559428d1b3f8b73dca95fea6f9aac51c3c46a73d02e9c7c195c",
+    "build/weighted-stream/pools001_006/Part0005.vo": "613be4ff33adc525d68e78c75fb71dd635d244f2a3c4609b612a05fc5ec80785",
+    "build/weighted-stream/pools001_006/Part0006.v": "8aaff63bbd033d68b36fccbe3727dcfcee90a1ba755658ae63e221d26e5e322e",
+    "build/weighted-stream/pools001_006/Part0006.vo": "d10c95e397bcda5a93bd28ba98b3ed0d53b70b0b1cce64b5c32aa41afa2dd880",
+    "build/weighted-stream/pools001_006/Part0007.v": "5c418b84c830dd2836c8275085546347234c4da5c5ef10da94b6283d56829b45",
+    "build/weighted-stream/pools001_006/Part0007.vo": "23dcb44653c21a4598fd04c8627beea232fa3163a1d1af911f88ea401806cde0"
+  },
+  "compiled_snapshot": "build/weighted-stream-prefix/pools001_006_prefix0008/compiled-snapshot.json",
+  "compiled_snapshot_sha256": "06bbc25a482e234d08d834b705877bc401c9b0d7eb3b5a8070cd47168afb505f",
+  "tool_sha256": "28fbd7707a44059986932a9665e009c334bf118d24d3c6fbdbe85ec17b2661e4",
+  "ledger_sha256": "01ef2528ae1ff7d55c2f35ff0c37da3371e6e572e87ffb5dad091470b36cadc8",
+  "promotion_requirement": "The combined campaign must independently validate every transitive proof object, directly or through exact-artifact audit receipts, before publishing this prefix as checked.",
+  "driver_source_sha256": "38d6a3a4825adca890c94fd0c9fb70bea807f060708e860a79e9a7eba635f399"
+}

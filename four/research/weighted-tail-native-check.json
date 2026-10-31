@@ -1,0 +1,384 @@
+{
+  "validation": "Exact Boolean parity with Coq VM controls; independently kernel-checked8-row smoke plus default compact-input replay.",
+  "status": "Producer validation only; these comparisons do not add census counts.",
+  "pair_control": {
+    "measurements": [
+      {
+        "name": "native_compile",
+        "exit": 0,
+        "cpu_seconds": 3.089917,
+        "wall_seconds": 18.073538128999644
+      },
+      {
+        "name": "native_run",
+        "exit": 0,
+        "cpu_seconds": 0.503283,
+        "wall_seconds": 1.3719499389990233
+      },
+      {
+        "name": "coq",
+        "exit": 0,
+        "cpu_seconds": 12.075702999999999,
+        "wall_seconds": 79.87531810599467
+      }
+    ],
+    "equal": true,
+    "rows": 28,
+    "true": 8,
+    "false": 20
+  },
+  "bulk_controls": [
+    {
+      "batch": "pools001_006",
+      "compared_rows": 800,
+      "shards": [
+        {
+          "shard": "Part0000",
+          "rows": 19,
+          "coq_log_sha256": "a92286c7d966fa0594620048ea734d38d42272cec61b62cd55461ac530517ae0",
+          "native_log_sha256": "2135eb288b339c1160615e47f09e342c1ba7363847a51f9b23fe0537be199c4a"
+        },
+        {
+          "shard": "Part0001",
+          "rows": 31,
+          "coq_log_sha256": "7d662eaed4d98aa838b9098aeec03750d3565bedc715a802e200747746cfeeb6",
+          "native_log_sha256": "232a8bf3d49c05585b9f3511aed3431e491222c8b5c166b06228f980f2161595"
+        },
+        {
+          "shard": "Part0002",
+          "rows": 32,
+          "coq_log_sha256": "ad91186b1a31b9deeed692fa0103fde7c3bddb29d9e2218032cd0349009a0737",
+          "native_log_sha256": "890adc99f6c61e9c2840080a462dffb94ce1ec7a3bcc9a2a014c0dc62a4e0cf5"
+        },
+        {
+          "shard": "Part0003",
+          "rows": 39,
+          "coq_log_sha256": "44c7fb96e8a440b150859e1671e50f2b4a0513f88517578336120ef010cf9a1e",
+          "native_log_sha256": "49449d12644c26f5ced20da9f305e0b245502979a7fa67562e39c0f7b5d9b552"
+        },
+        {
+          "shard": "Part0004",
+          "rows": 51,
+          "coq_log_sha256": "ed32f85f5b20b043c076d52a705c0ca2ea2d50052b7887487d88ebbf2bd0a62c",
+          "native_log_sha256": "5b881b44986f916d5dd5b11f4bbdbfaa93b96b7746ee49de0258b0dabe3a23c2"
+        },
+        {
+          "shard": "Part0005",
+          "rows": 34,
+          "coq_log_sha256": "e04499bbd9c12edd41ec57f8726a53ed07a53b11a3c106fccb44bfe5971fb342",
+          "native_log_sha256": "2b81b96333c39d8b5f6e980dcf2302953dcc879a4dd6a183a786fd3cf157641b"
+        },
+        {
+          "shard": "Part0006",
+          "rows": 48,
+          "coq_log_sha256": "421d7cd2633af009246d8a4864f5a114db0c9c8e35a7957d6dc10052789bb2f9",
+          "native_log_sha256": "e7258af3bdfa23ef6e4f71d6e84b6258a1154be8216a4cebc5cc3263f221f41d"
+        },
+        {
+          "shard": "Part0007",
+          "rows": 35,
+          "coq_log_sha256": "b3c77619cc55fbfc2122a2c20cae2d9d89371ae60a72aa922b8a20cceaaca6f4",
+          "native_log_sha256": "60e29f98f02fc77e3426f4bd15a612a88c932f0a8f96c4b37772bd4de6d7c420"
+        },
+        {
+          "shard": "Part0008",
+          "rows": 19,
+          "coq_log_sha256": "8f8d122ab676b872f1fe7682faaaf220e7037664dc80f3f297e443437b51be2c",
+          "native_log_sha256": "377b47282a2da36d05b94396b7376d4c209df9c59e001fa5e41209eaf273a5cc"
+        },
+        {
+          "shard": "Part0009",
+          "rows": 30,
+          "coq_log_sha256": "85986ba88ab214145a78acaecbb90113d09478c8115fbdc40f79e9d8fe8a55e3",
+          "native_log_sha256": "92a58cb96beb8f7acbe76c351b753c732bcd5ed8df42731b3169d59cc218fd0b"
+        },
+        {
+          "shard": "Part0010",
+          "rows": 29,
+          "coq_log_sha256": "9d918dc323d49aaa66eca107aa42379e8bd83b1209dc09a23e3e612fb3c84373",
+          "native_log_sha256": "fd1db72ebce9a4f887f49a237d883ef8c9f732480be3f2de9f094e9829672971"
+        },
+        {
+          "shard": "Part0011",
+          "rows": 37,
+          "coq_log_sha256": "1e32f3ab2a56aa7b018b8f274fba20c57c6f1c6a881d8d3ab19858679f8a153f",
+          "native_log_sha256": "24ca74c363c45eb403c5043853e9ac0511788d68498de896f08360dbc10bd250"
+        },
+        {
+          "shard": "Part0012",
+          "rows": 24,
+          "coq_log_sha256": "6ff5319b31c53f48cef7981e353ce62a0ef92e9311609d99c6a27bfb8b4f5f2e",
+          "native_log_sha256": "6fd1037ba0512e850bf717debe24415b48447c1964fac90b1b433832ed461770"
+        },
+        {
+          "shard": "Part0013",
+          "rows": 35,
+          "coq_log_sha256": "ede8f8e078aba36fc39fb87d152e60011a1355ce3664c74f577bc56480a1cdbd",
+          "native_log_sha256": "012bad7afa9cbe32b4ae78f1c9c4891722e1d1f163b0a63a70cc68ac9b15c4f6"
+        },
+        {
+          "shard": "Part0014",
+          "rows": 25,
+          "coq_log_sha256": "d01551909d63e681a29d67fe6cc76252dc9522d18b1ad81b7670745ce5950388",
+          "native_log_sha256": "bacb5a68d0098b9d931f9a7f4e6f96bc3e3354af0a74169e92a9f387f0c6c369"
+        },
+        {
+          "shard": "Part0015",
+          "rows": 27,
+          "coq_log_sha256": "8fcb18a45e475a43b38b17cc15f9b7c4cbd5fc04ef4cb56ed4da0221801abf4e",
+          "native_log_sha256": "b3e24938d09573caed9844b1d5c7b09d3bac41b89dea41c9ab274044af1d068d"
+        },
+        {
+          "shard": "Part0016",
+          "rows": 35,
+          "coq_log_sha256": "9e7072801fc83012f825596311f96a60f1f4480932f56bd303946c76cfac4460",
+          "native_log_sha256": "4ccbd62c40a95ef5cbe674c65f5b7c51fd8c5c4d50e2c6b816aaec9bf9afd19c"
+        },
+        {
+          "shard": "Part0017",
+          "rows": 30,
+          "coq_log_sha256": "f2c4b65941742d6fb9a4a57ed3045a5b4230a9a5ccef4404dbe14bc5e55079a1",
+          "native_log_sha256": "00b5ad684410db7e5c09cdfc60a4ca81e413a6696be46a457648448eea2ca487"
+        },
+        {
+          "shard": "Part0018",
+          "rows": 25,
+          "coq_log_sha256": "9cc82c75a889d6775d764d6a5f4968c09cdaebf6ebbf9a855345c24a4cde8d00",
+          "native_log_sha256": "2734b7f87f597c00f11b4dfbe245a6f38df0c1950562a848e93d079ff9753308"
+        },
+        {
+          "shard": "Part0019",
+          "rows": 23,
+          "coq_log_sha256": "2e406e7114e93f0db52f82a8753496f0c27e657bde6e20bd208e35f3f2c3d093",
+          "native_log_sha256": "ee3f6aa0705af3296f5bb2ff66a73701c24c4d798552ecf5c0c23fcf3b8a1f62"
+        },
+        {
+          "shard": "Part0020",
+          "rows": 21,
+          "coq_log_sha256": "51eb4d0e49376713a4fffd7886c5a9dc89d2bbff55751da932a088ed3a02c0f3",
+          "native_log_sha256": "9a76ce9311da9ec80ba208ebf8e626966a7d07beadf5e88e0884f1659556a4c2"
+        },
+        {
+          "shard": "Part0021",
+          "rows": 18,
+          "coq_log_sha256": "14e44229401906ed69ae6d2e8a84efad01bd08bd4728f89b0d15b4e5c159533d",
+          "native_log_sha256": "4f6493d52dc100f99e30ed167e5b3b1e8d37643096c2e89cfa207a5d1c55e7e5"
+        },
+        {
+          "shard": "Part0022",
+          "rows": 17,
+          "coq_log_sha256": "f33388cbc3ce05ed403c7087531f5e3d25128016c72924b84c3b2e116810913e",
+          "native_log_sha256": "651a2f408dbb9167b014ba00c6997178f0e4394f3d33d598e708caf28f9756e8"
+        },
+        {
+          "shard": "Part0023",
+          "rows": 31,
+          "coq_log_sha256": "4f6bcf05c13f3dce59712c6381c34b6531e8628091b903b503679832c12dbd48",
+          "native_log_sha256": "0000e8d12fe111b03dc9f3555b62d7987e889101a756ff64f3db66544a386184"
+        },
+        {
+          "shard": "Part0024",
+          "rows": 16,
+          "coq_log_sha256": "212ffe901f5773cf620db09bf0f0c08e22479230c733dd5907a87fbf972e1550",
+          "native_log_sha256": "666d202695e722afe3facd74367d34a605fb7ab1006c8fac5fd4213b20bfbd90"
+        },
+        {
+          "shard": "Part0025",
+          "rows": 39,
+          "coq_log_sha256": "733ef8505aaad87cc08fe5964a1a9851ee7a8d21f97d09c7896d1051b4e7ddb9",
+          "native_log_sha256": "9d137cd09ac86c35d0ece26e7cd5bf3e67ac8529e8f155d1c1a9e81a615b5292"
+        },
+        {
+          "shard": "Part0026",
+          "rows": 30,
+          "coq_log_sha256": "85986ba88ab214145a78acaecbb90113d09478c8115fbdc40f79e9d8fe8a55e3",
+          "native_log_sha256": "92a58cb96beb8f7acbe76c351b753c732bcd5ed8df42731b3169d59cc218fd0b"
+        }
+      ]
+    },
+    {
+      "batch": "ordinary001_006",
+      "compared_rows": 874,
+      "shards": [
+        {
+          "shard": "Part0000",
+          "rows": 71,
+          "coq_log_sha256": "251aebdc6ca1e19e1c5945c82c05b116921cad9a3e76f60a189c286df0980ef2",
+          "native_log_sha256": "a7ce75e1ffafaec4911aa3df1f82ca625453f2659870bb305d4ca76d789c32ee"
+        },
+        {
+          "shard": "Part0001",
+          "rows": 30,
+          "coq_log_sha256": "85986ba88ab214145a78acaecbb90113d09478c8115fbdc40f79e9d8fe8a55e3",
+          "native_log_sha256": "92a58cb96beb8f7acbe76c351b753c732bcd5ed8df42731b3169d59cc218fd0b"
+        },
+        {
+          "shard": "Part0002",
+          "rows": 35,
+          "coq_log_sha256": "ede8f8e078aba36fc39fb87d152e60011a1355ce3664c74f577bc56480a1cdbd",
+          "native_log_sha256": "012bad7afa9cbe32b4ae78f1c9c4891722e1d1f163b0a63a70cc68ac9b15c4f6"
+        },
+        {
+          "shard": "Part0003",
+          "rows": 44,
+          "coq_log_sha256": "18f3ffcc64609e3cb9675fe3be892187b5b10506fdbe17bf5b05904b4094c72d",
+          "native_log_sha256": "63c9a07ea2b406696394260dd8f140f6435f9a358537daf572ba7f16b2df03aa"
+        },
+        {
+          "shard": "Part0004",
+          "rows": 20,
+          "coq_log_sha256": "e4fb34d64a27056f9fdc9140b1ac29c0c840e7ce34b57c1e8893e3acacf1f630",
+          "native_log_sha256": "f4cdaa415511a63b814d266bd9c32d24985c47fdcc1962785a45d0bdea76d01a"
+        },
+        {
+          "shard": "Part0005",
+          "rows": 36,
+          "coq_log_sha256": "16e69ef7e24cceb43e9db48b14ce3c8725c553e129d3feca2f696bbcfd57245d",
+          "native_log_sha256": "be9e3e02f2612e46776d7098af2d421845a770d74ac8f9a2ad4b2ab276a6d5c5"
+        },
+        {
+          "shard": "Part0006",
+          "rows": 30,
+          "coq_log_sha256": "85986ba88ab214145a78acaecbb90113d09478c8115fbdc40f79e9d8fe8a55e3",
+          "native_log_sha256": "92a58cb96beb8f7acbe76c351b753c732bcd5ed8df42731b3169d59cc218fd0b"
+        },
+        {
+          "shard": "Part0007",
+          "rows": 41,
+          "coq_log_sha256": "b0792a6ecb2a121a3be0cf2e9d8c1dfd7240de40b4e8c501b5c2f370e226891a",
+          "native_log_sha256": "af022b60e6f21b2be7f9b46a26146c25640a004ead1f3b2725eaf1c8bed0bbbd"
+        },
+        {
+          "shard": "Part0008",
+          "rows": 36,
+          "coq_log_sha256": "16e69ef7e24cceb43e9db48b14ce3c8725c553e129d3feca2f696bbcfd57245d",
+          "native_log_sha256": "be9e3e02f2612e46776d7098af2d421845a770d74ac8f9a2ad4b2ab276a6d5c5"
+        },
+        {
+          "shard": "Part0009",
+          "rows": 28,
+          "coq_log_sha256": "6720f6f6acd31be1f6f908690ec90db973aa4d41b7dc9218e183c79f267c4d9f",
+          "native_log_sha256": "6758bc39abbbca82cbea682dc9aef7dba4b44b088618414a7f56052f0e06fec2"
+        },
+        {
+          "shard": "Part0010",
+          "rows": 38,
+          "coq_log_sha256": "86549004d5fff4c0a6d3d07adab9886e0ac202de8314d84213f294dc4f566357",
+          "native_log_sha256": "131c8b3f0d8f22017dbf31e498fbcecdcca259429b3adfc6e7044772a2b0ee5c"
+        },
+        {
+          "shard": "Part0011",
+          "rows": 20,
+          "coq_log_sha256": "e4fb34d64a27056f9fdc9140b1ac29c0c840e7ce34b57c1e8893e3acacf1f630",
+          "native_log_sha256": "f4cdaa415511a63b814d266bd9c32d24985c47fdcc1962785a45d0bdea76d01a"
+        },
+        {
+          "shard": "Part0012",
+          "rows": 36,
+          "coq_log_sha256": "16e69ef7e24cceb43e9db48b14ce3c8725c553e129d3feca2f696bbcfd57245d",
+          "native_log_sha256": "be9e3e02f2612e46776d7098af2d421845a770d74ac8f9a2ad4b2ab276a6d5c5"
+        },
+        {
+          "shard": "Part0013",
+          "rows": 55,
+          "coq_log_sha256": "1498b8ad769b375ca375b8f58fc777a4be96d80eb02a91fe1e7fcf6f63faf768",
+          "native_log_sha256": "d900e24cebe2274712fd02fbeb99c46c5fe902738ffbf15f8b8281d677109acb"
+        },
+        {
+          "shard": "Part0014",
+          "rows": 37,
+          "coq_log_sha256": "e45c5eff15c0bcf7cd9e4d4a428b11ed4476a6d799a0d781eb3d5bf9987eb373",
+          "native_log_sha256": "354170ac93b4263e5e8f679b87a706e9c70058acdd68ca3bfbb5ffc56c14ba98"
+        },
+        {
+          "shard": "Part0015",
+          "rows": 28,
+          "coq_log_sha256": "6720f6f6acd31be1f6f908690ec90db973aa4d41b7dc9218e183c79f267c4d9f",
+          "native_log_sha256": "6758bc39abbbca82cbea682dc9aef7dba4b44b088618414a7f56052f0e06fec2"
+        },
+        {
+          "shard": "Part0016",
+          "rows": 27,
+          "coq_log_sha256": "ecc16967f32f038760056c85b960fe24522f988daf0a1b7d56d89a3869c17107",
+          "native_log_sha256": "e548cf05798d02f5ad93203ebeac0f946b3de1f2ae9a4488279c775d32043cd2"
+        },
+        {
+          "shard": "Part0017",
+          "rows": 29,
+          "coq_log_sha256": "9d918dc323d49aaa66eca107aa42379e8bd83b1209dc09a23e3e612fb3c84373",
+          "native_log_sha256": "fd1db72ebce9a4f887f49a237d883ef8c9f732480be3f2de9f094e9829672971"
+        },
+        {
+          "shard": "Part0018",
+          "rows": 27,
+          "coq_log_sha256": "ecc16967f32f038760056c85b960fe24522f988daf0a1b7d56d89a3869c17107",
+          "native_log_sha256": "e548cf05798d02f5ad93203ebeac0f946b3de1f2ae9a4488279c775d32043cd2"
+        },
+        {
+          "shard": "Part0019",
+          "rows": 17,
+          "coq_log_sha256": "ad1006500111de0f58706a39f9ad6619decba696933204805b5c89ff0bc912f7",
+          "native_log_sha256": "6fc17562722cda371db7eb128e73088c4e424a2e532e4191ad4cceeb62e3e987"
+        },
+        {
+          "shard": "Part0020",
+          "rows": 24,
+          "coq_log_sha256": "b0ba873108a6effc4e9bbb6cba719150d679d19a48fc986306b858d6f5d9b418",
+          "native_log_sha256": "778bd89f08c82b763c7bd0cca0299fa1f81209a1b85266218ab6fbdc11f98185"
+        },
+        {
+          "shard": "Part0021",
+          "rows": 20,
+          "coq_log_sha256": "e4fb34d64a27056f9fdc9140b1ac29c0c840e7ce34b57c1e8893e3acacf1f630",
+          "native_log_sha256": "f4cdaa415511a63b814d266bd9c32d24985c47fdcc1962785a45d0bdea76d01a"
+        },
+        {
+          "shard": "Part0022",
+          "rows": 25,
+          "coq_log_sha256": "b89c16dddfc565ece97634581ab69f3ca11bbf5906327c661fc6c1f21d1e88bc",
+          "native_log_sha256": "6464276a27d1788daf873c1cc0722ec40683e241ad16b93aa34cdf686b4b583f"
+        },
+        {
+          "shard": "Part0023",
+          "rows": 27,
+          "coq_log_sha256": "ecc16967f32f038760056c85b960fe24522f988daf0a1b7d56d89a3869c17107",
+          "native_log_sha256": "e548cf05798d02f5ad93203ebeac0f946b3de1f2ae9a4488279c775d32043cd2"
+        },
+        {
+          "shard": "Part0024",
+          "rows": 29,
+          "coq_log_sha256": "9d918dc323d49aaa66eca107aa42379e8bd83b1209dc09a23e3e612fb3c84373",
+          "native_log_sha256": "fd1db72ebce9a4f887f49a237d883ef8c9f732480be3f2de9f094e9829672971"
+        },
+        {
+          "shard": "Part0025",
+          "rows": 31,
+          "coq_log_sha256": "4f6bcf05c13f3dce59712c6381c34b6531e8628091b903b503679832c12dbd48",
+          "native_log_sha256": "0000e8d12fe111b03dc9f3555b62d7987e889101a756ff64f3db66544a386184"
+        },
+        {
+          "shard": "Part0026",
+          "rows": 16,
+          "coq_log_sha256": "212ffe901f5773cf620db09bf0f0c08e22479230c733dd5907a87fbf972e1550",
+          "native_log_sha256": "666d202695e722afe3facd74367d34a605fb7ab1006c8fac5fd4213b20bfbd90"
+        },
+        {
+          "shard": "Part0027",
+          "rows": 17,
+          "coq_log_sha256": "ad1006500111de0f58706a39f9ad6619decba696933204805b5c89ff0bc912f7",
+          "native_log_sha256": "6fc17562722cda371db7eb128e73088c4e424a2e532e4191ad4cceeb62e3e987"
+        }
+      ]
+    }
+  ],
+  "smoke_report": "research/weighted-stream-reuse/datasmoke-summary.json",
+  "smoke_report_sha256": "178b7d81b1e28a0fb745ba400a4602d649173aeb0a16e6e86cae76d585a06568",
+  "source_sha256": {
+    "tools/ExtractWeightedTail.v": "11ab4b79b91d59ecbe482930ccf75d354a04788ee79b8192cbfe54ad99ebed23",
+    "tools/weighted_tail_native.py": "388f9c25be33d51da20ee86fcecac0a9782de8b6fd1d0c51db162038543204e5",
+    "tools/weighted_tail_data.py": "defbca7c1c770e5962c02685d941dab3150297df4448fc07e05b0e920a80fb15",
+    "tools/weighted_tail_selector.ml": "3f7e3d1e36e88977efdfb3602af953574710943e2a587f1973d17d8b31daa0f8",
+    "tools/check_weighted_stream_reuse_v6.py": "2031115ae2b9c7d9d4945fcd01a24772568c4858be89db73ab3e048c21d6344b",
+    "tools/check_weighted_stream_reuse_v7.py": "412e8c44f8ce56bff625f5d172669458b8bc019a86ff4b289a202707ae7fdf50"
+  }
+}

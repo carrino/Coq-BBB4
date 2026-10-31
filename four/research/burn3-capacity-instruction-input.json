@@ -1,0 +1,39 @@
+{
+  "selection": "All candidates from the bounded trace-guided capacity instruction pilot",
+  "source_report": "research/burn3-capacity-instruction-search.json",
+  "search_sources": [],
+  "excluded_ledgers_sha256": {},
+  "columns": [
+    "machine",
+    "mode",
+    "bound",
+    "size",
+    "anchor",
+    "fuel",
+    "extra",
+    "history"
+  ],
+  "selected_rows": 2,
+  "rows": [
+    [
+      "1LB2RB1RA1RB_2RA3LB2LB0LA",
+      "hist",
+      4096,
+      4,
+      4096,
+      16384,
+      32,
+      3
+    ],
+    [
+      "1LB2RB2RB2LA_3RA0LA0RB3LB",
+      "hist",
+      4096,
+      4,
+      4096,
+      16384,
+      32,
+      3
+    ]
+  ]
+}

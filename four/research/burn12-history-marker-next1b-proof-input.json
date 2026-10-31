@@ -1,0 +1,25 @@
+{
+  "generic_report_sha256": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 3587496456,
+      "fuel": 131072,
+      "history": 18,
+      "history_marker_mask": 3,
+      "invariant": "conditional",
+      "machine": "1LB2LB3RA0RB_2RB2RA3LA2LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    }
+  ],
+  "selection_report": "research/burn12-history-marker-next1b-selection.json",
+  "selection_sha256": "aa9359807f3ebe4be5e9b63acdf2060529e5cb2eb6b2ac53f70128ef9baf41db",
+  "state_bound": 0
+}

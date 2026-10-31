@@ -1,0 +1,98 @@
+{
+  "baseline_boards": 113,
+  "champion_registered": true,
+  "cohort_rows": 133185,
+  "counts": {
+    "both": {
+      "cohort_covered": 99824,
+      "cohort_remaining": 33361,
+      "distinct_families": 123026,
+      "newly_covered_cohort": 131
+    },
+    "state": {
+      "cohort_covered": 130681,
+      "cohort_remaining": 2504,
+      "distinct_families": 153883,
+      "newly_covered_cohort": 254
+    }
+  },
+  "global_upper_bound_proved": false,
+  "helper_sha256": {
+    "tools/campaign_next_boards.py": "98022d44f29cefbc6e98b86271c44a0e7567f1a111656cc2c12e0ecc22519200",
+    "tools/check_campaign.py": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+    "tools/check_campaign_next.py": "18e5a49e5b39dabf0419802d906583fde708d9e27a09a9144c88cdeab3d78f57",
+    "tools/kernel_audit_cache_v3.py": "0323d125e53534efe41ce5c675ec3189537b6568cbf10fe057e32810835e9e0f",
+    "tools/summarize_campaign_queue.py": "a3bec9bc51c8901a7456f8d9446f85de9e035097c1713789987b8593d4ed4f0e",
+    "tools/summarize_next_burndown.py": "699a7cfdd5df4654dcaa71fb0f10a736a894ba98d596ab2c3f7524fcabf4fe34"
+  },
+  "outputs": {
+    "both-families.tsv": {
+      "path": "build/next-burndown/both-families.tsv",
+      "sha256": "fa635a74ae5641151191fcbfdaba3c11d59be16cd5c80be1341ac66f54a6ebb5"
+    },
+    "both-newly-covered.txt": {
+      "path": "build/next-burndown/both-newly-covered.txt",
+      "sha256": "9e9b1dbda54484e3ad56c238b912502428d11f430060f23e39c5eb88f02648b5"
+    },
+    "both-queued.txt": {
+      "path": "build/next-burndown/both-queued.txt",
+      "sha256": "631eb3029fcf3d35abe57f68cbae89172d542252525fbd239ac17a84c240afb2"
+    },
+    "both-remaining.txt": {
+      "path": "build/next-burndown/both-remaining.txt",
+      "sha256": "c3a6e078bd2035be5b70616123bda70bcb0dafd1c1cc314f1551ecda4bc30283"
+    },
+    "queued.tsv": {
+      "path": "build/next-burndown/queued.tsv",
+      "sha256": "a942a894967973085b67e67e004376455b296b166c5c713a58cbd0acf383e6dd"
+    },
+    "state-families.tsv": {
+      "path": "build/next-burndown/state-families.tsv",
+      "sha256": "9f0d3982328e117231c77afea6a82d72c6ac129e2e2ade1bfe84cb8df951de38"
+    },
+    "state-newly-covered.txt": {
+      "path": "build/next-burndown/state-newly-covered.txt",
+      "sha256": "64eacde5dedcaf5f427a87fe60fa99fe0af46fabb40393908300316b22376a82"
+    },
+    "state-queued.txt": {
+      "path": "build/next-burndown/state-queued.txt",
+      "sha256": "a11466f2601253f36901bc8499d8d9af613ba7e973832a622c5da8498ea0dad7"
+    },
+    "state-remaining.txt": {
+      "path": "build/next-burndown/state-remaining.txt",
+      "sha256": "80eb3390d632f8e48ae60ff4255b0faa06d971539e3ff9101ca4946d751d61bb"
+    }
+  },
+  "proof_inputs": [
+    {
+      "inputs_sha256": "0235fce479f2e2189ba31bc697e9ee2305dc99d74e9d4eb26e09f7750b219a5f",
+      "manifest": "research/campaign-final-input.json",
+      "manifest_sha256": "7227b3323a2e1db49f26a2788cc7526895e0480bf075260a385ae89114b8375e",
+      "module": "BBB24CampaignFinal.Campaign",
+      "proof_sources_sha256": "859e4dddda67002fd1ece96966c692f81b593f69a5bbe04b0d3c9405bdf2af18",
+      "report": "research/campaign-final-summary.json",
+      "report_sha256": "e3b29cf0416c9a93f0c6831f68040074b6016939aa1b486dbd361923996c5e89",
+      "validation": "Exact inventory VM proofs, typed bounds, pending membership, and coqchk validation of the complete transitive object dependency closure."
+    },
+    {
+      "inputs_sha256": "1bccc24d1fa34082070c93d846226877522e7a2fac8f2b7458661a5dbc7204b6",
+      "manifest": "research/next-campaign-input.json",
+      "manifest_sha256": "6533d04b040464020ec5cdff0ebfcd23b7fa9ee7c520edd63809a6921687d101",
+      "module": "BBB24NextCampaign.Campaign",
+      "proof_sources_sha256": "c3873e56ef004d776912a91a3f944581c45dc1b1552e1e12c35dae751f817728",
+      "report": "research/next-campaign-summary.json",
+      "report_sha256": "c9ba0148d448e16cd869c7e1468a468d4f894e3d7853994e0e9fec05ef96ac1b",
+      "validation": "Exact inventory VM proofs, typed bounds, pending membership, and coqchk validation of the complete transitive object dependency closure."
+    }
+  ],
+  "remaining_candidate_queue": {
+    "both": 4227,
+    "distinct": 4227,
+    "original_queue_report": "research/campaign-next-summary.json",
+    "original_queue_report_sha256": "e3d3801a541606338dbe9ea0d35262ec217ae55e3f5e63c81ef7172659802858",
+    "scope": "Scheduling only; remaining candidates are not proof successes.",
+    "state": 409
+  },
+  "scope": "Distinct census families from independently audited exact boards; all completions covered. No subtraction of raw census table weights.",
+  "supplement_boards": 6
+}

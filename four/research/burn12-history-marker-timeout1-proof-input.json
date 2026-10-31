@@ -1,0 +1,25 @@
+{
+  "generic_report_sha256": "99b5d76f525558a55e90786f7ef31cee6099c8fca86f66b3382a4da17e6069ed",
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 68781580,
+      "fuel": 131072,
+      "history": 5,
+      "history_marker_mask": 11,
+      "invariant": "conditional",
+      "machine": "1LB2LB3RB2LA_1RB3RA0RA0LA",
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 2
+    }
+  ],
+  "selection_report": "research/burn12-history-marker-timeout1-selection.json",
+  "selection_sha256": "1de3371036b01460172882be64f20f157e916375874a474aef58c41c411038bc",
+  "state_bound": 0
+}

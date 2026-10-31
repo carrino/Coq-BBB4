@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 2790952922,
+      "machine": "1LB2LB0LB0RB_2RB2RA3LB1RA"
+    }
+  ],
+  "selection_report": "research/burn16-quaternary-counter-native.json",
+  "selection_sha256": "6c34e23da80c90d32eb1d2a42b48f489fc14383dec942e273e2f9abac6e8c9f7",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn16-quaternary-counter/QuaternaryCounter.v": "a26431940858c11351763079de53f2d0a4580c84d39693a9ea55d99823f9d847",
+    "proof-sources/burn16-quaternary-counter/Regression.v": "150ad4957f80941afd6669c408a7a67aa5899e7c8556108f2fd553309bf06cd1"
+  }
+}

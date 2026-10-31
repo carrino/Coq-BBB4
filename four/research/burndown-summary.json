@@ -1,0 +1,52 @@
+{
+  "baseline": "256-step exploratory survey; four checked affine families linked by frozen-census closeout",
+  "families": 611360,
+  "raw_table_weight": 39521784,
+  "roots": {
+    "blank": {
+      "families": 63426,
+      "family_weight": 2842146,
+      "total_completion_weight": 2331696,
+      "root_multiplier": 2,
+      "raw_table_weight": 5684292,
+      "raw_total_table_weight": 4663392,
+      "inventory_sha256": "4e7a25f1b57086896e77b2e0fa686be8d207cac4dedf3f70ab3ea1a5206867ee"
+    },
+    "nonblank": {
+      "families": 547934,
+      "family_weight": 5639582,
+      "total_completion_weight": 4874204,
+      "root_multiplier": 6,
+      "raw_table_weight": 33837492,
+      "raw_total_table_weight": 29245224,
+      "inventory_sha256": "8599abad2aa4238e53eb8bc5ac406178d9d21cd9da56804d3c93572016dd1de9"
+    }
+  },
+  "raw_total_table_weight": 33908616,
+  "status_counts": {
+    "candidate_unchecked": 782,
+    "coq_checked": 4,
+    "no_certificate": 238,
+    "not_sampled": 610336
+  },
+  "sample_size": 1024,
+  "sample_status_counts": {
+    "candidate_unchecked": 782,
+    "coq_checked": 4,
+    "no_certificate": 238
+  },
+  "sample_no_certificate_reasons": {
+    "noshape": 98,
+    "noproof": 76,
+    "nofit": 64
+  },
+  "state_checked": 4,
+  "instruction_checked": 4,
+  "census_linked": 4,
+  "census_residual_predicate": "BBB24.AffineCloseout.bootstrap_affine_pending",
+  "census_coverage_theorem": "BBB24.AffineCloseout.bootstrap_affine_coverage",
+  "census_accounting": "Family completion sets excluded from the refined residual predicate; original census structural counts unchanged.",
+  "sample_sha256": "d9d558057dacb8e21c4d02e90a53151af5fca1bf6334120b92bc4c068e16c369",
+  "search_csv_sha256": "389618a70ff14ffc0152d579835638b9e795ad4d1000e6e446e6e8adca7c9712",
+  "verified_registry_sha256": "bfed5f8e1a6bf21f7585adae49627444dbf22e2f74e6bc58785496743ad8a59c"
+}

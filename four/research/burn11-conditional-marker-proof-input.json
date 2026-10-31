@@ -1,0 +1,114 @@
+{
+  "rows": [
+    {
+      "anchor": 4096,
+      "code": 2067154326,
+      "fuel": 131072,
+      "history": 4,
+      "machine": "1LB0RA---0LB_3RB2RA0LA1LB",
+      "marker_mask": 2,
+      "required_A_mask": 8,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "width": 4
+    },
+    {
+      "anchor": 4096,
+      "code": 3303582397,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB---2LA3RB_2RB3RA0LA2LA",
+      "marker_mask": 2,
+      "required_A_mask": 12,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 310523841,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB---2LA3RB_2RB3RA3LA0LA",
+      "marker_mask": 2,
+      "required_A_mask": 12,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 3303882957,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB---2RB2LA_3RB3RA0LA2LA",
+      "marker_mask": 2,
+      "required_A_mask": 12,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 310824401,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB---2RB2LA_3RB3RA3LA0LA",
+      "marker_mask": 2,
+      "required_A_mask": 12,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    },
+    {
+      "anchor": 4096,
+      "code": 305144973,
+      "fuel": 131072,
+      "history": 3,
+      "machine": "1LB---2RB2LA_3RB2RA3LA0LA",
+      "marker_mask": 2,
+      "required_A_mask": 12,
+      "rounds": 128,
+      "weights": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "width": 3
+    }
+  ],
+  "state_bound": 0,
+  "selection_report": "research/burn11-conditional-marker-search.json",
+  "selection_sha256": "0af0f311f48a41b318f2b21dcbfd590de4e0805654a828e70e97d37620dc3207",
+  "generic_report_sha256": "ca7163a3ae41317c6214cb5b90d6f9f94aa1eeaf432dd46afe85e111bfc6849d",
+  "template_sha256": {
+    "proof-sources/burn11-conditional-marker/ConditionalMarker.v": "2ce8eabe33c8c30f9e16b001bc791469f3b01faa70ac4ba25365df9f93a65eb5",
+    "proof-sources/burn11-conditional-marker/Regression.v": "96690ac744951d6ab17d9b061be772d50649fe791138b998da314f1f28302d02"
+  }
+}

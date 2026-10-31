@@ -1,0 +1,23 @@
+{
+  "rows": [
+    {
+      "code": 4039390864,
+      "machine": "1LB0LA0RB3LB_3RB1LB3RA2LB"
+    },
+    {
+      "code": 4046490149,
+      "machine": "1LB0LA0RB3LB_3RB2RA3RA2LB"
+    },
+    {
+      "code": 4050749720,
+      "machine": "1LB0LA0RB3LB_3RB3LB3RA2LB"
+    }
+  ],
+  "selection_report": "research/burn19-binary-trio-native.json",
+  "selection_sha256": "863fd1150b5b984d9408b08f11ac8bc525607b2c1ed3aa87e517ea687e0085cf",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn19-binary-trio/BinaryTrio.v": "52c1e6caf3b16b4a669c980e0e8acaa1d04908b41b572b42f7cb617f86071574",
+    "proof-sources/burn19-binary-trio/Regression.v": "1181002707221ecc6d1e5cc83ecb1862ceaebca10ddcf149232f3526be1b22a4"
+  }
+}

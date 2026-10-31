@@ -1,0 +1,17 @@
+{
+  "rows": [
+    {
+      "code": 2504515077,
+      "machine": "1LB0RA0LB2RB_3RB3LA0LB1RA"
+    }
+  ],
+  "selection_report": "research/burn39-s014-normalizer-native.json",
+  "selection_sha256": "bc6425225e2a068d19ca808ae87b22a593f34d0028c4796ae5e0a629a1e40087",
+  "shared_normalizer_parent_sha256": "4b43d3e48f8ea0fd874c2d357c7741dc0650213944537d03e16f682c5ebf57cf",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn38-cut-siblings/Normalizer.v": "4b43d3e48f8ea0fd874c2d357c7741dc0650213944537d03e16f682c5ebf57cf",
+    "proof-sources/burn38-cut-siblings/Regression014.v": "c4d4219b64d3fdfea99c4eaf03cc36096dd4a1dbfca9a05bc17394d694610ec3",
+    "proof-sources/burn38-cut-siblings/S014.v": "0f09a7dfadfbb0647a740f3e4d9bf13ddd8db130d4d0d0d67538f9af0cd874f2"
+  }
+}

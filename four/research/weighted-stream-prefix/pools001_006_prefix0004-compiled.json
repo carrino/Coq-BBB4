@@ -1,0 +1,48 @@
+{
+  "status": "compiled_queued_campaign_audit",
+  "checked_canonical_cores": 0,
+  "compiled_canonical_cores": 130,
+  "descriptor": {
+    "module": "BBB24WeightedPrefixPools001_006P0004.PrefixAll",
+    "board": "board",
+    "nonhalt": "nonhalt",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "was_pending": "was_pending",
+    "bound": 4096,
+    "proof_source": "build/weighted-stream-prefix/pools001_006_prefix0004/PrefixAll.v",
+    "load_paths": [
+      {
+        "path": "build/weighted-stream/pools001_006",
+        "namespace": "BBB24WeightedStreamPools001_006"
+      },
+      {
+        "path": "build/weighted-stream-prefix/pools001_006_prefix0004",
+        "namespace": "BBB24WeightedPrefixPools001_006P0004"
+      }
+    ],
+    "machine_inputs": [
+      {
+        "path": "research/weighted-stream-prefix/pools001_006_prefix0004-input.json",
+        "format": "json_columns"
+      }
+    ],
+    "compiled_report": "research/weighted-stream-prefix/pools001_006_prefix0004-compiled.json"
+  },
+  "input_sha256": "7038a7cabb0b722f5856e3ee201b077eef1ba77567b5f9c7fc893c1c96a8484c",
+  "source_artifacts_sha256": {
+    "build/weighted-stream/pools001_006/Part0000.v": "42c2a68d5186d1e68d38cda36873728bf5840b84775f623161390598a2a423b2",
+    "build/weighted-stream/pools001_006/Part0000.vo": "ca9c8794bb69300f2697bbf543fc2675c85834396c932d0e4a3b104655095b1d",
+    "build/weighted-stream/pools001_006/Part0001.v": "c4ce62dafba5c24356d658e123539b969b6becab9309510ec53a2963f5b659ec",
+    "build/weighted-stream/pools001_006/Part0001.vo": "03befc5d76c6bca79a909dfb828fef66ca0c152d57212487ef6392d13ba48bef",
+    "build/weighted-stream/pools001_006/Part0002.v": "a981634f03eae4c9948935fd789f4a85eb5af5c36e637524c4cdb8aa8d82e370",
+    "build/weighted-stream/pools001_006/Part0002.vo": "bfcf9b65931b14dd967ad3a028301ee1c27a573edcf62900f08ec2f171759627",
+    "build/weighted-stream/pools001_006/Part0003.v": "2c4ccf2452ddb8d9a1486d17314bba6c8be0cb877e9aa7549f8ec80659795355",
+    "build/weighted-stream/pools001_006/Part0003.vo": "bfa35436fd5138d33579279166d3f285bd33c7525eaee7e36386d923243ffee1"
+  },
+  "compiled_snapshot": "build/weighted-stream-prefix/pools001_006_prefix0004/compiled-snapshot.json",
+  "compiled_snapshot_sha256": "21f906ffbfc712eb12b8a0fc3e9a0050abded5808f673658362abbf642c713bf",
+  "tool_sha256": "38d6a3a4825adca890c94fd0c9fb70bea807f060708e860a79e9a7eba635f399",
+  "ledger_sha256": "99398968ac908398953d008b4cd91ab8be393933ee2d06b3d164494e0785db77",
+  "promotion_requirement": "The combined campaign must independently validate every transitive proof object, directly or through exact-artifact audit receipts, before publishing this prefix as checked."
+}

@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "code": 1149612969,
+      "machine": "1LB2LB0LB1RA_2RB2RA3LB0RA"
+    }
+  ],
+  "selection_report": "research/burn17-zero-marker-native.json",
+  "selection_sha256": "d6d614bf179287e8642334f2b57eaf00040bd416025d25445d28a6b9fb9b8095",
+  "state_bound": 0,
+  "template_sha256": {
+    "proof-sources/burn17-zero-marker/Regression.v": "d54cea34ec25b832290c69ef95027af183baedaedab1e0195f0c82bc65c49544",
+    "proof-sources/burn17-zero-marker/ZeroMarker.v": "e8b4518d1c671b429bfad138934eab00cea444d5be5b2c3a12f3267a104cc2b3"
+  }
+}

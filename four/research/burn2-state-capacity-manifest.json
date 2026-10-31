@@ -1,0 +1,578 @@
+{
+  "parameters": {
+    "address_space_bytes": 2147483648,
+    "lp_target_seconds": 3,
+    "machine_seconds": 90,
+    "wall_width": 32,
+    "workers": 1
+  },
+  "rows": [
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0496.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0496.jsonl"
+        }
+      ],
+      "machine": "1LB0LB0LB0RA_2RB2RA3LA2RA",
+      "nodes": [
+        95,
+        95
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0608.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0608.jsonl"
+        }
+      ],
+      "machine": "1LB2RB1LA1LB_2RB2RA3LA0RB",
+      "nodes": [
+        150,
+        150
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0528.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0528.jsonl"
+        }
+      ],
+      "machine": "1LB2RB3RB1LA_1RB3RA---3LA",
+      "nodes": [
+        164,
+        164
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0608.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0608.jsonl"
+        }
+      ],
+      "machine": "1LB2LA3RB1RA_3RB3LA0RA2LA",
+      "nodes": [
+        212,
+        212
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0576.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0576.jsonl"
+        }
+      ],
+      "machine": "1LB2LB2LB1RA_1RB2RA3LB2RB",
+      "nodes": [
+        212,
+        212
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0576.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0576.jsonl"
+        }
+      ],
+      "machine": "1LB0LB1RB3LB_3RB1LA0LB2RB",
+      "nodes": [
+        216,
+        216
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0528.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0528.jsonl"
+        }
+      ],
+      "machine": "1LB2LB1RB0LB_2RB1LA3RB0LB",
+      "nodes": [
+        216,
+        216
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0544.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0544.jsonl"
+        }
+      ],
+      "machine": "1LB---0LA2LB_3RB1LA2RB3RB",
+      "nodes": [
+        224,
+        224
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0512.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0512.jsonl"
+        }
+      ],
+      "machine": "1LB2LB1RB2RB_2RB1LA3RB0LB",
+      "nodes": [
+        246,
+        246
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0480.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0480.jsonl"
+        }
+      ],
+      "machine": "1LB2RB2LB1RB_2RB1LA3RB0LB",
+      "nodes": [
+        246,
+        246
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0464.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0464.jsonl"
+        }
+      ],
+      "machine": "1LB0LA3RA2RA_2RB1LA3RB0LB",
+      "nodes": [
+        261,
+        261
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0528.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0528.jsonl"
+        }
+      ],
+      "machine": "1LB2LA3RB1LA_0RB1RA3RA3RB",
+      "nodes": [
+        276,
+        276
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0496.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0496.jsonl"
+        }
+      ],
+      "machine": "1LB1RA1LB2LA_2RB3LB0LB1RA",
+      "nodes": [
+        283,
+        283
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0608.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0608.jsonl"
+        }
+      ],
+      "machine": "1LB1RA1RA2LB_2RB3LB0LB1RA",
+      "nodes": [
+        307,
+        307
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0592.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0592.jsonl"
+        }
+      ],
+      "machine": "1LB0LA0LB2RB_3RB1LA0LB3RA",
+      "nodes": [
+        323,
+        323
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0640.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0640.jsonl"
+        }
+      ],
+      "machine": "1LB0LB1LA1RB_3RB2RA3RA3LA",
+      "nodes": [
+        331,
+        331
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0640.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0640.jsonl"
+        }
+      ],
+      "machine": "1LB2RB0LA1RB_2RB3RA1LA0LB",
+      "nodes": [
+        343,
+        343
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0512.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0512.jsonl"
+        }
+      ],
+      "machine": "1LB2LB3RA1RA_3RB2LA1RB3LA",
+      "nodes": [
+        349,
+        349
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0592.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0592.jsonl"
+        }
+      ],
+      "machine": "1LB2RB2RB2LB_0RB3RA0LA2LA",
+      "nodes": [
+        359,
+        359
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0672.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0672.jsonl"
+        }
+      ],
+      "machine": "1LB0LA0LB3RA_3RB1LA2RA2RB",
+      "nodes": [
+        363,
+        363
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0464.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0464.jsonl"
+        }
+      ],
+      "machine": "1LB0RB0LA0RA_1RB2RA3LA2LA",
+      "nodes": [
+        364,
+        364
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0544.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0544.jsonl"
+        }
+      ],
+      "machine": "1LB2RB0LA0LB_3RB1LA3RA2RA",
+      "nodes": [
+        368,
+        368
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0544.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0544.jsonl"
+        }
+      ],
+      "machine": "1LB2LA2RA1LB_2RB3RA0LB0LA",
+      "nodes": [
+        430,
+        430
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0544.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0544.jsonl"
+        }
+      ],
+      "machine": "1LB2LB0LA2LA_1RB3RA2RB3LA",
+      "nodes": [
+        448,
+        448
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0496.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0496.jsonl"
+        }
+      ],
+      "machine": "1LB2LB3LB1RA_3RB2LB1RA0LB",
+      "nodes": [
+        459,
+        459
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0592.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0592.jsonl"
+        }
+      ],
+      "machine": "1LB2LA0LA2LB_3RB1LA2RB1RA",
+      "nodes": [
+        460,
+        460
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0624.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0624.jsonl"
+        }
+      ],
+      "machine": "1LB2LA3RA2RA_1RB2RA0LB2RB",
+      "nodes": [
+        473,
+        473
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0528.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0528.jsonl"
+        }
+      ],
+      "machine": "1LB0LB0RA2RA_1RB3RA3RA2LA",
+      "nodes": [
+        475,
+        475
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0656.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0656.jsonl"
+        }
+      ],
+      "machine": "1LB0RA---3RA_3RB2RA0LA0LB",
+      "nodes": [
+        480,
+        480
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0576.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0576.jsonl"
+        }
+      ],
+      "machine": "1LB2RA0LB1RA_1RB3LA2RB3RB",
+      "nodes": [
+        480,
+        480
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0624.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0624.jsonl"
+        }
+      ],
+      "machine": "1LB2LA2RA3LB_2RB3RA0LB3RA",
+      "nodes": [
+        481,
+        481
+      ]
+    },
+    {
+      "graphs": [
+        {
+          "mirror": 0,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0624.jsonl"
+        },
+        {
+          "mirror": 1,
+          "path": "four/build/burn2-state/graph-snapshots/chunk-0624.jsonl"
+        }
+      ],
+      "machine": "1LB2LA0RA3RB_3RB1RA1LB0LB",
+      "nodes": [
+        492,
+        492
+      ]
+    }
+  ],
+  "scope": "Untrusted state-only capacity discovery; no proof claim.",
+  "sources_sha256": {
+    "build/burn2-state/graph-snapshots/chunk-0464.jsonl": "7e520d4c8e069e77a9010602836bfa6bc335807c790b17a0372b9fb47ca2bc6b",
+    "build/burn2-state/graph-snapshots/chunk-0480.jsonl": "4e5b30af06334264addcb89331eeabda903695ebe5fb3c171b3050c522b7a5c4",
+    "build/burn2-state/graph-snapshots/chunk-0496.jsonl": "224c9958be96843296ecdaad2fae263b89b41e9564ae2fd714d277aee16c4bd2",
+    "build/burn2-state/graph-snapshots/chunk-0512.jsonl": "3bf313c9069287af9f5a94e7bbac000af6b9fef54aedc745704b1b99e39dde7e",
+    "build/burn2-state/graph-snapshots/chunk-0528.jsonl": "6f0b0ea92b77416e957e056fc8cd42b0e7717267b9dea42b4563faae6e200223",
+    "build/burn2-state/graph-snapshots/chunk-0544.jsonl": "6afebe3ec822b118ba27dc222966dc8620f15a481cfa6aa0bbc5fdfdfe1ead9a",
+    "build/burn2-state/graph-snapshots/chunk-0576.jsonl": "bbd6a05c2bd0a8aa01ce3ab5c28b34edcaa7accd9be9750829b61b2a6c9e8515",
+    "build/burn2-state/graph-snapshots/chunk-0592.jsonl": "085e920dd1c2832a0bdd548735f322fb44b79ec8d2e653f4c106a2b2ccbfa1b5",
+    "build/burn2-state/graph-snapshots/chunk-0608.jsonl": "9e7432deae8a86602ed157c77387231d150b35602b299090fd7d39b92f0d795a",
+    "build/burn2-state/graph-snapshots/chunk-0624.jsonl": "64b91ca12c1b4502933fd0ce3d0ad755a80b155ab7f4ca4057c60bb2361121a4",
+    "build/burn2-state/graph-snapshots/chunk-0640.jsonl": "8583b9daad9596a9ce52c27d3953d68bf9a94548be0727a10732a9df502dfe19",
+    "build/burn2-state/graph-snapshots/chunk-0656.jsonl": "6eb7d2203e88b7ddf12f69d68674dd42ef048f8552780b579763c5bc25bb33af",
+    "build/burn2-state/graph-snapshots/chunk-0672.jsonl": "bb8b70fe9a7e89ccd77552d8af1f86d9017fa0ffb9d279402d2d7c225ba4a6e3",
+    "build/burn2-state/state-capacity-pilot-input.json": "72708d001a6cc3ab815ab75f30c60a6e27144576a57e1d16ef4b902d9e986023",
+    "tools/search_burn2_state_capacity.py": "2a8218c534353c5b05f42e0bc29e97d1252086e6618a9f99cfa56fb4bf9e79f5",
+    "tools/weighted_capacity_search.py": "8698e571369581a2259c4658479e882c38c2aa5a48c56d9b793fe16e82231a6f",
+    "tools/weighted_codec_v2.py": "212d68e26b2df50747f77fdf62ff1467a007e2461a5ee948afde34eafdcdaf3a",
+    "tools/weighted_portfolio_search.py": "59229f2c9e17c11a96092ea5ee704b4f11a7da2209d3f06ed41a5f3501dae244",
+    "tools/weighted_search.py": "783d099f855fa6db1f9c62b33b32161b300c558674a0e5894d4dd6f54cbb4b99",
+    "tools/weighted_search_v2.py": "0035b8fb5337864205139fc08fca93a86eae3172e0ae6bac378c64a468be1259"
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "description": "Nonhalting source boards for a conjugacy extension compiled for the shared campaign audit; no standalone checked count is published.",
+  "source_bound": 65537,
+  "output_bound": 131072,
+  "sources": [
+    {
+      "module": "BBB24Transport.FamilyTransportCloseout",
+      "board": "transport_board",
+      "nonhalt": "transport_board_nonhalt",
+      "small_sound": "transport_board_small_sound",
+      "sound": "transport_board_sound",
+      "was_pending": "transport_board_was_pending",
+      "bound": 4097,
+      "proof_source": "build/family-transport/FamilyTransportCloseout.v",
+      "machine_inputs": [
+        {
+          "path": "research/family-transport-input.json",
+          "format": "transport_images"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-batch",
+          "namespace": "BBB24Batch"
+        },
+        {
+          "path": "build/affine-closeout",
+          "namespace": "BBB24AffineCloseout"
+        },
+        {
+          "path": "build/closure-batch",
+          "namespace": "BBB24ClosureBatch"
+        },
+        {
+          "path": "build/family-transport",
+          "namespace": "BBB24Transport"
+        }
+      ],
+      "audited_report": "research/family-transport-summary.json"
+    },
+    {
+      "board": "weighted_board",
+      "discharged": "weighted_families_discharged",
+      "load_paths": [
+        {
+          "namespace": "BBB24Weighted",
+          "path": "build/weighted/pilot-kernel"
+        }
+      ],
+      "machine_inputs": [
+        {
+          "format": "json_rows",
+          "path": "research/weighted-pilot-machines.json"
+        }
+      ],
+      "module": "BBB24Weighted.WeightedCloseout",
+      "nonhalt": "weighted_board_nonhalt",
+      "proof_source": "build/weighted/pilot-kernel/WeightedCloseout.v",
+      "small_sound": "weighted_board_small_sound",
+      "sound": "weighted_board_sound",
+      "was_pending": "weighted_board_was_pending",
+      "bound": 4096,
+      "audited_report": "research/weighted-pilot-closeout.json"
+    },
+    {
+      "module": "BBB24LateCycles.full65536.NonHalt",
+      "board": "cycle_source_board",
+      "nonhalt": "cycle_source_board_nonhalt",
+      "small_sound": "cycle_source_board_small_sound",
+      "sound": "cycle_source_board_sound",
+      "was_pending": null,
+      "bound": 65537,
+      "proof_source": "build/late-cycle-proofs/full65536/NonHalt.v",
+      "machine_inputs": [
+        {
+          "path": "research/late-cycles-full65536.json",
+          "format": "root_cycle_rows"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/late-cycle-proofs",
+          "namespace": "BBB24LateCycles"
+        }
+      ],
+      "audited_report": "research/late-cycles-full65536-sources.json"
+    },
+    {
+      "module": "BBB24WeightedReuse.WeightedReuseAll",
+      "board": "board",
+      "nonhalt": "nonhalt",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "was_pending": "was_pending",
+      "bound": 4096,
+      "proof_source": "build/weighted-reuse/WeightedReuseAll.v",
+      "load_paths": [
+        {
+          "path": "build/weighted-reuse",
+          "namespace": "BBB24WeightedReuse"
+        }
+      ],
+      "machine_inputs": [
+        {
+          "path": "research/weighted-reuse-input.json",
+          "format": "json_columns"
+        }
+      ],
+      "audited_report": "research/weighted-reuse-summary.json"
+    },
+    {
+      "module": "BBB24WeightedSuffixPilot.WeightedSuffixAll",
+      "board": "board",
+      "nonhalt": "nonhalt",
+      "small_sound": "small_sound",
+      "sound": "sound",
+      "was_pending": "was_pending",
+      "bound": 4096,
+      "proof_source": "build/weighted-suffix/pilot/WeightedSuffixAll.v",
+      "load_paths": [
+        {
+          "path": "build/weighted-suffix/pilot",
+          "namespace": "BBB24WeightedSuffixPilot"
+        }
+      ],
+      "machine_inputs": [
+        {
+          "path": "research/weighted-suffix-pilot-input.json",
+          "format": "json_columns"
+        }
+      ],
+      "audited_report": "research/weighted-suffix-pilot-summary.json"
+    },
+    {
+      "module": "BBB24AffineWave.Pilot.All",
+      "board": "affine_wave_board",
+      "nonhalt": "affine_wave_board_nonhalt",
+      "small_sound": "affine_wave_board_small_sound",
+      "sound": "affine_wave_board_sound",
+      "was_pending": "affine_wave_board_pending",
+      "bound": 4096,
+      "proof_source": "build/affine-wave/proofs/Pilot/All.v",
+      "machine_inputs": [
+        {
+          "path": "research/wave3-affine-pilot.tsv",
+          "format": "checked_affine_tsv"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ],
+      "audited_report": "research/wave3-affine-pilot.json"
+    },
+    {
+      "module": "BBB24AffineWave.Bulk4096A.All",
+      "board": "affine_wave_board",
+      "nonhalt": "affine_wave_board_nonhalt",
+      "small_sound": "affine_wave_board_small_sound",
+      "sound": "affine_wave_board_sound",
+      "was_pending": "affine_wave_board_pending",
+      "bound": 4096,
+      "proof_source": "build/affine-wave/proofs/Bulk4096A/All.v",
+      "machine_inputs": [
+        {
+          "path": "research/wave3-affine-bulk4096a.tsv",
+          "format": "checked_affine_tsv"
+        }
+      ],
+      "load_paths": [
+        {
+          "path": "build/affine-wave/proofs",
+          "namespace": "BBB24AffineWave"
+        }
+      ],
+      "audited_report": "research/wave3-affine-bulk4096a.json"
+    },
+    {
+      "board": "weighted_board",
+      "discharged": "weighted_families_discharged",
+      "load_paths": [
+        {
+          "namespace": "BBB24WeightedV2Pilot",
+          "path": "build/weighted-v2/pilot205-kernel"
+        }
+      ],
+      "machine_inputs": [
+        {
+          "format": "json_rows",
+          "path": "research/weighted-v2-pilot-machines.json"
+        }
+      ],
+      "module": "BBB24WeightedV2Pilot.WeightedAll",
+      "nonhalt": "weighted_board_nonhalt",
+      "proof_source": "build/weighted-v2/pilot205-kernel/WeightedAll.v",
+      "small_sound": "weighted_board_small_sound",
+      "sound": "weighted_board_sound",
+      "was_pending": "weighted_board_was_pending",
+      "bound": 4096,
+      "audited_report": "research/weighted-v2-pilot-check.json"
+    }
+  ]
+}

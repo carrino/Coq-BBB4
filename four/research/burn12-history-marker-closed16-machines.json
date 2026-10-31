@@ -1,0 +1,52 @@
+{
+  "rows": [
+    {
+      "machine": "1LB2LA0RB1RA_3RB3LA1RA0RB"
+    },
+    {
+      "machine": "1LB1RB1LA2RA_3RB3LA0LA0RB"
+    },
+    {
+      "machine": "1LB0RB1LA1LA_2RB3RA0LB2LA"
+    },
+    {
+      "machine": "1LB0RB1LA1LA_2RB2RA3LA0LB"
+    },
+    {
+      "machine": "1LB0LB0LA0RB_1RB2LA3RA2LB"
+    },
+    {
+      "machine": "1LB2LB3LA1RA_3RB2LA2RB3LA"
+    },
+    {
+      "machine": "1LB2RB3RB0LB_1RB2LA3RA2LB"
+    },
+    {
+      "machine": "1LB2LA0RB0RA_1RB3RA0LB2LA"
+    },
+    {
+      "machine": "1LB2LA3LB1RA_3RB2RA3LA2RB"
+    },
+    {
+      "machine": "1LB2LA0LA0RB_1RB3RA0RA2RA"
+    },
+    {
+      "machine": "1LB2LA3LA2RB_0RB3RA0LA2RA"
+    },
+    {
+      "machine": "1LB2LA3RA0RB_2RB1RA0LB1LB"
+    },
+    {
+      "machine": "1LB2LA1RB0LA_1RB3RA0RA0LA"
+    },
+    {
+      "machine": "1LB1RB0LB1LB_2RB3RA1LA0LA"
+    },
+    {
+      "machine": "1LB2LA3RB1LA_0RB1RA0RA3LA"
+    },
+    {
+      "machine": "1LB2RA3LB2RB_0RB3LB1LA1RA"
+    }
+  ]
+}

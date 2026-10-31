@@ -1,0 +1,112 @@
+{
+  "bundles": [
+    {
+      "bytes": 571926,
+      "path": "research/weighted-full-snapshots/batch012/certificates-0000.json",
+      "rows": 512,
+      "sha256": "f6b74f1071e305454e3267b6086f25f8e8ca1184450d16f6bdfa947c78a0a11c"
+    },
+    {
+      "bytes": 223305,
+      "path": "research/weighted-full-snapshots/batch012/certificates-0001.json",
+      "rows": 216,
+      "sha256": "9023dc9c9242ed030d813fdd4209dbac52cc9083208054d3c8c2fb4eac43898e"
+    },
+    {
+      "bytes": 639402,
+      "path": "research/weighted-full-snapshots/batch013/certificates-0000.json",
+      "rows": 512,
+      "sha256": "7e0fbb755f8f49088462c90189a8a30836006c2289a5683abc7796610735624c"
+    },
+    {
+      "bytes": 207469,
+      "path": "research/weighted-full-snapshots/batch013/certificates-0001.json",
+      "rows": 187,
+      "sha256": "be1a9e640cb3c71ec6a07a472ab830a4697bdf6358f0170c39dd07dece168abf"
+    },
+    {
+      "bytes": 636850,
+      "path": "research/weighted-full-snapshots/batch014/certificates-0000.json",
+      "rows": 512,
+      "sha256": "121290190951701ef8235df173de2d721677c4abd334afb783a5eecb42c01794"
+    },
+    {
+      "bytes": 238533,
+      "path": "research/weighted-full-snapshots/batch014/certificates-0001.json",
+      "rows": 193,
+      "sha256": "d11ba035a88c498d8be1e0b60d6e931483dd991250b4bd973e2c35d6ddd7923c"
+    },
+    {
+      "bytes": 597038,
+      "path": "research/weighted-full-snapshots/batch015/certificates-0000.json",
+      "rows": 512,
+      "sha256": "d99183fd472d7f22b6777b2d95072de82ad36f63ddae0aec629f0c868137a9a9"
+    },
+    {
+      "bytes": 145161,
+      "path": "research/weighted-full-snapshots/batch015/certificates-0001.json",
+      "rows": 134,
+      "sha256": "6b4b07957429ca78d7b12ddc01cc150d269583e9c507e7887443ec4638e1e623"
+    },
+    {
+      "bytes": 586154,
+      "path": "research/weighted-full-snapshots/batch016/certificates-0000.json",
+      "rows": 512,
+      "sha256": "8cb50a5196209bdc1a0fcdecb587b6a98e0a9ab3b0aa6637f4d9cc1e29974a21"
+    },
+    {
+      "bytes": 159501,
+      "path": "research/weighted-full-snapshots/batch016/certificates-0001.json",
+      "rows": 140,
+      "sha256": "acfedcfbb12408baf7cf3fc62db95d81e9ee2f1d1bb5d4eddbad08c8ee8bd1d2"
+    },
+    {
+      "bytes": 720358,
+      "path": "research/weighted-full-snapshots/batch017/certificates-0000.json",
+      "rows": 512,
+      "sha256": "b21daec4d45109b2dcd446e49ca5dd0c922bc32beb522c23634f48fdf612e94a"
+    },
+    {
+      "bytes": 183845,
+      "path": "research/weighted-full-snapshots/batch017/certificates-0001.json",
+      "rows": 143,
+      "sha256": "b824432543fd8188ebeade1d58ddf6d135d023dd9427e8ee3a0036fef322902f"
+    }
+  ],
+  "format": "BBB24 compact weighted certificates v2",
+  "kinds": {
+    "ordinary": 1090,
+    "weighted": 2995
+  },
+  "rows": 4085,
+  "source": {
+    "registries": [
+      {
+        "path": "research/weighted-full-snapshots/batch012/registry.json",
+        "sha256": "71be3b4f85f3a54b3eafaeeb3f4b5e9ee1827ef0a90449a1a540e57ddeaea540"
+      },
+      {
+        "path": "research/weighted-full-snapshots/batch013/registry.json",
+        "sha256": "11825a6657c25e4d560d9fa6d47a32a559aba0f452cb2aa1673f046da526dbde"
+      },
+      {
+        "path": "research/weighted-full-snapshots/batch014/registry.json",
+        "sha256": "b2cbad3331d7fd632c8c17e791bdba3dcce46dec15fe80d7c3eff1fdc7313616"
+      },
+      {
+        "path": "research/weighted-full-snapshots/batch015/registry.json",
+        "sha256": "f1bb69d045a921374a880c2b42a993839a0d07e27fceb275a8c65c6465d9c106"
+      },
+      {
+        "path": "research/weighted-full-snapshots/batch016/registry.json",
+        "sha256": "83065f59e4930de266de18d8aba752a755e6901f6610042bff923f22f4518586"
+      },
+      {
+        "path": "research/weighted-full-snapshots/batch017/registry.json",
+        "sha256": "96a20aef1c74dd89888969d49280014df069604f8c0d762ab2de8b82aec605ea"
+      }
+    ],
+    "union_tool_sha256": "5ec43e292d38a29723fd19546106b4e7c87995f00036928628224a0243ba1de4"
+  },
+  "status": "Ordered immutable candidate-pool union; no proof or census claim."
+}

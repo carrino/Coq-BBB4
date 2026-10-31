@@ -1,0 +1,242 @@
+{
+  "blank_entry_steps": 12565,
+  "controls": {
+    "A_odd_context": 896,
+    "B_zero_context": 448,
+    "F_loop": 25,
+    "G_loop": 25,
+    "entry": 1,
+    "full_return": 8,
+    "twos_context": 896,
+    "unsafe_boundary": 3
+  },
+  "initial_parameter": 42,
+  "loop_controls": [
+    {
+      "F_steps": 96,
+      "G_steps": 180,
+      "m": 0,
+      "n": 0
+    },
+    {
+      "F_steps": 104,
+      "G_steps": 204,
+      "m": 1,
+      "n": 0
+    },
+    {
+      "F_steps": 112,
+      "G_steps": 228,
+      "m": 2,
+      "n": 0
+    },
+    {
+      "F_steps": 120,
+      "G_steps": 252,
+      "m": 3,
+      "n": 0
+    },
+    {
+      "F_steps": 128,
+      "G_steps": 276,
+      "m": 4,
+      "n": 0
+    },
+    {
+      "F_steps": 112,
+      "G_steps": 196,
+      "m": 0,
+      "n": 1
+    },
+    {
+      "F_steps": 120,
+      "G_steps": 220,
+      "m": 1,
+      "n": 1
+    },
+    {
+      "F_steps": 128,
+      "G_steps": 244,
+      "m": 2,
+      "n": 1
+    },
+    {
+      "F_steps": 136,
+      "G_steps": 268,
+      "m": 3,
+      "n": 1
+    },
+    {
+      "F_steps": 144,
+      "G_steps": 292,
+      "m": 4,
+      "n": 1
+    },
+    {
+      "F_steps": 128,
+      "G_steps": 212,
+      "m": 0,
+      "n": 2
+    },
+    {
+      "F_steps": 136,
+      "G_steps": 236,
+      "m": 1,
+      "n": 2
+    },
+    {
+      "F_steps": 144,
+      "G_steps": 260,
+      "m": 2,
+      "n": 2
+    },
+    {
+      "F_steps": 152,
+      "G_steps": 284,
+      "m": 3,
+      "n": 2
+    },
+    {
+      "F_steps": 160,
+      "G_steps": 308,
+      "m": 4,
+      "n": 2
+    },
+    {
+      "F_steps": 144,
+      "G_steps": 228,
+      "m": 0,
+      "n": 3
+    },
+    {
+      "F_steps": 152,
+      "G_steps": 252,
+      "m": 1,
+      "n": 3
+    },
+    {
+      "F_steps": 160,
+      "G_steps": 276,
+      "m": 2,
+      "n": 3
+    },
+    {
+      "F_steps": 168,
+      "G_steps": 300,
+      "m": 3,
+      "n": 3
+    },
+    {
+      "F_steps": 176,
+      "G_steps": 324,
+      "m": 4,
+      "n": 3
+    },
+    {
+      "F_steps": 160,
+      "G_steps": 244,
+      "m": 0,
+      "n": 4
+    },
+    {
+      "F_steps": 168,
+      "G_steps": 268,
+      "m": 1,
+      "n": 4
+    },
+    {
+      "F_steps": 176,
+      "G_steps": 292,
+      "m": 2,
+      "n": 4
+    },
+    {
+      "F_steps": 184,
+      "G_steps": 316,
+      "m": 3,
+      "n": 4
+    },
+    {
+      "F_steps": 192,
+      "G_steps": 340,
+      "m": 4,
+      "n": 4
+    }
+  ],
+  "return_controls": [
+    {
+      "a": 3,
+      "n": 0,
+      "next_n": 27,
+      "steps": 5565
+    },
+    {
+      "a": 5,
+      "n": 1,
+      "next_n": 30,
+      "steps": 6377
+    },
+    {
+      "a": 7,
+      "n": 2,
+      "next_n": 33,
+      "steps": 7253
+    },
+    {
+      "a": 9,
+      "n": 3,
+      "next_n": 36,
+      "steps": 8193
+    },
+    {
+      "a": 11,
+      "n": 4,
+      "next_n": 39,
+      "steps": 9197
+    },
+    {
+      "a": 13,
+      "n": 5,
+      "next_n": 42,
+      "steps": 10265
+    },
+    {
+      "a": 15,
+      "n": 6,
+      "next_n": 45,
+      "steps": 11397
+    },
+    {
+      "a": 17,
+      "n": 7,
+      "next_n": 48,
+      "steps": 12593
+    }
+  ],
+  "rows": [
+    {
+      "code": 352418879,
+      "machine": "1LB2LA3RB2LA_0RB2RA3RA0LA"
+    }
+  ],
+  "scope": "Finite controls only; universal Coq scan soundness and loop induction carry all proof credit.",
+  "seconds": 0.030487,
+  "source_sha256": {
+    "tools/check_burn32_s042_native.py": "54d77b2f563f19b212c04ad80ad1e1fa23727c65afac00d4d99b74896528ba4d",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  },
+  "state_bound": 0,
+  "total_controls": 2302,
+  "unsafe_seed": {
+    "left": [
+      2,
+      0,
+      3,
+      3,
+      3,
+      0
+    ],
+    "permanent_B_from": 43,
+    "right": []
+  }
+}

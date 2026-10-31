@@ -1,0 +1,96 @@
+{
+  "diagnostic_sha256": "041efe302def14004344cae7027a777f4ec13a3b2e3ba042fc385f7b7d85fbb8",
+  "plans": [
+    {
+      "bound": 4096,
+      "cluster": "short",
+      "input": "build/burn2-state-diagnostics/short.txt",
+      "input_sha256": "1453a4a1d2a0f4d6f09aba19e47f1a24648be173d902808e8c09ad56699523ab",
+      "machines": [
+        "1LB0LB0LB0RA_2RB2RA3LA2RA",
+        "1LB2RB3RB1LA_1RB3RA---3LA",
+        "1LB2LA3RB1RA_3RB3LA0RA2LA",
+        "1LB2LB2LB1RA_1RB2RA3LB2RB",
+        "1LB0LB1RB3LB_3RB1LA0LB2RB",
+        "1LB2LB1RB0LB_2RB1LA3RB0LB",
+        "1LB---0LA2LB_3RB1LA2RB3RB",
+        "1LB2LB1RB2RB_2RB1LA3RB0LB",
+        "1LB2RB2LB1RB_2RB1LA3RB0LB",
+        "1LB0LA3RA2RA_2RB1LA3RB0LB",
+        "1LB0LA0LB2RB_3RB1LA0LB3RA",
+        "1LB0LB1LA1RB_3RB2RA3RA3LA",
+        "1LB2RB0LA1RB_2RB3RA1LA0LB",
+        "1LB2RB2RB2LB_0RB3RA0LA2LA",
+        "1LB0LA0LB3RA_3RB1LA2RA2RB",
+        "1LB0RB0LA0RA_1RB2RA3LA2LA",
+        "1LB2RB0LA0LB_3RB1LA3RA2RA",
+        "1LB2LB0LA2LA_1RB3RA2RB3LA",
+        "1LB2LA0LA2LB_3RB1LA2RB1RA",
+        "1LB0LB0RA2RA_1RB3RA3RA2LA",
+        "1LB2RA0LB1RA_1RB3LA2RB3RB"
+      ],
+      "probe": "build/state-pipeline/probe",
+      "rows": 21,
+      "stages": [
+        {
+          "anchor": 4096,
+          "extra": 32,
+          "fuel": 16384,
+          "history": 3,
+          "mode": "hist",
+          "size": 4
+        },
+        {
+          "anchor": 4096,
+          "extra": 32,
+          "fuel": 16384,
+          "history": 5,
+          "mode": "hist",
+          "size": 3
+        }
+      ],
+      "timeout_seconds": 2
+    },
+    {
+      "bound": 4096,
+      "cluster": "long",
+      "input": "build/burn2-state-diagnostics/long.txt",
+      "input_sha256": "74b65bbe7d5e68ac4353a79f319784f68cb0d85d5ade152043ffb9149831b470",
+      "machines": [
+        "1LB2RB1LA1LB_2RB2RA3LA0RB",
+        "1LB2LA3RB1LA_0RB1RA3RA3RB",
+        "1LB1RA1LB2LA_2RB3LB0LB1RA",
+        "1LB1RA1RA2LB_2RB3LB0LB1RA",
+        "1LB2LB3RA1RA_3RB2LA1RB3LA",
+        "1LB2LA2RA1LB_2RB3RA0LB0LA",
+        "1LB2LB3LB1RA_3RB2LB1RA0LB",
+        "1LB2LA3RA2RA_1RB2RA0LB2RB",
+        "1LB0RA---3RA_3RB2RA0LA0LB",
+        "1LB2LA2RA3LB_2RB3RA0LB3RA",
+        "1LB2LA0RA3RB_3RB1RA1LB0LB"
+      ],
+      "probe": "build/state-repwl/probe",
+      "rows": 11,
+      "stages": [
+        {
+          "anchor": 4096,
+          "extra": 2,
+          "fuel": 8192,
+          "history": 0,
+          "mode": "rw",
+          "size": 7
+        },
+        {
+          "anchor": 4096,
+          "extra": 3,
+          "fuel": 8192,
+          "history": 0,
+          "mode": "rw",
+          "size": 4
+        }
+      ],
+      "timeout_seconds": 3
+    }
+  ],
+  "scope": "Untrusted proposed scheduling from finite simulation; no new proof claims. Budgets exceed the corresponding frozen frontier stages."
+}

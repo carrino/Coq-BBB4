@@ -1,0 +1,20 @@
+[
+  {
+    "anchor": 0,
+    "extra": 3,
+    "fuel": 5120,
+    "mirror": false,
+    "size": 2,
+    "size_cap": 32,
+    "swap23": false
+  },
+  {
+    "anchor": 0,
+    "extra": 3,
+    "fuel": 5120,
+    "mirror": false,
+    "size": 3,
+    "size_cap": 32,
+    "swap23": false
+  }
+]

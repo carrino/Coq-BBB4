@@ -1,0 +1,38 @@
+{
+  "arbitrary_context_macros": 21168,
+  "arbitrary_context_max_length": 2,
+  "checksum": "head equals binary value of positions containing symbol2, modulo3",
+  "excluded_seed": {
+    "head": 2,
+    "left": [
+      0,
+      2
+    ],
+    "result_head": 0,
+    "result_left": [
+      2,
+      2,
+      2
+    ],
+    "result_right": [],
+    "result_state": "B",
+    "steps": 3
+  },
+  "grammar": "2^(2*n), or p 0 2^b with p over1,2; b>0; length(p)+b even",
+  "main_configurations": 5463,
+  "marker_main_max_prefix_plus_suffix": 12,
+  "outer_carry_macros": 48,
+  "rows": [
+    {
+      "code": 1149612969,
+      "machine": "1LB2LB0LB1RA_2RB2RA3LB0RA"
+    }
+  ],
+  "scope": "Finite synthetic controls only; no proof credit.",
+  "seconds": 0.126209,
+  "simulated_main_steps": 21901,
+  "source_sha256": {
+    "tools/check_burn17_zero_marker_native.py": "c799de4cf74e1b6e0f8696f66c187e0cd87c5908d5034e3f8f9f68a2b31000db",
+    "tools/generate_pipeline_examples.py": "46403d43a38eb47d7abde1c27fd92341d1f76f337d1a7b6426d5829c59fdd479"
+  }
+}
