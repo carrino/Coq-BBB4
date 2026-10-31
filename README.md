@@ -2,368 +2,310 @@
 
 [![CI](https://github.com/carrino/Coq-BBB4/actions/workflows/ci.yml/badge.svg)](https://github.com/carrino/Coq-BBB4/actions/workflows/ci.yml)
 
-A Coq formalization of the Beeping Busy Beaver problem on 4-state,
-2-symbol Turing machines, culminating in the kernel-checked value
-theorem **BBB(4) = 32,779,478** — built from the certificates of the
-[BBB harness](https://github.com/carrino/BBB) on the patterns of
+Coq proofs of Beeping Busy Beaver values for **state-based** and
+**instruction-based (transition-based)** quasihalting. The proofs establish a maximum in two parts:
+a concrete champion attains the stated score, and no machine of the same size
+can attain a larger score.
+
+The development builds on certificates from the
+[BBB harness](https://github.com/carrino/BBB), following the approaches of
 [Coq-BB5](https://github.com/carrino/Coq-BB5) and
-[busycoq](https://github.com/carrino/busycoq).
-
-The isolated [small-machine development](small/README.md) proves both state
-and instruction quasihalting values for `(2,2)`, `(3,2)`, and `(2,3)`:
-respectively **6 / 8**, **55 / 55**, and **59 / 67**.
-
-The separate [four-symbol development](four/README.md) proves an exact score of
-**205,770,076,433,044,242,247,860** for the known `(2,4)` champion at both levels,
-establishing lower bounds on the global values.
+[busycoq](https://github.com/carrino/busycoq). Search programs produce untrusted
+certificates; Coq checks the machine behavior and exhaustive coverage.
 
 ## The result
 
-**BBB(4) = 32,779,478.**
+`BBB(n,m)` denotes the state-based value for `n` states and `m` tape symbols;
+`BBB_tr(n,m)` denotes the instruction-based value. The symbol count defaults to
+2 when omitted. All values below use the counting convention defined next.
 
-The claim is stated in [`theories/BBB4_Spec.v`](theories/BBB4_Spec.v) —
-that file plus the machine model it imports
-([`theories/BBB4_Statement.v`](theories/BBB4_Statement.v)) is the
-entire trusted statement surface: two short files, and nothing in
-either depends on the census, the checkers, or the closeout:
+Each domain is `(states, symbols)`. Each value links to its formal statement;
+proof links open the proving theorems. The state `(2,4)` entry
+accompanies the proof stack currently being verified. Champion programs are
+shown with the first move to the right; reflecting the tape preserves both
+scores. The [program notation](#champion-programs) is explained below.
+
+| Domain | State based | Instruction based | State champion | Instruction champion |
+| --- | ---: | ---: | --- | --- |
+| `(1,2)` | [**1**](small/theories/Value12.v#L40) | [**1**](small/theories/Value12.v#L40) | `1RZ---` | `1RZ---` |
+| `(2,2)` | [**6**](small/theories/Spec.v#L23) ([proof](small/theories/Value22.v#L4)) | [**8**](small/theories/Spec.v#L23) ([proof](small/theories/Value22.v#L4)) | `1RB1LB_1LB1LA` | `0RB1LB_1LA1RB` |
+| `(3,2)` | [**55**](small/theories/Spec.v#L24) ([proof](small/theories/Value32.v#L3)) | [**55**](small/theories/Spec.v#L24) ([proof](small/theories/Value32.v#L3)) | `1RB0LB_1LA0RC_1LC1LA` | `1RB0LB_1LA0RC_1LC1LA` |
+| `(4,2)` | [**32,779,478**](theories/BBB4_Spec.v#L99) ([proof](theories/Closeout/BBB4_Value.v#L104)) | [**32,779,478**](theories/BBBT4_Spec.v#L70) ([proof](theories/CloseoutTr/BBBT4_Value.v#L43)) | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` |
+| `(2,3)` | [**59**](small/theories/Spec.v#L25) ([proof](small/theories/Value23.v#L4)) | [**67**](small/theories/Spec.v#L25) ([proof](small/theories/Value23.v#L4)) | `1RB2LB1LA_2LB2RA0RA` | `1RB2LA0RB_1LA0LB1RA` |
+| `(2,4)` † | [**205,770,076,433,044,242,247,860**](four/theories/ValueSpec.v#L9) ([proof assembly](four/proof-sources/state-opaque-byte448/Final.v#L28)) |  | `1RB2LA1RA1LB_0LB2RB3RB1LA` |  |
+
+### State (2,4) verification
+
+† The state `(2,4)` equality is included with the accompanying proof stack;
+its final recursive audit must pass before that stack is merged.
+[`champion_exact`](four/theories/Champion.v) proves the known champion's exact
+score at both levels. The global instruction equality is not established.
+Follow the
+[scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) and
+[state proof build guide](docs/VERIFYING_BBB24.md).
+
+## What quasihalting means
+
+Machines start in state `A` on a two-way infinite tape filled with symbol `0`.
+Each defined transition writes a symbol, moves left or right, and enters a
+state. An undefined transition halts. The quantification includes every table
+of the requested size, including halting machines and arbitrary first
+transitions.
+
+Configuration index `n` means the configuration **after `n` transitions**, so
+the initial configuration has index `0`.
+
+* A machine **state-quasihalts** if some state is visited at least once but only
+  finitely often. Such a state has a last visit at some index `s`.
+* A machine **instruction-quasihalts** if some `(state, read symbol)` pair is
+  visited at least once but only finitely often. The pair identifies an
+  instruction slot; the written symbol and next state are not part of its
+  identity.
+* A state's or instruction's **score is `s + 1`**, where `s` is its last visit
+  index. A machine's score is the largest score among its finitely visited
+  states or instructions. The BBB value is the maximum over all machines of
+  that size.
+
+Never-visited states and instructions do not witness quasihalting. Halting
+machines are included: their final configuration counts as a visit to its state
+and instruction slot, even when that slot contains an undefined transition.
+If every visited state, or every visited instruction, recurs at arbitrarily
+large indices, the machine does not quasihalt at that level.
+
+This counting convention matters for `(2,4)`. The champion's final state `A`
+visit and final `A3` instruction visit are at index
+**205,770,076,433,044,242,247,859**. Its final transition out of `A` leads to a
+permanent `B0` drift at index **205,770,076,433,044,242,247,860**, giving the
+repository's score. The [four-symbol guide](four/README.md#how-the-large-prefix-is-proved)
+connects both numbers to the published analyses.
+
+### The formal maximum claim
+
+For `(4,2)`, the relevant definitions in
+[`BBB4_Statement.v`](theories/BBB4_Statement.v) and
+[`BBB4_Spec.v`](theories/BBB4_Spec.v) are:
 
 ```coq
-tm_champion    : TM                       (* 1RB1LD_1RC1RB_1LC1LA_0RC0RD  *)
-champion_score : nat := N.to_nat 32779478
+Definition VisitsAt (tm : TM) (q : St) (n : nat) : Prop :=
+  exists c, stepn tm n InitES = Some c /\ fst c = q.
 
-Attains tm B   : Prop := exists q s, QuietAfter tm q s /\ S s = B
+Definition QuietAfter (tm : TM) (q : St) (s : nat) : Prop :=
+  VisitsAt tm q s /\ forall n, s < n -> ~ VisitsAt tm q n.
 
-BBB4_is B      : Prop :=
-  (exists tm, Attains tm B)                       (* ATTAINED *)
-  /\ (forall tm B', Attains tm B' -> B' <= B)     (* MAXIMAL  *)
+Definition Attains (tm : TM) (B : nat) : Prop :=
+  exists q s, QuietAfter tm q s /\ S s = B.
 
-BBB4_statement : Prop := BBB4_is champion_score
-BBB4_is_unique : forall B B', BBB4_is B -> BBB4_is B' -> B = B'
+Definition BBB4_is (B : nat) : Prop :=
+  (exists tm, Attains tm B)
+  /\ (forall tm B', Attains tm B' -> B' <= B).
+
+Definition champion_score : nat := N.to_nat 32779478.
+Definition BBB4_statement : Prop := BBB4_is champion_score.
 ```
 
-`make proof` builds and reports the proof
-(`theories/Closeout/BBB4_Value.v`, kernel-checked, `Qed`):
+`QuietAfter` requires an actual last visit. `Attains` gives its score. The two
+clauses of `BBB4_is` say **the bound is attained** and **nothing exceeds it**.
+The quantifier `forall tm` ranges over all machines in the model, not just
+normalized tables or machines found by a search.
+
+The proof exports `champion_attains : Attains tm_champion champion_score` and
+`BBB4_value : BBB4_statement`. Together they identify the named champion as a
+machine attaining the global maximum. `BBB4_is_unique`, proved in the spec,
+shows that two numbers satisfying this maximum claim must be equal.
+
+For instruction quasihalting,
+[`BBBT4_Statement.v`](theories/BBBT4_Statement.v) defines `FiresAt tm t n` as
+a visit to instruction slot `t` at configuration index `n`, and
+[`BBBT4_Spec.v`](theories/BBBT4_Spec.v) states the corresponding maximum:
 
 ```coq
-BBB4_value       : BBB4_statement
-champion_attains : Attains tm_champion champion_score
+Definition QuietAfterTr (tm : TM) (t : Instr) (s : nat) : Prop :=
+  FiresAt tm t s /\ forall n, s < n -> ~ FiresAt tm t n.
+
+Definition AttainsTr (tm : TM) (B : nat) : Prop :=
+  exists t s, QuietAfterTr tm t s /\ S s = B.
+
+Definition BBBT4_is (B : nat) : Prop :=
+  (exists tm, AttainsTr tm B)
+  /\ (forall tm B', AttainsTr tm B' -> B' <= B).
+
+Definition BBBT4_statement : Prop := BBBT4_is champion_score.
 ```
 
-Some state of some (4,2) Turing machine makes its last visit at
-configuration index 32,779,477 — score exactly **32,779,478** in the
-harness convention (last visit + 1) — and no state of any (4,2) machine
-is ever quiet after a later index.  The witness is the champion
-`1RB1LD_1RC1RB_1LC1LA_0RC0RD`, whose state `D` goes quiet at exactly
-that index (kernel-checked by two binary-fuel `vm_compute` runs in
-`theories/Machines/Counters/Champion_*.v`); the upper bound is the
-census + closeout chain (`bbb4_target`) with its residue disjunct
-discharged — as of 2026-08-01 the residue lists are **empty** (0 core
-rows, 0 shadows; the frozen census's 5,156 deferred rows are settled
-5,156-for-5,156), so `~ skipped [] tm` closes the last gap
-(`not_skipped_nil`, `BBB4_Value.v`).
+`BBBT4_value : BBBT4_statement` proves this second maximum. The small-machine
+specifications in [`small/theories/Spec.v`](small/theories/Spec.v) use the same
+attainment-and-upper-bound form, with `Admissible` restricting the common
+carrier to the requested machine size.
 
-The two-disjunct reading survives as `bbb4_unconditional`: every (4,2)
-machine either quasihalts with score at most 32,779,478 or never
-quasihalts — no skips, no residue.
+For `(2,4)`, [`ValueSpec.v`](four/theories/ValueSpec.v) states the state equality
+as `BBB24_state_lower_bound score /\ (forall tm : TM, QHBound score tm)`.
+Here `QHBound B tm` means every state's last-visit score is at most `B`.
+[`Champion.v`](four/theories/Champion.v) supplies the named lower-bound witness;
+the complete state build must verify the universal upper bound as well.
 
-What "BBB" means here — the state-level quasihalting convention, and
-what this does *not* claim (it is not BB(4), and machine-count
-bookkeeping stays untrusted) — is stated precisely in
-[`docs/CLAIMS.md`](docs/CLAIMS.md).
+### Champion programs
 
-**Axiom footprint: `functional_extensionality_dep`, and nothing else**
-(`BBB4_is_unique` is axiom-free).  There are zero `Admitted` in
-`theories/`.  Verify with `Print Assumptions BBB4_value` (printed
-during `make proof`) or independently with `coqchk -o`.
+A value can have multiple champion programs. The tables use the familiar
+[wiki champions](https://wiki.bbchallenge.org/wiki/Beeping_Busy_Beaver#Champions)
+for state quasihalting and versions of the instruction champions whose first
+move is to the right.
 
-### And at instruction level: BBB_tr(4) = 32,779,478
+Each three-character instruction gives write symbol, direction, and next state;
+`_` separates state rows, and `---` is undefined. `Z` denotes halting in the
+community notation: `1RZ---` has a halting first slot, represented by an
+undefined transition in the Coq model. It has score 1 at both levels.
 
-The harness's second convention scores the last fire of each
-*instruction* (state, read symbol) instead of each state's last visit.
-Its value is the same number, attained by the same champion:
+The one-state proof is in [`Value12.v`](small/theories/Value12.v). The other
+small-machine witnesses are in [`Champions.v`](small/theories/Champions.v),
+sometimes in reflected forms; [`Mirror.v`](small/theories/Mirror.v) and
+[`Witness.v`](small/theories/Witness.v) prove the score-preserving transport.
+The state `(2,2)` table uses the wiki's nonhalting champion, which attains the
+same score 6 as the halting witness used by `BBB22_value`.
 
-```coq
-AttainsTr tm B   : Prop := exists t s, QuietAfterTr tm t s /\ S s = B
-BBBT4_is B       : Prop :=
-  (exists tm, AttainsTr tm B) /\ (forall tm B', AttainsTr tm B' -> B' <= B)
-BBBT4_statement  : Prop := BBBT4_is champion_score
-
-BBBT4_value      : BBBT4_statement     (* theories/CloseoutTr/BBBT4_Value.v *)
-```
-
-The claim is [`theories/BBBT4_Spec.v`](theories/BBBT4_Spec.v), with
-[`theories/BBBT4_Statement.v`](theories/BBBT4_Statement.v) for
-`FiresAt` and `QuietAfterTr`.  One command proves it from a fresh
-clone:
-
-```bash
-set -o pipefail
-make proof-tr-all 2>&1 | tee proof-tr-all.log
-```
-
-It ends with `proof-tr-all COMPLETE` and the `Print Assumptions
-BBBT4_value` block, which should list `functional_extensionality_dep`
-and nothing else. The latest completed fresh build, on 2026-10-18, passed in
-**2 h 15 m 38 s with a four-CPU quota and 16 GiB RAM**. Earlier validations
-are recorded in [`docs/BBBT4_REVIEW.md`](docs/BBBT4_REVIEW.md) §8.1–8.3.
-It uses the same native toolchain as `make proof`. Current measurements and
-their build conditions are in [`docs/CENSUS_RUNTIME.md`](docs/CENSUS_RUNTIME.md).
-Verification instructions are in
-[`docs/VERIFYING.md`](docs/VERIFYING.md), Tier C.
+The instruction `(2,2)` champion starts by writing `0` and moving right. That
+initial blank-writing move is included: fixing the first transition to `1RB`
+instead gives the separately proved restricted maximum of
+**7**, in [`Normalized22.v`](small/theories/Normalized22.v).
+The `(2,4)` champion has a proved exact score; its global maximality remains
+under verification at state level and is not established at instruction level.
 
 ## The verification ladder
 
-Three rungs for BBB(4), in increasing order of paranoia — each needs
-strictly less trust than the one before — and a fourth that proves the
-instruction-level value the same way.  A fresh clone carries **no binaries**: since
-2026-10-07 the census `.vo` are not committed either, so the full proof
-is one from-source build on your own machine.
+1. **Read the statement.** The model and specifications above define the claim
+   independently of the census, certificates, and closeout code. The detailed
+   `(4,2)` claim and assumptions are in [`docs/CLAIMS.md`](docs/CLAIMS.md).
+2. **Build from source.** The complete targets below rebuild the census and
+   assemble the champion lower bound with the universal upper bound. Plain
+   `make` builds proof components; use the appropriate complete target for a
+   value theorem.
+3. **Inspect the assumptions and audit the proof.** The complete `(4,2)` targets
+   print the theorem and `Print Assumptions` output. The verification guide also
+   gives standalone `coqchk` commands. The small-machine `check` target and the
+   selected `(2,4)` state build include full recursive kernel audits.
 
-1. **Read the claim.**  [`theories/BBB4_Spec.v`](theories/BBB4_Spec.v)
-   (with [`theories/BBB4_Statement.v`](theories/BBB4_Statement.v)) is
-   the complete formal statement;
-   [`docs/CLAIMS.md`](docs/CLAIMS.md) states in prose exactly what is
-   proved — and what is not.  Trust: the authors.
-2. **`make`** (stock Coq 8.18, no opam). Rebuilds every
-   checker, every board theorem, the champion's exact score, and
-   `closeout_partial` — the entire boarding argument — **from source**.
-   Trust: the Coq kernel.
-3. **`make proof`** (= `make proof-all`) — **the whole claim from
-   source, one command.**  The state-level base build, then
-   the census walk on your machine, then the closeout chain and
-   `Print Assumptions BBB4_value`.  Nothing is precompiled; the `Axioms:`
-   block at the end is the entire trust surface.  Trust: the kernel
-   alone.
-
-   A fresh build on 2026-10-17 completed in **1 h 48 m 54 s with a
-   four-CPU quota and 16 GiB RAM**. The historical 2026-08-12 run on
-   8 physical cores / 31 GB took 79 m 38 s, including a 42 m 36 s walk;
-   these are different revisions and configurations. The wrapper selects
-   worker counts and the native toolchain automatically. `proof-all` forces
-   the state census to be re-walked; `make census` can resume a matching
-   interrupted walk. Eligible base proof objects may be reused.
-4. **`make proof-tr-all`** — **the instruction-level claim from
-   source, one command.**  `BBBT4_value : BBBT4_statement`
-   (BBB_tr(4) = 32,779,478): the instruction-level census walk, the
-   10,924-row closeout, the champion, and `Print Assumptions
-   BBBT4_value`.  Nothing is precompiled.  Trust: the kernel alone.
-   Same toolchain as rung 3. See the completed fresh-build measurements
-   below; the older seven-hour result predates the current optimizations.
-
-For the extra-careful, `coqchk -o` re-verifies compiled proof terms
-with the standalone checker at any rung.  Full instructions and the
-expected outputs for every rung: [`docs/VERIFYING.md`](docs/VERIFYING.md).
+All proofs are built from source. Full commands and expected outputs are in
+[`docs/VERIFYING.md`](docs/VERIFYING.md), with the selected `(2,4)` build in
+[`docs/VERIFYING_BBB24.md`](docs/VERIFYING_BBB24.md).
 
 ## Building and measured runtime
 
-For the exact small state and instruction values, activate the native toolchain
-and run these commands from the repository root:
+Use GNU make, Python 3, and Coq 8.18.0 with native computation enabled. The
+documented toolchain uses OCaml 4.14.2. Installation instructions are in the
+[verification guide](docs/VERIFYING.md).
+
+For the small-machine state and instruction value proofs, activate the native
+toolchain and run from the repository root:
 
 ```sh
 eval "$(opam env --switch=census)"
 make -C small -j2
-make -C small check -j2
+make -C small check
 ```
 
-The `check` target also builds any missing dependencies. Toolchain installation,
-the final theorem names, and expected output are in
-[`docs/VERIFYING.md`, Small-machine proofs](docs/VERIFYING.md#small-machine-proofs).
-
-Use GNU make, Python 3 and a native-capable Coq toolchain. Select one complete
-`(4,2)` target in a fresh source checkout:
+For the complete `(4,2)` value proofs, choose a target:
 
 ```sh
-make proof-all     # state-level value theorem; make proof is an alias
-make proof-tr-all  # instruction-level value theorem
+make proof-all     # state value; make proof is an alias
+make proof-tr-all  # instruction value
 ```
 
-No outer `make -j` is needed: the wrappers select workers from CPU and
-available-memory limits. `tools/census_toolchain.sh` finds a native-capable
-Coq, activates the `census` opam switch, or bootstraps that switch. Installation
-instructions are in [`docs/VERIFYING.md`](docs/VERIFYING.md). Plain `make`
-builds a broader set of project files but does not prove either complete value
-theorem.
+The wrappers select workers from CPU and available-memory limits; no outer
+`make -j` is needed. `tools/census_toolchain.sh` finds a native-capable Coq,
+activates the `census` opam switch, or bootstraps that switch. `proof-all` forces
+a fresh state census walk; `make census` can resume a matching interrupted walk.
 
-Completed fresh builds used **Coq 8.18.0 with native compilation, OCaml
-4.14.2, a four-CPU container quota and 16 GiB RAM**:
+Completed fresh builds used Coq 8.18.0, OCaml 4.14.2, a four-CPU container quota,
+and 16 GiB RAM:
 
 | Target | Wall time | Result |
 | --- | ---: | --- |
 | `make proof-all` | 1 h 48 m 54 s | Passed |
-| `make proof-tr-all` (2026-10-18, v4) | 2 h 15 m 38 s | Passed |
+| `make proof-tr-all` | 2 h 15 m 38 s | Passed |
 
-The state result meets the two-hour cloud target; the latest completed TR
-run is still 15 m 38 s over it. A sub-hour desktop run and lower-memory
-configurations have not been measured. These totals include native/data
-preparation, proof prerequisites, census, closeout and final theorem checks.
-The toolchain was already installed; checkout preparation and optional offline
-searches are separate. No compiled project artifacts were present at target
-start, but OS caches were not flushed. Later toolchain-stamp migration is a
-build-correctness change, not a measured speedup. Detailed conditions and
-historical results are in [`docs/CENSUS_RUNTIME.md`](docs/CENSUS_RUNTIME.md).
+These measurements include proof preparation, prerequisites, census, closeout,
+and final theorem checks; the toolchain was already installed. Revision details
+and historical measurements are in [`docs/CENSUS_RUNTIME.md`](docs/CENSUS_RUNTIME.md).
 
-The checkout supplies advisory hints for all 96 TR census units: **256,390
-rows in 251 Coq data modules of at most 1,024 rows**. Hints select checkers
-and parameters; the checker must accept the actual machine. Missing, invalid
-or unsuccessful hints use the original fallback. Stored RW certificates are
-also untrusted inputs whose closure and ranking conditions are checked in Coq.
-Ordinary builds compile and check the supplied data; they do not rerun the
-offline searches that produced it. Both observed final assumption blocks
-contain only the existing `FunctionalExtensionality.functional_extensionality_dep`.
+For the complete **state `(2,4)` build under verification**, run:
 
-The 250 state IRules certificates are checked in 34 independent parts of
-at most eight machines. The original batch modules preserve their public
-definitions and theorem names. `Makefile.coq.local` budgets 3 GiB per part
-and caps concurrent parts by available memory and physical cores. A
-four-core / 16 GiB container normally runs four; `IRULES_JOBS=N` overrides
-the limit. Other files can use the remaining build slots.
+```sh
+make proof-2-4 BUILD_JOBS=8 STATE24_PROVIDER_LIGHT=1
+```
 
-[`docs/VERIFYING.md`](docs/VERIFYING.md) walks through every
-verification tier, from "check one machine" to "re-walk the census".
+This prepares the selected source graph, compiles it, checks the exact statement
+and numeric value, reports its assumptions, and runs both full recursive audits.
+Only a successful complete run establishes the global state result. Its runtime
+and peak memory remain under verification; the `(4,2)` measurements above do not
+apply to this target. Resource settings, checkpoint resume, audit logs, and
+success criteria are in [`docs/VERIFYING_BBB24.md`](docs/VERIFYING_BBB24.md).
 
 ## What is in the tree
 
 | Path | Contents |
 | --- | --- |
-| `theories/BBB4_Statement.v` | The (4,2) machine model and the quasihalting semantics: `VisitsAt`, `QuietFrom`, `QuietAfter`, `QuasiHaltsSt`, `NeverQuasiHaltsSt` |
-| `theories/BBB4_Spec.v` | The claim: `tm_champion`, `champion_score`, `Attains`, `BBB4_is`, `BBB4_statement`, `BBB4_is_unique` — with `BBB4_Statement.v`, the entire trusted statement surface; depends on nothing census-side |
-| `theories/Checkers/` | The verified certificate checkers: cyclers, translated cyclers, n-gram closures with ranking/pattern measures, RepWL, fuel/drift rules, inductive-rules (irules) engines, quasihalt wrappers |
-| `theories/Closure.v` | The generic covering-abstraction / liveness engine the n-gram and RepWL checkers instantiate |
-| `theories/Machines/` | Per-machine theorems: the generated boards (`Bulk/`, batch files) plus individually proved counter machines (`Machines/Counters/`) — thousands of files; `tools/closeout/audit.py` prints the live count |
-| `theories/Counters/` | The windowed-run toolkit for hand-proved machines: `WTape`, `LapGlue`/`WaveCounter`/`MeasureGlue` closers, shared counter encodings |
-| `theories/Checkers/ReachSt.v`, `ReachStI.v` | The termination checker behind the REACHST tier: a machine's liveness obligation for one state, discharged as termination of the STATE-DELETED sub-machine (`docs/REACHST_TIER.md`) |
-| `theories/Checkers/Ladder*.v`, `theories/Machines/Ladder/` | The ladder: counter segments carried as a value-indexed rule family, its fill law read off the machine rather than assumed (`docs/LADDER_PLAN.md`) |
-| `theories/Census/` | The trusted census: TNF enumeration, the in-walk deciders, the frozen deferred tables, and the walk units (`Compute/`, run by `make proof`) ending in `census_decided` |
-| `theories/Closeout/` | The assembly: generated stages bridging every decided frozen row to its board, `closeout_partial`, `census_boarded`, `bbb4_target`, and the hand-written `BBB4_Value.v` — the BBB(4) = 32,779,478 value theorem |
-| `theories/BBBT4_Statement.v`, `theories/BBBT4_Spec.v`, `theories/BBBT4_Champion.v`, `theories/CensusTr/`, `theories/Checkers/*Tr.v`, `theories/Machines/CountersTr/` | The **instruction-level (transition-level) development**: the claim BBB_tr(4) = 32,779,478, the beeping semantics at instruction granularity, the ported checkers, the transition-level census walk and its proven tier — see the section below |
-| `theories/Tests/` | Negative controls in the BBB corruption-test tradition: mutated certificates, periods, sides and claims must all fail |
-| `tools/` | **Untrusted** certificate search, generators, and differential validators — a wrong certificate fails to compile, never proves a false theorem |
-| `docs/` | The prose claim, verification guide, and closing-campaign write-ups, plus the historical lab notebook — [`docs/README.md`](docs/README.md) is the index |
+| [`theories/BBB4_Statement.v`](theories/BBB4_Statement.v), [`theories/BBB4_Spec.v`](theories/BBB4_Spec.v) | `(4,2)` machine model, state quasihalting, champion, and maximum claim |
+| [`theories/BBBT4_Statement.v`](theories/BBBT4_Statement.v), [`theories/BBBT4_Spec.v`](theories/BBBT4_Spec.v) | Instruction quasihalting and its maximum claim |
+| `theories/Checkers/`, `theories/Counters/`, `theories/Machines/` | Verified certificate checkers, symbolic recurrence tools, and machine proofs |
+| `theories/Census/`, `theories/Closeout/` | Exhaustive state census and assembly of `BBB4_value` |
+| `theories/CensusTr/`, `theories/CloseoutTr/` | Exhaustive instruction census and assembly of `BBBT4_value` |
+| [`small/`](small/README.md) | Exact state and instruction values for `(1,2)`, `(2,2)`, `(3,2)`, and `(2,3)` |
+| [`four/`](four/README.md) | `(2,4)` champion, census, certificate checkers, and state proof assembly |
+| `theories/Tests/` | Corruption tests that reject invalid certificates and claims |
+| `tools/` | Certificate searches, source generators, validators, and build tools |
+| [`docs/`](docs/README.md) | Claims, verification guides, measured runtimes, and proof-method documentation |
 
 ## The trust story
 
-* The kernel checks everything: every certificate emitted by the
-  untrusted Python is re-derived or re-checked inside Coq
-  (`vm_compute`/`native_compute`), so `tools/` need not be read to
-  believe a theorem.
-* Every checker feature ships with corruption tests
-  (`theories/Tests/*_Corruption.v`) that must reject tampered
-  certificates.
-* Nothing precompiled is trusted: no `.vo` are committed, and
-  **`make proof` re-derives the census and the whole value theorem
-  from source**. Timings are in [`docs/CENSUS_RUNTIME.md`](docs/CENSUS_RUNTIME.md). The census `.vo`
-  used to be committed and hash-guarded; that cache was removed on
-  2026-10-07, so the proof is one from-source build.
-* The partition audit (`tools/closeout/audit.py`) is untrusted Python —
-  but with the residue empty it carries no weight for the value
-  theorem: `not_skipped_nil` discharges the skip disjunct inside Coq,
-  so no table edit can change `BBB4_value`.  It remains bookkeeping
-  for the frozen tables and per-row attribution.
+The machine model and maximum specification determine what is proved. The
+census coverage theorem and all machine certificates are checked in Coq;
+search results, machine counts, and progress percentages are not proof premises.
+The completed `(4,2)` closeouts discharge every deferred case inside Coq.
+
+The completed `(4,2)` value proofs use the standard
+`FunctionalExtensionality.functional_extensionality_dep` assumption.
+`Print Assumptions` records each theorem's actual footprint.
+The `(2,4)` state runner accepts only an empty footprint or that same standard
+assumption, checks the exact public statement, and requires both recursive
+audits before reporting success. Its generated `Value.v` alias is gated by the
+first successful audit.
+
+Search and generation tools are untrusted: the proof checks the certificates
+they produce. Corruption tests check that altered certificates are rejected.
+See [`docs/CLAIMS.md`](docs/CLAIMS.md) and
+[`docs/BBBT4_REVIEW.md`](docs/BBBT4_REVIEW.md) for the `(4,2)` review details.
 
 ## Contributing
 
-The burndown is DONE — `tools/closeout/core_rows.txt` and
-`tools/closeout/shadow_rows.tsv` are empty, and
-`python3 tools/closeout/audit.py` reports 5,156 of 5,156 settled.  What
-remains valuable now is **verification**: independent re-runs of the
-ladder above (especially `make census-verify` on hardware that can
-afford it), `coqchk -o` over the full closure, and scrutiny of the
-statement in [`docs/CLAIMS.md`](docs/CLAIMS.md).
-[`docs/TERMINOLOGY.md`](docs/TERMINOLOGY.md) has the vocabulary and
-[`NEXT_SESSION.md`](NEXT_SESSION.md) the accumulated traps;
-[`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) records how each family of
-machines fell.
+Independent builds and reviews of the statements are especially useful. For
+`(2,4)`, the [scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) tracks
+the remaining verification work. When reporting a build, include the commit,
+command, Coq and OCaml versions, available RAM, and final report or failure log.
 
 ## The instruction-level development
 
-The BBB harness's second convention scores a machine by the last time
-each *instruction* (state, read symbol) fires rather than each state.
-The obligation "every fired instruction recurs" (`NeverQuasiHaltsTr`,
-`theories/BBBT4_Statement.v`) is strictly stronger than the state one,
-so the census has to be re-decided.  This tree carries that
-re-decision alongside the finished state-level proof, without touching
-it:
+The completed `(4,2)` instruction census has its own recurrence obligations and
+closeout. Its verified bound matches the state champion's score, giving
+`BBB_tr(4,2) = 32,779,478`. The census uses 96 walk units and closes all 10,924
+deferred rows. The final theorem is
+[`BBBT4_value`](theories/CloseoutTr/BBBT4_Value.v).
 
-* `theories/BBBT4_Statement.v` — `Instr`, `FiresAt`, `QuietAfterTr`,
-  `QuasiHaltsTr`, `NeverQuasiHaltsTr`, and the bridges to the state
-  level.
-* `theories/Checkers/*Tr.v`, `theories/ClosureTr.v`,
-  `theories/CensusTr/RepWLTr.v`, `theories/Counters/LapGlueTr.v` — the
-  checkers ported to instruction targets (cyclers, translated cyclers,
-  n-gram closures with rank/lex certificates, history-augmented
-  n-grams, RepWL, the inductive-rules engine, lap certificates), each
-  with a soundness theorem concluding `NeverQuasiHaltsTr`.
-* `theories/CensusTr/` — the transition-level census: `TNF_QHTr`
-  (the census contract at the raised bound `B_tr = 32,779,478`),
-  `DecideTr`/`RunTr` (the in-walk decider), `RunTr_Split` (the
-  kernel-checked frontier split), the frozen deferred tables
-  (`DeferredTr_*`, 10,924 rows) and the two proven tiers: `prov_tr`,
-  7,353 never-quasihalting machines as certificate stages
-  (`ProvTr_TC_*` translated cyclers, `ProvTr_Lap_*` lap boards from
-  `Machines/CountersTr/`, `ProvTr_RW_*` RepWL at the tape period,
-  `ProvTr_IR_*` and `ProvTr_RK_*` the state census's irules
-  certificates and rank rungs re-checked at instruction level), and
-  `provqh_tr`, 5,534 quasihalting machines with every quiet
-  instruction's last fire proved at most `B_tr` (`ProvTr_QH_00..02`
-  translated cyclers via `Checkers/TCyclerQHTr`, `ProvTr_QH_03..15`
-  the `LAPQ_*` counter boards via `Counters/LapGlueQHTr`,
-  `ProvTr_QH_16..39` quiet-instruction bouncers via the wrapped RepWL
-  tier and `CensusTr/QHConveyorTr`).
-* The census theorem `census_tr : forall tm, QHBoundTr B_tr tm \/
-  Deferred D_tr tm` is assembled from 96 native-compute walk units
-  (`theories/CensusTr/Compute/`, generated; not part of the default
-  build). All 96 units passed in the completed 2026-10-18 fresh build
-  against the v10 tables (10,924 deferred rows). The Makefile chooses
-  worker counts from available resources; its per-job memory allowances
-  are estimates, not process caps. `Print Assumptions` on `census_tr` and on the proven
-  tiers' `prov_tr_all` and `provqh_tr_all` reports
-  `functional_extensionality_dep` and nothing else -- the same single
-  axiom as the state-level proof.
-
-The census is now frozen at v10.  The deferred rows are settled
-outside it by batch files in `theories/CloseoutTr/` (`make closeout-tr`,
-without a census re-walk), in parallel workstreams:
-[`docs/CLOSEOUT_TR.md`](docs/CLOSEOUT_TR.md).  As of 2026-10-05 all
-10,924 rows are boarded (626 batches).  `closeout_tr_complete`
-(`CloseoutTr/CloseoutTr.v`, CI) closes every deferred row.
-`bbbt4_bound : forall tm, QHBoundTr B_tr tm` (`CloseoutFinalTr.v`)
-is the unconditional instruction-level upper bound, after
-`make proof-tr-all` (the instruction-level `make proof-all`; native
-toolchain; see Tier C of
-[`docs/VERIFYING.md`](docs/VERIFYING.md)).  The same champion attains it (`BBBT4_Champion.v`), so
-**BBB_tr(4) = 32,779,478**: `BBBT4_value : BBBT4_statement`
-(claim in `theories/BBBT4_Spec.v`, proof in
-`theories/CloseoutTr/BBBT4_Value.v`, box only;
-[`docs/CLAIMS.md`](docs/CLAIMS.md); reviewer's guide and cross-checks:
-[`docs/BBBT4_REVIEW.md`](docs/BBBT4_REVIEW.md)).
-
-Build: `make proof-tr-all` for the value theorem.  For partial
-builds, `make instr` builds the walk's prerequisites (statement,
-checkers, proven tiers, deferred tables) and `make instr-core` builds the slice CI compiles.
-`SCOPING_INSTR.md` is the running record
-of the scoping, the measured population, the routes per machine class
-and the open classes (section 7), and `tools/censustr/` holds the
-untrusted generators (`gen_walk_units.py`, `gen_listburn.py`,
-`gen_provtr_*.py`, `rw_period_rows.py`, `proven_specs.py`).
+Use `make proof-tr-all` for the full theorem. For component builds, `make instr`
+builds the census prerequisites and `make instr-core` builds the slice used in
+CI. See [`docs/CLOSEOUT_TR.md`](docs/CLOSEOUT_TR.md) and the
+[reviewer's guide](docs/BBBT4_REVIEW.md) for the construction.
 
 ## Status and further reading
 
-* [`docs/CLAIMS.md`](docs/CLAIMS.md) — what is proved, exactly,
-  including what is **not**.
-* [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — the residue map,
-  now closed out: how each shape and blocker fell.
-* [`docs/REACHST_TIER.md`](docs/REACHST_TIER.md) — the tier with the
-  shortest explanation: a counter's liveness is a TERMINATION question
-  about the state-avoiding sub-machine, which is usually far simpler than
-  the machine.  127 rows over two waves.
-* [`docs/LADDER_PLAN.md`](docs/LADDER_PLAN.md) — the ladder, the
-  endgame's main producer: a counter segment carried as a value-indexed
-  rule family whose fill law, code and step are read OFF the machine
-  rather than assumed.  A design record with its append-only build log.
-* [`docs/VERIFYING.md`](docs/VERIFYING.md) — how to check any of this
-  yourself.
-* [`SCOPING.md`](SCOPING.md) — the original inventory and phased plan
-  (historical).
-* [`NEXT_SESSION.md`](NEXT_SESSION.md) — the internal development log:
-  per-wave findings, traps, and the compute playbook.  Kept verbatim as
-  the project's lab notebook.
+* [`docs/CLAIMS.md`](docs/CLAIMS.md) — the precise `(4,2)` claim and trust boundary.
+* [`docs/VERIFYING.md`](docs/VERIFYING.md) — build commands and expected results.
+* [`docs/VERIFYING_BBB24.md`](docs/VERIFYING_BBB24.md) — selected `(2,4)` state
+  build, resource controls, audit diagnostics, and checkpoint resume.
+* [`docs/CENSUS_RUNTIME.md`](docs/CENSUS_RUNTIME.md) — measured build conditions
+  and runtimes.
+* [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — how the `(4,2)` state holdouts
+  were proved.
+* [`docs/REACHST_TIER.md`](docs/REACHST_TIER.md) and
+  [`docs/LADDER_PLAN.md`](docs/LADDER_PLAN.md) — two of the proof methods used
+  for difficult machines.
+* [`SCOPING.md`](SCOPING.md) and [`NEXT_SESSION.md`](NEXT_SESSION.md) — the
+  historical scope and development notebook.
