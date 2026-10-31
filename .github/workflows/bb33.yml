@@ -1,0 +1,64 @@
+name: BB(3,3) lower bounds
+
+# The bb33/ development: Bigfoot and the probable BB(3,3) champion both
+# run for more than 119,112,334,170,342,541 steps.  Stock Coq 8.18 from
+# apt is enough (no native_compute); the whole build, the coqchk pass and
+# the assumption printout take a few minutes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'bb33/**'
+      - 'small/theories/Statement.v'
+      - 'small/theories/CTape.v'
+      - 'small/_CoqProject'
+      - '.github/workflows/bb33.yml'
+  pull_request:
+    paths:
+      - 'bb33/**'
+      - 'small/theories/Statement.v'
+      - 'small/theories/CTape.v'
+      - 'small/_CoqProject'
+      - '.github/workflows/bb33.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bb33-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bb33:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: ~/apt-debs
+          key: apt-debs-${{ runner.os }}-coq-v1
+      - name: Install Coq
+        timeout-minutes: 25
+        run: |
+          mkdir -p ~/apt-debs/partial
+          for i in 1 2 3; do
+            sudo timeout 300 apt-get update && \
+            sudo timeout 600 apt-get install -y -o Dir::Cache::archives=$HOME/apt-debs coq && break
+            echo "apt attempt $i failed or hung; retrying"
+            [ "$i" = 3 ] && exit 1
+            sleep 10
+          done
+          sudo rm -rf ~/apt-debs/partial ~/apt-debs/lock
+          sudo chown -R "$(id -u):$(id -g)" ~/apt-debs
+      - name: Coq version (expect 8.18.0)
+        run: coqc --version
+      - name: Build both lower-bound theorems from source
+        run: make -C bb33
+      - name: Re-verify with coqchk
+        run: make -C bb33 check
+      - name: "Axiom footprint (expect functional_extensionality_dep only)"
+        run: make -C bb33 assumptions
+      - name: "Hygiene: zero Admitted in bb33/"
+        run: "! grep -rn 'Admitted\\.' bb33/theories --include='*.v'"
