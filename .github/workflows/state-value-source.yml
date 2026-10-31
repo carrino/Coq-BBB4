@@ -8,6 +8,7 @@ on:
       - 'four/tools/test_state_value_scheduler.py'
       - 'four/tools/test_state_value_stack.py'
       - 'four/tools/test_state_value_audit_gc.py'
+      - 'four/tools/test_state_value_audit_memory.py'
       - 'four/tools/with_coq_stack.py'
       - 'four/Makefile'
       - 'four/tools/proof24_common.py'
@@ -22,6 +23,7 @@ on:
       - 'four/tools/test_state_value_scheduler.py'
       - 'four/tools/test_state_value_stack.py'
       - 'four/tools/test_state_value_audit_gc.py'
+      - 'four/tools/test_state_value_audit_memory.py'
       - 'four/tools/with_coq_stack.py'
       - 'four/Makefile'
       - 'four/tools/proof24_common.py'
@@ -46,3 +48,5 @@ jobs:
         run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_stack.py'
       - name: Check audit heap policy, failure records and exact resume compatibility
         run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_audit_gc.py'
+      - name: Check audit-only RAM overrides and available-memory admission
+        run: python3 -Werror::SyntaxWarning -m unittest discover -s four/tools -p 'test_state_value_audit_memory.py'

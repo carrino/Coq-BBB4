@@ -1,8 +1,10 @@
 # State BBB(2,4): selected source build
 
-The complete state proof build is under verification. Its source preparation
-and resource-profile metadata have been independently checked; the complete Coq
-build and its memory fit still need confirmation. Follow the
+The complete state proof build is under verification. A reported WSL run
+compiled the selected source graph and reached the final recursive audit,
+which exceeded its memory guard. The global state equality still awaits a
+complete audit. Source preparation and resource-profile metadata have been
+independently checked. Follow the
 [scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) for current proof status.
 
 From the repository root, run the reviewed source build with:
@@ -166,17 +168,53 @@ Use the same paths and `STATE24_RESUME=1 STATE24_PROVIDER_LIGHT=1`. It checks al
 object receipts again and performs both full recursive audits. Other identity
 changes remain rejected.
 
-For an older checkout whose audit exceeded its memory guard, a bounded trial
-requires no Git update: set the stack and GC settings, then resume the same
-compiled work:
+### Audit memory on larger machines
+
+A reported 32-GiB WSL run compiled the complete selected source graph, but the
+full recursive `CheckFinal` audit exceeded its 25-GiB RSS guard both with the
+original GC settings and with `o=40,O=60`. The complete audit's required memory
+has not yet been measured. Compilation receipts remain reusable.
+
+`STATE24_AUDIT_RSS_GIB` sets a positive integer RSS budget for the two final
+recursive audits only. Their address-space limit is that budget plus 2 GiB,
+and they remain serial. Without this setting, the reviewed default limits are
+unchanged. Source compilation, compiler flags, source preparation, exact
+statement checks, assumptions checks and full recursive checking are unchanged.
+The existing RAM/cgroup admission check requires the budget to fit current
+available memory and leaves the normal reserve. A 40-GiB request is rejected
+on a 32-GiB machine; adding this setting alone does not supply more RAM.
+
+On a 64-GiB Windows host currently exposing 32 GiB to WSL, the next profile to
+try is 48 GiB for WSL and a 40-GiB checker RSS guard (42 GiB address space).
+Its complete-audit fit is still unverified. In Windows, set `memory=48GB` in
+the existing `[wsl2]` section of `%USERPROFILE%\.wslconfig`, preserving other
+settings. Restart WSL with `wsl --shutdown` from PowerShell after saving any
+running WSL work, then reopen the Linux shell and check `free -h`.
+
+With the same toolchain and prepared-tree/state paths as the interrupted run:
 
 ```sh
-ulimit -S -s 65536
-OCAMLRUNPARAM='o=40,O=60' \
+git fetch origin
+git merge --ff-only origin/codex/bbb24-audit-memory
+STATE24_AUDIT_RSS_GIB=40 STATE24_COQCHK_TRACE=1 \
 make proof-2-4 BUILD_JOBS=8 STATE24_RESUME=1 STATE24_PROVIDER_LIGHT=1 \
   STATE24_PREPARED=build/state-value-selected-native \
   STATE24_STATE=build/state-value-proof-native
 ```
+
+The audit-memory driver accepts exact completed receipts from the earlier
+native scheduler, bounded provider scheduler, and GC-only driver. It still
+requires identical source graph, runtime, compiler, resource monitor and
+reporter bindings, then checks every object receipt again. No compiled-object
+hash or dependency check is relaxed. It performs both recursive audits again.
+The log records the requested RSS budget and effective limits before launch;
+trace mode retains the library and constant names being checked.
+
+`coqchk` deliberately disables native conversion and checks native-cast proof
+terms using VM conversion, so its `native-compiler-disabled` fallback warnings
+can be expected. This is separate from source compilation, which requires
+native-capable Coq and treats the same warning there as an error. A warning
+does not indicate a successful audit: both complete audits must exit normally.
 
 Default prepared sources and proof state live under
 `four/build/state-value-selected/` and `four/build/state-value-proof/`. To place

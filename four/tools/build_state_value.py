@@ -14,7 +14,7 @@ import sys
 import tempfile
 import time
 
-from proof24_common import (COMPILER_FLAGS, Graph, REPORT_PATH, REPORT_NS, VALUE, canonical, clean_environment, inside,
+from proof24_common import (COMPILER_FLAGS, PHASES, Graph, REPORT_PATH, REPORT_NS, VALUE, canonical, clean_environment, inside,
     archive_results, exclusive_build_locks,
     parse_assumptions, receipt_key, receipt_valid, require_native_compiler, runtime_snapshot, sha,
     selected_statement_check, write_json)
@@ -119,6 +119,10 @@ AUDIT_PREDECESSOR = {
     **SCHEDULER_PREDECESSOR,
     'build_state_value.py': 'c1e0d5dcc8ac519c4b2074b17d50c927ffc25a7e2a887b9bed84f5db7c9db052',
 }
+MEMORY_PREDECESSOR = {
+    **AUDIT_PREDECESSOR,
+    'build_state_value.py': '3f7af4787e63fa731b9523200bb9ae2c1785015d237d07cdf2bd309ef4d1c5ea',
+}
 DEFAULT_AUDIT_GC = 'o=40,O=60'
 
 
@@ -131,6 +135,21 @@ def audit_environment(env):
     return audit_env
 
 
+def audit_limits(graph, env, default=None):
+    """Optional serial audit budget; retain the normal RAM/cgroup admission check."""
+    requested = env.get('STATE24_AUDIT_RSS_GIB')
+    if requested is None:
+        return default if default is not None else phase_limits('assembly', 1, profiles=graph.profiles)
+    if not re.fullmatch(r'[1-9][0-9]*', requested):
+        raise ValueError('STATE24_AUDIT_RSS_GIB must be a positive integer number of GiB')
+    rss_mib = int(requested) * 1024
+    profiles = dict(graph.profiles)
+    profiles['assembly'] = {**profiles.get('assembly', PHASES['assembly']),
+                           'workers': 1, 'rss_guard_mib': rss_mib,
+                           'address_space_mib': rss_mib + 2048}
+    return phase_limits('assembly', 1, profiles=profiles)
+
+
 def resume_identity(state, identity, provider_light):
     initial = state / 'build-identity.json'
     if not initial.is_file():
@@ -140,7 +159,7 @@ def resume_identity(state, identity, provider_light):
         return
     unchanged = set(SCHEDULER_PREDECESSOR) - {'build_state_value.py'}
     predecessors = [{**identity, 'implementation': implementation}
-                    for implementation in (SCHEDULER_PREDECESSOR, AUDIT_PREDECESSOR)]
+                    for implementation in (SCHEDULER_PREDECESSOR, AUDIT_PREDECESSOR, MEMORY_PREDECESSOR)]
     if (not provider_light or previous not in predecessors
             or any(identity['implementation'].get(name) != SCHEDULER_PREDECESSOR[name]
                    for name in unchanged)):
@@ -293,6 +312,7 @@ def checked_root(graph, state, runtime, env, constant, require, name, timeout):
     source.write_text(expected_source)
     flags = [*graph.flags, '-Q', REPORT_PATH, REPORT_NS]
     limits = phase_limits('assembly', 1, profiles=graph.profiles)
+    audit_budget = audit_limits(graph, env, limits)
     compile_log = state / (name + '-compile.log')
     audit_log = state / (name + '-coqchk.log')
     audit_log.unlink(missing_ok=True)
@@ -305,19 +325,20 @@ def checked_root(graph, state, runtime, env, constant, require, name, timeout):
     policy = {'status': 'policy recorded before audit; no proof credit',
               'verification_mode': 'full-recursive', 'trace_enabled': trace,
               'ocamlrunparam': audit_env['OCAMLRUNPARAM'],
-              'address_space_bytes': limits['address_space_bytes'],
-              'rss_guard_bytes': limits['rss_guard_bytes'], 'timeout_seconds': timeout}
+              'address_space_bytes': audit_budget['address_space_bytes'],
+              'rss_guard_bytes': audit_budget['rss_guard_bytes'], 'timeout_seconds': timeout,
+              'requested_rss_gib': env.get('STATE24_AUDIT_RSS_GIB')}
     archive_results(state, [name + '-audit-policy.json', name + '-audit-failure.json'])
     write_json(state / (name + '-audit-policy.json'), policy)
     print(json.dumps({'phase': 'audit', 'mode': 'full-recursive',
         'root': REPORT_NS + '.' + name, 'workers': 1,
         'ocamlrunparam': audit_env['OCAMLRUNPARAM'],
-        'rss_guard_mib': limits['rss_guard_bytes'] // (1024 * 1024)}), flush=True)
+        'rss_guard_mib': audit_budget['rss_guard_bytes'] // (1024 * 1024)}), flush=True)
     started = time.monotonic()
     try:
         result = run_capped([runtime['binaries']['coqchk']['path'], *verbosity, '-bytecode-compiler',
                             'yes', *flags, REPORT_NS + '.' + name], graph.tree, audit_env,
-                           audit_log, limits, timeout)
+                           audit_log, audit_budget, timeout)
     except (OSError, ValueError, RuntimeError) as error:
         write_json(state / (name + '-audit-failure.json'), {
             **policy, 'status': 'audit failed; no proof credit', 'error': str(error),
@@ -346,6 +367,8 @@ def execute(graph, state, args):
         graph.verify_sources()
         graph.verify_no_unselected(allow_value=args.resume)
         env = clean_environment()
+        if 'STATE24_AUDIT_RSS_GIB' in env:
+            audit_limits(graph, env)  # Reject an unfit override before source compilation.
         runtime = runtime_snapshot(env)
         require_native_compiler(runtime)
         identity = {'manifest_sha256': graph.digest, 'runtime_sha256': canonical(runtime),
