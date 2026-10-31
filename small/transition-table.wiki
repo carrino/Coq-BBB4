@@ -3,26 +3,31 @@
 Write <math>\mathrm{BBB}_{\mathrm{tr}}(n,m)</math> for the variant in which a beep designates a state–symbol pair (an instruction slot). As above, <math>m=2</math> is implicit when omitted. The score is one plus the configuration index of the last visit to a slot that is visited at least once and only finitely often; the halting slot counts as a visit. The initial transition is unrestricted, including writes of the blank symbol.
 
 {| class="wikitable"
-! Domain !! Max steps !! Champions
+! Domain !! Max steps !! Statement proved !! Champions
 |-
 | <math>\mathrm{BBB}_{\mathrm{tr}}(1)</math>
 | <math>=1</math><ref name="Coq-small-transition">[https://github.com/carrino/Coq-BBB4/pull/256 Coq formalization of small state- and instruction-based beeping busy beaver values]. The unconditional theorems are in small/theories/Value12.v, Value22.v, Value32.v and Value23.v; witnesses are in Value12.v and Champions.v.</ref>
+| [https://github.com/carrino/Coq-BBB4/blob/17e53b1803addf72640f3447bbaed7ce74e72030/small/theories/Value12.v#L40 <code>BBBTr_is 1 2 1</code>]
 | <code>1RZ---</code> ([https://bbchallenge.org/1RZ---&status=halt bbch])
 |-
 | <math>\mathrm{BBB}_{\mathrm{tr}}(2)</math>
 | <math>=8</math><ref name="Coq-small-transition" />
+| [https://github.com/carrino/Coq-BBB4/blob/17e53b1803addf72640f3447bbaed7ce74e72030/small/theories/Spec.v#L23 <code>BBBTr_is 2 2 8</code>] ([https://github.com/carrino/Coq-BBB4/blob/17e53b1803addf72640f3447bbaed7ce74e72030/small/theories/Value22.v#L4 proof])
 | <code>0RB1LB_1LA1RB</code> ([https://bbchallenge.org/0RB1LB_1LA1RB&status=non_halt bbch])
 |-
 | <math>\mathrm{BBB}_{\mathrm{tr}}(3)</math>
 | <math>=55</math><ref name="Coq-small-transition" />
+| [https://github.com/carrino/Coq-BBB4/blob/17e53b1803addf72640f3447bbaed7ce74e72030/small/theories/Spec.v#L24 <code>BBBTr_is 3 2 55</code>] ([https://github.com/carrino/Coq-BBB4/blob/17e53b1803addf72640f3447bbaed7ce74e72030/small/theories/Value32.v#L3 proof])
 | <code>1RB0LB_1LA0RC_1LC1LA</code> ([https://bbchallenge.org/1RB0LB_1LA0RC_1LC1LA&status=non_halt bbch])
 |-
 | <math>\mathrm{BBB}_{\mathrm{tr}}(4)</math>
 | <math>=32{,}779{,}478</math><ref name="Coq-BBB4-transition">[https://github.com/carrino/Coq-BBB4/blob/main/theories/CloseoutTr/BBBT4_Value.v Coq theorem BBBT4_value] and [https://github.com/carrino/Coq-BBB4/blob/main/theories/BBBT4_Champion.v its champion proof].</ref>
+| [https://github.com/carrino/Coq-BBB4/blob/17e53b1803addf72640f3447bbaed7ce74e72030/theories/BBBT4_Spec.v#L70 <code>BBBT4_statement</code>] ([https://github.com/carrino/Coq-BBB4/blob/17e53b1803addf72640f3447bbaed7ce74e72030/theories/CloseoutTr/BBBT4_Value.v#L43 proof])
 | <code>1RB1LD_1RC1RB_1LC1LA_0RC0RD</code> ([https://bbchallenge.org/1RB1LD_1RC1RB_1LC1LA_0RC0RD&status=non_halt bbch])
 |-
 | <math>\mathrm{BBB}_{\mathrm{tr}}(2,3)</math>
 | <math>=67</math><ref name="Coq-small-transition" />
+| [https://github.com/carrino/Coq-BBB4/blob/17e53b1803addf72640f3447bbaed7ce74e72030/small/theories/Spec.v#L25 <code>BBBTr_is 2 3 67</code>] ([https://github.com/carrino/Coq-BBB4/blob/17e53b1803addf72640f3447bbaed7ce74e72030/small/theories/Value23.v#L4 proof])
 | <code>1RB2LA0RB_1LA0LB1RA</code> ([https://bbchallenge.org/1RB2LA0RB_1LA0LB1RA&status=non_halt bbch])
 |}
 
