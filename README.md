@@ -19,32 +19,20 @@ certificates; Coq checks the machine behavior and exhaustive coverage.
 `BBB_tr(n,m)` denotes the instruction-based value. The symbol count defaults to
 2 when omitted. All values below use the counting convention defined next.
 
-The tables link values to their formal statements and proofs in this repository.
-The state `(2,4)` row accompanies the proof stack currently being verified.
-Champion programs are shown with the first move to the right; reflecting the
-tape preserves both scores. The
-[program notation](#champion-programs) is explained below.
+Each domain is `(states, symbols)`. Each value links to its formal statement;
+proof links open the proving theorems. The state `(2,4)` entry
+accompanies the proof stack currently being verified. Champion programs are
+shown with the first move to the right; reflecting the tape preserves both
+scores. The [program notation](#champion-programs) is explained below.
 
-### State quasihalting
-
-| Domain | Max steps | Statement proved | Champion |
-| --- | ---: | --- | --- |
-| `BBB(1)` | **1** | [`BBBSt_is 1 2 1`](small/theories/Value12.v#L40) | `1RZ---` |
-| `BBB(2)` | **6** | [`BBBSt_is 2 2 6`](small/theories/Spec.v#L23) ([proof](small/theories/Value22.v#L4)) | `1RB1LB_1LB1LA` |
-| `BBB(3)` | **55** | [`BBBSt_is 3 2 55`](small/theories/Spec.v#L24) ([proof](small/theories/Value32.v#L3)) | `1RB0LB_1LA0RC_1LC1LA` |
-| `BBB(4)` | **32,779,478** | [`BBB4_statement`](theories/BBB4_Spec.v#L99) ([proof](theories/Closeout/BBB4_Value.v#L104)) | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` |
-| `BBB(2,3)` | **59** | [`BBBSt_is 2 3 59`](small/theories/Spec.v#L25) ([proof](small/theories/Value23.v#L4)) | `1RB2LB1LA_2LB2RA0RA` |
-| `BBB(2,4)` † | **205,770,076,433,044,242,247,860** | [`BBB24_state_statement`](four/theories/ValueSpec.v#L9) ([proof assembly](four/proof-sources/state-opaque-byte448/Final.v#L28)) | `1RB2LA1RA1LB_0LB2RB3RB1LA` |
-
-### Instruction quasihalting
-
-| Domain | Max steps | Statement proved | Champion |
-| --- | ---: | --- | --- |
-| `BBB_tr(1)` | **1** | [`BBBTr_is 1 2 1`](small/theories/Value12.v#L40) | `1RZ---` |
-| `BBB_tr(2)` | **8** | [`BBBTr_is 2 2 8`](small/theories/Spec.v#L23) ([proof](small/theories/Value22.v#L4)) | `0RB1LB_1LA1RB` |
-| `BBB_tr(3)` | **55** | [`BBBTr_is 3 2 55`](small/theories/Spec.v#L24) ([proof](small/theories/Value32.v#L3)) | `1RB0LB_1LA0RC_1LC1LA` |
-| `BBB_tr(4)` | **32,779,478** | [`BBBT4_statement`](theories/BBBT4_Spec.v#L70) ([proof](theories/CloseoutTr/BBBT4_Value.v#L43)) | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` |
-| `BBB_tr(2,3)` | **67** | [`BBBTr_is 2 3 67`](small/theories/Spec.v#L25) ([proof](small/theories/Value23.v#L4)) | `1RB2LA0RB_1LA0LB1RA` |
+| Domain | State based | Instruction based | State champion | Instruction champion |
+| --- | ---: | ---: | --- | --- |
+| `(1,2)` | [**1**](small/theories/Value12.v#L40) | [**1**](small/theories/Value12.v#L40) | `1RZ---` | `1RZ---` |
+| `(2,2)` | [**6**](small/theories/Spec.v#L23) ([proof](small/theories/Value22.v#L4)) | [**8**](small/theories/Spec.v#L23) ([proof](small/theories/Value22.v#L4)) | `1RB1LB_1LB1LA` | `0RB1LB_1LA1RB` |
+| `(3,2)` | [**55**](small/theories/Spec.v#L24) ([proof](small/theories/Value32.v#L3)) | [**55**](small/theories/Spec.v#L24) ([proof](small/theories/Value32.v#L3)) | `1RB0LB_1LA0RC_1LC1LA` | `1RB0LB_1LA0RC_1LC1LA` |
+| `(4,2)` | [**32,779,478**](theories/BBB4_Spec.v#L99) ([proof](theories/Closeout/BBB4_Value.v#L104)) | [**32,779,478**](theories/BBBT4_Spec.v#L70) ([proof](theories/CloseoutTr/BBBT4_Value.v#L43)) | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` |
+| `(2,3)` | [**59**](small/theories/Spec.v#L25) ([proof](small/theories/Value23.v#L4)) | [**67**](small/theories/Spec.v#L25) ([proof](small/theories/Value23.v#L4)) | `1RB2LB1LA_2LB2RA0RA` | `1RB2LA0RB_1LA0LB1RA` |
+| `(2,4)` † | [**205,770,076,433,044,242,247,860**](four/theories/ValueSpec.v#L9) ([proof assembly](four/proof-sources/state-opaque-byte448/Final.v#L28)) |  | `1RB2LA1RA1LB_0LB2RB3RB1LA` |  |
 
 ### State (2,4) verification
 
