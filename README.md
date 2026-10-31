@@ -16,20 +16,38 @@ certificates; Coq checks the machine behavior and exhaustive coverage.
 ## The result
 
 `BBB(n,m)` denotes the state-based value for `n` states and `m` tape symbols;
-`BBB_tr(n,m)` denotes the instruction-based value. `BBB(n)` abbreviates
-`BBB(n,2)`. All values below use the counting convention defined next.
+`BBB_tr(n,m)` denotes the instruction-based value. The symbol count defaults to
+2 when omitted. All values below use the counting convention defined next.
 
-| States, symbols | State maximum | Instruction maximum | Value proofs |
-| --- | ---: | ---: | --- |
-| `(1,2)` | **1** | **1** | [`BBB12_value`](small/theories/Value12.v) |
-| `(2,2)` | **6** | **8** | [`BBB22_value`](small/theories/Value22.v) |
-| `(3,2)` | **55** | **55** | [`BBB32_value`](small/theories/Value32.v) |
-| `(2,3)` | **59** | **67** | [`BBB23_value`](small/theories/Value23.v) |
-| `(4,2)` | **32,779,478** | **32,779,478** | [`BBB4_value`](theories/Closeout/BBB4_Value.v), [`BBBT4_value`](theories/CloseoutTr/BBBT4_Value.v) |
+Each domain links to its proof. Champion programs are shown with the first move
+to the right; reflecting the tape preserves both scores. Entries marked `≥`
+are proved lower bounds. The [program notation](#champion-programs) is explained
+below.
 
-For **`(2,4)`**, [`champion_exact`](four/theories/Champion.v) proves the known
-champion's score is **205,770,076,433,044,242,247,860** at both levels. These are
-proved lower bounds on the global values. The complete **state-based** equality
+### State quasihalting
+
+| Domain | Max steps | Champion |
+| --- | ---: | --- |
+| [`BBB(1)`](small/theories/Value12.v) | **1** | `1RZ---` |
+| [`BBB(2)`](small/theories/Value22.v) | **6** | `1RB1LB_1LB1LA` |
+| [`BBB(3)`](small/theories/Value32.v) | **55** | `1RB0LB_1LA0RC_1LC1LA` |
+| [`BBB(4)`](theories/Closeout/BBB4_Value.v) | **32,779,478** | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` |
+| [`BBB(2,3)`](small/theories/Value23.v) | **59** | `1RB2LB1LA_2LB2RA0RA` |
+| [`BBB(2,4)`](four/theories/Champion.v) | **≥ 205,770,076,433,044,242,247,860** | `1RB2LA1RA1LB_0LB2RB3RB1LA` |
+
+### Instruction quasihalting
+
+| Domain | Max steps | Champion |
+| --- | ---: | --- |
+| [`BBB_tr(1)`](small/theories/Value12.v) | **1** | `1RZ---` |
+| [`BBB_tr(2)`](small/theories/Value22.v) | **8** | `0RB1LB_1LA1RB` |
+| [`BBB_tr(3)`](small/theories/Value32.v) | **55** | `1RB0LB_1LA0RC_1LC1LA` |
+| [`BBB_tr(4)`](theories/CloseoutTr/BBBT4_Value.v) | **32,779,478** | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` |
+| [`BBB_tr(2,3)`](small/theories/Value23.v) | **67** | `1RB2LA0RB_1LA0LB1RA` |
+| [`BBB_tr(2,4)`](four/theories/Champion.v) | **≥ 205,770,076,433,044,242,247,860** | `1RB2LA1RA1LB_0LB2RB3RB1LA` |
+
+For **`(2,4)`**, [`champion_exact`](four/theories/Champion.v) proves the displayed
+champion's exact score at both levels. The complete **state-based** equality
 build is under verification and still awaits a successful final recursive
 audit. Follow the
 [scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) and
@@ -136,25 +154,29 @@ the complete state build must verify the universal upper bound as well.
 
 ### Champion programs
 
-These are the witnesses used by the proofs. A value can have multiple champion
-programs, including reflected or relabeled versions. In this encoding, each
-three-character instruction gives write symbol, direction, and next state;
-`---` is undefined, and `_` separates state rows.
+A value can have multiple champion programs. The tables use the familiar
+[wiki champions](https://wiki.bbchallenge.org/wiki/Beeping_Busy_Beaver#Champions)
+for state quasihalting and versions of the instruction champions whose first
+move is to the right.
 
-| States, symbols | State champion | Instruction champion |
-| --- | --- | --- |
-| `(1,2)` | `------` | same machine |
-| `(2,2)` | `0LB---_1RA1LB` | `0LB1RB_1RA1LB` |
-| `(3,2)` | `1LB0RB_1RA0LC_1RC1RA` | same machine |
-| `(2,3)` | `1LB2RB1RA_2RB2LA0LA` | `1LB2RA0LB_1RA0RB1LA` |
-| `(4,2)` | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` | same machine |
-| `(2,4)` candidate | `1RB2LA1RA1LB_0LB2RB3RB1LA` | same machine |
+Each three-character instruction gives write symbol, direction, and next state;
+`_` separates state rows, and `---` is undefined. `Z` denotes halting in the
+community notation: `1RZ---` has a halting first slot, represented by an
+undefined transition in the Coq model. It has score 1 at both levels.
 
-The one-state witness halts immediately. Its proof is in
-[`Value12.v`](small/theories/Value12.v); the other small-machine witnesses are in
-[`Champions.v`](small/theories/Champions.v). The `(2,4)` row has a proved exact
-score; its global maximality remains under verification at state level and is
-not established at instruction level.
+The one-state proof is in [`Value12.v`](small/theories/Value12.v). The other
+small-machine witnesses are in [`Champions.v`](small/theories/Champions.v),
+sometimes in reflected forms; [`Mirror.v`](small/theories/Mirror.v) and
+[`Witness.v`](small/theories/Witness.v) prove the score-preserving transport.
+The state `(2,2)` table uses the wiki's nonhalting champion, which attains the
+same score 6 as the halting witness used by `BBB22_value`.
+
+The instruction `(2,2)` champion starts by writing `0` and moving right. That
+initial blank-writing move is included: fixing the first transition to `1RB`
+instead gives the separately proved restricted maximum of
+**7**, in [`Normalized22.v`](small/theories/Normalized22.v).
+The `(2,4)` champion has a proved exact score; its global maximality remains
+under verification at state level and is not established at instruction level.
 
 ## The verification ladder
 
