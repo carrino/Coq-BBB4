@@ -18,6 +18,9 @@ score supplies its lower bound. The public definitions are in
 and four symbols, with unrestricted initial transitions and implicit blank
 padding on both ends of the tape.
 
+The [instruction burndown](INSTRUCTION_BURNDOWN.md) tracks the remaining historical
+hard-cohort families and gives replay commands for the new instruction proofs.
+
 ## Build and audit
 
 For the complete state equality, run from the repository root on a machine
@@ -234,4 +237,5 @@ proofs. Search failures need alternative invariants as well as larger budgets.
 These samples illustrate the certificate methods. The complete state proof
 now discharges the global state obligations; the global instruction value
 remains open. Sample acceptance rates alone do not establish a global bound.
+
 

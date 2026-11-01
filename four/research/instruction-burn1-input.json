@@ -1,0 +1,120 @@
+{
+  "baseline_report": "research/instruction-baseline.json",
+  "baseline_sha256": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+  "rows": [
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 3,
+      "machine": "1LB2RB0RA3LA_1RA2LB3LA3LA",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 3,
+      "machine": "1LB2LA2RB1RB_3RA0RA2LB3LB",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB---0LB2LB_3RB3RA0RB2LA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 3,
+      "machine": "1LB2RA0RA1RB_0RA3LA3RB0LB",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 3,
+      "machine": "1LB0RB0RB1LA_2RA2RB3LB0RA",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 3,
+      "machine": "1LB2RA3LA3RA_1RB3LA0LB1RA",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 3,
+      "machine": "1LB0LA0RA2LB_2RB3RA2LA0LB",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 3,
+      "machine": "1LB1LA0RB2RB_3RB3LA1LA2RA",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 3,
+      "machine": "1LB2RA0RA3LA_3RA0LB2LA2RB",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 2,
+      "machine": "1LB2RB0RB0LA_2RA3RA0RB3LA",
+      "mode": "hist",
+      "size": 5
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2RB3RB0RA_3RA2RB1LA3LB",
+      "mode": "hist",
+      "size": 3
+    }
+  ],
+  "scope": "Instruction closure upgrades from the frozen 28653-family residual; all selected families already have state bounds.",
+  "search_report": "research/instruction-burn1-search.json",
+  "search_sha256": "3eccfb06316e3cf63acd67afba35ddbd6c36bd8c4f4eedc1a7d335a0211e01b3",
+  "selected_rows": 11
+}
