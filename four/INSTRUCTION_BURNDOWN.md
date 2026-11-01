@@ -1,5 +1,8 @@
 # Instruction BBB(2,4) burndown
 
+For a searchable machine list, stable IDs, work lanes and contributor claims,
+see the [instruction worklist](INSTRUCTION_WORKLIST.md).
+
 The state maximum is proved. The instruction maximum remains open; its known
 lower bound is **205,770,076,433,044,242,247,860**, attained by
 `1RB2LA1RA1LB_0LB2RB3RB1LA`. See the [formal specification](theories/Spec.v)
@@ -65,8 +68,7 @@ With the [Coq toolchain](../docs/VERIFYING.md) on `PATH`, run from the repositor
 root:
 
 ```sh
-make -C four Makefile.coq
-make -C four -f Makefile.coq theories/AdvancedPipeline.vo theories/BoardManifest.vo -j2
+python3 four/tools/instruction_core_targets.py --build --jobs 2
 ulimit -S -s 65536
 python3 -m unittest discover -s four/tools -p 'test_instruction_residual.py'
 python3 four/tools/check_instruction_closure.py

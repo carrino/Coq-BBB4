@@ -22,11 +22,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-native-coq
       - name: Build the shared checker dependencies
-        run: |
-          make -C four Makefile.coq
-          make -C four -f Makefile.coq theories/AdvancedPipeline.vo theories/BoardManifest.vo -j2
+        run: python3 four/tools/instruction_core_targets.py --build --jobs 2
       - name: Check exact instruction accounting
-        run: python3 -m unittest discover -s four/tools -p 'test_instruction_residual.py'
+        run: python3 -m unittest discover -s four/tools -p 'test_instruction*.py'
+      - name: Generate the contributor worklist
+        run: python3 four/tools/instruction_worklist.py
       - name: Replay and recursively audit the instruction upgrades
         run: |
           ulimit -S -s 65536
@@ -42,4 +42,9 @@ jobs:
             four/build/instruction-burn1/proof/*.json
             four/build/instruction-tails/proof/*.log
             four/build/instruction-tails/proof/*.json
+            four/build/instruction-worklist/index.html
+            four/build/instruction-worklist/machines.tsv
+            four/build/instruction-worklist/all-families.tsv
+            four/build/instruction-worklist/summary.json
+            four/build/instruction-worklist/next64.md
           retention-days: 7
