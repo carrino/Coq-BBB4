@@ -1,0 +1,37 @@
+{
+  "rows": [
+    {
+      "machine": "1LB2RB0RA3LA_1RA2LB3LA3LA"
+    },
+    {
+      "machine": "1LB2LA2RB1RB_3RA0RA2LB3LB"
+    },
+    {
+      "machine": "1LB---0LB2LB_3RB3RA0RB2LA"
+    },
+    {
+      "machine": "1LB2RA0RA1RB_0RA3LA3RB0LB"
+    },
+    {
+      "machine": "1LB0RB0RB1LA_2RA2RB3LB0RA"
+    },
+    {
+      "machine": "1LB2RA3LA3RA_1RB3LA0LB1RA"
+    },
+    {
+      "machine": "1LB0LA0RA2LB_2RB3RA2LA0LB"
+    },
+    {
+      "machine": "1LB1LA0RB2RB_3RB3LA1LA2RA"
+    },
+    {
+      "machine": "1LB2RA0RA3LA_3RA0LB2LA2RB"
+    },
+    {
+      "machine": "1LB2RB0RB0LA_2RA3RA0RB3LA"
+    },
+    {
+      "machine": "1LB2RB3RB0RA_3RA2RB1LA3LB"
+    }
+  ]
+}
