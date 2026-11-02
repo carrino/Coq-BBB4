@@ -1,0 +1,98 @@
+{
+  "baseline_report": "research/instruction-baseline.json",
+  "baseline_sha256": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+  "instruction_bound": 72057594037927936,
+  "previous_batch": "research/instruction-burn1-checked.json",
+  "previous_batch_sha256": "b16149f6ca841af149f90c5707f40060cd6b7f7a793e1f1639ac88d36340a43a",
+  "rows": [
+    {
+      "machine": "1LB2LB1RB1RA_1RB3LA3RA2LB"
+    },
+    {
+      "machine": "1LB2RB3LA2RA_3RB3LA0LB1LB"
+    },
+    {
+      "machine": "1LB2LB3RA2LA_2RB1RA0LB3LA"
+    },
+    {
+      "machine": "1LB2LA1RA2RB_2RB3LB0LB1LA"
+    }
+  ],
+  "scope": "Four instruction upgrades of completed state proofs; exact singleton tables and every completion.",
+  "sources": [
+    {
+      "files": [
+        {
+          "path": "proof-sources/burn21-s057-drift/RightBlankDrift.v",
+          "sha256": "7b91d6f6807210fb1cfa118eab4db5c552b7089d569f440a2217e88e6aca92f7"
+        }
+      ],
+      "name": "burn21-s057-drift",
+      "namespace": "BBB24Burn21S057Drift",
+      "proof_input": "research/burn21-s057-drift-proof-input.json",
+      "proof_input_sha256": "5db9cf823ad2dc16c6344b64a7fe05d5f8ac462e4182603d2ad037853e51205a"
+    },
+    {
+      "files": [
+        {
+          "path": "proof-sources/burn19-s077-finite/FiniteEscape.v",
+          "sha256": "f452cac7a8790501e8844066e7346aef7ff574f79b3e9b5a8a39343e445bada6"
+        },
+        {
+          "path": "proof-sources/burn19-s077-finite/FinitePrefix.v",
+          "sha256": "40fb345f879a411169982e7ba0c68a9dcd2089544120e6eb18d08d821dac3ba7"
+        }
+      ],
+      "name": "burn19-s077-finite",
+      "namespace": "BBB24Burn19S077Finite",
+      "proof_input": "research/burn19-s077-finite-proof-input.json",
+      "proof_input_sha256": "d14d588d697c128fe39f02a2371a3c4c8cbdf494cb19e749dafb60483167d630"
+    },
+    {
+      "files": [
+        {
+          "path": "proof-sources/burn19-finite-counter/FiniteCounter.v",
+          "sha256": "2e0e11ff6870709528745b46d7b2be4dc454e88b0de8fd7ff1e856f4f2164e71"
+        },
+        {
+          "path": "proof-sources/burn19-finite-counter/Trace.v",
+          "sha256": "e0f3f3e5c4280dca5e06b1d9179dd0b50e051c74a7b5faa75cd7d826789f3b26"
+        }
+      ],
+      "name": "burn19-finite-counter",
+      "namespace": "BBB24Burn19FiniteCounter",
+      "proof_input": "research/burn19-finite-counter-proof-input.json",
+      "proof_input_sha256": "fddc02d24768f3a6cb46b75c8bff48fe67ae15797576dd20f1def12e26d542df"
+    },
+    {
+      "files": [
+        {
+          "path": "proof-sources/burn21-s032-finite/CutMacros.v",
+          "sha256": "19808cea5f0f9e4d573f1780936f3182b78309c44e96ad92d75ba88cf9a79193"
+        },
+        {
+          "path": "proof-sources/burn21-s032-finite/BinaryBridge.v",
+          "sha256": "a2ce4ab9d2e0a8d36a942901dd5e7f05aaeb4e1fbeb65affdbd1d7f79ff99d3a"
+        },
+        {
+          "path": "proof-sources/burn21-s032-finite/Trace.v",
+          "sha256": "8208019d799608be4112e879931e40b5efa5a17939fe956deadcf32813b74417"
+        },
+        {
+          "path": "proof-sources/burn21-s032-finite/Final.v",
+          "sha256": "fdafb6cd52d5b223999536084a41cb7299b18646fb5c3026b704b8d21b97b7fa"
+        }
+      ],
+      "name": "burn21-s032-finite",
+      "namespace": "BBB24Burn21S032Finite",
+      "proof_input": "research/burn21-s032-finite-proof-input.json",
+      "proof_input_sha256": "458a43bdd46579fb6ae836d05e287c9c72ad09e0647cef74d7087251005edf1c"
+    }
+  ],
+  "templates_sha256": {
+    "proof-sources/instruction-tails/Board.v": "43e137787550aeb65e1daf664b90190df711006d8e372c8dadcea3f095998015",
+    "proof-sources/instruction-tails/FiniteTails.v": "9a3e9db50ef36ee3867a59020a3af53de89d61fab2b1602deb6ec20866a8f094",
+    "proof-sources/instruction-tails/Regression.v": "a6cf4dbfb20e77f878a88d9eb872db133f9bcf174253bf41dc4d4db4cb54f073",
+    "proof-sources/instruction-tails/SingleInstruction.v": "5fce1d9e2f20f6ede47eaf02757e81c58b0f388ecb25acf91478a485f3334673"
+  }
+}

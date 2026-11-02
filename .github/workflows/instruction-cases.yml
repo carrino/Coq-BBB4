@@ -1,0 +1,50 @@
+name: Four-symbol instruction proofs
+on:
+  push:
+    branches: [main]
+    paths: ['four/**', '.github/actions/setup-native-coq/**', '.github/workflows/instruction-cases.yml']
+  pull_request:
+    paths: ['four/**', '.github/actions/setup-native-coq/**', '.github/workflows/instruction-cases.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: instruction-cases-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  instruction-burn1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: opam exec -- bash -euo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Build the shared checker dependencies
+        run: python3 four/tools/instruction_core_targets.py --build --jobs 2
+      - name: Check exact instruction accounting
+        run: python3 -m unittest discover -s four/tools -p 'test_instruction*.py'
+      - name: Generate the contributor worklist
+        run: python3 four/tools/instruction_worklist.py
+      - name: Replay and recursively audit the instruction upgrades
+        run: |
+          ulimit -S -s 65536
+          python3 four/tools/check_instruction_closure.py
+          python3 four/tools/check_instruction_tails.py
+      - name: Preserve current proof receipts and audit logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instruction-burn1
+          path: |
+            four/build/instruction-burn1/proof/*.log
+            four/build/instruction-burn1/proof/*.json
+            four/build/instruction-tails/proof/*.log
+            four/build/instruction-tails/proof/*.json
+            four/build/instruction-worklist/index.html
+            four/build/instruction-worklist/machines.tsv
+            four/build/instruction-worklist/all-families.tsv
+            four/build/instruction-worklist/summary.json
+            four/build/instruction-worklist/next64.md
+          retention-days: 7

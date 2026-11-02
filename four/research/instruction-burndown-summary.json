@@ -1,0 +1,29 @@
+{
+  "global_instruction_upper_bound_proved": false,
+  "historical_holdouts": 28653,
+  "inputs_sha256": {
+    "research/campaign-cohort.json": "5c8fe858b3a54ee06505f3b6278ab1e301e725c61ef9814e3cc4d7ad5e117f16",
+    "research/instruction-baseline.json": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+    "research/instruction-burn1-checked.json": "b16149f6ca841af149f90c5707f40060cd6b7f7a793e1f1639ac88d36340a43a",
+    "research/instruction-burn1-machines.json": "6b366fd59f4502d5c2698e3447a7ace97c4521cc037163aa796a0b2e42ad0ae9",
+    "research/instruction-tails-checked.json": "0e89f2e2ae96ec0eaf853b66380d6c776d9272e83b21c70c42467d1a674e4008",
+    "research/instruction-tails-machines.json": "62e6d9b70295cb255d2b09dd3cb5d70f6aeaac36462d0fb59dab95adb723c59f"
+  },
+  "new_instruction_families": 15,
+  "new_state_families": 0,
+  "remaining_instruction_families": 28638,
+  "remaining_machine_text_sha256": "c0060bb4219f7e71f086a88fcf820a0c5ab5aaa135322b9e3aa8a6f527f282aa",
+  "scope": "Historical hard-cohort instruction inventory; not a global instruction census theorem.",
+  "upgrades": [
+    {
+      "name": "instruction-burn1",
+      "new_instruction_families": 11,
+      "theorem": "BBB24InstructionBurn1.Inventory.sound"
+    },
+    {
+      "name": "instruction-tails",
+      "new_instruction_families": 4,
+      "theorem": "BBB24InstructionTails.Inventory.sound"
+    }
+  ]
+}
