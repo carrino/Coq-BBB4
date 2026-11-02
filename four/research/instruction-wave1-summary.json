@@ -1,0 +1,942 @@
+{
+  "accepted_batches": [
+    "instruction-burn2",
+    "instruction-burn3",
+    "instruction-s030",
+    "instruction-sparse-return",
+    "instruction-sparse-twos"
+  ],
+  "assignments": [
+    {
+      "id": "tr24-1056257588",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1059121306",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-1141037200",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1144258683",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1156265766",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-1176846000",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-1347945883",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1497407418",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1730557607",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-1754732338",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1757565813",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1782890288",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1799218499",
+      "outcome": "proved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1849966338",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-1855302995",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1868400492",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1876914721",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1877273948",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-1879081354",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-1919473405",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-1947869423",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-1996078686",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-2017052674",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-2120817971",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-2200232570",
+      "outcome": "proved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-2251401210",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-2289424940",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-2306146735",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-2342543973",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-2359334890",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-2369235027",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-2375297244",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-237695161",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-2481795699",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-2576864595",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-2644990497",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-2682983134",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-2698634405",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-2699702328",
+      "outcome": "proved",
+      "owner": "codex/sparse_second"
+    },
+    {
+      "id": "tr24-2734430285",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-2734521898",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-2806290152",
+      "outcome": "proved",
+      "owner": "codex/sparse_returns"
+    },
+    {
+      "id": "tr24-2813593743",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-2829999729",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-2891680710",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-2983639065",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-3066680614",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-3078062896",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-3080988290",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-3085149720",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3085153426",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3096502813",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-317482587",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3176528545",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3177511808",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3199176642",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-3201307490",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-3303179106",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-331693006",
+      "outcome": "proved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-3326260142",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-3377633921",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3393228361",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-3398566786",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3418852835",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-3421721738",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3424551915",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-3460020307",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-3508225966",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3520430861",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-353439644",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-3581158686",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3602790642",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3646005917",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3654592345",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-3662655564",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3665216665",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-3677939873",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-3714221630",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-3737647579",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-375370154",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-3756710903",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-3760692116",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3803702575",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3809378535",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-381722357",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3844731633",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-3857548409",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-3907315637",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-3911486281",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-3964029541",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-3997217417",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4014178096",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4025865494",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4027340227",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-4073356609",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4073787236",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4074793092",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4074815770",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4075580481",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-4088091563",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4198304586",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4218951817",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4243047005",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4243066657",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4312004309",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4339953278",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-4341153240",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4386482941",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-4424053502",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4430168385",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4437349525",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-44979812",
+      "outcome": "proved",
+      "owner": "codex/state_tail"
+    },
+    {
+      "id": "tr24-4556106391",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4654119109",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-4683924019",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-4774524057",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-4811050801",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4811379122",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4825575601",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4833847121",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4840098446",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4840865333",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4852857558",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4894041911",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4963693087",
+      "outcome": "proved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4967230447",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-4968650882",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-4969282636",
+      "outcome": "proved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-4987866611",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-5017197408",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5039690550",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-5048791160",
+      "outcome": "unresolved",
+      "owner": "codex/history_b"
+    },
+    {
+      "id": "tr24-5066940377",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-5082266863",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-512375330",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5125463438",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5141096604",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5161500004",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-5175286732",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5218525195",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5230192720",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-5245467815",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5248650861",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-5250853602",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5321397652",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5451401395",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-5558174434",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5563544377",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5578165431",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5638031951",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5684649810",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5763480068",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5765914893",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-5788305729",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-5885193268",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5908989800",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-5968586547",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-5971470444",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-5983799507",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6055210251",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6070399224",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-6076514447",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-6079373830",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-6170137187",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6172981814",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6239371183",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6245084050",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6363331358",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6460225068",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-6499910701",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6529694786",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-665779284",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6740940220",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6760827092",
+      "outcome": "proved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-6888654750",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-69458690",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-694830142",
+      "outcome": "unresolved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-716788396",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-720108989",
+      "outcome": "proved",
+      "owner": "codex/alternative_closure"
+    },
+    {
+      "id": "tr24-720111284",
+      "outcome": "unresolved",
+      "owner": "codex/history_a"
+    },
+    {
+      "id": "tr24-720454055",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-737482530",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-779029153",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    },
+    {
+      "id": "tr24-960342245",
+      "outcome": "unresolved",
+      "owner": "codex/fresh75"
+    }
+  ],
+  "native_attempts": 551,
+  "native_candidates": 21,
+  "native_distinct_tables": 181,
+  "native_rejections": 275,
+  "native_timeouts": 255,
+  "new_instruction_families": 24,
+  "new_state_families": 0,
+  "remaining_open": 28614,
+  "scope": "Worker-wave accounting; accepted proof inventories supply all proof credit.",
+  "search_ledger_sha256": "0961b450675f28facd5881a99ae6079c8cfcb0f5a5d3922b6b17740c9e30b309",
+  "start_open": 28638
+}

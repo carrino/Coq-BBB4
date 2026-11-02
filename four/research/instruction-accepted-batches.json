@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "batches": [
+    {
+      "name": "instruction-burn1",
+      "report_sha256": "b16149f6ca841af149f90c5707f40060cd6b7f7a793e1f1639ac88d36340a43a"
+    },
+    {
+      "name": "instruction-tails",
+      "report_sha256": "0e89f2e2ae96ec0eaf853b66380d6c776d9272e83b21c70c42467d1a674e4008"
+    },
+    {
+      "name": "instruction-burn2",
+      "report_sha256": "0955ed124c216e9182c7d27abeb2ebd9f32649cd89133cf1f695f108b27ca06f"
+    },
+    {
+      "name": "instruction-burn3",
+      "report_sha256": "d0fc07312712d2cbc0ab0d018ab5e6f6a7a35cb60edb9322b23d0e5734a5d438"
+    },
+    {
+      "name": "instruction-s030",
+      "report_sha256": "d25a5a46aba7b410e1b6831b7f860c27b08c4c4a56a241a5c4cb8bc8cbe426fe"
+    },
+    {
+      "name": "instruction-sparse-return",
+      "report_sha256": "e1e34bd6d6925e1c4205a91eaaa7cdc1eea0d6576f1ca264d7030246038ef528"
+    },
+    {
+      "name": "instruction-sparse-twos",
+      "report_sha256": "fe837c0d54621d5dc996fbf3e587dfc76e911140ddd794d633dd0af0ec0ba177"
+    }
+  ]
+}

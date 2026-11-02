@@ -3,16 +3,27 @@
   "historical_holdouts": 28653,
   "inputs_sha256": {
     "research/campaign-cohort.json": "5c8fe858b3a54ee06505f3b6278ab1e301e725c61ef9814e3cc4d7ad5e117f16",
+    "research/instruction-accepted-batches.json": "a252ca3e3594d17635a2c566fe298e3fc2daa7c71a604a7f7d49d9e8b9772fee",
     "research/instruction-baseline.json": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
     "research/instruction-burn1-checked.json": "b16149f6ca841af149f90c5707f40060cd6b7f7a793e1f1639ac88d36340a43a",
     "research/instruction-burn1-machines.json": "6b366fd59f4502d5c2698e3447a7ace97c4521cc037163aa796a0b2e42ad0ae9",
+    "research/instruction-burn2-checked.json": "0955ed124c216e9182c7d27abeb2ebd9f32649cd89133cf1f695f108b27ca06f",
+    "research/instruction-burn2-machines.json": "3196c6ba48aa6073e343db1c12dbd5137562c0849780c38417a227252a578fe9",
+    "research/instruction-burn3-checked.json": "d0fc07312712d2cbc0ab0d018ab5e6f6a7a35cb60edb9322b23d0e5734a5d438",
+    "research/instruction-burn3-machines.json": "c32f9d569f06da0c5be3ea3e8b683744fdfebb6fd7a6c2f76d237c546c3317cc",
+    "research/instruction-s030-checked.json": "d25a5a46aba7b410e1b6831b7f860c27b08c4c4a56a241a5c4cb8bc8cbe426fe",
+    "research/instruction-s030-machines.json": "94f6369089472bf21b16d8b2e977b20c856ed4c762a53968578739b989e7ad92",
+    "research/instruction-sparse-return-checked.json": "e1e34bd6d6925e1c4205a91eaaa7cdc1eea0d6576f1ca264d7030246038ef528",
+    "research/instruction-sparse-return-machines.json": "b0290fedb911db98316a7c109fac6c676f6202e2213548521c3d1ded72de595f",
+    "research/instruction-sparse-twos-checked.json": "fe837c0d54621d5dc996fbf3e587dfc76e911140ddd794d633dd0af0ec0ba177",
+    "research/instruction-sparse-twos-machines.json": "c104d4d1e566b267dbf76b2298703bd19608fcb6dad3d5ecfb77a69d12c0ade6",
     "research/instruction-tails-checked.json": "0e89f2e2ae96ec0eaf853b66380d6c776d9272e83b21c70c42467d1a674e4008",
     "research/instruction-tails-machines.json": "62e6d9b70295cb255d2b09dd3cb5d70f6aeaac36462d0fb59dab95adb723c59f"
   },
-  "new_instruction_families": 15,
+  "new_instruction_families": 39,
   "new_state_families": 0,
-  "remaining_instruction_families": 28638,
-  "remaining_machine_text_sha256": "c0060bb4219f7e71f086a88fcf820a0c5ab5aaa135322b9e3aa8a6f527f282aa",
+  "remaining_instruction_families": 28614,
+  "remaining_machine_text_sha256": "40533b1db1dd30b06bdb40fc697ca21c397f22b159fbe5a92878d3d8fa23c9bf",
   "scope": "Historical hard-cohort instruction inventory; not a global instruction census theorem.",
   "upgrades": [
     {
@@ -24,6 +35,31 @@
       "name": "instruction-tails",
       "new_instruction_families": 4,
       "theorem": "BBB24InstructionTails.Inventory.sound"
+    },
+    {
+      "name": "instruction-burn2",
+      "new_instruction_families": 6,
+      "theorem": "BBB24InstructionBurn2.Inventory.sound"
+    },
+    {
+      "name": "instruction-burn3",
+      "new_instruction_families": 15,
+      "theorem": "BBB24InstructionBurn3.Inventory.sound"
+    },
+    {
+      "name": "instruction-s030",
+      "new_instruction_families": 1,
+      "theorem": "BBB24InstructionS030.Inventory.sound"
+    },
+    {
+      "name": "instruction-sparse-return",
+      "new_instruction_families": 1,
+      "theorem": "BBB24SparseReturn.Inventory.sound"
+    },
+    {
+      "name": "instruction-sparse-twos",
+      "new_instruction_families": 1,
+      "theorem": "BBB24SparseTwos.Inventory.sound"
     }
   ]
 }
