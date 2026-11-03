@@ -1,0 +1,70 @@
+{
+  "baseline_report": "research/instruction-wave1-baseline.json",
+  "baseline_sha256": "f31208e8ebebf2d61372f652aa8c2a3b6a2cadf09b6f0b89c249f058827ce357",
+  "rows": [
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2LB3RA0LB_0RB2LB1RA1LA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 3,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2RA0RA3RB_0RA3RA3LA0LB",
+      "mode": "rw",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 2,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2RB1LB1RA_2RA3LA3LB0LA",
+      "mode": "rw",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 3,
+      "machine": "1LB2RA0RA2LA_3RB2RA0LB3LA",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2LA3RB1RB_2RA0RA1RA1LB",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2RA3RA1RA_3RA3RA0LB3LA",
+      "mode": "finite",
+      "size": 5
+    }
+  ],
+  "scope": "Six new instruction upgrades from disjoint worker packets; all-completion bounds.",
+  "search_report": "research/instruction-burn2-search.json",
+  "search_sha256": "94d07044c3f9843d9c7b72432465040fea734544d7279747d9c35a95d81f976c",
+  "selected_rows": 6
+}

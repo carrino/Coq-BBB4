@@ -7,9 +7,9 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 
 from check_campaign import ROOT, read_inventory, sha
-from check_instruction_closure import exact
 from instruction_residual import residual
 
 
@@ -21,8 +21,20 @@ def main():
     remaining, pins = residual(baseline, sha(baseline))
     initial = len(remaining)
     upgrades, accepted = [], set()
-    for name in ('instruction-burn1', 'instruction-tails'):
+    registry_path = ROOT / 'research/instruction-accepted-batches.json'
+    registry = json.loads(registry_path.read_text())
+    if registry.get('schema_version') != 1 or not registry.get('batches'):
+        raise ValueError('Invalid accepted instruction batch registry')
+    pins[str(registry_path.relative_to(ROOT))] = sha(registry_path)
+    seen = set()
+    for entry in registry['batches']:
+        name = entry['name']
+        if not re.fullmatch(r'instruction-[a-z0-9-]+', name) or name in seen:
+            raise ValueError('Invalid or repeated accepted instruction batch')
+        seen.add(name)
         report_path = ROOT / 'research' / (name + '-checked.json')
+        if sha(report_path) != entry['report_sha256']:
+            raise ValueError('Accepted instruction report differs: ' + name)
         report = json.loads(report_path.read_text())
         spec = report['descriptor']['inventories'][0]
         path = ROOT / spec['path']
@@ -51,7 +63,7 @@ def main():
         if not output.exists() or output.read_text() != content:
             raise ValueError('Published instruction scoreboard differs')
     else:
-        exact(output, content)
+        output.write_text(content)
     directory = ROOT / 'build/instruction-burndown'
     directory.mkdir(parents=True, exist_ok=True)
     (directory / 'remaining.txt').write_text(text)

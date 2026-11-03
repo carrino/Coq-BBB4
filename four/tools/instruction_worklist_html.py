@@ -1,7 +1,7 @@
 """Render a small, self-contained browser for the exact instruction worklist."""
 import json
 
-def render(rows, summary, fields, lanes):
+def render(rows, summary, fields, lanes, source_ref='main'):
     omitted = {'id', 'batch', 'machine', 'righthand_machine'}
     defaults = dict.fromkeys(fields, '')
     defaults.update(proof_status='open', lane='needs_triage', work_status='unclaimed')
@@ -12,7 +12,7 @@ def render(rows, summary, fields, lanes):
         if changed:
             extra[row['id'][5:]] = changed
     payload = dict(machines=[int(row['id'][5:]) for row in rows], extra=extra,
-                   defaults=defaults, lanes=lanes, summary=summary, fields=fields)
+                   defaults=defaults, lanes=lanes, summary=summary, fields=fields, source_ref=source_ref)
     # Claim notes remain text even if they contain HTML or a closing script tag.
     encoded = json.dumps(payload, separators=(',', ':'), ensure_ascii=True).replace('<', '\\u003c')
     return TEMPLATE.replace('__WORKLIST_DATA__', encoded)
@@ -89,7 +89,7 @@ function show() {
   cell(tr,data.lanes[r.lane]+' / '+r.proof_status);
   cell(tr,(r.missing_targets||'unknown')+(r.search_history?' · '+r.search_history:''));
   const evidence=cell(tr,r.state_case?(r.state_case+' · '+r.state_package):'');
-  if(r.evidence) {const a=document.createElement('a');a.href='https://github.com/carrino/Coq-BBB4/blob/codex/bbb24-instruction-burn1/four/'+r.evidence;
+  if(r.evidence) {const a=document.createElement('a');a.href='https://github.com/carrino/Coq-BBB4/blob/'+encodeURI(data.source_ref)+'/four/'+r.evidence;
    a.textContent=' evidence';evidence.append(a);}
   cell(tr,(r.owner?r.owner+' · '+r.work_status:'Unclaimed')+(r.note?' · '+r.note:''));el('rows').append(tr);
  }

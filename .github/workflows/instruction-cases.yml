@@ -26,12 +26,11 @@ jobs:
       - name: Check exact instruction accounting
         run: python3 -m unittest discover -s four/tools -p 'test_instruction*.py'
       - name: Generate the contributor worklist
-        run: python3 four/tools/instruction_worklist.py
+        run: python3 four/tools/instruction_worklist.py --ref "${{ github.event.pull_request.head.sha || github.sha }}"
       - name: Replay and recursively audit the instruction upgrades
         run: |
-          ulimit -S -s 65536
-          python3 four/tools/check_instruction_closure.py
-          python3 four/tools/check_instruction_tails.py
+          python3 four/tools/replay_instruction_proofs.py --no-build-core
+          python3 four/tools/report_instruction_burndown.py --check
       - name: Preserve current proof receipts and audit logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -42,6 +41,18 @@ jobs:
             four/build/instruction-burn1/proof/*.json
             four/build/instruction-tails/proof/*.log
             four/build/instruction-tails/proof/*.json
+            four/build/instruction-burn2/proof/*.log
+            four/build/instruction-burn2/proof/*.json
+            four/build/instruction-burn3/proof/*.log
+            four/build/instruction-burn3/proof/*.json
+            four/build/instruction-s030/*.log
+            four/build/instruction-s030/*.json
+            four/build/instruction-s030/proof/*.log
+            four/build/instruction-sparse-return/proof/*.log
+            four/build/instruction-sparse-return/proof/*.json
+            four/build/instruction-sparse-twos/proof/*.log
+            four/build/instruction-sparse-twos/proof/*.json
+            four/build/instruction-replay/*
             four/build/instruction-worklist/index.html
             four/build/instruction-worklist/machines.tsv
             four/build/instruction-worklist/all-families.tsv

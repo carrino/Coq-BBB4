@@ -1,0 +1,21 @@
+{
+  "baseline_report": "research/instruction-baseline.json",
+  "baseline_sha256": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+  "instruction_bound": 2,
+  "rows": [
+    {
+      "code": 2699702328,
+      "id": "tr24-2699702328",
+      "machine": "1LB2LB3LB2RA_1RA3RA2LB1RA"
+    }
+  ],
+  "scope": "One exact family with state bound0 and exact instruction score2; all completions covered.",
+  "source_diagnostics": "research/burn3-capacity-instruction-diagnostics.json",
+  "source_diagnostics_sha256": "a12abe6cbc96fa38a6805411e8681615eecc625990c90304b3f2a056d2657917",
+  "state_bound": 0,
+  "templates_sha256": {
+    "proof-sources/instruction-sparse-twos/Board.v": "d7126a3c5841807cf982dffc023eae692f2ecf8e1f13c8ab7d2525779c996bd3",
+    "proof-sources/instruction-sparse-twos/Regression.v": "0a75acecc3b79f883c30a80d48726cd54f1214ff640bdfd3d270b91dbf0e992c",
+    "proof-sources/instruction-sparse-twos/TwosCounter.v": "6886543be0b3d3a043948f1b2a5863e126bdb4050e15d592d76b51e156c6db7b"
+  }
+}

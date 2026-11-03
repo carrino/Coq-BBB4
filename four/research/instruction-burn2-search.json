@@ -1,0 +1,2512 @@
+{
+  "candidates": [
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2LB3RA0LB_0RB2LB1RA1LA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 3,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2RA0RA3RB_0RA3RA3LA0LB",
+      "mode": "rw",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 2,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2RB1LB1RA_2RA3LA3LB0LA",
+      "mode": "rw",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 3,
+      "machine": "1LB2RA0RA2LA_3RB2RA0LB3LA",
+      "mode": "hist",
+      "size": 4
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2LA3RB1RB_2RA0RA1RA1LB",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2RA3RA1RA_3RA3RA0LB3LA",
+      "mode": "finite",
+      "size": 5
+    }
+  ],
+  "scope": "Untrusted native worker discovery; only separate Coq replay gives proof credit.",
+  "selected": [
+    "1LB2RA3RA3RB_1RA3RA2LB0LA",
+    "1LB2RB1RB1LB_1RA2LB3RB0LA",
+    "1LB2RB1LA0RA_3RA2RB3LA0LB",
+    "1LB2LB2RA3RB_0RA3RA3LA0LB",
+    "1LB2LB1RA2RA_3RB3LA2LB0RA",
+    "1LB2RA2LB2RB_2RA1LA3LB0RA",
+    "1LB2RA1LA1LA_3RB1RA3LB0RA",
+    "1LB2RA0LB0LA_1RA3RA1LA0RB",
+    "1LB2LB3LA2LA_2RA0LA2RB0RB",
+    "1LB0RB0LB2LA_3RA2RB1LA1LA",
+    "1LB2RA3LB1RA_3RA3LB1LA1LA",
+    "1LB2LB1RA2RA_2RB3RA1LB1LA",
+    "1LB2LB3RA0LB_0RB2LB1RA1LA",
+    "1LB2LB1RA2RA_2RB3RA2LA1LA",
+    "1LB2RA1LA1RB_3RB1RA2LB1LA",
+    "1LB2RA1LA1RA_3RB3LA2LB1LA",
+    "1LB2RA1RA2RB_0RA3LB2LB1LA",
+    "1LB2LA3RB1RB_2RA0RA1RA1LB",
+    "1LB2RA1LA1RA_1RB3RA2LB1LB",
+    "1LB2RA3RA2LA_3RB1RA3LB1LB",
+    "1LB1RA3LA2RA_3RB3LB0LA1RA",
+    "1LB1LA2RB2LB_3RA2LB1RB1RA",
+    "1LB2RB3LA1RB_2RA0RA2LB1RA",
+    "1LB2LA1RA1RB_3RA1LA2RB1RA",
+    "1LB2LA1RB1LA_2RA2LB3RA1RA",
+    "1LB2RA3LA2RB_0RA1LA3RB1RA",
+    "1LB2RA1RA0RB_2RA3LB0LA1RB",
+    "1LB2RA3LA0RB_1RA2RA1LA1RB",
+    "1LB2RA0RA2LA_3RA0LA2LA1RB",
+    "1LB2RB3RB3LA_3RA2LA2LA1RB",
+    "1LB1RA2RA3RA_0RA2LB3LB1RB",
+    "1LB2LA1RB0LB_1RB3RA0LA2LA",
+    "1LB2RA0RB1LA_3RA2LB1LA2LA",
+    "1LB2RA3RA0LA_3RB2RA1LB2LA",
+    "1LB2RA3RA1LA_3RB3RA1LB2LA",
+    "1LB2RA0RA---_3RA1LB1RB2LA",
+    "1LB1LA2RB2LB_3RB1RA3RB2LA",
+    "1LB2LB3RA0LB_1RA1RA---2LA",
+    "1LB2RA3RA---_1RA3RA0LB2LB",
+    "1LB2RB0LA1LA_3RA2RA0RA2LB",
+    "1LB2RA0LB3RA_3RB3LB1LA2LB",
+    "1LB2RB3RB0LB_3RA1LA1RA2LB",
+    "1LB1RA2RB2LB_3RA3LB1RA2LB",
+    "1LB0RB0LA2LA_3RA0RB2RB2LB",
+    "1LB1RB0RB3RA_1RA3LB3LB2LB",
+    "1LB2LB2RA1RB_3RA3LA3RB2LB",
+    "1LB2RA1LA2RA_0RA3LB3RB2LB",
+    "1LB0LB0LA2RB_3RA3LB3RB2LB",
+    "1LB2LB2RA3RB_3RA3LB3RB2LB",
+    "1LB2LA3LA1RB_3RA3RB0RB2RA",
+    "1LB0RB1LB2RB_1RA3LB1LA2RA",
+    "1LB0RA1RA3LB_3RB2RA2LA2RA",
+    "1LB2RA0LA1RA_3RA1LA3LB2RA",
+    "1LB1RA2RB2LB_0RA2LB3LB2RA",
+    "1LB0LA1LB1RB_3RA3LA0LB2RB",
+    "1LB2RA0LB3RB_1RA1LB3LA2RB",
+    "1LB2RB3RB3LB_2RA1LB3LA2RB",
+    "1LB0LB2RA3RA_1RA2LB3LB2RB",
+    "1LB2RB2LA1RB_3RA0LA3RA2RB",
+    "1LB2RA0RA2LA_3RB2RA0LB3LA",
+    "1LB2RA0RA3RA_1RA3LB0LB3LA",
+    "1LB0LA2LA3RB_3RB2RA0RA3LA",
+    "1LB2RA3LB1RA_1RB3LB1LA3LA",
+    "1LB2RA0RA1RA_3RA0RA1LB3LA",
+    "1LB2RB1LB1RA_2RA3LA3LB0LA",
+    "1LB2LB2RB3LA_3RB2RA3RA0LA",
+    "1LB2LB3RA0RB_1RA3LB2RB0LB",
+    "1LB2RA0RA3RB_0RA3RA3LA0LB",
+    "1LB2LA3LA3RB_3RA2LA2RB1LA",
+    "1LB2RA2LA3RB_3RA2RB3LA1LA",
+    "1LB2LA3LA2RA_2RB3RA0RA1LB",
+    "1LB2LB3RA1RA_2RB3LA3LA1LB",
+    "1LB2LA0RB3RB_3RA3LA1LA1RA",
+    "1LB1LB1RB3RA_2RA3LB2LB1RA",
+    "1LB0RA1RA3LB_3RB2RA2LA1RB",
+    "1LB2LB1LB1RA_2RB2RA3LB1RB",
+    "1LB2RB1RA1RB_2RB3LB0LB2LA",
+    "1LB2RA0RA3LB_1RA3RA3RB2LA",
+    "1LB---2RB2LA_3RB3RA0LA2LB",
+    "1LB1LB1RA1RB_3RB3RA2LA2LB",
+    "1LB0RA0RA3RA_0RB2RA3LA2LB",
+    "1LB2RA1LB3RB_0RA1LB3LB2LB",
+    "1LB2LB3LB3RA_0RB1RA---2LB",
+    "1LB2LB2RB0RA_1RA3LB1LB2RA",
+    "1LB2LB2RB1RA_1RA3LB1LB2RA",
+    "1LB2LA1RA3LB_1RB3RA2LB2RA",
+    "1LB1RB2LA3LB_2RA3RB3LA2RB",
+    "1LB2RA0LB3RA_1RB1LA3LB2RB",
+    "1LB2LA2LA2RB_3RA2LA3LB2RB",
+    "1LB0LB1LA2LB_3RA3LA3RB2RB",
+    "1LB2RA3RA1RA_3RA3RA0LB3LA",
+    "1LB2RB1LA2RB_2RA3RB1LB3LA",
+    "1LB2RA0LB3RA_0RB3RA2LB3LA",
+    "1LB2RB3RB1LA_2RA2RB3LA3LA",
+    "1LB2RB3RB1LA_2RA1RB3LB3LA",
+    "1LB2RA0LB3RA_1RA3RA1LA3LB",
+    "1LB2RA2RB2LA_3RB3RA0LA3RA",
+    "1LB2LB0RA2RA_2RB3LB0LB3RA",
+    "1LB2LA1RA2LB_2RB3LB1RA3RA",
+    "1LB2LA3LB2RA_2RB1RA2LB3RA",
+    "1LB2RA3RB0LB_1RA2LA3LB3RA",
+    "1LB2LB2RA1LB_2RB3LA3LB3RA",
+    "1LB2RA2RA2LB_2RB3RA3LB3RA",
+    "1LB---2RB2LA_3RB2RA3LA3RB",
+    "1LB2RA2RB1LA_3RA2LA3RB3RB",
+    "1LB2RA---0LB_2RB1RA3LB---"
+  ],
+  "workers": [
+    {
+      "name": "history_a",
+      "report": {
+        "candidates": [
+          {
+            "anchor": 65536,
+            "bound": 65536,
+            "extra": 64,
+            "fuel": 32768,
+            "history": 5,
+            "machine": "1LB2LB3RA0LB_0RB2LB1RA1LA",
+            "mode": "hist",
+            "size": 3
+          },
+          {
+            "anchor": 65536,
+            "bound": 65536,
+            "extra": 64,
+            "fuel": 32768,
+            "history": 5,
+            "machine": "1LB2LA3RB1RB_2RA0RA1RA1LB",
+            "mode": "hist",
+            "size": 3
+          }
+        ],
+        "memory_bytes": 2147483648,
+        "remaining": [
+          "1LB2RA3RA3RB_1RA3RA2LB0LA",
+          "1LB2RB1RB1LB_1RA2LB3RB0LA",
+          "1LB2RB1LA0RA_3RA2RB3LA0LB",
+          "1LB2LB2RA3RB_0RA3RA3LA0LB",
+          "1LB2LB1RA2RA_3RB3LA2LB0RA",
+          "1LB2RA2LB2RB_2RA1LA3LB0RA",
+          "1LB2RA1LA1LA_3RB1RA3LB0RA",
+          "1LB2RA0LB0LA_1RA3RA1LA0RB",
+          "1LB2LB3LA2LA_2RA0LA2RB0RB",
+          "1LB0RB0LB2LA_3RA2RB1LA1LA",
+          "1LB2RA3LB1RA_3RA3LB1LA1LA",
+          "1LB2LB1RA2RA_2RB3RA1LB1LA",
+          "1LB2LB1RA2RA_2RB3RA2LA1LA",
+          "1LB2RA1LA1RB_3RB1RA2LB1LA",
+          "1LB2RA1LA1RA_3RB3LA2LB1LA",
+          "1LB2RA1RA2RB_0RA3LB2LB1LA",
+          "1LB2RA1LA1RA_1RB3RA2LB1LB",
+          "1LB2RA3RA2LA_3RB1RA3LB1LB",
+          "1LB1RA3LA2RA_3RB3LB0LA1RA",
+          "1LB1LA2RB2LB_3RA2LB1RB1RA",
+          "1LB2RB3LA1RB_2RA0RA2LB1RA",
+          "1LB2LA1RA1RB_3RA1LA2RB1RA",
+          "1LB2LA1RB1LA_2RA2LB3RA1RA",
+          "1LB2RA3LA2RB_0RA1LA3RB1RA",
+          "1LB2RA1RA0RB_2RA3LB0LA1RB",
+          "1LB2RA3LA0RB_1RA2RA1LA1RB",
+          "1LB2RA0RA2LA_3RA0LA2LA1RB",
+          "1LB2RB3RB3LA_3RA2LA2LA1RB",
+          "1LB1RA2RA3RA_0RA2LB3LB1RB",
+          "1LB2LA1RB0LB_1RB3RA0LA2LA"
+        ],
+        "results": [
+          {
+            "ledger_sha256": "a8c8bfa790a578aec6f9c3f0969018cd2a7e8e9ab410b9ce7619115e054e07ea",
+            "recipe": {
+              "anchor": 65536,
+              "bound": 65536,
+              "extra": 64,
+              "fuel": 32768,
+              "history": 3,
+              "mode": "hist",
+              "size": 4
+            },
+            "rows": [
+              {
+                "machine": "1LB2RA3RA3RB_1RA3RA2LB0LA",
+                "seconds": 2.000059,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB1RB1LB_1RA2LB3RB0LA",
+                "seconds": 2.000039,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB1LA0RA_3RA2RB3LA0LB",
+                "seconds": 2.000058,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB2RA3RB_0RA3RA3LA0LB",
+                "seconds": 2.000045,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB1RA2RA_3RB3LA2LB0RA",
+                "seconds": 2.000052,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA2LB2RB_2RA1LA3LB0RA",
+                "seconds": 2.000415,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LA1LA_3RB1RA3LB0RA",
+                "seconds": 0.577592,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB0LA_1RA3RA1LA0RB",
+                "seconds": 2.000062,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB3LA2LA_2RA0LA2RB0RB",
+                "seconds": 2.00004,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RB0LB2LA_3RA2RB1LA1LA",
+                "seconds": 2.000296,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3LB1RA_3RA3LB1LA1LA",
+                "seconds": 2.000048,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB1RA2RA_2RB3RA1LB1LA",
+                "seconds": 1.272545,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3RA0LB_0RB2LB1RA1LA",
+                "seconds": 2.000037,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB1RA2RA_2RB3RA2LA1LA",
+                "seconds": 1.667274,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA1LA1RB_3RB1RA2LB1LA",
+                "seconds": 2.000042,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LA1RA_3RB3LA2LB1LA",
+                "seconds": 2.000226,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1RA2RB_0RA3LB2LB1LA",
+                "seconds": 2.000038,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA3RB1RB_2RA0RA1RA1LB",
+                "seconds": 0.907155,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA1LA1RA_1RB3RA2LB1LB",
+                "seconds": 0.720239,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA3RA2LA_3RB1RA3LB1LB",
+                "seconds": 2.000044,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RA3LA2RA_3RB3LB0LA1RA",
+                "seconds": 2.000134,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1LA2RB2LB_3RA2LB1RB1RA",
+                "seconds": 2.000043,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3LA1RB_2RA0RA2LB1RA",
+                "seconds": 0.541716,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA1RA1RB_3RA1LA2RB1RA",
+                "seconds": 2.000061,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA1RB1LA_2RA2LB3RA1RA",
+                "seconds": 1.30567,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA3LA2RB_0RA1LA3RB1RA",
+                "seconds": 2.000185,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1RA0RB_2RA3LB0LA1RB",
+                "seconds": 2.000047,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3LA0RB_1RA2RA1LA1RB",
+                "seconds": 2.00005,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0RA2LA_3RA0LA2LA1RB",
+                "seconds": 2.000051,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3RB3LA_3RA2LA2LA1RB",
+                "seconds": 0.72857,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1RA2RA3RA_0RA2LB3LB1RB",
+                "seconds": 1.617367,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA1RB0LB_1RB3RA0LA2LA",
+                "seconds": 1.243512,
+                "status": "rejected"
+              }
+            ],
+            "stage": 0
+          },
+          {
+            "ledger_sha256": "26d92c7b0a3b73b00b7f42d3dad5efcabfbfa33cf3ddc37acd7078e401876544",
+            "recipe": {
+              "anchor": 65536,
+              "bound": 65536,
+              "extra": 64,
+              "fuel": 32768,
+              "history": 5,
+              "mode": "hist",
+              "size": 3
+            },
+            "rows": [
+              {
+                "machine": "1LB2RA3RA3RB_1RA3RA2LB0LA",
+                "seconds": 2.000055,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB1RB1LB_1RA2LB3RB0LA",
+                "seconds": 2.001664,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB1LA0RA_3RA2RB3LA0LB",
+                "seconds": 2.000041,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB2RA3RB_0RA3RA3LA0LB",
+                "seconds": 2.000041,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB1RA2RA_3RB3LA2LB0RA",
+                "seconds": 2.000044,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA2LB2RB_2RA1LA3LB0RA",
+                "seconds": 2.000085,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LA1LA_3RB1RA3LB0RA",
+                "seconds": 0.5145,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB0LA_1RA3RA1LA0RB",
+                "seconds": 2.000041,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB3LA2LA_2RA0LA2RB0RB",
+                "seconds": 2.000202,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RB0LB2LA_3RA2RB1LA1LA",
+                "seconds": 2.000047,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3LB1RA_3RA3LB1LA1LA",
+                "seconds": 2.000115,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB1RA2RA_2RB3RA1LB1LA",
+                "seconds": 2.000061,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB3RA0LB_0RB2LB1RA1LA",
+                "seconds": 1.000985,
+                "status": "candidate"
+              },
+              {
+                "machine": "1LB2LB1RA2RA_2RB3RA2LA1LA",
+                "seconds": 1.305382,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA1LA1RB_3RB1RA2LB1LA",
+                "seconds": 2.000053,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LA1RA_3RB3LA2LB1LA",
+                "seconds": 2.000051,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1RA2RB_0RA3LB2LB1LA",
+                "seconds": 2.000045,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA3RB1RB_2RA0RA1RA1LB",
+                "seconds": 0.694439,
+                "status": "candidate"
+              },
+              {
+                "machine": "1LB2RA1LA1RA_1RB3RA2LB1LB",
+                "seconds": 2.000041,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3RA2LA_3RB1RA3LB1LB",
+                "seconds": 2.000045,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RA3LA2RA_3RB3LB0LA1RA",
+                "seconds": 1.854619,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1LA2RB2LB_3RA2LB1RB1RA",
+                "seconds": 2.000077,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3LA1RB_2RA0RA2LB1RA",
+                "seconds": 2.000043,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA1RA1RB_3RA1LA2RB1RA",
+                "seconds": 2.000056,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA1RB1LA_2RA2LB3RA1RA",
+                "seconds": 1.15925,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA3LA2RB_0RA1LA3RB1RA",
+                "seconds": 1.349206,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA1RA0RB_2RA3LB0LA1RB",
+                "seconds": 2.000267,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3LA0RB_1RA2RA1LA1RB",
+                "seconds": 2.000052,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0RA2LA_3RA0LA2LA1RB",
+                "seconds": 2.000053,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3RB3LA_3RA2LA2LA1RB",
+                "seconds": 0.916422,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1RA2RA3RA_0RA2LB3LB1RB",
+                "seconds": 2.000045,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA1RB0LB_1RB3RA0LA2LA",
+                "seconds": 0.681887,
+                "status": "rejected"
+              }
+            ],
+            "stage": 1
+          },
+          {
+            "ledger_sha256": "e0b8078e78b8bb532bba887bd7c43b5826788d4d18e3af8b92d63215ad93fa23",
+            "recipe": {
+              "anchor": 65536,
+              "bound": 65536,
+              "extra": 64,
+              "fuel": 32768,
+              "history": 2,
+              "mode": "hist",
+              "size": 5
+            },
+            "rows": [
+              {
+                "machine": "1LB2RA3RA3RB_1RA3RA2LB0LA",
+                "seconds": 2.000075,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB1RB1LB_1RA2LB3RB0LA",
+                "seconds": 2.000047,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB1LA0RA_3RA2RB3LA0LB",
+                "seconds": 2.000101,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB2RA3RB_0RA3RA3LA0LB",
+                "seconds": 2.000049,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB1RA2RA_3RB3LA2LB0RA",
+                "seconds": 2.000047,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA2LB2RB_2RA1LA3LB0RA",
+                "seconds": 2.000069,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LA1LA_3RB1RA3LB0RA",
+                "seconds": 0.763688,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB0LA_1RA3RA1LA0RB",
+                "seconds": 2.000114,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB3LA2LA_2RA0LA2RB0RB",
+                "seconds": 2.000111,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RB0LB2LA_3RA2RB1LA1LA",
+                "seconds": 2.000046,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3LB1RA_3RA3LB1LA1LA",
+                "seconds": 2.000042,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB1RA2RA_2RB3RA1LB1LA",
+                "seconds": 2.000047,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB1RA2RA_2RB3RA2LA1LA",
+                "seconds": 2.000051,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LA1RB_3RB1RA2LB1LA",
+                "seconds": 2.00005,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LA1RA_3RB3LA2LB1LA",
+                "seconds": 2.000056,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1RA2RB_0RA3LB2LB1LA",
+                "seconds": 2.000052,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LA1RA_1RB3RA2LB1LB",
+                "seconds": 2.000055,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3RA2LA_3RB1RA3LB1LB",
+                "seconds": 2.00006,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RA3LA2RA_3RB3LB0LA1RA",
+                "seconds": 2.000048,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1LA2RB2LB_3RA2LB1RB1RA",
+                "seconds": 2.000048,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3LA1RB_2RA0RA2LB1RA",
+                "seconds": 2.00005,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA1RA1RB_3RA1LA2RB1RA",
+                "seconds": 2.000074,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA1RB1LA_2RA2LB3RA1RA",
+                "seconds": 2.000096,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3LA2RB_0RA1LA3RB1RA",
+                "seconds": 2.000188,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1RA0RB_2RA3LB0LA1RB",
+                "seconds": 2.000106,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3LA0RB_1RA2RA1LA1RB",
+                "seconds": 2.000107,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0RA2LA_3RA0LA2LA1RB",
+                "seconds": 2.000067,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3RB3LA_3RA2LA2LA1RB",
+                "seconds": 0.66534,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1RA2RA3RA_0RA2LB3LB1RB",
+                "seconds": 2.000352,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA1RB0LB_1RB3RA0LA2LA",
+                "seconds": 2.000046,
+                "status": "timeout"
+              }
+            ],
+            "stage": 2
+          }
+        ],
+        "row_timeout_seconds": 2,
+        "scope": "Native instruction search only; zero Coq proof credit.",
+        "selected": [
+          "1LB2RA3RA3RB_1RA3RA2LB0LA",
+          "1LB2RB1RB1LB_1RA2LB3RB0LA",
+          "1LB2RB1LA0RA_3RA2RB3LA0LB",
+          "1LB2LB2RA3RB_0RA3RA3LA0LB",
+          "1LB2LB1RA2RA_3RB3LA2LB0RA",
+          "1LB2RA2LB2RB_2RA1LA3LB0RA",
+          "1LB2RA1LA1LA_3RB1RA3LB0RA",
+          "1LB2RA0LB0LA_1RA3RA1LA0RB",
+          "1LB2LB3LA2LA_2RA0LA2RB0RB",
+          "1LB0RB0LB2LA_3RA2RB1LA1LA",
+          "1LB2RA3LB1RA_3RA3LB1LA1LA",
+          "1LB2LB1RA2RA_2RB3RA1LB1LA",
+          "1LB2LB3RA0LB_0RB2LB1RA1LA",
+          "1LB2LB1RA2RA_2RB3RA2LA1LA",
+          "1LB2RA1LA1RB_3RB1RA2LB1LA",
+          "1LB2RA1LA1RA_3RB3LA2LB1LA",
+          "1LB2RA1RA2RB_0RA3LB2LB1LA",
+          "1LB2LA3RB1RB_2RA0RA1RA1LB",
+          "1LB2RA1LA1RA_1RB3RA2LB1LB",
+          "1LB2RA3RA2LA_3RB1RA3LB1LB",
+          "1LB1RA3LA2RA_3RB3LB0LA1RA",
+          "1LB1LA2RB2LB_3RA2LB1RB1RA",
+          "1LB2RB3LA1RB_2RA0RA2LB1RA",
+          "1LB2LA1RA1RB_3RA1LA2RB1RA",
+          "1LB2LA1RB1LA_2RA2LB3RA1RA",
+          "1LB2RA3LA2RB_0RA1LA3RB1RA",
+          "1LB2RA1RA0RB_2RA3LB0LA1RB",
+          "1LB2RA3LA0RB_1RA2RA1LA1RB",
+          "1LB2RA0RA2LA_3RA0LA2LA1RB",
+          "1LB2RB3RB3LA_3RA2LA2LA1RB",
+          "1LB1RA2RA3RA_0RA2LB3LB1RB",
+          "1LB2LA1RB0LB_1RB3RA0LA2LA"
+        ],
+        "source_sha256": {
+          "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe": "a3c1e02a1c8edd98e8a7e00f175e8090add438bd5824090eac3728f80555325b",
+          "/workspace/Coq-BBB4/four/theories/AdvancedPipeline.v": "bbc466a07904b22cba918b290aff287cfaad6b3cdd326d72a99ef93c10d1fe24",
+          "/workspace/Coq-BBB4/four/theories/Checkers/NGramHist.v": "5976b6f0267b4cf70f3e96e33ce633484062780aa6e24d83581cb6c9ebee9488",
+          "/workspace/Coq-BBB4/four/theories/HistCensus.v": "f6f42a2dfc76fb95f552b1569c414d13e9702a3a04234f0b33c114e3165b9c89",
+          "/workspace/Coq-BBB4/four/tools/advanced_probe_v2.ml": "25729f71f7750f9ac3d73a4628e5870f4e7166992d0e6d6dea15e452b0d4c413",
+          "/workspace/bbb24-instruction-workers-v1/history_a/search.py": "e02421fce770646665710f8318609deb1ade00668c287989dcabf0160443972a",
+          "/workspace/bbb24-instruction-workers-v1/history_a/selection.json": "6309be2b41d9febdbf3ddff1e395a7ce0c5bf71debeb1e68f9f68023eb67e8af"
+        },
+        "stack_bytes": 67108864,
+        "workers": 1
+      },
+      "report_sha256": "ee539f493e27c2c151db4018bad07178f5df89ef909146848958554bd63da3f1"
+    },
+    {
+      "name": "history_b",
+      "report": {
+        "attempted": 94,
+        "candidates": [
+          {
+            "anchor": 65536,
+            "bound": 65536,
+            "extra": 64,
+            "fuel": 32768,
+            "history": 3,
+            "machine": "1LB2RA0RA2LA_3RB2RA0LB3LA",
+            "mode": "hist",
+            "size": 4
+          }
+        ],
+        "native_seconds": 169.789,
+        "plan_sha256": "6ea7d2195d43f9618427d9ab3a72678fe3f84c3e9cb1c955ce8a7199f665f16a",
+        "proof_credit": 0,
+        "remaining": [
+          "1LB2RA0RB1LA_3RA2LB1LA2LA",
+          "1LB2RA3RA0LA_3RB2RA1LB2LA",
+          "1LB2RA3RA1LA_3RB3RA1LB2LA",
+          "1LB2RA0RA---_3RA1LB1RB2LA",
+          "1LB1LA2RB2LB_3RB1RA3RB2LA",
+          "1LB2LB3RA0LB_1RA1RA---2LA",
+          "1LB2RA3RA---_1RA3RA0LB2LB",
+          "1LB2RB0LA1LA_3RA2RA0RA2LB",
+          "1LB2RA0LB3RA_3RB3LB1LA2LB",
+          "1LB2RB3RB0LB_3RA1LA1RA2LB",
+          "1LB1RA2RB2LB_3RA3LB1RA2LB",
+          "1LB0RB0LA2LA_3RA0RB2RB2LB",
+          "1LB1RB0RB3RA_1RA3LB3LB2LB",
+          "1LB2LB2RA1RB_3RA3LA3RB2LB",
+          "1LB2RA1LA2RA_0RA3LB3RB2LB",
+          "1LB0LB0LA2RB_3RA3LB3RB2LB",
+          "1LB2LB2RA3RB_3RA3LB3RB2LB",
+          "1LB2LA3LA1RB_3RA3RB0RB2RA",
+          "1LB0RB1LB2RB_1RA3LB1LA2RA",
+          "1LB0RA1RA3LB_3RB2RA2LA2RA",
+          "1LB2RA0LA1RA_3RA1LA3LB2RA",
+          "1LB1RA2RB2LB_0RA2LB3LB2RA",
+          "1LB0LA1LB1RB_3RA3LA0LB2RB",
+          "1LB2RA0LB3RB_1RA1LB3LA2RB",
+          "1LB2RB3RB3LB_2RA1LB3LA2RB",
+          "1LB0LB2RA3RA_1RA2LB3LB2RB",
+          "1LB2RB2LA1RB_3RA0LA3RA2RB",
+          "1LB2RA0RA3RA_1RA3LB0LB3LA",
+          "1LB0LA2LA3RB_3RB2RA0RA3LA",
+          "1LB2RA3LB1RA_1RB3LB1LA3LA",
+          "1LB2RA0RA1RA_3RA0RA1LB3LA"
+        ],
+        "scope": "Untrusted discovery only; all candidates need separate Coq replay.",
+        "selection_sha256": "42d40f7c9888cd4c7d7812b1eba072350169c5fbc0f771a4cbeeddb40d8efffd",
+        "stages": [
+          {
+            "command_template": [
+              "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe",
+              "hist",
+              "65536",
+              "4",
+              "65536",
+              "32768",
+              "64",
+              "3",
+              "2"
+            ],
+            "executions": [
+              {
+                "command": [
+                  "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe",
+                  "hist",
+                  "65536",
+                  "4",
+                  "65536",
+                  "32768",
+                  "64",
+                  "3",
+                  "2",
+                  "/workspace/bbb24-instruction-workers-v1/history_b/stage-00-pending-000.txt"
+                ],
+                "elapsed_seconds": 57.131
+              }
+            ],
+            "history": 3,
+            "input_sha256": "d2f26d83487fe1d57135b9476f0f007462abd1d1cd5e21d28121a0a56e138f00",
+            "output_sha256": "b4dd3a8593efef648c2fb2f535b993711cbc841ed5f7270f5d3c250a28ccdd1d",
+            "results": [
+              {
+                "machine": "1LB2RA0RB1LA_3RA2LB1LA2LA",
+                "seconds": 2.000054,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3RA0LA_3RB2RA1LB2LA",
+                "seconds": 1.127871,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA3RA1LA_3RB3RA1LB2LA",
+                "seconds": 1.378194,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0RA---_3RA1LB1RB2LA",
+                "seconds": 2.000051,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1LA2RB2LB_3RB1RA3RB2LA",
+                "seconds": 0.786101,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3RA0LB_1RA1RA---2LA",
+                "seconds": 2.000046,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3RA---_1RA3RA0LB2LB",
+                "seconds": 2.00005,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB0LA1LA_3RA2RA0RA2LB",
+                "seconds": 2.000051,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_3RB3LB1LA2LB",
+                "seconds": 2.000046,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3RB0LB_3RA1LA1RA2LB",
+                "seconds": 2.000042,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RA2RB2LB_3RA3LB1RA2LB",
+                "seconds": 2.000045,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RB0LA2LA_3RA0RB2RB2LB",
+                "seconds": 2.000051,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RB0RB3RA_1RA3LB3LB2LB",
+                "seconds": 2.00005,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB2RA1RB_3RA3LA3RB2LB",
+                "seconds": 2.000039,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LA2RA_0RA3LB3RB2LB",
+                "seconds": 2.000117,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0LB0LA2RB_3RA3LB3RB2LB",
+                "seconds": 1.027484,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RA3RB_3RA3LB3RB2LB",
+                "seconds": 1.414374,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LA1RB_3RA3RB0RB2RA",
+                "seconds": 2.000108,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RB1LB2RB_1RA3LB1LA2RA",
+                "seconds": 2.000044,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RA1RA3LB_3RB2RA2LA2RA",
+                "seconds": 2.000084,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0LA1RA_3RA1LA3LB2RA",
+                "seconds": 2.000042,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RA2RB2LB_0RA2LB3LB2RA",
+                "seconds": 2.00005,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0LA1LB1RB_3RA3LA0LB2RB",
+                "seconds": 2.001415,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0LB3RB_1RA1LB3LA2RB",
+                "seconds": 2.000043,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3RB3LB_2RA1LB3LA2RB",
+                "seconds": 1.937431,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0LB2RA3RA_1RA2LB3LB2RB",
+                "seconds": 1.216616,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB2LA1RB_3RA0LA3RA2RB",
+                "seconds": 2.000042,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0RA2LA_3RB2RA0LB3LA",
+                "seconds": 0.95059,
+                "status": "candidate"
+              },
+              {
+                "machine": "1LB2RA0RA3RA_1RA3LB0LB3LA",
+                "seconds": 1.425257,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0LA2LA3RB_3RB2RA0RA3LA",
+                "seconds": 2.000121,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3LB1RA_1RB3LB1LA3LA",
+                "seconds": 2.000136,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0RA1RA_3RA0RA1LB3LA",
+                "seconds": 1.852984,
+                "status": "rejected"
+              }
+            ],
+            "statuses": {
+              "candidate": 1,
+              "rejected": 9,
+              "timeout": 22
+            },
+            "width": 4
+          },
+          {
+            "command_template": [
+              "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe",
+              "hist",
+              "65536",
+              "3",
+              "65536",
+              "32768",
+              "64",
+              "5",
+              "2"
+            ],
+            "executions": [
+              {
+                "command": [
+                  "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe",
+                  "hist",
+                  "65536",
+                  "3",
+                  "65536",
+                  "32768",
+                  "64",
+                  "5",
+                  "2",
+                  "/workspace/bbb24-instruction-workers-v1/history_b/stage-01-pending-000.txt"
+                ],
+                "elapsed_seconds": 53.815
+              }
+            ],
+            "history": 5,
+            "input_sha256": "2ce84e0d5d2bbd86e1f3e2b357428e1e89b4a5629d4c89226d29bd42a4302bf3",
+            "output_sha256": "887759d4c1f9eb82ac0b52dad0a8c95135962fffaddf89f0a4986085a4d202e6",
+            "results": [
+              {
+                "machine": "1LB2RA0RB1LA_3RA2LB1LA2LA",
+                "seconds": 2.000061,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3RA0LA_3RB2RA1LB2LA",
+                "seconds": 2.000042,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3RA1LA_3RB3RA1LB2LA",
+                "seconds": 0.624409,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0RA---_3RA1LB1RB2LA",
+                "seconds": 2.000045,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1LA2RB2LB_3RB1RA3RB2LA",
+                "seconds": 0.636085,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3RA0LB_1RA1RA---2LA",
+                "seconds": 2.000043,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3RA---_1RA3RA0LB2LB",
+                "seconds": 2.000083,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB0LA1LA_3RA2RA0RA2LB",
+                "seconds": 2.000047,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_3RB3LB1LA2LB",
+                "seconds": 2.000048,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3RB0LB_3RA1LA1RA2LB",
+                "seconds": 2.000056,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RA2RB2LB_3RA3LB1RA2LB",
+                "seconds": 2.000254,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RB0LA2LA_3RA0RB2RB2LB",
+                "seconds": 2.000097,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RB0RB3RA_1RA3LB3LB2LB",
+                "seconds": 2.000043,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB2RA1RB_3RA3LA3RB2LB",
+                "seconds": 2.000105,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LA2RA_0RA3LB3RB2LB",
+                "seconds": 2.000054,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0LB0LA2RB_3RA3LB3RB2LB",
+                "seconds": 2.000045,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB2RA3RB_3RA3LB3RB2LB",
+                "seconds": 1.341938,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LA1RB_3RA3RB0RB2RA",
+                "seconds": 2.000166,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RB1LB2RB_1RA3LB1LA2RA",
+                "seconds": 2.000043,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RA1RA3LB_3RB2RA2LA2RA",
+                "seconds": 2.000085,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0LA1RA_3RA1LA3LB2RA",
+                "seconds": 2.00004,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RA2RB2LB_0RA2LB3LB2RA",
+                "seconds": 1.285997,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0LA1LB1RB_3RA3LA0LB2RB",
+                "seconds": 2.000052,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0LB3RB_1RA1LB3LA2RB",
+                "seconds": 2.000148,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3RB3LB_2RA1LB3LA2RB",
+                "seconds": 1.152336,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0LB2RA3RA_1RA2LB3LB2RB",
+                "seconds": 0.669845,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB2LA1RB_3RA0LA3RA2RB",
+                "seconds": 2.000494,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0RA3RA_1RA3LB0LB3LA",
+                "seconds": 0.739252,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0LA2LA3RB_3RB2RA0RA3LA",
+                "seconds": 2.000091,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3LB1RA_1RB3LB1LA3LA",
+                "seconds": 2.000046,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0RA1RA_3RA0RA1LB3LA",
+                "seconds": 1.313286,
+                "status": "rejected"
+              }
+            ],
+            "statuses": {
+              "rejected": 8,
+              "timeout": 23
+            },
+            "width": 3
+          },
+          {
+            "command_template": [
+              "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe",
+              "hist",
+              "65536",
+              "5",
+              "65536",
+              "32768",
+              "64",
+              "2",
+              "2"
+            ],
+            "executions": [
+              {
+                "command": [
+                  "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe",
+                  "hist",
+                  "65536",
+                  "5",
+                  "65536",
+                  "32768",
+                  "64",
+                  "2",
+                  "2",
+                  "/workspace/bbb24-instruction-workers-v1/history_b/stage-02-pending-000.txt"
+                ],
+                "elapsed_seconds": 58.955
+              }
+            ],
+            "history": 2,
+            "input_sha256": "2ce84e0d5d2bbd86e1f3e2b357428e1e89b4a5629d4c89226d29bd42a4302bf3",
+            "output_sha256": "3feef34b756ee1f7fc93d2cb8eb4d060b9bb521edb3c34746d99ddafe29b88ae",
+            "results": [
+              {
+                "machine": "1LB2RA0RB1LA_3RA2LB1LA2LA",
+                "seconds": 2.000052,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3RA0LA_3RB2RA1LB2LA",
+                "seconds": 2.00006,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3RA1LA_3RB3RA1LB2LA",
+                "seconds": 1.853865,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0RA---_3RA1LB1RB2LA",
+                "seconds": 1.483369,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1LA2RB2LB_3RB1RA3RB2LA",
+                "seconds": 1.9546,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3RA0LB_1RA1RA---2LA",
+                "seconds": 2.000438,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3RA---_1RA3RA0LB2LB",
+                "seconds": 1.717863,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB0LA1LA_3RA2RA0RA2LB",
+                "seconds": 2.000043,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_3RB3LB1LA2LB",
+                "seconds": 2.000047,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3RB0LB_3RA1LA1RA2LB",
+                "seconds": 2.000067,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RA2RB2LB_3RA3LB1RA2LB",
+                "seconds": 2.000044,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RB0LA2LA_3RA0RB2RB2LB",
+                "seconds": 2.000052,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RB0RB3RA_1RA3LB3LB2LB",
+                "seconds": 2.000049,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB2RA1RB_3RA3LA3RB2LB",
+                "seconds": 1.977742,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA1LA2RA_0RA3LB3RB2LB",
+                "seconds": 2.000409,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0LB0LA2RB_3RA3LB3RB2LB",
+                "seconds": 1.455359,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RA3RB_3RA3LB3RB2LB",
+                "seconds": 2.000196,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA3LA1RB_3RA3RB0RB2RA",
+                "seconds": 2.000054,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RB1LB2RB_1RA3LB1LA2RA",
+                "seconds": 2.000199,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0RA1RA3LB_3RB2RA2LA2RA",
+                "seconds": 2.000059,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0LA1RA_3RA1LA3LB2RA",
+                "seconds": 2.000326,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1RA2RB2LB_0RA2LB3LB2RA",
+                "seconds": 2.000095,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0LA1LB1RB_3RA3LA0LB2RB",
+                "seconds": 2.000042,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0LB3RB_1RA1LB3LA2RB",
+                "seconds": 2.000049,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB3RB3LB_2RA1LB3LA2RB",
+                "seconds": 2.000258,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0LB2RA3RA_1RA2LB3LB2RB",
+                "seconds": 2.000048,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RB2LA1RB_3RA0LA3RA2RB",
+                "seconds": 1.115942,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0RA3RA_1RA3LB0LB3LA",
+                "seconds": 2.000042,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0LA2LA3RB_3RB2RA0RA3LA",
+                "seconds": 2.000045,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA3LB1RA_1RB3LB1LA3LA",
+                "seconds": 2.000049,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA0RA1RA_3RA0RA1LB3LA",
+                "seconds": 1.342481,
+                "status": "rejected"
+              }
+            ],
+            "statuses": {
+              "rejected": 8,
+              "timeout": 23
+            },
+            "width": 5
+          }
+        ],
+        "workers": 1
+      },
+      "report_sha256": "bab43d696309e92993c6e0cd656b41ed603de3a8dcf0fa35a2db69022cb2f144"
+    },
+    {
+      "name": "alternative_closure",
+      "report": {
+        "candidates": [
+          {
+            "anchor": 65536,
+            "bound": 65536,
+            "extra": 64,
+            "fuel": 32768,
+            "history": 0,
+            "machine": "1LB2RA3RA1RA_3RA3RA0LB3LA",
+            "mode": "finite",
+            "size": 5
+          },
+          {
+            "anchor": 65536,
+            "bound": 65536,
+            "extra": 3,
+            "fuel": 32768,
+            "history": 0,
+            "machine": "1LB2RA0RA3RB_0RA3RA3LA0LB",
+            "mode": "rw",
+            "size": 3
+          },
+          {
+            "anchor": 65536,
+            "bound": 65536,
+            "extra": 2,
+            "fuel": 32768,
+            "history": 0,
+            "machine": "1LB2RB1LB1RA_2RA3LA3LB0LA",
+            "mode": "rw",
+            "size": 4
+          }
+        ],
+        "complete": true,
+        "manifest_sha256": "94d7611a384f4919a7c05e2274ba2434ddf9efe0e94dac100165af8155ba863b",
+        "remaining": [
+          "1LB2LB2RB3LA_3RB2RA3RA0LA",
+          "1LB2LB3RA0RB_1RA3LB2RB0LB",
+          "1LB2LA3LA3RB_3RA2LA2RB1LA",
+          "1LB2RA2LA3RB_3RA2RB3LA1LA",
+          "1LB2LA3LA2RA_2RB3RA0RA1LB",
+          "1LB2LB3RA1RA_2RB3LA3LA1LB",
+          "1LB2LA0RB3RB_3RA3LA1LA1RA",
+          "1LB1LB1RB3RA_2RA3LB2LB1RA",
+          "1LB0RA1RA3LB_3RB2RA2LA1RB",
+          "1LB2LB1LB1RA_2RB2RA3LB1RB",
+          "1LB2RB1RA1RB_2RB3LB0LB2LA",
+          "1LB2RA0RA3LB_1RA3RA3RB2LA",
+          "1LB---2RB2LA_3RB3RA0LA2LB",
+          "1LB1LB1RA1RB_3RB3RA2LA2LB",
+          "1LB0RA0RA3RA_0RB2RA3LA2LB",
+          "1LB2RA1LB3RB_0RA1LB3LB2LB",
+          "1LB2LB3LB3RA_0RB1RA---2LB",
+          "1LB2LB2RB0RA_1RA3LB1LB2RA",
+          "1LB2LB2RB1RA_1RA3LB1LB2RA",
+          "1LB2LA1RA3LB_1RB3RA2LB2RA",
+          "1LB1RB2LA3LB_2RA3RB3LA2RB",
+          "1LB2RA0LB3RA_1RB1LA3LB2RB",
+          "1LB2LA2LA2RB_3RA2LA3LB2RB",
+          "1LB0LB1LA2LB_3RA3LA3RB2RB",
+          "1LB2RB1LA2RB_2RA3RB1LB3LA",
+          "1LB2RA0LB3RA_0RB3RA2LB3LA",
+          "1LB2RB3RB1LA_2RA2RB3LA3LA",
+          "1LB2RB3RB1LA_2RA1RB3LB3LA",
+          "1LB2RA0LB3RA_1RA3RA1LA3LB",
+          "1LB2RA2RB2LA_3RB3RA0LA3RA",
+          "1LB2LB0RA2RA_2RB3LB0LB3RA",
+          "1LB2LA1RA2LB_2RB3LB1RA3RA",
+          "1LB2LA3LB2RA_2RB1RA2LB3RA",
+          "1LB2RA3RB0LB_1RA2LA3LB3RA",
+          "1LB2LB2RA1LB_2RB3LA3LB3RA",
+          "1LB2RA2RA2LB_2RB3RA3LB3RA",
+          "1LB---2RB2LA_3RB2RA3LA3RB",
+          "1LB2RA2RB1LA_3RA2LA3RB3RB",
+          "1LB2RA---0LB_2RB1RA3LB---"
+        ],
+        "scope": "Untrusted alternate closure candidates; no proof credit.",
+        "seconds": 77.648,
+        "selected": [
+          "1LB2RB1LB1RA_2RA3LA3LB0LA",
+          "1LB2LB2RB3LA_3RB2RA3RA0LA",
+          "1LB2LB3RA0RB_1RA3LB2RB0LB",
+          "1LB2RA0RA3RB_0RA3RA3LA0LB",
+          "1LB2LA3LA3RB_3RA2LA2RB1LA",
+          "1LB2RA2LA3RB_3RA2RB3LA1LA",
+          "1LB2LA3LA2RA_2RB3RA0RA1LB",
+          "1LB2LB3RA1RA_2RB3LA3LA1LB",
+          "1LB2LA0RB3RB_3RA3LA1LA1RA",
+          "1LB1LB1RB3RA_2RA3LB2LB1RA",
+          "1LB0RA1RA3LB_3RB2RA2LA1RB",
+          "1LB2LB1LB1RA_2RB2RA3LB1RB",
+          "1LB2RB1RA1RB_2RB3LB0LB2LA",
+          "1LB2RA0RA3LB_1RA3RA3RB2LA",
+          "1LB---2RB2LA_3RB3RA0LA2LB",
+          "1LB1LB1RA1RB_3RB3RA2LA2LB",
+          "1LB0RA0RA3RA_0RB2RA3LA2LB",
+          "1LB2RA1LB3RB_0RA1LB3LB2LB",
+          "1LB2LB3LB3RA_0RB1RA---2LB",
+          "1LB2LB2RB0RA_1RA3LB1LB2RA",
+          "1LB2LB2RB1RA_1RA3LB1LB2RA",
+          "1LB2LA1RA3LB_1RB3RA2LB2RA",
+          "1LB1RB2LA3LB_2RA3RB3LA2RB",
+          "1LB2RA0LB3RA_1RB1LA3LB2RB",
+          "1LB2LA2LA2RB_3RA2LA3LB2RB",
+          "1LB0LB1LA2LB_3RA3LA3RB2RB",
+          "1LB2RA3RA1RA_3RA3RA0LB3LA",
+          "1LB2RB1LA2RB_2RA3RB1LB3LA",
+          "1LB2RA0LB3RA_0RB3RA2LB3LA",
+          "1LB2RB3RB1LA_2RA2RB3LA3LA",
+          "1LB2RB3RB1LA_2RA1RB3LB3LA",
+          "1LB2RA0LB3RA_1RA3RA1LA3LB",
+          "1LB2RA2RB2LA_3RB3RA0LA3RA",
+          "1LB2LB0RA2RA_2RB3LB0LB3RA",
+          "1LB2LA1RA2LB_2RB3LB1RA3RA",
+          "1LB2LA3LB2RA_2RB1RA2LB3RA",
+          "1LB2RA3RB0LB_1RA2LA3LB3RA",
+          "1LB2LB2RA1LB_2RB3LA3LB3RA",
+          "1LB2RA2RA2LB_2RB3RA3LB3RA",
+          "1LB---2RB2LA_3RB2RA3LA3RB",
+          "1LB2RA2RB1LA_3RA2LA3RB3RB",
+          "1LB2RA---0LB_2RB1RA3LB---"
+        ],
+        "stages": [
+          {
+            "command": [
+              "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe",
+              "finite",
+              "65536",
+              "5",
+              "65536",
+              "32768",
+              "64",
+              "0",
+              "2",
+              "/workspace/bbb24-instruction-workers-v1/alternative_closure/stage-00-pending-000.txt"
+            ],
+            "output_sha256": "ecf5f5f8c62a16606e8cccf3b0ea657afe92c11f9bc4fe61339800b31567bca8",
+            "parameters": {
+              "anchor": 65536,
+              "bound": 65536,
+              "extra": 64,
+              "fuel": 32768,
+              "history": 0,
+              "mode": "finite",
+              "size": 5
+            },
+            "rows": [
+              {
+                "machine": "1LB2RB1LB1RA_2RA3LA3LB0LA",
+                "seconds": 0.095845,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RB3LA_3RB2RA3RA0LA",
+                "seconds": 0.051854,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3RA0RB_1RA3LB2RB0LB",
+                "seconds": 0.006307,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0RA3RB_0RA3RA3LA0LB",
+                "seconds": 0.021153,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LA3RB_3RA2LA2RB1LA",
+                "seconds": 0.004562,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2LA3RB_3RA2RB3LA1LA",
+                "seconds": 0.013058,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LA2RA_2RB3RA0RA1LB",
+                "seconds": 0.191038,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3RA1RA_2RB3LA3LA1LB",
+                "seconds": 0.566647,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA0RB3RB_3RA3LA1LA1RA",
+                "seconds": 0.105371,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1LB1RB3RA_2RA3LB2LB1RA",
+                "seconds": 0.057108,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0RA1RA3LB_3RB2RA2LA1RB",
+                "seconds": 0.034286,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB1LB1RA_2RB2RA3LB1RB",
+                "seconds": 0.064665,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB1RA1RB_2RB3LB0LB2LA",
+                "seconds": 0.049858,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0RA3LB_1RA3RA3RB2LA",
+                "seconds": 0.012812,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB---2RB2LA_3RB3RA0LA2LB",
+                "seconds": 0.10544,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1LB1RA1RB_3RB3RA2LA2LB",
+                "seconds": 0.072499,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0RA0RA3RA_0RB2RA3LA2LB",
+                "seconds": 0.484003,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA1LB3RB_0RA1LB3LB2LB",
+                "seconds": 0.004013,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3LB3RA_0RB1RA---2LB",
+                "seconds": 0.048596,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RB0RA_1RA3LB1LB2RA",
+                "seconds": 0.252424,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RB1RA_1RA3LB1LB2RA",
+                "seconds": 0.371593,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA1RA3LB_1RB3RA2LB2RA",
+                "seconds": 0.009667,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1RB2LA3LB_2RA3RB3LA2RB",
+                "seconds": 0.02256,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_1RB1LA3LB2RB",
+                "seconds": 0.019049,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA2LA2RB_3RA2LA3LB2RB",
+                "seconds": 0.048101,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0LB1LA2LB_3RA3LA3RB2RB",
+                "seconds": 0.332697,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA3RA1RA_3RA3RA0LB3LA",
+                "seconds": 0.748851,
+                "status": "candidate"
+              },
+              {
+                "machine": "1LB2RB1LA2RB_2RA3RB1LB3LA",
+                "seconds": 0.037375,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_0RB3RA2LB3LA",
+                "seconds": 0.00622,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB3RB1LA_2RA2RB3LA3LA",
+                "seconds": 0.052351,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB3RB1LA_2RA1RB3LB3LA",
+                "seconds": 0.014027,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_1RA3RA1LA3LB",
+                "seconds": 0.035674,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2RB2LA_3RB3RA0LA3RA",
+                "seconds": 0.032773,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB0RA2RA_2RB3LB0LB3RA",
+                "seconds": 0.202861,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA1RA2LB_2RB3LB1RA3RA",
+                "seconds": 0.147245,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LB2RA_2RB1RA2LB3RA",
+                "seconds": 0.051906,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA3RB0LB_1RA2LA3LB3RA",
+                "seconds": 0.010874,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RA1LB_2RB3LA3LB3RA",
+                "seconds": 0.011352,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2RA2LB_2RB3RA3LB3RA",
+                "seconds": 0.045647,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB---2RB2LA_3RB2RA3LA3RB",
+                "seconds": 0.052813,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2RB1LA_3RA2LA3RB3RB",
+                "seconds": 0.042902,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA---0LB_2RB1RA3LB---",
+                "seconds": 0.011656,
+                "status": "rejected"
+              }
+            ],
+            "statuses": {
+              "candidate": 1,
+              "rejected": 41
+            }
+          },
+          {
+            "command": [
+              "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe",
+              "rw",
+              "65536",
+              "3",
+              "65536",
+              "32768",
+              "3",
+              "0",
+              "2",
+              "/workspace/bbb24-instruction-workers-v1/alternative_closure/stage-01-pending-000.txt"
+            ],
+            "output_sha256": "20e3aaa15f64e7c3cea43d9eb05261dca7c55d3e8fa27100ca296c80d0ff3cd3",
+            "parameters": {
+              "anchor": 65536,
+              "bound": 65536,
+              "extra": 3,
+              "fuel": 32768,
+              "history": 0,
+              "mode": "rw",
+              "size": 3
+            },
+            "rows": [
+              {
+                "machine": "1LB2RB1LB1RA_2RA3LA3LB0LA",
+                "seconds": 2.000763,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB2RB3LA_3RB2RA3RA0LA",
+                "seconds": 0.203774,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3RA0RB_1RA3LB2RB0LB",
+                "seconds": 0.090436,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0RA3RB_0RA3RA3LA0LB",
+                "seconds": 0.329127,
+                "status": "candidate"
+              },
+              {
+                "machine": "1LB2LA3LA3RB_3RA2LA2RB1LA",
+                "seconds": 0.115599,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2LA3RB_3RA2RB3LA1LA",
+                "seconds": 0.134201,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LA2RA_2RB3RA0RA1LB",
+                "seconds": 2.000388,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB3RA1RA_2RB3LA3LA1LB",
+                "seconds": 2.000243,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA0RB3RB_3RA3LA1LA1RA",
+                "seconds": 0.128976,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1LB1RB3RA_2RA3LB2LB1RA",
+                "seconds": 0.277062,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0RA1RA3LB_3RB2RA2LA1RB",
+                "seconds": 0.321393,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB1LB1RA_2RB2RA3LB1RB",
+                "seconds": 0.15541,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB1RA1RB_2RB3LB0LB2LA",
+                "seconds": 0.699913,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0RA3LB_1RA3RA3RB2LA",
+                "seconds": 0.267015,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB---2RB2LA_3RB3RA0LA2LB",
+                "seconds": 0.255001,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1LB1RA1RB_3RB3RA2LA2LB",
+                "seconds": 0.189394,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0RA0RA3RA_0RB2RA3LA2LB",
+                "seconds": 2.000472,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA1LB3RB_0RA1LB3LB2LB",
+                "seconds": 0.142594,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3LB3RA_0RB1RA---2LB",
+                "seconds": 0.190903,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RB0RA_1RA3LB1LB2RA",
+                "seconds": 0.946855,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RB1RA_1RA3LB1LB2RA",
+                "seconds": 0.225104,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA1RA3LB_1RB3RA2LB2RA",
+                "seconds": 0.092041,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1RB2LA3LB_2RA3RB3LA2RB",
+                "seconds": 0.201116,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_1RB1LA3LB2RB",
+                "seconds": 2.000048,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA2LA2RB_3RA2LA3LB2RB",
+                "seconds": 2.00005,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0LB1LA2LB_3RA3LA3RB2RB",
+                "seconds": 0.254726,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB1LA2RB_2RA3RB1LB3LA",
+                "seconds": 0.23615,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_0RB3RA2LB3LA",
+                "seconds": 0.170693,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB3RB1LA_2RA2RB3LA3LA",
+                "seconds": 0.237457,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB3RB1LA_2RA1RB3LB3LA",
+                "seconds": 0.186165,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_1RA3RA1LA3LB",
+                "seconds": 2.000377,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA2RB2LA_3RB3RA0LA3RA",
+                "seconds": 0.175666,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB0RA2RA_2RB3LB0LB3RA",
+                "seconds": 0.189764,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA1RA2LB_2RB3LB1RA3RA",
+                "seconds": 0.193661,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LB2RA_2RB1RA2LB3RA",
+                "seconds": 0.218502,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA3RB0LB_1RA2LA3LB3RA",
+                "seconds": 0.15364,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RA1LB_2RB3LA3LB3RA",
+                "seconds": 0.129811,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2RA2LB_2RB3RA3LB3RA",
+                "seconds": 0.269567,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB---2RB2LA_3RB2RA3LA3RB",
+                "seconds": 0.181454,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2RB1LA_3RA2LA3RB3RB",
+                "seconds": 0.225594,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA---0LB_2RB1RA3LB---",
+                "seconds": 0.143463,
+                "status": "rejected"
+              }
+            ],
+            "statuses": {
+              "candidate": 1,
+              "rejected": 33,
+              "timeout": 7
+            }
+          },
+          {
+            "command": [
+              "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe",
+              "rw",
+              "65536",
+              "4",
+              "65536",
+              "32768",
+              "2",
+              "0",
+              "2",
+              "/workspace/bbb24-instruction-workers-v1/alternative_closure/stage-02-pending-000.txt"
+            ],
+            "output_sha256": "ac51d450958461e18c141219bdc269988413a709103b292773d5ce1a7cecdc38",
+            "parameters": {
+              "anchor": 65536,
+              "bound": 65536,
+              "extra": 2,
+              "fuel": 32768,
+              "history": 0,
+              "mode": "rw",
+              "size": 4
+            },
+            "rows": [
+              {
+                "machine": "1LB2RB1LB1RA_2RA3LA3LB0LA",
+                "seconds": 0.451979,
+                "status": "candidate"
+              },
+              {
+                "machine": "1LB2LB2RB3LA_3RB2RA3RA0LA",
+                "seconds": 0.178522,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3RA0RB_1RA3LB2RB0LB",
+                "seconds": 0.148901,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LA3RB_3RA2LA2RB1LA",
+                "seconds": 0.168556,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2LA3RB_3RA2RB3LA1LA",
+                "seconds": 0.161676,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LA2RA_2RB3RA0RA1LB",
+                "seconds": 2.000038,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB3RA1RA_2RB3LA3LA1LB",
+                "seconds": 2.000261,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LA0RB3RB_3RA3LA1LA1RA",
+                "seconds": 0.229414,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1LB1RB3RA_2RA3LB2LB1RA",
+                "seconds": 0.284594,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0RA1RA3LB_3RB2RA2LA1RB",
+                "seconds": 1.348155,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB1LB1RA_2RB2RA3LB1RB",
+                "seconds": 0.22317,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB1RA1RB_2RB3LB0LB2LA",
+                "seconds": 0.844825,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0RA3LB_1RA3RA3RB2LA",
+                "seconds": 0.2668,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB---2RB2LA_3RB3RA0LA2LB",
+                "seconds": 0.240766,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1LB1RA1RB_3RB3RA2LA2LB",
+                "seconds": 0.225173,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0RA0RA3RA_0RB2RA3LA2LB",
+                "seconds": 0.627843,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA1LB3RB_0RA1LB3LB2LB",
+                "seconds": 0.101813,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3LB3RA_0RB1RA---2LB",
+                "seconds": 0.202498,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RB0RA_1RA3LB1LB2RA",
+                "seconds": 1.948056,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RB1RA_1RA3LB1LB2RA",
+                "seconds": 0.330084,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA1RA3LB_1RB3RA2LB2RA",
+                "seconds": 0.092521,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1RB2LA3LB_2RA3RB3LA2RB",
+                "seconds": 0.178715,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_1RB1LA3LB2RB",
+                "seconds": 0.177724,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA2LA2RB_3RA2LA3LB2RB",
+                "seconds": 2.000042,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0LB1LA2LB_3RA3LA3RB2RB",
+                "seconds": 0.243411,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB1LA2RB_2RA3RB1LB3LA",
+                "seconds": 0.243009,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_0RB3RA2LB3LA",
+                "seconds": 0.105701,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB3RB1LA_2RA2RB3LA3LA",
+                "seconds": 0.20107,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB3RB1LA_2RA1RB3LB3LA",
+                "seconds": 0.113458,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_1RA3RA1LA3LB",
+                "seconds": 2.000271,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2RA2RB2LA_3RB3RA0LA3RA",
+                "seconds": 0.310679,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB0RA2RA_2RB3LB0LB3RA",
+                "seconds": 0.216512,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA1RA2LB_2RB3LB1RA3RA",
+                "seconds": 0.202562,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LB2RA_2RB1RA2LB3RA",
+                "seconds": 0.170831,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA3RB0LB_1RA2LA3LB3RA",
+                "seconds": 0.122891,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RA1LB_2RB3LA3LB3RA",
+                "seconds": 0.102559,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2RA2LB_2RB3RA3LB3RA",
+                "seconds": 0.230419,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB---2RB2LA_3RB2RA3LA3RB",
+                "seconds": 0.210121,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2RB1LA_3RA2LA3RB3RB",
+                "seconds": 0.263487,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA---0LB_2RB1RA3LB---",
+                "seconds": 0.142904,
+                "status": "rejected"
+              }
+            ],
+            "statuses": {
+              "candidate": 1,
+              "rejected": 35,
+              "timeout": 4
+            }
+          },
+          {
+            "command": [
+              "/workspace/Coq-BBB4/four/build/wave3/driver-v2/probe",
+              "hist",
+              "65536",
+              "4",
+              "65536",
+              "32768",
+              "64",
+              "4",
+              "2",
+              "/workspace/bbb24-instruction-workers-v1/alternative_closure/stage-03-pending-000.txt"
+            ],
+            "output_sha256": "cbde608babc30b519e243b8187ceb2fa8f579177bbe797824a26e218044cc40c",
+            "parameters": {
+              "anchor": 65536,
+              "bound": 65536,
+              "extra": 64,
+              "fuel": 32768,
+              "history": 4,
+              "mode": "hist",
+              "size": 4
+            },
+            "rows": [
+              {
+                "machine": "1LB2LB2RB3LA_3RB2RA3RA0LA",
+                "seconds": 0.268995,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3RA0RB_1RA3LB2RB0LB",
+                "seconds": 0.942796,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LA3RB_3RA2LA2RB1LA",
+                "seconds": 0.52683,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2LA3RB_3RA2RB3LA1LA",
+                "seconds": 1.306893,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LA2RA_2RB3RA0RA1LB",
+                "seconds": 0.744789,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3RA1RA_2RB3LA3LA1LB",
+                "seconds": 1.000868,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA0RB3RB_3RA3LA1LA1RA",
+                "seconds": 2.00004,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB1LB1RB3RA_2RA3LB2LB1RA",
+                "seconds": 0.196953,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0RA1RA3LB_3RB2RA2LA1RB",
+                "seconds": 2.000054,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB1LB1RA_2RB2RA3LB1RB",
+                "seconds": 0.789307,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB1RA1RB_2RB3LB0LB2LA",
+                "seconds": 0.448336,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0RA3LB_1RA3RA3RB2LA",
+                "seconds": 0.469328,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB---2RB2LA_3RB3RA0LA2LB",
+                "seconds": 0.606979,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1LB1RA1RB_3RB3RA2LA2LB",
+                "seconds": 0.565613,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB0RA0RA3RA_0RB2RA3LA2LB",
+                "seconds": 0.3127,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA1LB3RB_0RA1LB3LB2LB",
+                "seconds": 0.353632,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB3LB3RA_0RB1RA---2LB",
+                "seconds": 0.425782,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB2RB0RA_1RA3LB1LB2RA",
+                "seconds": 2.000044,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB2RB1RA_1RA3LB1LB2RA",
+                "seconds": 1.09923,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA1RA3LB_1RB3RA2LB2RA",
+                "seconds": 0.817341,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB1RB2LA3LB_2RA3RB3LA2RB",
+                "seconds": 0.328612,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_1RB1LA3LB2RB",
+                "seconds": 0.694112,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA2LA2RB_3RA2LA3LB2RB",
+                "seconds": 2.000067,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB0LB1LA2LB_3RA3LA3RB2RB",
+                "seconds": 0.373422,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB1LA2RB_2RA3RB1LB3LA",
+                "seconds": 0.399684,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_0RB3RA2LB3LA",
+                "seconds": 0.333703,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB3RB1LA_2RA2RB3LA3LA",
+                "seconds": 0.658907,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RB3RB1LA_2RA1RB3LB3LA",
+                "seconds": 1.660764,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA0LB3RA_1RA3RA1LA3LB",
+                "seconds": 1.043709,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2RB2LA_3RB3RA0LA3RA",
+                "seconds": 0.381597,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LB0RA2RA_2RB3LB0LB3RA",
+                "seconds": 0.322156,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA1RA2LB_2RB3LB1RA3RA",
+                "seconds": 0.484233,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2LA3LB2RA_2RB1RA2LB3RA",
+                "seconds": 0.556352,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA3RB0LB_1RA2LA3LB3RA",
+                "seconds": 2.000056,
+                "status": "timeout"
+              },
+              {
+                "machine": "1LB2LB2RA1LB_2RB3LA3LB3RA",
+                "seconds": 0.836139,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2RA2LB_2RB3RA3LB3RA",
+                "seconds": 0.219806,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB---2RB2LA_3RB2RA3LA3RB",
+                "seconds": 0.148618,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA2RB1LA_3RA2LA3RB3RB",
+                "seconds": 0.362124,
+                "status": "rejected"
+              },
+              {
+                "machine": "1LB2RA---0LB_2RB1RA3LB---",
+                "seconds": 2.000036,
+                "status": "timeout"
+              }
+            ],
+            "statuses": {
+              "rejected": 33,
+              "timeout": 6
+            }
+          }
+        ]
+      },
+      "report_sha256": "93311c02d0aef758e4419d26b81f3f89a7d9af955e2afd4112bdbfa10bd53388"
+    }
+  ]
+}

@@ -16,8 +16,9 @@ from check_campaign import ROOT, packed, read_inventory, sha, unpack
 from instruction_residual import residual
 
 LANES = {
-    'retry_history': 'Retry history timeouts',
-    'refine_history': 'Refine rejected history certificates',
+    'replay_candidate': 'Replay a native candidate in Coq',
+    'retry_history': 'Retry closure timeouts',
+    'refine_history': 'Refine rejected closure certificates',
     'sparse_target': 'Prove sparse instruction returns',
     'frequent_target': 'Refine a frequently observed target',
     'exclude_target': 'Prove a target absent from the tail',
@@ -84,6 +85,37 @@ def load_rows():
         if row['proof_status'] == 'open':
             row['lane'] = 'retry_history' if all(s == 'timeout' for s in statuses) else 'refine_history'
             row['evidence'] = 'research/instruction-burn1-search.json'
+
+    wave = evidence('research/instruction-wave1-search-ledger.json')
+    columns = ['machine', 'mode', 'bound', 'size', 'anchor', 'fuel', 'extra', 'history',
+               'row_budget_seconds', 'status', 'seconds', 'worker']
+    if wave.get('schema_version') != 1 or wave.get('columns') != columns:
+        raise ValueError('Unknown worker search ledger schema')
+    for source in wave['sources']:
+        path = ROOT / source['path']
+        if sha(path) != source['sha256']:
+            raise ValueError('Worker search provenance differs')
+        pins[source['path']] = source['sha256']
+    attempted = {}
+    for values in wave['rows']:
+        if len(values) != len(columns):
+            raise ValueError('Incomplete worker search row')
+        item = dict(zip(columns, values))
+        if item['machine'] not in rows or item['status'] not in {'candidate', 'rejected', 'timeout', 'stack_overflow'}:
+            raise ValueError('Invalid worker search target or status')
+        attempted.setdefault(item['machine'], []).append(item)
+    for machine, attempts in attempted.items():
+        row = rows[machine]
+        recent = [item['status'] for item in attempts]
+        row['search_history'] += (';' if row['search_history'] else '') + 'wave1:' + ','.join(recent)
+        if row['proof_status'] == 'open' and row['lane'] in {'needs_triage', 'retry_history', 'refine_history'}:
+            if 'candidate' in recent:
+                row['lane'] = 'replay_candidate'
+            elif all(item['status'] == 'timeout' for item in attempts) and row['lane'] != 'refine_history':
+                row['lane'] = 'retry_history'
+            else:
+                row['lane'] = 'refine_history'
+            row['evidence'] = 'research/instruction-wave1-search-ledger.json'
 
     diagnostics = evidence('research/burn3-capacity-instruction-diagnostics.json')
     for entry in diagnostics['rows']:
@@ -179,9 +211,12 @@ def main():
     parser.add_argument('--batch', help='Export one stable batch, b00 through bff')
     parser.add_argument('--machine', help='Show one stable tr24-N machine ID')
     parser.add_argument('--next-count', type=int, default=64)
+    parser.add_argument('--ref', default='main', help='Published Git ref for evidence links')
     args = parser.parse_args()
     if not 1 <= args.next_count <= 1024:
         parser.error('Next batch must have 1 to 1024 families')
+    if not re.fullmatch(r'[A-Za-z0-9_./-]+', args.ref):
+        parser.error('Invalid evidence Git ref')
     rows, pins = load_rows()
     claims_path = ROOT / 'research/instruction-claims.json'
     apply_claims(rows, json.loads(claims_path.read_text()))
@@ -197,7 +232,7 @@ def main():
     (args.output / 'summary.json').write_text(json.dumps(summary, indent=2, sort_keys=True) + '\n')
     (args.output / 'next64.md').write_text(markdown(next_rows(rows, args.next_count), 'Next instruction families'))
     from instruction_worklist_html import render
-    (args.output / 'index.html').write_text(render(rows, summary, FIELDS, LANES))
+    (args.output / 'index.html').write_text(render(rows, summary, FIELDS, LANES, args.ref))
     if args.batch:
         if not re.fullmatch(r'b[0-9a-f]{2}', args.batch):
             parser.error('Batch ID must be b00 through bff')

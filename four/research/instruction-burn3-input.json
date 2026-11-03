@@ -1,0 +1,160 @@
+{
+  "baseline_report": "research/instruction-after-burn2-baseline.json",
+  "baseline_sha256": "5d27cb7766bbcbec83daf8e3c90dbed8bd2d6e7cacdcacb0a05927b03173547a",
+  "rows": [
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB0LA0RB1LA_2RA2LB3RB1LA",
+      "mode": "finite",
+      "size": 5
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2LA0RA1RB_3RA3LA3RA0RA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB0RB0LA0RA_3RA1LB2LB2LA",
+      "mode": "finite",
+      "size": 5
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2RA1LA1LB_1RB3RA2LB1LA",
+      "mode": "finite",
+      "size": 5
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB0LB---3RB_2RA0RA3LB1LB",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2RA0RA3LA_3RB2RA2LA1LA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB1RA3LA2RA_2RA0LB2LA---",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2RB2LA0LB_2RA3RA0RB3LA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2RA1LA2RB_0RA2LB3LB3LA",
+      "mode": "finite",
+      "size": 5
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2RA0LB1RA_0RB3LB0LA3RA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB1RA0RA1RB_2RA3LB2LB2RA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2RB3LA1LA_2RA2RA0LA3RB",
+      "mode": "finite",
+      "size": 5
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2RA0LB2RA_1RA0RB3LA3LA",
+      "mode": "finite",
+      "size": 5
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2RB3LA1LB_2RA3LA0LA3RB",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB0LA3LA2RB_3RA0RB1LA0LB",
+      "mode": "hist",
+      "size": 3
+    }
+  ],
+  "scope": "Fifteen new instruction candidates from a bounded worker search; proof credit requires replay.",
+  "search_report": "research/instruction-burn3-search.json",
+  "search_sha256": "1d982ed60eb89967e6be589a0d05da143798eb3521149acfd2222b62255e6973",
+  "selected_rows": 15
+}

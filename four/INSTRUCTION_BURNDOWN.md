@@ -17,11 +17,17 @@ hard cohort, rather than the entire global instruction census.
 | :-- | --: | --: |
 | Historical resumed inventory | — | 28,653 |
 | Stronger history closure certificates | 11 | 28,642 |
-| Finite prefixes followed by one recurring instruction | 4 | **28,638** |
+| Finite prefixes followed by one recurring instruction | 4 | 28,638 |
+| First worker search packets | 6 | 28,632 |
+| Additional worker closure pilot | 15 | 28,617 |
+| S030 instruction tail | 1 | 28,616 |
+| Sparse boundary counter | 1 | 28,615 |
+| Counter with transient B0 | 1 | **28,614** |
 
-Both new batches passed full recursive `coqchk`, with zero skipped or reused
-audit modules. Their all-completion bounds and exact inventories are proved in
-Coq. They add no state coverage to the completed state result.
+Every registered batch passed full recursive `coqchk`, with zero skipped or
+reused audit modules. All-completion bounds and exact inventories are proved
+in Coq. The [first worker wave](INSTRUCTION_WAVE1.md) adds 24 instruction
+families and no new state coverage.
 
 The [baseline](research/instruction-baseline.json) freezes every remaining ID
 in compact base-17 form, its exact machine-text hash, and the historical
@@ -38,8 +44,8 @@ The history pilot selected 128 families by increasing
 bound and anchor 65,536, fuel 32,768, 64 growth rounds and a 0.5-second native
 budget. The 366 attempts produced 11 candidates; all 11 passed the existing
 instruction-mode checker in Coq. Their common upper bound is **65,536**.
-These are upper bounds, not exact score claims. The remaining 117 sampled
-families remain open.
+These are upper bounds, not exact score claims. Another 117 sampled families were unresolved at that checkpoint; their
+current status is in the worklist.
 
 The finite-tail package reuses four unchanged prefix proofs from the state
 development. A new small theorem proves that a suffix firing only `B0` cannot
@@ -68,19 +74,17 @@ With the [Coq toolchain](../docs/VERIFYING.md) on `PATH`, run from the repositor
 root:
 
 ```sh
-python3 four/tools/instruction_core_targets.py --build --jobs 2
-ulimit -S -s 65536
-python3 -m unittest discover -s four/tools -p 'test_instruction_residual.py'
-python3 four/tools/check_instruction_closure.py
-python3 four/tools/check_instruction_tails.py
+python3 -m unittest discover -s four/tools -p 'test_instruction*.py'
+python3 four/tools/replay_instruction_proofs.py --jobs 2
 python3 four/tools/report_instruction_burndown.py --check
 ```
 
-Each replayer uses one compilation worker and a 3 GiB process address-space
+The replay command builds the shared dependency closure and runs every batch
+in the accepted registry sequentially. Each replayer uses one compilation worker and a 3 GiB process address-space
 limit. It reconstructs the proofs from tracked inputs, then audits the entire
 dependency closure. No discovery executable, old proof object or historical
 receipt is needed. Published reports stay frozen; current logs and receipts go
-below `four/build/instruction-burn1/` and `four/build/instruction-tails/`.
+below `four/build/` in its package directory.
 The reporting command writes the exact remaining list to
 `four/build/instruction-burndown/remaining.txt`. GitHub Actions runs both proof
 replays from source.

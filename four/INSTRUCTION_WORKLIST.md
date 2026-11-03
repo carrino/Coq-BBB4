@@ -12,26 +12,30 @@ and lets you search by machine, family ID, state-case ID or owner, filter by
 work lane and batch, and download the filtered TSV. The same directory contains
 the complete open `machines.tsv`, a suggested `next64.md`, and `summary.json`.
 GitHub Actions publishes these files in the **instruction-burn1** artifact.
+For evidence links in a PR snapshot, pass `--ref` with the published commit SHA.
 
 Each family has a stable ID such as `tr24-237695161`, obtained from its exact
 base-17 table code. The list retains the original table used by Coq and also
 displays its reflected form with the first move to the right. Keep the family
 ID when submitting a proof. The 256 stable batches, `b00` through `bff`, use
-the low byte of that code and currently contain 64–169 open families each.
+the low byte of that code; current batch sizes are in the generated summary.
 They divide work without introducing new machine equivalences; proving one row
 does not change another row's ID or batch.
 
 ## Current work lanes
 
+This snapshot includes the [first worker wave](INSTRUCTION_WAVE1.md). The
+generated summary updates when accepted proof inventories or search evidence change.
+
 | Attached evidence | Open families | Suggested work |
 | :-- | --: | :-- |
-| All three history attempts timed out | 75 | Retry the recorded recipes with bounded extra time |
-| At least one history certificate was rejected | 42 | Refine the abstraction or try another recipe |
-| A diagnostic instruction appeared sparsely | 32 | Prove its counter or phase returns |
+| All attached closure attempts timed out | 49 | Retry with bounded extra time |
+| At least one closure certificate was rejected | 111 | Refine the abstraction or try another recipe |
+| A diagnostic instruction appeared sparsely | 30 | Prove its counter or phase returns |
 | A diagnostic instruction appeared frequently | 1 | Refine its graph or history |
-| An individual state proof is available | 74 | Adapt its invariants or macros to instructions |
-| No instruction diagnostic attached here | 28,414 | Triage and attach the next bounded search result |
-| **Total open** | **28,638** | |
+| An individual state proof is available | 73 | Adapt its invariants or macros to instructions |
+| No instruction diagnostic attached here | 28,350 | Triage and attach the next bounded search result |
+| **Total open** | **28,614** | |
 
 The lanes are scheduling hints. A rejection concerns one certificate; a timeout
 does not settle the machine. Finite observations do not prove recurrence or
