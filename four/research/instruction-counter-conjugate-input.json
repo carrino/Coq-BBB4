@@ -1,0 +1,24 @@
+{
+  "baseline_report": "research/instruction-baseline.json",
+  "baseline_sha256": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+  "instruction_bound": 1,
+  "original_sources_sha256": {
+    "proof-sources/instruction-sparse-twos/Regression.v": "0a75acecc3b79f883c30a80d48726cd54f1214ff640bdfd3d270b91dbf0e992c",
+    "proof-sources/instruction-sparse-twos/TwosCounter.v": "6886543be0b3d3a043948f1b2a5863e126bdb4050e15d592d76b51e156c6db7b"
+  },
+  "rows": [
+    {
+      "code": 2819321740,
+      "id": "tr24-2819321740",
+      "machine": "1LB2LB1LB3RA_2RA3LB3RA1RA"
+    }
+  ],
+  "scope": "Exact conjugate counter family; seven recurrent instructions and one transient initial A0. Every completion covered.",
+  "state_bound": 0,
+  "templates_sha256": {
+    "proof-sources/instruction-counter-conjugate/Board.v": "e1337b54d2ef0e878b2d09a6516cdc17278b2ebcbdc9e136efedca00ad89a467",
+    "proof-sources/instruction-counter-conjugate/ConjugateCounter.v": "07bdfd01324d6bfadc50be666e1fd83a75edda31d0e4d1a25470cacbfb7415ca",
+    "proof-sources/instruction-counter-conjugate/Inventory.v": "16716d09244b29831d855c24d2e6812d4c5c8c5b80df2b063f7ade897f380f12",
+    "proof-sources/instruction-counter-conjugate/Regression.v": "bbd11c189dc9e4edf1c2e4644eecad873f62a572631303c0f0d22e8f983293f7"
+  }
+}

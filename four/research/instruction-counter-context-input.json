@@ -1,0 +1,38 @@
+{
+  "baseline_report": "research/instruction-baseline.json",
+  "baseline_sha256": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+  "instruction_bound": 2,
+  "required_original_sources_sha256": {
+    "proof-sources/instruction-sparse-twos/TwosCounter.v": "6886543be0b3d3a043948f1b2a5863e126bdb4050e15d592d76b51e156c6db7b"
+  },
+  "rows": [
+    {
+      "code": 2699451765,
+      "id": "tr24-2699451765",
+      "machine": "1LB2LB3LB2RA_0RB3RA2LB1RA"
+    },
+    {
+      "code": 2699785849,
+      "id": "tr24-2699785849",
+      "machine": "1LB2LB3LB2RA_1RB3RA2LB1RA"
+    },
+    {
+      "code": 2700119933,
+      "id": "tr24-2700119933",
+      "machine": "1LB2LB3LB2RA_2RB3RA2LB1RA"
+    },
+    {
+      "code": 2700454017,
+      "id": "tr24-2700454017",
+      "machine": "1LB2LB3LB2RA_3RB3RA2LB1RA"
+    }
+  ],
+  "scope": "Four exact complete tables sharing one context-parametric symbolic counter; all completions covered.",
+  "state_bound": 0,
+  "templates_sha256": {
+    "proof-sources/instruction-counter-context/Board.v": "dc31d3bb885f52daa09b0d7cd9de23fde6d521548db48c23e987730cad08b4fe",
+    "proof-sources/instruction-counter-context/ContextCounter.v": "b097a2ffd2b83d1926389fbbfad03a478366d93cac2de65b7414c41a232a9961",
+    "proof-sources/instruction-counter-context/CounterEntry.v": "0e531d4facb82fc8c0ba5d2d59869f9736bd0ed1594af3b192deab0263df00ee",
+    "proof-sources/instruction-counter-context/Regression.v": "313020c088df26c41fadbd05a251b884715d63e31253a5661bde141eb8f1e214"
+  }
+}

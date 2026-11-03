@@ -1,0 +1,33 @@
+{
+  "baseline_report": "research/instruction-baseline.json",
+  "baseline_sha256": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+  "instruction_bound": 2,
+  "instruction_scores": [
+    2,
+    1
+  ],
+  "required_original_sources_sha256": {
+    "proof-sources/instruction-sparse-twos/TwosCounter.v": "6886543be0b3d3a043948f1b2a5863e126bdb4050e15d592d76b51e156c6db7b"
+  },
+  "rows": [
+    {
+      "code": 2700370496,
+      "id": "tr24-2700370496",
+      "machine": "1LB2LB3LB2RA_3RA3RA2LB1RA"
+    },
+    {
+      "code": 4437624636,
+      "id": "tr24-4437624636",
+      "machine": "1LB2LB1LB3RA_1RA3RA3LB2RA"
+    }
+  ],
+  "scope": "Two exact complete tables sharing a three-sentinel symbolic counter; all completions covered.",
+  "state_bound": 0,
+  "templates_sha256": {
+    "proof-sources/instruction-counter-three/Board.v": "535d428d2a9201b02e15936a89e9d506274cac4c1b81ecea5611689438522911",
+    "proof-sources/instruction-counter-three/ConjugateThree.v": "bd94df9506b9c4c2af2b068bc7d3983fdbc78907bd10d582090827af7a428acb",
+    "proof-sources/instruction-counter-three/Regression.v": "4c688f601c906a4673784ec78c3ece806513ad31676b673e0b1f444b89b678d5",
+    "proof-sources/instruction-counter-three/ThreeCounter.v": "a2e01bceae50bca1eb1f49e16dd4c769ab2b8b3914b60e8d94a5dbccaaa75c60",
+    "proof-sources/instruction-counter-three/ThreeEntry.v": "891c71b228973d153ff16a7468173e7ad745bfcb44db5d5f9038dddd181f73b6"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "baseline_report": "research/instruction-baseline.json",
+  "baseline_sha256": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+  "entry_parameters": [
+    1,
+    1,
+    1,
+    0,
+    1
+  ],
+  "entry_steps": [
+    40,
+    44,
+    36,
+    19,
+    64
+  ],
+  "instruction_bound": 64,
+  "rows": [
+    {
+      "code": 2541110977,
+      "id": "tr24-2541110977",
+      "machine": "1LB2LB3RA3LB_2RB1LA0RB1RA"
+    },
+    {
+      "code": 2565248546,
+      "id": "tr24-2565248546",
+      "machine": "1LB2LB3RA3LB_2RB1LA1LA1RA"
+    },
+    {
+      "code": 2589386115,
+      "id": "tr24-2589386115",
+      "machine": "1LB2LB3RA3LB_2RB1LA1LB1RA"
+    },
+    {
+      "code": 2758349098,
+      "id": "tr24-2758349098",
+      "machine": "1LB2LB3RA3LB_2RB1LA3LA1RA"
+    },
+    {
+      "code": 2806624236,
+      "id": "tr24-2806624236",
+      "machine": "1LB2LB3RA3LB_2RB1LA3RA1RA"
+    }
+  ],
+  "scope": "Five exact census families; every completion covered. Generic recurrent suffix omits B2.",
+  "state_bound": 0,
+  "templates_sha256": {
+    "proof-sources/instruction-boundary-counter/BoundaryKernel.v": "926d750b79ced85fa6ad58052811a7f49f91298c29a2cf8ae3f4af3717384497",
+    "proof-sources/instruction-boundary-counter/Cases.v": "50182cf00e1ab5f96ee724869e9709d4f83dff084f9de14537117df3f2340fcf",
+    "proof-sources/instruction-boundary-counter/Regression.v": "10d00c3156583ed76a20603280af8c6e4256275182dfd3d10cb5173a03ef0bec"
+  }
+}

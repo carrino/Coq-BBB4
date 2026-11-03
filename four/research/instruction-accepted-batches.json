@@ -28,6 +28,30 @@
     {
       "name": "instruction-sparse-twos",
       "report_sha256": "fe837c0d54621d5dc996fbf3e587dfc76e911140ddd794d633dd0af0ec0ba177"
+    },
+    {
+      "name": "instruction-unary-pair",
+      "report_sha256": "a6a3d03a636638c1cc69c10ec6527d2b1e1efc9e152fc814aae34da63f7e95ad"
+    },
+    {
+      "name": "instruction-counter-context",
+      "report_sha256": "05145d5d4eadfddfa686c1b84cecdd66433a456e1f20fb7dde67ecaef9078f21"
+    },
+    {
+      "name": "instruction-boundary-counter",
+      "report_sha256": "3cb03c3172b6bf46531bf49f72031fc6ba4ed07825ca3942c3bbfb69566b5c13"
+    },
+    {
+      "name": "instruction-counter-conjugate",
+      "report_sha256": "5a753018a59f1209bbd64ed513a29d17b6a85dedef2e7eaa46fdc43b114f17bd"
+    },
+    {
+      "name": "instruction-burn4",
+      "report_sha256": "3faf53641b0b2adf77d1abdf458a5e3760f3abafc6e2e2150d1d344512d16d85"
+    },
+    {
+      "name": "instruction-counter-three",
+      "report_sha256": "ee2c073d93c53b2ef7282b714db1d51a3d15c3ea03efb8f40f27b9898a4225ce"
     }
   ]
 }

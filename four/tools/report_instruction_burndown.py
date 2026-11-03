@@ -1,7 +1,7 @@
 """Report exact historical instruction holdouts and recorded proof upgrades.
 
 This is portable inventory accounting. For fresh kernel verification, run the
-two proof replayers first. No global instruction upper bound is claimed.
+registered proof replayers first. No global instruction upper bound is claimed.
 """
 import argparse
 import hashlib

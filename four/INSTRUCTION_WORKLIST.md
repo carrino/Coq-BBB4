@@ -24,18 +24,19 @@ does not change another row's ID or batch.
 
 ## Current work lanes
 
-This snapshot includes the [first worker wave](INSTRUCTION_WAVE1.md). The
+This snapshot includes the [first worker wave](INSTRUCTION_WAVE1.md) and the
+[counter generalization wave](INSTRUCTION_GENERALIZATION.md). The
 generated summary updates when accepted proof inventories or search evidence change.
 
 | Attached evidence | Open families | Suggested work |
 | :-- | --: | :-- |
-| All attached closure attempts timed out | 49 | Retry with bounded extra time |
-| At least one closure certificate was rejected | 111 | Refine the abstraction or try another recipe |
+| All attached closure attempts timed out | 77 | Retry with bounded extra time |
+| At least one closure certificate was rejected | 132 | Refine the abstraction or try another recipe |
 | A diagnostic instruction appeared sparsely | 30 | Prove its counter or phase returns |
 | A diagnostic instruction appeared frequently | 1 | Refine its graph or history |
-| An individual state proof is available | 73 | Adapt its invariants or macros to instructions |
-| No instruction diagnostic attached here | 28,350 | Triage and attach the next bounded search result |
-| **Total open** | **28,614** | |
+| An individual state proof is available | 71 | Adapt its invariants or macros to instructions |
+| No instruction diagnostic attached here | 28,281 | Triage and attach the next bounded search result |
+| **Total open** | **28,592** | |
 
 The lanes are scheduling hints. A rejection concerns one certificate; a timeout
 does not settle the machine. Finite observations do not prove recurrence or

@@ -52,6 +52,18 @@ jobs:
             four/build/instruction-sparse-return/proof/*.json
             four/build/instruction-sparse-twos/proof/*.log
             four/build/instruction-sparse-twos/proof/*.json
+            four/build/instruction-unary-pair/**/*.log
+            four/build/instruction-unary-pair/**/*.json
+            four/build/instruction-counter-context/**/*.log
+            four/build/instruction-counter-context/**/*.json
+            four/build/instruction-boundary-counter/**/*.log
+            four/build/instruction-boundary-counter/**/*.json
+            four/build/instruction-burn4/proof/*.log
+            four/build/instruction-burn4/proof/*.json
+            four/build/instruction-counter-conjugate/**/*.log
+            four/build/instruction-counter-conjugate/**/*.json
+            four/build/instruction-counter-three/**/*.log
+            four/build/instruction-counter-three/**/*.json
             four/build/instruction-replay/*
             four/build/instruction-worklist/index.html
             four/build/instruction-worklist/machines.tsv

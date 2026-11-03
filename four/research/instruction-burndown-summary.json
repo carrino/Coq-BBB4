@@ -3,14 +3,24 @@
   "historical_holdouts": 28653,
   "inputs_sha256": {
     "research/campaign-cohort.json": "5c8fe858b3a54ee06505f3b6278ab1e301e725c61ef9814e3cc4d7ad5e117f16",
-    "research/instruction-accepted-batches.json": "a252ca3e3594d17635a2c566fe298e3fc2daa7c71a604a7f7d49d9e8b9772fee",
+    "research/instruction-accepted-batches.json": "837967849ce93d9d05f5b60883552e9fbbc8672e8cd6c2c202eba7f9eddb8665",
     "research/instruction-baseline.json": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+    "research/instruction-boundary-counter-checked.json": "3cb03c3172b6bf46531bf49f72031fc6ba4ed07825ca3942c3bbfb69566b5c13",
+    "research/instruction-boundary-counter-machines.json": "195cf84ed5ba43b0430c4d21aca250479ab97db91a6fa36b88268be7239b24c5",
     "research/instruction-burn1-checked.json": "b16149f6ca841af149f90c5707f40060cd6b7f7a793e1f1639ac88d36340a43a",
     "research/instruction-burn1-machines.json": "6b366fd59f4502d5c2698e3447a7ace97c4521cc037163aa796a0b2e42ad0ae9",
     "research/instruction-burn2-checked.json": "0955ed124c216e9182c7d27abeb2ebd9f32649cd89133cf1f695f108b27ca06f",
     "research/instruction-burn2-machines.json": "3196c6ba48aa6073e343db1c12dbd5137562c0849780c38417a227252a578fe9",
     "research/instruction-burn3-checked.json": "d0fc07312712d2cbc0ab0d018ab5e6f6a7a35cb60edb9322b23d0e5734a5d438",
     "research/instruction-burn3-machines.json": "c32f9d569f06da0c5be3ea3e8b683744fdfebb6fd7a6c2f76d237c546c3317cc",
+    "research/instruction-burn4-checked.json": "3faf53641b0b2adf77d1abdf458a5e3760f3abafc6e2e2150d1d344512d16d85",
+    "research/instruction-burn4-machines.json": "cc095335b42efd3019944b8157ed90c4f76126f607dd702871e006fdbbe7c0ae",
+    "research/instruction-counter-conjugate-checked.json": "5a753018a59f1209bbd64ed513a29d17b6a85dedef2e7eaa46fdc43b114f17bd",
+    "research/instruction-counter-conjugate-machines.json": "ff8938905f5c11c4a7d76bc495b80d28d3da9458e79df9039f487b0fe936c8b9",
+    "research/instruction-counter-context-checked.json": "05145d5d4eadfddfa686c1b84cecdd66433a456e1f20fb7dde67ecaef9078f21",
+    "research/instruction-counter-context-machines.json": "b17395aabd4c9ef15f6d0fb15a3869350636c16133e2dde611b5d738e45b8f18",
+    "research/instruction-counter-three-checked.json": "ee2c073d93c53b2ef7282b714db1d51a3d15c3ea03efb8f40f27b9898a4225ce",
+    "research/instruction-counter-three-machines.json": "b3d67e4820bb6a1e6b23c2e52f8e03cab5cf7385039b2ff125552a00c3679b70",
     "research/instruction-s030-checked.json": "d25a5a46aba7b410e1b6831b7f860c27b08c4c4a56a241a5c4cb8bc8cbe426fe",
     "research/instruction-s030-machines.json": "94f6369089472bf21b16d8b2e977b20c856ed4c762a53968578739b989e7ad92",
     "research/instruction-sparse-return-checked.json": "e1e34bd6d6925e1c4205a91eaaa7cdc1eea0d6576f1ca264d7030246038ef528",
@@ -18,12 +28,14 @@
     "research/instruction-sparse-twos-checked.json": "fe837c0d54621d5dc996fbf3e587dfc76e911140ddd794d633dd0af0ec0ba177",
     "research/instruction-sparse-twos-machines.json": "c104d4d1e566b267dbf76b2298703bd19608fcb6dad3d5ecfb77a69d12c0ade6",
     "research/instruction-tails-checked.json": "0e89f2e2ae96ec0eaf853b66380d6c776d9272e83b21c70c42467d1a674e4008",
-    "research/instruction-tails-machines.json": "62e6d9b70295cb255d2b09dd3cb5d70f6aeaac36462d0fb59dab95adb723c59f"
+    "research/instruction-tails-machines.json": "62e6d9b70295cb255d2b09dd3cb5d70f6aeaac36462d0fb59dab95adb723c59f",
+    "research/instruction-unary-pair-checked.json": "a6a3d03a636638c1cc69c10ec6527d2b1e1efc9e152fc814aae34da63f7e95ad",
+    "research/instruction-unary-pair-machines.json": "f9bbe721e593607d10db3c90bd3afe1e73d94b832afc020a474803708e74f3a6"
   },
-  "new_instruction_families": 39,
+  "new_instruction_families": 61,
   "new_state_families": 0,
-  "remaining_instruction_families": 28614,
-  "remaining_machine_text_sha256": "40533b1db1dd30b06bdb40fc697ca21c397f22b159fbe5a92878d3d8fa23c9bf",
+  "remaining_instruction_families": 28592,
+  "remaining_machine_text_sha256": "cb9b3dfb531c7bdb5c7dd7f71b47d7f5c2a83f572b29ba6ee08a0847d9227289",
   "scope": "Historical hard-cohort instruction inventory; not a global instruction census theorem.",
   "upgrades": [
     {
@@ -60,6 +72,36 @@
       "name": "instruction-sparse-twos",
       "new_instruction_families": 1,
       "theorem": "BBB24SparseTwos.Inventory.sound"
+    },
+    {
+      "name": "instruction-unary-pair",
+      "new_instruction_families": 2,
+      "theorem": "BBB24InstructionUnaryPair.Inventory.sound"
+    },
+    {
+      "name": "instruction-counter-context",
+      "new_instruction_families": 4,
+      "theorem": "BBB24CounterEntry.Inventory.sound"
+    },
+    {
+      "name": "instruction-boundary-counter",
+      "new_instruction_families": 5,
+      "theorem": "BBB24BoundaryNeighbors.Inventory.sound"
+    },
+    {
+      "name": "instruction-counter-conjugate",
+      "new_instruction_families": 1,
+      "theorem": "BBB24CounterConjugate.Inventory.sound"
+    },
+    {
+      "name": "instruction-burn4",
+      "new_instruction_families": 8,
+      "theorem": "BBB24InstructionBurn4.Inventory.sound"
+    },
+    {
+      "name": "instruction-counter-three",
+      "new_instruction_families": 2,
+      "theorem": "BBB24ThreeCounter.Inventory.sound"
     }
   ]
 }
