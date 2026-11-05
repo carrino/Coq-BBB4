@@ -1,0 +1,40 @@
+{
+  "status": "untrusted finite search; not an exhaustive census",
+  "start": 32779478,
+  "cap": 500000000,
+  "mode": "state",
+  "source_files": [
+    {
+      "path": "docs/bbbt4_cull_audit.tsv",
+      "sha256": "29636ab6fd5dc9592282eb8e7434a3835ccf2a6b49a86d1fc4d59a6a285ea362",
+      "distinct_rows": 432
+    },
+    {
+      "path": "docs/bbbt4_horizon_1e10.txt",
+      "sha256": "925f945f1e76913e2d43ea7bb14e784a80d8fdbe9af8a24b533be6f83fce8145",
+      "distinct_rows": 8
+    }
+  ],
+  "scanner_source_sha256": "5da58012cd93a8f82002bb470e67f6b814459bf248caf122668bb9f2224d2ef2",
+  "driver_sha256": "234968112600a41d666e6724444605a5bd420515fa77cc5d739c5e464ff2d4b8",
+  "proof_credit": 0,
+  "canonical_candidates": 432,
+  "seconds": 90.438,
+  "outcomes": {
+    "closed-control-mask": 432
+  },
+  "state_record": {
+    "horizon": 258372146,
+    "extra_wait": 225592668,
+    "machine": "1RB1RC_1LA0LA_0RD0RC_1LD1LA",
+    "target_index": 1
+  },
+  "state_control_mask_candidates": 432,
+  "instruction_record": {
+    "horizon": 258372146,
+    "extra_wait": 225592668,
+    "machine": "1RB1RC_1LA0LA_0RD0RC_1LD1LA",
+    "target_index": 3
+  },
+  "instruction_control_mask_candidates": 0
+}

@@ -1,0 +1,355 @@
+{
+  "combined_observed_unique_rows": {
+    "duplicate_rows": 0,
+    "full_unique_rows": 22959,
+    "partial_unique_rows": 6658,
+    "rows": 29617,
+    "sorted_unique_rows_sha256": "03ad7ff9bf1ec349af4867088afbb982daec575805ccc7c33e4f87b5ef4db9f3",
+    "undefined_slots_histogram": {
+      "0": 22959,
+      "1": 6164,
+      "2": 412,
+      "3": 31,
+      "5": 44,
+      "6": 5,
+      "7": 2
+    },
+    "unique_rows": 29617
+  },
+  "coverage": {
+    "candidate_universe": "Adapt Census/TNF_QH full tree: first-use states, first move right, no cnt=1 pruning.",
+    "full_tnf_walk_performed": false,
+    "full_waiting_holdout_list_available": false,
+    "labelled_tables_including_undefined": 6975757441,
+    "labelled_total_transition_tables": 4294967296,
+    "limitations": [
+      "Listed rows are historical subsets, not all TNF leaves and not all waiting holdouts.",
+      "Legacy QHBound / NeverQuasiHalts certificates do not bound later return gaps.",
+      "Different rows may share a swap/reflection/completion orbit; no orbit quotient is computed.",
+      "state_tiers text snapshots are not re-extracted or verified against current Coq data lists.",
+      "No all-leaf tier ledger was found or regenerated; in-walk accepted leaves are absent here."
+    ],
+    "table_count_note": "Combinatorial counts only; neither is a TNF representative count.",
+    "universal_waiting_bound_proved": false
+  },
+  "external_halting_enumeration": {
+    "coverage_limitation": "oracle_lookup.py documents cnt>=1 pruning and zero full machines; unsuitable as full waiting universe.",
+    "downloaded_by_this_tool": false,
+    "license_verified": false,
+    "local_path_present": false,
+    "url": "https://docs.bbchallenge.org/CoqBB5_release_v1.0.0/BB4_verified_enumeration.csv"
+  },
+  "lists": {
+    "instruction_deferred_coq": {
+      "duplicate_rows": 0,
+      "full_unique_rows": 9941,
+      "partial_unique_rows": 983,
+      "paths": [
+        "theories/CensusTr/DeferredTr_00.v",
+        "theories/CensusTr/DeferredTr_01.v"
+      ],
+      "rows": 10924,
+      "sorted_unique_rows_sha256": "3ebf5086c8a3620f07eb55f41370c66e35da285b6a145b5585d7f25e55a5720a",
+      "undefined_slots_histogram": {
+        "0": 9941,
+        "1": 823,
+        "2": 103,
+        "3": 6,
+        "5": 44,
+        "6": 5,
+        "7": 2
+      },
+      "unique_rows": 10924
+    },
+    "instruction_deferred_v10": {
+      "duplicate_rows": 0,
+      "full_unique_rows": 9941,
+      "partial_unique_rows": 983,
+      "paths": [
+        "censustr_deferred_v10.txt"
+      ],
+      "rows": 10924,
+      "sorted_unique_rows_sha256": "3ebf5086c8a3620f07eb55f41370c66e35da285b6a145b5585d7f25e55a5720a",
+      "undefined_slots_histogram": {
+        "0": 9941,
+        "1": 823,
+        "2": 103,
+        "3": 6,
+        "5": 44,
+        "6": 5,
+        "7": 2
+      },
+      "unique_rows": 10924
+    },
+    "instruction_inwalk_v7": {
+      "duplicate_rows": 0,
+      "full_unique_rows": 9657,
+      "partial_unique_rows": 0,
+      "paths": [
+        "censustr_deferred_v7_inwalk.txt"
+      ],
+      "rows": 9657,
+      "sorted_unique_rows_sha256": "469e3bd1a0abb5bd13a323aee5854c352c71dca77a74a32901f41176a2b31b90",
+      "undefined_slots_histogram": {
+        "0": 9657
+      },
+      "unique_rows": 9657
+    },
+    "state_deferred_coq": {
+      "duplicate_rows": 0,
+      "full_unique_rows": 3619,
+      "partial_unique_rows": 1537,
+      "paths": [
+        "theories/Census/Deferred_00.v",
+        "theories/Census/Deferred_01.v",
+        "theories/Census/Deferred_02.v",
+        "theories/Census/Deferred_03.v",
+        "theories/Census/Deferred_04.v",
+        "theories/Census/Deferred_05.v",
+        "theories/Census/Deferred_06.v",
+        "theories/Census/Deferred_07.v"
+      ],
+      "rows": 5156,
+      "sorted_unique_rows_sha256": "176493d0de136441deced00457c57663f9c7b9c4d1086e500222d0d27efa8e79",
+      "undefined_slots_histogram": {
+        "0": 3619,
+        "1": 1368,
+        "2": 148,
+        "3": 21
+      },
+      "unique_rows": 5156
+    },
+    "state_holdouts": {
+      "duplicate_rows": 0,
+      "full_unique_rows": 25,
+      "partial_unique_rows": 2,
+      "paths": [
+        "tools/census_holdouts_kept.txt"
+      ],
+      "rows": 27,
+      "sorted_unique_rows_sha256": "ffb6dd1ac143d8f6d45a487dd1cb9480a31cf3792b822fe31f41a53c5aeeb4b3",
+      "undefined_slots_histogram": {
+        "0": 25,
+        "1": 2
+      },
+      "unique_rows": 27
+    },
+    "state_proven_snapshot": {
+      "duplicate_rows": 0,
+      "full_unique_rows": 5103,
+      "partial_unique_rows": 167,
+      "paths": [
+        "tools/censustr/state_tiers/proven.txt"
+      ],
+      "rows": 5270,
+      "sorted_unique_rows_sha256": "02b39858baca5b0a966883454c8ca2aa3144c5fd46a1734aca9caf06a4d94cfe",
+      "undefined_slots_histogram": {
+        "0": 5103,
+        "1": 162,
+        "2": 5
+      },
+      "unique_rows": 5270
+    },
+    "state_provenqh_snapshot": {
+      "duplicate_rows": 0,
+      "full_unique_rows": 3705,
+      "partial_unique_rows": 2812,
+      "paths": [
+        "tools/censustr/state_tiers/provenqh.txt"
+      ],
+      "rows": 6517,
+      "sorted_unique_rows_sha256": "104137e9899f0cc3667e10491e77b08f01dad58793af1d481db99b5707764228",
+      "undefined_slots_histogram": {
+        "0": 3705,
+        "1": 2727,
+        "2": 85
+      },
+      "unique_rows": 6517
+    },
+    "state_rerootqh_snapshot": {
+      "duplicate_rows": 0,
+      "full_unique_rows": 875,
+      "partial_unique_rows": 1917,
+      "paths": [
+        "tools/censustr/state_tiers/rerootqh.txt"
+      ],
+      "rows": 2792,
+      "sorted_unique_rows_sha256": "2ada2abf91dfacd0d8a9c1d82d168f95115a134f5c326482e5423e1b051cca10",
+      "undefined_slots_histogram": {
+        "0": 875,
+        "1": 1801,
+        "2": 106,
+        "3": 10
+      },
+      "unique_rows": 2792
+    },
+    "state_residue": {
+      "duplicate_rows": 0,
+      "full_unique_rows": 3594,
+      "partial_unique_rows": 1535,
+      "paths": [
+        "tools/census_residue.txt"
+      ],
+      "rows": 5129,
+      "sorted_unique_rows_sha256": "fd92cc05959b37d997d98984ca002dd6cd80a0c800e082e0bc2f5a97383e1f93",
+      "undefined_slots_histogram": {
+        "0": 3594,
+        "1": 1366,
+        "2": 148,
+        "3": 21
+      },
+      "unique_rows": 5129
+    }
+  },
+  "schema_version": 1,
+  "source_fingerprints": {
+    "LICENSE": {
+      "bytes": 668,
+      "sha256": "194beb8b28bbcf0478db7b5b42fba92aa326b8c30d2d447040694ce595ee1de3"
+    },
+    "censustr_deferred_v10.txt": {
+      "bytes": 305872,
+      "sha256": "3ebf5086c8a3620f07eb55f41370c66e35da285b6a145b5585d7f25e55a5720a"
+    },
+    "censustr_deferred_v7_inwalk.txt": {
+      "bytes": 270396,
+      "sha256": "a31d705b49fb60f1851e5260d7299cdcfcb4d29990a4b89c446bfd8d237ea758"
+    },
+    "theories/Census/Decide.v": {
+      "bytes": 50809,
+      "sha256": "dc635ffa094cb8053816630411f0cc04c5a0162f45b50dd63a601b634813c52a"
+    },
+    "theories/Census/Deferred_00.v": {
+      "bytes": 27566,
+      "sha256": "20199988143d43947c3fa06291364f51378f5f888e0596d6cf844d558051c583"
+    },
+    "theories/Census/Deferred_01.v": {
+      "bytes": 27772,
+      "sha256": "21a84a46996e5884fb4e6e9ec36b4ec8d2c427025ea394b2494a14c9c4887950"
+    },
+    "theories/Census/Deferred_02.v": {
+      "bytes": 26650,
+      "sha256": "a525901ec3c87b1ca20e38fbc35d265ef29058a7e47863fd0647ad89e01951a0"
+    },
+    "theories/Census/Deferred_03.v": {
+      "bytes": 27824,
+      "sha256": "d3088c7417be42d42175a784c1d4c2c1d64076fa0690d4fd455b60d8e12d0dfe"
+    },
+    "theories/Census/Deferred_04.v": {
+      "bytes": 28012,
+      "sha256": "f57ba74d98d0e12a0a843277c00a01ba6e54ef1571c833a84eabb4fcee9a1742"
+    },
+    "theories/Census/Deferred_05.v": {
+      "bytes": 27978,
+      "sha256": "8a7963a90fbce953538e1524f2c52a71561abc151040cba9e01dcce881aaec01"
+    },
+    "theories/Census/Deferred_06.v": {
+      "bytes": 27900,
+      "sha256": "15073a05fde4ba6131a6d09f0aa77852e08956f1d5511723c947dffa079b7d23"
+    },
+    "theories/Census/Deferred_07.v": {
+      "bytes": 27792,
+      "sha256": "7fb3f5fae13a5e4d8494207304ab5305cd8b8ee433362adbdf4a0360e8641e43"
+    },
+    "theories/Census/Deferred_Data.v": {
+      "bytes": 640,
+      "sha256": "5ca0baacf5e4374dad2495539e6840379f8b66853aad2cdb6bef2ed696fb7647"
+    },
+    "theories/Census/ProvenQH_List.v": {
+      "bytes": 147854,
+      "sha256": "7a9cd945b81f67576766b46b71fb70ebbdfce58c5ec54c4df59af6b8435e2844"
+    },
+    "theories/Census/Proven_List.v": {
+      "bytes": 109035,
+      "sha256": "ecf9a11718ecba59ac897ce9813dcb4a9b870e288e1712b18320bb54976e7927"
+    },
+    "theories/Census/RerootQH_List.v": {
+      "bytes": 2238,
+      "sha256": "394000709e6b2de2221a938af54081f195ebf66e5b873b37e520f48e167cac88"
+    },
+    "theories/Census/Run.v": {
+      "bytes": 7502,
+      "sha256": "66ab37b930cedef74c5c4ac2e6bb74efa6930eda2eb8f50e05014d38eff46394"
+    },
+    "theories/Census/Run_Compute.v": {
+      "bytes": 12592,
+      "sha256": "15c85352b1fb7d78b9f22ad2dee7a79fc36fa17e5b9d4a75a602cdad1642d044"
+    },
+    "theories/Census/TNF_QH.v": {
+      "bytes": 37396,
+      "sha256": "352167bb39ff716881e5f3ac78e28efb368a44d8bf84d8813464150c03098d5d"
+    },
+    "theories/CensusTr/DecideTr.v": {
+      "bytes": 39149,
+      "sha256": "5287a81b97fa64f1415e2bc4fd2253a92318bdeb6fddfeb298ed9a794a60ba2c"
+    },
+    "theories/CensusTr/DeferredTr_00.v": {
+      "bytes": 343454,
+      "sha256": "5497de5e532731f340e99185687e5354053d076dcae4dabe2ac7e77171fb4b59"
+    },
+    "theories/CensusTr/DeferredTr_01.v": {
+      "bytes": 125924,
+      "sha256": "d36d590416cf9af95121f2bb859c70d536b15e0d094cc037d7aff176e55cf7dc"
+    },
+    "theories/CensusTr/DeferredTr_Data.v": {
+      "bytes": 494,
+      "sha256": "da49150c9a1645bcd7a9ae0e1684a3285b6b020a2bc4b8fc0b7f846bd545bde9"
+    },
+    "theories/CensusTr/RunTr_Compute.v": {
+      "bytes": 6979,
+      "sha256": "d6ed655e651c64b20d0e37a93a9f2edb4c9043dac111a771481eae3cc4dc3205"
+    },
+    "theories/CensusTr/TNF_QHTr.v": {
+      "bytes": 17903,
+      "sha256": "4cab1ca0183219abd7ac87be59e1c86ca0c0e94ac8e1253100facda7f1822a07"
+    },
+    "tools/census_holdouts_kept.txt": {
+      "bytes": 756,
+      "sha256": "ffb6dd1ac143d8f6d45a487dd1cb9480a31cf3792b822fe31f41a53c5aeeb4b3"
+    },
+    "tools/census_ladder.c": {
+      "bytes": 26320,
+      "sha256": "d22dcea2137b9cd30d3df8049cd5e47d38d012855b4f8472be62d5dbe5836a9f"
+    },
+    "tools/census_residue.txt": {
+      "bytes": 143612,
+      "sha256": "fd92cc05959b37d997d98984ca002dd6cd80a0c800e082e0bc2f5a97383e1f93"
+    },
+    "tools/censustr/classify_deferred.py": {
+      "bytes": 3984,
+      "sha256": "5d549b9572c808b217a594aed6ca8ce2503f96c63045ff6dd8bc6c2f0ec04177"
+    },
+    "tools/censustr/state_tiers/proven.txt": {
+      "bytes": 147683,
+      "sha256": "c58d9e4a7a21d7da10af2cfced05e7f1187d6ca9f7353ec1eb2c39fa72294fd0"
+    },
+    "tools/censustr/state_tiers/provenqh.txt": {
+      "bytes": 182601,
+      "sha256": "0c441ad40a9f8d4369834e1c3df36cd56e6a11555bb1eb1d74d1dbbbe87bf11c"
+    },
+    "tools/censustr/state_tiers/rerootqh.txt": {
+      "bytes": 78301,
+      "sha256": "3f902fd3a0c128eac9b0abab82cdfdb6b3cb54258ef61c2835cc9a40b916f713"
+    },
+    "tools/gen_deferred.py": {
+      "bytes": 3720,
+      "sha256": "a4ef15fe04a17260e2e50b4d80fe4a57f701f718066d8f78157964d331c2676e"
+    },
+    "tools/nghist/BB4_verified_enumeration.README": {
+      "bytes": 138,
+      "sha256": "be16d66772a31ec6180b3fe665f2ecda2ab0b41fd32de9620664ecb8a1ef0586"
+    },
+    "tools/nghist/oracle_lookup.py": {
+      "bytes": 5472,
+      "sha256": "8fdad2b98c83e046effb98ee3817bce3126106ea2f4e9f6edca8903081265f55"
+    }
+  },
+  "state_deferred_crosscheck": {
+    "coq_literal_unique": 5156,
+    "holdouts_union_residue_unique": 5156,
+    "only_in_coq_literals": 0,
+    "only_in_text_union": 0,
+    "same_row_set": true
+  },
+  "trust": "untrusted bookkeeping; no coverage or waiting certificate"
+}

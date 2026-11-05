@@ -1,0 +1,15 @@
+-Q ../theories BBB4
+-Q theories BBBWait42
+theories/Spec.v
+theories/Recurrence.v
+theories/Transport.v
+theories/BinaryScan.v
+theories/Witness.v
+theories/Examples.v
+theories/WitnessRecord.v
+theories/LowerBounds.v
+theories/Periodic.v
+theories/Ranked.v
+theories/Census.v
+theories/Run.v
+theories/Pilot.v

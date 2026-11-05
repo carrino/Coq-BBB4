@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "trust": "untrusted candidate survey",
+  "coverage_proved": false,
+  "kernel_credit": 0,
+  "legacy_holdout_lookup_enabled": false,
+  "cycle_hash_candidates_require_exact_replay": true,
+  "root": "all",
+  "max_nodes": 20000000,
+  "gas": 130,
+  "seed_nodes": 4,
+  "virtual_root_expanded": 1,
+  "nodes_visited": 3995004,
+  "expanded_popped_nodes": 249692,
+  "expanded_nodes": 249693,
+  "halted_actual_completions": 249693,
+  "generated_children": 3995000,
+  "cycle_candidates": 1029719,
+  "translated_cycle_candidates": 2281684,
+  "ngram_candidates": 144255,
+  "unknown": 289654,
+  "pending": 0,
+  "edge_events": 0,
+  "full_nodes_visited": 3136096,
+  "ledger_rows": 3995005,
+  "budget_reached": false,
+  "tree_exhausted_untrusted": true,
+  "stack_accounting_ok": true,
+  "halt_family_semantics": "reached halt_slot must remain undefined; other undefined slots arbitrary",
+  "halted_completion_count_is_unweighted_family_count": true,
+  "candidate_bound_condition": "cutoff B >= anchor; exact Coq replay still required",
+  "family_semantics": "unknown and pending rows represent all completions, with TNF ptr retained",
+  "rungs": [
+    {
+      "n": 1,
+      "t": 0,
+      "candidates": 24667
+    },
+    {
+      "n": 2,
+      "t": 32,
+      "candidates": 65822
+    },
+    {
+      "n": 3,
+      "t": 64,
+      "candidates": 53766
+    }
+  ],
+  "execution": {
+    "command": [
+      "wait42/build/census_probe",
+      "--max-nodes",
+      "20000000",
+      "--gas",
+      "130",
+      "--rungs",
+      "1:0,2:32,3:64",
+      "--output",
+      "/tmp/bbb-wait42-full/census"
+    ],
+    "exit_code": 0,
+    "seconds": 26.515,
+    "maxrss_kib": 9216
+  },
+  "source_sha256": {
+    "tools/census_ladder.c": "d22dcea2137b9cd30d3df8049cd5e47d38d012855b4f8472be62d5dbe5836a9f",
+    "wait42/tools/census_probe.c": "d2db985c27d58ce2ef42832bd132b9eca0b147490f2bceb50861445a9c12d0c0"
+  },
+  "output_sha256": {
+    "census.summary.json": "709a2874610069d7a645edb9120eb18c0d1e9574f92623075a5c2a52fdd1f322",
+    "census.frontier.tsv": "b31124294705b30acf18f9c62b097054d819661745c7b936c1f260ee0461e267",
+    "census.residual.tsv": "352c1195a2281761cd34919aa247b5477a683e46a90da74e8fb41e1f607749f6",
+    "census.ledger.tsv": "eb56d333006aa548468ad1494bd59b39ade6e528d442cb978a67b1927f288fd7"
+  },
+  "notes": [
+    "Entire exploratory tree exhausted at these solver settings; no pending frontier.",
+    "All cycle and n-gram accepted leaves still require exact Coq replay.",
+    "Unknown count is a search backlog, not an already verified proof holdout count."
+  ]
+}

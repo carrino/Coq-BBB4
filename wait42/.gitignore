@@ -1,0 +1,10 @@
+build/
+Makefile.coq*
+.Makefile.coq.d
+*.vo
+*.vos
+*.vok
+*.glob
+.*.aux
+.coq-native/
+__pycache__/
