@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "exact_four_state_waiting_value": "open",
+  "complete_census_coverage_proved": false,
+  "periodic": {
+    "families": 204,
+    "stratified_samples": 80,
+    "recovered_certificates": 124,
+    "state_and_instruction": true,
+    "arbitrary_completions": true,
+    "recursive_audit": "passed",
+    "fixture_sha256": "17c8341097097bec1e9d3976d4bab54f7a9de012876c52c251ab5fd3643bdd34"
+  },
+  "ngram": {
+    "families": 10,
+    "widths": [
+      2,
+      3,
+      4,
+      6,
+      8
+    ],
+    "arbitrary_completions": true,
+    "recursive_audit": "passed",
+    "fixture_sha256": "f10d2b5e38e52706fb5b73e13a9bfda938b6ebe6723b862608a9739415e16f0a",
+    "audit_seconds": 31.418
+  },
+  "repeated_word": {
+    "initial_holdouts": 1,
+    "hash_sample_holdouts": 25,
+    "arbitrary_completions": true,
+    "portable_modules_compile_and_recursive_audit": "passed",
+    "proof_index_sha256": "9f0b34c5353a8729a1b5aaf61510ddee10f69885e222d559125ccd6531b4b295"
+  },
+  "checked_pilot": {
+    "before_pending": 53,
+    "before_unknown": 338,
+    "after_pending_subtree_roots": 21,
+    "after_unknown_nodes": 29,
+    "removed": 341,
+    "compile_seconds": 123.77,
+    "recursive_audit_seconds": 415.15,
+    "recursive_audit": "passed",
+    "audit_log_sha256": "8009f70a3f4d8ab3b302608cd3aaf9c2e1dd6571d9d7654decd11ed3810a5e33",
+    "count_assumptions": [],
+    "coverage": "conditional on all retained completion obligations"
+  },
+  "larger_width_wrapper": {
+    "theorem": "BBBWait42.ReplayCoverage.replay_pilot_coverage_at_width",
+    "compilation": "passed",
+    "minimum_width": 4096
+  },
+  "tests": {
+    "count": 48,
+    "status": "passed",
+    "log_sha256": "2d757257a4ef36cbdbfd7d99688885eb87ab5876062669029901e6b364a387d3"
+  },
+  "semantic_assumptions": [
+    "FunctionalExtensionality.functional_extensionality_dep"
+  ],
+  "notes": [
+    "Individual samples and pilot counts may overlap; they are not summed into a census coverage count.",
+    "The existing exact BBB proofs and lower-bound witnesses were not changed.",
+    "Final periodic provenance hardening changes generated comments only; all 204 Coq machine/certificate definitions are byte-identical after removing those comments."
+  ]
+}

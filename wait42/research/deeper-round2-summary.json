@@ -1,0 +1,708 @@
+{
+  "schema_version": 1,
+  "trust": "untrusted C candidate survey; no Coq proof replay in this run",
+  "coverage_proved": false,
+  "kernel_credit": 0,
+  "universal_coverage_credit": 0,
+  "source_fingerprints": {
+    "wait42/tools/census_probe.c": {
+      "bytes": 12047,
+      "sha256": "39a7e6a202be61931c855cc904d4b51f8f589e3790db99d0a8fa85b295b6d13f"
+    },
+    "wait42/tools/ngram_tail.inc": {
+      "bytes": 7810,
+      "sha256": "4d6908e6ce8d0c123b484044fa3c6f91080f0e0c49b7b8b1ee6ba1e039cbd3db"
+    },
+    "tools/census_ladder.c": {
+      "bytes": 26320,
+      "sha256": "d22dcea2137b9cd30d3df8049cd5e47d38d012855b4f8472be62d5dbe5836a9f"
+    }
+  },
+  "baseline": {
+    "nodes_visited": 3995004,
+    "unknown": 221186,
+    "gas": 1030,
+    "rungs": "2:100,3:200,4:400,6:800"
+  },
+  "artifacts_directory": "/tmp/wait42-deeper-round2",
+  "compile": {
+    "command": [
+      "gcc",
+      "-O2",
+      "-std=c11",
+      "wait42/tools/census_probe.c",
+      "-o",
+      "/tmp/wait42-deeper-round2/census_probe"
+    ],
+    "exit_code": 0
+  },
+  "binary": {
+    "bytes": 38792,
+    "sha256": "c7ba105709f1e6b1dfc27c1d8fe92410e84ef6e4e12a5e72f27c9af31cb2d5ce"
+  },
+  "pilot": {
+    "command": [
+      "/tmp/wait42-deeper-round2/census_probe",
+      "--max-nodes",
+      "50000",
+      "--gas",
+      "4096",
+      "--rungs",
+      "2:100,3:200,4:400,6:800,8:1600",
+      "--output",
+      "/tmp/wait42-deeper-round2/pilot"
+    ],
+    "status": "complete",
+    "exit_code": 0,
+    "wall_seconds": 4.783,
+    "wall_timeout_seconds": 120,
+    "maxrss_kib": 8444,
+    "memory_measurement": "sampled /proc VmHWM every 50ms",
+    "census": {
+      "schema_version": 1,
+      "trust": "untrusted candidate survey",
+      "coverage_proved": false,
+      "kernel_credit": 0,
+      "legacy_holdout_lookup_enabled": false,
+      "ngram_tier": "tail_ngram",
+      "ngram_checker_source": "wait42/tools/ngram_tail.inc",
+      "cycle_hash_candidates_require_exact_replay": true,
+      "root": "all",
+      "max_nodes": 50000,
+      "gas": 4096,
+      "seed_nodes": 4,
+      "virtual_root_expanded": 1,
+      "nodes_visited": 50000,
+      "expanded_popped_nodes": 3128,
+      "expanded_nodes": 3129,
+      "halted_actual_completions": 3129,
+      "generated_children": 50036,
+      "cycle_candidates": 14891,
+      "translated_cycle_candidates": 25599,
+      "ngram_candidates": 3062,
+      "unknown": 3320,
+      "pending": 40,
+      "edge_events": 0,
+      "full_nodes_visited": 39070,
+      "ledger_rows": 50001,
+      "budget_reached": true,
+      "tree_exhausted_untrusted": false,
+      "stack_accounting_ok": true,
+      "halt_family_semantics": "reached halt_slot must remain undefined; other undefined slots arbitrary",
+      "halted_completion_count_is_unweighted_family_count": true,
+      "candidate_bound_condition": "cutoff B >= anchor; exact Coq replay still required",
+      "family_semantics": "unknown and pending rows represent all completions, with TNF ptr retained",
+      "rungs": [
+        {
+          "n": 2,
+          "t": 100,
+          "candidates": 1651
+        },
+        {
+          "n": 3,
+          "t": 200,
+          "candidates": 677
+        },
+        {
+          "n": 4,
+          "t": 400,
+          "candidates": 308
+        },
+        {
+          "n": 6,
+          "t": 800,
+          "candidates": 320
+        },
+        {
+          "n": 8,
+          "t": 1600,
+          "candidates": 106
+        }
+      ]
+    },
+    "accepted_candidates_untrusted": 43552,
+    "unknown_families": 3320,
+    "pending_families": 40,
+    "accepted_proofs": 0
+  },
+  "full_run_estimate_seconds": 382.162,
+  "launch_condition": {
+    "pilot_complete": true,
+    "estimated_full_within_600_seconds": true,
+    "maxrss_below_512mib": true
+  },
+  "full_launched": true,
+  "full": {
+    "command": [
+      "/tmp/wait42-deeper-round2/census_probe",
+      "--max-nodes",
+      "20000000",
+      "--gas",
+      "4096",
+      "--rungs",
+      "2:100,3:200,4:400,6:800,8:1600",
+      "--output",
+      "/tmp/wait42-deeper-round2/full"
+    ],
+    "status": "complete",
+    "exit_code": 0,
+    "wall_seconds": 413.421,
+    "wall_timeout_seconds": 600,
+    "maxrss_kib": 8444,
+    "memory_measurement": "sampled /proc VmHWM every 50ms",
+    "census": {
+      "schema_version": 1,
+      "trust": "untrusted candidate survey",
+      "coverage_proved": false,
+      "kernel_credit": 0,
+      "legacy_holdout_lookup_enabled": false,
+      "ngram_tier": "tail_ngram",
+      "ngram_checker_source": "wait42/tools/ngram_tail.inc",
+      "cycle_hash_candidates_require_exact_replay": true,
+      "root": "all",
+      "max_nodes": 20000000,
+      "gas": 4096,
+      "seed_nodes": 4,
+      "virtual_root_expanded": 1,
+      "nodes_visited": 3995004,
+      "expanded_popped_nodes": 249692,
+      "expanded_nodes": 249693,
+      "halted_actual_completions": 249693,
+      "generated_children": 3995000,
+      "cycle_candidates": 1029750,
+      "translated_cycle_candidates": 2292139,
+      "ngram_candidates": 209349,
+      "unknown": 214074,
+      "pending": 0,
+      "edge_events": 0,
+      "full_nodes_visited": 3136096,
+      "ledger_rows": 3995005,
+      "budget_reached": false,
+      "tree_exhausted_untrusted": true,
+      "stack_accounting_ok": true,
+      "halt_family_semantics": "reached halt_slot must remain undefined; other undefined slots arbitrary",
+      "halted_completion_count_is_unweighted_family_count": true,
+      "candidate_bound_condition": "cutoff B >= anchor; exact Coq replay still required",
+      "family_semantics": "unknown and pending rows represent all completions, with TNF ptr retained",
+      "rungs": [
+        {
+          "n": 2,
+          "t": 100,
+          "candidates": 92890
+        },
+        {
+          "n": 3,
+          "t": 200,
+          "candidates": 53509
+        },
+        {
+          "n": 4,
+          "t": 400,
+          "candidates": 31014
+        },
+        {
+          "n": 6,
+          "t": 800,
+          "candidates": 24962
+        },
+        {
+          "n": 8,
+          "t": 1600,
+          "candidates": 6974
+        }
+      ]
+    },
+    "accepted_candidates_untrusted": 3531238,
+    "unknown_families": 214074,
+    "pending_families": 0,
+    "accepted_proofs": 0
+  },
+  "source_fingerprints_after": {
+    "wait42/tools/census_probe.c": {
+      "bytes": 12047,
+      "sha256": "39a7e6a202be61931c855cc904d4b51f8f589e3790db99d0a8fa85b295b6d13f"
+    },
+    "wait42/tools/ngram_tail.inc": {
+      "bytes": 7810,
+      "sha256": "4d6908e6ce8d0c123b484044fa3c6f91080f0e0c49b7b8b1ee6ba1e039cbd3db"
+    },
+    "tools/census_ladder.c": {
+      "bytes": 26320,
+      "sha256": "d22dcea2137b9cd30d3df8049cd5e47d38d012855b4f8472be62d5dbe5836a9f"
+    }
+  },
+  "source_unchanged": true,
+  "artifact_fingerprints": {
+    "compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "full.frontier.tsv": {
+      "bytes": 17,
+      "sha256": "b31124294705b30acf18f9c62b097054d819661745c7b936c1f260ee0461e267"
+    },
+    "full.ledger.tsv": {
+      "bytes": 415986972,
+      "sha256": "a4389952beb7522dcb31d0750b34b20ebfd32cfc05abe6b935b9252da062e8ad"
+    },
+    "full.residual.tsv": {
+      "bytes": 8134829,
+      "sha256": "359170d11431446ca32f3d2524006940c5161f2f64a057ed033b2c041b4de718"
+    },
+    "full.run.log": {
+      "bytes": 1421,
+      "sha256": "4aaf5dc37809b8ffd673cf556e5da19832b1179b76877d5a292a5f60c8c6b2ee"
+    },
+    "full.summary.json": {
+      "bytes": 1421,
+      "sha256": "4aaf5dc37809b8ffd673cf556e5da19832b1179b76877d5a292a5f60c8c6b2ee"
+    },
+    "pilot.frontier.tsv": {
+      "bytes": 1537,
+      "sha256": "9a1cbf90b0c2f247abd63bcd2dffc2101cedd4b5be770b229571aa869a9a06af"
+    },
+    "pilot.ledger.tsv": {
+      "bytes": 5080808,
+      "sha256": "d7081206867c5a0603e64eb9667a6d1d51561c4720e507d53c885ac095cbd5bf"
+    },
+    "pilot.residual.tsv": {
+      "bytes": 127697,
+      "sha256": "7db0926ceb474e4f589c4076462d617d3d851ad081be8b2a946a973ed7c94cbe"
+    },
+    "pilot.run.log": {
+      "bytes": 1389,
+      "sha256": "758014cdec286670744801a573d626595b3cfe6d70ac48dbce1b1551bba47b61"
+    },
+    "pilot.summary.json": {
+      "bytes": 1389,
+      "sha256": "758014cdec286670744801a573d626595b3cfe6d70ac48dbce1b1551bba47b61"
+    }
+  },
+  "comparison": {
+    "unknown_delta": -7112,
+    "nodes_visited_delta": 0,
+    "pending": 0,
+    "accepted_candidates_untrusted_delta": 7112,
+    "interpretation": "Different gas and tail-rank pruning can change the enumerated tree; candidate gains are not proof or coverage credit."
+  },
+  "baseline_exact_node_comparison": {
+    "baseline_residual_file": "/tmp/bbb-wait42-tail/census.residual.tsv",
+    "baseline_unknown_distinct_machine_ptr": 221186,
+    "exact_popped_again": 221186,
+    "not_popped_exactly": 0,
+    "new_outcomes_of_exact_popped_rows": {
+      "cycle_hash_candidate": 1,
+      "tail_ngram_candidate": 6593,
+      "translated_cycle_candidate": 642,
+      "unknown": 213950
+    },
+    "interpretation": "Exact row identities only. Not-popped rows may lie below earlier-pruned ancestors; outcomes remain untrusted and establish no family coverage."
+  },
+  "full_ngram_context_statistics": {
+    "2": {
+      "minimum": 7,
+      "maximum": 128,
+      "mean": 19.63566584131769,
+      "rows": 92890
+    },
+    "3": {
+      "minimum": 9,
+      "maximum": 254,
+      "mean": 33.85484684819376,
+      "rows": 53509
+    },
+    "4": {
+      "minimum": 10,
+      "maximum": 533,
+      "mean": 50.65496227510157,
+      "rows": 31014
+    },
+    "6": {
+      "minimum": 12,
+      "maximum": 4252,
+      "mean": 71.74156718211682,
+      "rows": 24962
+    },
+    "8": {
+      "minimum": 14,
+      "maximum": 19703,
+      "mean": 172.06094063665043,
+      "rows": 6974
+    }
+  },
+  "full_n8_candidates": {
+    "rows": 6974,
+    "full_flag_counts": {
+      "1": 6810,
+      "0": 164
+    },
+    "first_eight_examples": [
+      {
+        "index": "222",
+        "kind": "tail_ngram_candidate",
+        "machine": "0RB0LC_1LA1RB_1LB1LD_1RD1RA",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "1600",
+        "period": "-1",
+        "side": "none",
+        "ngram_n": "8",
+        "ngram_t": "1600",
+        "contexts": "70",
+        "candidate_wait_upper": "71",
+        "excursion_width": "-1",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "1462",
+        "kind": "tail_ngram_candidate",
+        "machine": "0RB0LC_1LA1RB_1RC1RD_0LB0RD",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "1600",
+        "period": "-1",
+        "side": "none",
+        "ngram_n": "8",
+        "ngram_t": "1600",
+        "contexts": "74",
+        "candidate_wait_upper": "75",
+        "excursion_width": "-1",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "2123",
+        "kind": "tail_ngram_candidate",
+        "machine": "0RB0LC_1LA1RB_0LD0LA_1RD0RB",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "1600",
+        "period": "-1",
+        "side": "none",
+        "ngram_n": "8",
+        "ngram_t": "1600",
+        "contexts": "977",
+        "candidate_wait_upper": "978",
+        "excursion_width": "-1",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "2342",
+        "kind": "tail_ngram_candidate",
+        "machine": "0RB0LC_1LA1RB_1LD0LD_1RA0LA",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "1600",
+        "period": "-1",
+        "side": "none",
+        "ngram_n": "8",
+        "ngram_t": "1600",
+        "contexts": "154",
+        "candidate_wait_upper": "155",
+        "excursion_width": "-1",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "2355",
+        "kind": "tail_ngram_candidate",
+        "machine": "0RB0LC_1LA1RB_1LD0LD_1RA1LD",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "1600",
+        "period": "-1",
+        "side": "none",
+        "ngram_n": "8",
+        "ngram_t": "1600",
+        "contexts": "186",
+        "candidate_wait_upper": "187",
+        "excursion_width": "-1",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "2896",
+        "kind": "tail_ngram_candidate",
+        "machine": "0RB0LC_1LA1RB_1LD0LA_1RD0RC",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "1600",
+        "period": "-1",
+        "side": "none",
+        "ngram_n": "8",
+        "ngram_t": "1600",
+        "contexts": "118",
+        "candidate_wait_upper": "119",
+        "excursion_width": "-1",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "4554",
+        "kind": "tail_ngram_candidate",
+        "machine": "0RB1LC_1LA1RB_0LA0LD_1RA0LA",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "1600",
+        "period": "-1",
+        "side": "none",
+        "ngram_n": "8",
+        "ngram_t": "1600",
+        "contexts": "253",
+        "candidate_wait_upper": "254",
+        "excursion_width": "-1",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "4555",
+        "kind": "tail_ngram_candidate",
+        "machine": "0RB1LC_1LA1RB_0LA0LD_0LB0LA",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "1600",
+        "period": "-1",
+        "side": "none",
+        "ngram_n": "8",
+        "ngram_t": "1600",
+        "contexts": "96",
+        "candidate_wait_upper": "97",
+        "excursion_width": "-1",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      }
+    ],
+    "interpretation": "Untrusted suggestions for future exact Coq replay; no proof credit."
+  },
+  "validation": {
+    "source_bytes_unchanged": true,
+    "reported_stack_accounting_ok": true,
+    "popped_outcomes_sum_to_visited": true,
+    "ledger_rows_equal_visited_plus_virtual_root": true,
+    "rung_sum_equals_ngram_candidates": true,
+    "ngram_rows_recount_matches": true,
+    "full_tree_exhausted_untrusted_only": true
+  },
+  "driver_sources": {
+    "run.py": {
+      "sha256": "9ee6e0fd1b01e7b8e6ba0c1f9420494010dfe54ff38231262cb13e84ed5c0a7e",
+      "bytes": 5009
+    },
+    "augment.py": {
+      "sha256": "6909b6b045bb9cec4bee7639760673463bc27643a22fd407aa42261a8033f9ad",
+      "bytes": 3857
+    },
+    "sample_ngram8.py": {
+      "bytes": 883,
+      "sha256": "7d75ae016130f3d41d64c1771851fd9cf8a749ee4831ab7faeb2a8139bb3d9dd"
+    }
+  },
+  "new_unknown_exact_nodes": {
+    "count": 124,
+    "baseline_outcomes": {
+      "translated_cycle_candidate": 124
+    },
+    "first_eight_baseline_examples": [
+      {
+        "index": "221",
+        "kind": "translated_cycle_candidate",
+        "machine": "0RB0LC_1LA1RB_1LB1LD_1RD0RA",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "872",
+        "period": "136",
+        "side": "left",
+        "ngram_n": "-1",
+        "ngram_t": "-1",
+        "contexts": "-1",
+        "candidate_wait_upper": "136",
+        "excursion_width": "11",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "12527",
+        "kind": "translated_cycle_candidate",
+        "machine": "0RB1LC_1LA1RB_1RD1LD_0LA0LC",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "941",
+        "period": "82",
+        "side": "left",
+        "ngram_n": "-1",
+        "ngram_t": "-1",
+        "contexts": "-1",
+        "candidate_wait_upper": "82",
+        "excursion_width": "5",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "63667",
+        "kind": "translated_cycle_candidate",
+        "machine": "0RB1LC_1LA0RC_1LB1LD_1RB0LA",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "933",
+        "period": "94",
+        "side": "left",
+        "ngram_n": "-1",
+        "ngram_t": "-1",
+        "contexts": "-1",
+        "candidate_wait_upper": "94",
+        "excursion_width": "9",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "159899",
+        "kind": "translated_cycle_candidate",
+        "machine": "0RB0RD_0LC1RD_1RB1LC_1LA1RA",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "942",
+        "period": "82",
+        "side": "right",
+        "ngram_n": "-1",
+        "ngram_t": "-1",
+        "contexts": "-1",
+        "candidate_wait_upper": "82",
+        "excursion_width": "5",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "237599",
+        "kind": "translated_cycle_candidate",
+        "machine": "0RB1LC_1LC1RA_1LA0LD_1RA0LC",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "934",
+        "period": "94",
+        "side": "left",
+        "ngram_n": "-1",
+        "ngram_t": "-1",
+        "contexts": "-1",
+        "candidate_wait_upper": "94",
+        "excursion_width": "6",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "261158",
+        "kind": "translated_cycle_candidate",
+        "machine": "0RB0LB_1LC1RC_1LA1RD_0RC0RA",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "958",
+        "period": "72",
+        "side": "right",
+        "ngram_n": "-1",
+        "ngram_t": "-1",
+        "contexts": "-1",
+        "candidate_wait_upper": "72",
+        "excursion_width": "11",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "262305",
+        "kind": "translated_cycle_candidate",
+        "machine": "0RB1LD_1LC0LD_1LA0LA_1RA1LC",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "967",
+        "period": "54",
+        "side": "left",
+        "ngram_n": "-1",
+        "ngram_t": "-1",
+        "contexts": "-1",
+        "candidate_wait_upper": "54",
+        "excursion_width": "6",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      },
+      {
+        "index": "321097",
+        "kind": "translated_cycle_candidate",
+        "machine": "0RB1RB_1LC1RC_1RA0LD_1LB0LC",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "973",
+        "period": "36",
+        "side": "left",
+        "ngram_n": "-1",
+        "ngram_t": "-1",
+        "contexts": "-1",
+        "candidate_wait_upper": "36",
+        "excursion_width": "9",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      }
+    ],
+    "interpretation": "A larger simulation gas is not monotone for bounded candidate extraction. These rows had untrusted candidates at baseline but remain unknown in round2.",
+    "candidate_extraction_observation": "tools/census_ladder.c:tc_candidates considers only the last two record events per side and nearest prior equal-state event. Increasing gas changes those candidate anchors; earlier certificates can fall out of this bounded search."
+  },
+  "ngram8_replay_sample": {
+    "path": "/tmp/wait42-deeper-round2/ngram8-sample.tsv",
+    "selection": "bottom SHA256(machine TAB index), ties by integer index, per full/partial stratum",
+    "rows": [
+      {
+        "index": "3449346",
+        "kind": "tail_ngram_candidate",
+        "machine": "1RB1LB_1RC0RB_1LA0LD_---1LC",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "1600",
+        "period": "-1",
+        "side": "none",
+        "ngram_n": "8",
+        "ngram_t": "1600",
+        "contexts": "82",
+        "candidate_wait_upper": "83",
+        "excursion_width": "-1",
+        "edge_event": "0",
+        "full": "0",
+        "trust": "untrusted"
+      },
+      {
+        "index": "2173235",
+        "kind": "tail_ngram_candidate",
+        "machine": "1RB1RC_0LC1RC_1LA0RD_1LB0RC",
+        "ptr": "4",
+        "halt_slot": "-1",
+        "anchor": "1600",
+        "period": "-1",
+        "side": "none",
+        "ngram_n": "8",
+        "ngram_t": "1600",
+        "contexts": "73",
+        "candidate_wait_upper": "74",
+        "excursion_width": "-1",
+        "edge_event": "0",
+        "full": "1",
+        "trust": "untrusted"
+      }
+    ],
+    "sha256": "f53209904b1f3716c4f6e6a5490bc4a3c0e82f3be875c437b39d52c881c4bf9a",
+    "purpose": "Untrusted sampled candidates reserved for root exact Coq replay; no proof credit in this summary."
+  }
+}
