@@ -1062,3 +1062,20 @@ proof-wait-small:
 	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
 	 $(MAKE) -C wait proof -j$(BUILD_JOBS)
 .PHONY: proof-wait-small
+
+# Both waiting conventions for three-state binary machines.
+proof-wait-3:
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) -C wait proof-three -j$(BUILD_JOBS)
+
+# All exact waiting values in the supported small domains.
+proof-wait-all:
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) -C wait proof-all -j$(BUILD_JOBS)
+.PHONY: proof-wait-3 proof-wait-all
+
+# Both waiting conventions for two states and three tape symbols.
+proof-wait-2-3:
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) -C wait proof-ternary -j$(BUILD_JOBS)
+.PHONY: proof-wait-2-3
