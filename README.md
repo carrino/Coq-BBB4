@@ -46,17 +46,39 @@ global instruction value is proved. Build instructions are in the
 [scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) records the completed
 burndown.
 
-## Waiting after the BBB cutoff
+## Quasihalting decision horizons
 
-The [waiting-time development](wait/README.md) proves **BBB_wait(1) = 0** and
-**BBB_wait(2) = 3** for state-based beeps. These are the least additional
-transitions after the known BBB cutoff needed to detect every state that
-will ever beep again. The observation window includes the configuration at
-the cutoff. The two-state waiting witness is `1RB0RB_1LA1LB`, targeting A.
-Run `make proof-wait-small BUILD_JOBS=2` for the exact claims and full recursive
-audit. The [formal statement](wait/theories/Spec.v) and
-[value proofs](wait/theories/Values.v) include both the upper bound and its
-minimality.
+`BBB_qh_decide(n,m)` is the **total simulation cutoff** for the proved
+post-BBB observation rule. Its instruction counterpart uses `BBB_tr(n,m)` as
+the starting cutoff. We retain `BBB_wait` for the additional transitions:
+
+```text
+BBB_qh_decide    = BBB    + BBB_wait
+BBB_qh_decide_tr = BBB_tr + BBB_wait_tr
+```
+
+The observation window includes the configuration at the BBB cutoff. By the
+horizon, a previously visited state or instruction missing from that window
+is permanently silent; if no previously visited target is missing, the
+machine does not quasihalt at that level. These are the least horizons for
+this uniform observation rule, not lower bounds on arbitrary algorithms
+that analyze the transition table. See the [definitions and proofs](wait/README.md).
+
+| Domain | State horizon (+ extra wait) | Instruction horizon (+ extra wait) | State waiting champion | Instruction waiting champion |
+| --- | ---: | ---: | --- | --- |
+| `(1,2)` | [**1** (+0)](wait/theories/Decision.v) | [**1** (+0)](wait/theories/Decision.v) | `0RA---` (A) | `0RA---` (A0) |
+| `(2,2)` | [**9** (+3)](wait/theories/Decision.v) | [**17** (+9)](wait/theories/Decision.v) | `1RB0RB_1LA1LB` (A) | `1RB0LB_1LA0RA` (B1) |
+| `(3,2)` | [**93** (+38)](wait/theories/Decision32.v) | [**228** (+173)](wait/theories/Decision32.v) | `1RB1LA_1RC1LB_1LA0RB` (A) | `1RB0LC_1LC0RA_1LA1LB` (C1) |
+| `(2,3)` | [**91** (+32)](wait/theories/Decision23.v) | [**760** (+693)](wait/theories/Decision23.v) | `1RB2LA1RA_1LB1LA2RB` (B) | `1RB2LA1RA_1LA2RA2RB` (B1) |
+
+Waiting champions maximize the delay to the first post-cutoff beep; they can
+be different from the BBB champions above. For example, the two-state
+instruction witness is silent in B1 at indices 8–16 and beeps at 17.
+All programs in this table start by moving right.
+
+Build and recursively audit all eight waiting values and the corresponding
+decision horizons with `make proof-wait-all BUILD_JOBS=2`. Use
+`make proof-wait-small BUILD_JOBS=2` for just the one- and two-state binary cases.
 
 ## What quasihalting means
 

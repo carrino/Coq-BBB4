@@ -1,6 +1,57 @@
+-Q ../theories BBB4
+-Q ../small/legacy SmallLegacy
 -Q ../small/theories SmallBB
 -Q theories BBBWait
 theories/Spec.v
+theories/SpecTr.v
 theories/Checker.v
+theories/CheckerTr.v
 theories/Recurrence.v
+theories/RecurrenceTr.v
+theories/Tail.v
 theories/Values.v
+theories/ValuesTr.v
+theories/Static.v
+theories/HistoricalWait.v
+theories/Census.v
+theories/Fast.v
+theories/Check32.v
+theories/Witness32.v
+theories/Census32/Shard00.v
+theories/Census32/Shard01.v
+theories/Census32/Shard02.v
+theories/Census32/Shard03.v
+theories/Census32/Shard04.v
+theories/Census32/Shard05.v
+theories/Census32/Shard06.v
+theories/Census32/Shard07.v
+theories/Census32/Shard08.v
+theories/Census32/Shard09.v
+theories/Census32/Shard10.v
+theories/Census32/Shard11.v
+theories/Census32/Shard12.v
+theories/Value32.v
+theories/DecisionSpec.v
+theories/Decision.v
+theories/Decision32.v
+theories/Census23.v
+theories/Witness23.v
+theories/Monotone.v
+theories/Exceptional23.v
+theories/Check23.v
+theories/Census23/Shard00.v
+theories/Census23/Shard01.v
+theories/Census23/Shard02.v
+theories/Census23/Shard03.v
+theories/Census23/Shard04.v
+theories/Census23/Shard05.v
+theories/Census23/Shard06.v
+theories/Census23/Shard07.v
+theories/Census23/Shard08.v
+theories/Census23/Shard09.v
+theories/Census23/Shard10.v
+theories/Census23/Shard11.v
+theories/Census23/Shard12.v
+theories/Value23.v
+theories/Decision23.v
+theories/WitnessZero.v

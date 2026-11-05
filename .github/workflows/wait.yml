@@ -6,6 +6,8 @@ on:
     paths:
       - 'wait/**'
       - 'small/**'
+      - 'theories/**'
+      - '_CoqProject'
       - 'Makefile'
       - 'tools/census_toolchain.sh'
       - '.github/actions/setup-native-coq/**'
@@ -14,6 +16,8 @@ on:
     paths:
       - 'wait/**'
       - 'small/**'
+      - 'theories/**'
+      - '_CoqProject'
       - 'Makefile'
       - 'tools/census_toolchain.sh'
       - '.github/actions/setup-native-coq/**'
@@ -30,9 +34,9 @@ concurrency:
 jobs:
   waiting-values:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-native-coq
       - name: Prove exact waiting times and recursively audit
-        run: opam exec -- make proof-wait-small BUILD_JOBS=2
+        run: opam exec -- make proof-wait-all BUILD_JOBS=2

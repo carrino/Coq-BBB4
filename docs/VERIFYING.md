@@ -812,21 +812,48 @@ including cross-checks on the hardest machines, is
   [`CLOSEOUT_TR.md`](CLOSEOUT_TR.md) "CI"), enforces zero `Admitted`, and
   runs the untrusted audits; tiers A and B above are local.
 
-## Waiting-time proofs
+## Waiting-time and decision-horizon proofs
 
-`make proof-wait-small BUILD_JOBS=2` proves the state-based values
-`BBB_wait(1,2) = 0` and `BBB_wait(2,2) = 3`, then runs full recursive `coqchk`.
-The waiting window includes the already-observed configuration at the BBB
-cutoff, so the final observation indices are 1 and 9 respectively.
+The waiting time counts extra transitions after BBB. `BBB_qh_decide` is the
+total simulation horizon, `BBB + BBB_wait`; its instruction counterpart uses
+`BBB_tr + BBB_wait_tr`. The observation window includes the configuration at
+the BBB cutoff. These are minima for the uniform post-cutoff observation
+rule, rather than lower bounds on arbitrary machine-analysis algorithms.
 
-The target builds only the required small binary proof dependencies. A
-successful run prints `BBB_wait12_value : BBBWait_is 1 2 1 0` and
-`BBB_wait22_value : BBBWait_is 2 2 6 3`, the definitions, their assumptions,
-and `Exact upper bounds and minimality proved; full recursive coqchk passed.`
+| Target | Exact domains, both conventions |
+| --- | --- |
+| `make proof-wait-small BUILD_JOBS=2` | `(1,2)` and `(2,2)` |
+| `make proof-wait-3 BUILD_JOBS=2` | `(3,2)` |
+| `make proof-wait-2-3 BUILD_JOBS=2` | `(2,3)` |
+| `make proof-wait-all BUILD_JOBS=2` | All four domains |
+
+Use the native Coq 8.18 toolchain described above. With it already activated,
+the direct all-values command is `make -C wait proof-all -j2`. The build first
+compiles the existing BBB results it needs, then the waiting proofs. Each
+larger domain has 13 census shards covering all 4,826,809 labeled partial
+tables. The final assembly proves coverage of every admissible table,
+including undefined transitions and arbitrary first moves.
+
+The all-values target performs a full recursive `coqchk`, then prints the
+exact waiting statements and total-horizon corollaries. Its final output is:
+
+```text
+State BBB_wait: (1,2)=0; (2,2)=3; (3,2)=38; (2,3)=32.
+Instruction BBB_wait_tr: (1,2)=0; (2,2)=9; (3,2)=173; (2,3)=693.
+State BBB_qh_decide: (1,2)=1; (2,2)=9; (3,2)=93; (2,3)=91.
+Instruction BBB_qh_decide_tr: (1,2)=1; (2,2)=17; (3,2)=228; (2,3)=760.
+All eight exact waiting values and decision horizons proved; full recursive coqchk passed.
+```
+
 The only axiom is `FunctionalExtensionality.functional_extensionality_dep`.
-Logs are in `wait/build/coqchk.log` and `wait/build/report.log`.
+Native compilation can run in parallel. The recursive kernel audit is serial
+and rechecks the census computations, so it takes longer than compiling the
+shards. The complete audit log is `wait/build/coqchk-all.log`; statements and
+assumptions are in `report.log`, `report32.log`, and `report23.log` under that
+same directory. Individual targets use `coqchk.log`, `coqchk32.log`, or
+`coqchk23.log`.
 
-With the native Coq 8.18 toolchain already activated, the equivalent command
-is `make -C wait proof -j2`. See the [waiting-time guide](../wait/README.md)
-for the definition, waiting champion, and distinction between detecting a
-chosen state and deciding whole-machine quasihalting.
+The [waiting-time guide](../wait/README.md) links each definition, exact value
+proof, and waiting champion. Both state and instruction versions also prove
+the whole-machine quasihalting decision rule. Existing proof sources and
+frozen manifests are unchanged.
