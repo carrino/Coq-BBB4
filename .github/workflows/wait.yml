@@ -1,0 +1,38 @@
+name: BBB waiting proofs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'wait/**'
+      - 'small/**'
+      - 'Makefile'
+      - 'tools/census_toolchain.sh'
+      - '.github/actions/setup-native-coq/**'
+      - '.github/workflows/wait.yml'
+  pull_request:
+    paths:
+      - 'wait/**'
+      - 'small/**'
+      - 'Makefile'
+      - 'tools/census_toolchain.sh'
+      - '.github/actions/setup-native-coq/**'
+      - '.github/workflows/wait.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bbb-wait-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  waiting-values:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Prove exact waiting times and recursively audit
+        run: opam exec -- make proof-wait-small BUILD_JOBS=2

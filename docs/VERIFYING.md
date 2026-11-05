@@ -812,3 +812,21 @@ including cross-checks on the hardest machines, is
   [`CLOSEOUT_TR.md`](CLOSEOUT_TR.md) "CI"), enforces zero `Admitted`, and
   runs the untrusted audits; tiers A and B above are local.
 
+## Waiting-time proofs
+
+`make proof-wait-small BUILD_JOBS=2` proves the state-based values
+`BBB_wait(1,2) = 0` and `BBB_wait(2,2) = 3`, then runs full recursive `coqchk`.
+The waiting window includes the already-observed configuration at the BBB
+cutoff, so the final observation indices are 1 and 9 respectively.
+
+The target builds only the required small binary proof dependencies. A
+successful run prints `BBB_wait12_value : BBBWait_is 1 2 1 0` and
+`BBB_wait22_value : BBBWait_is 2 2 6 3`, the definitions, their assumptions,
+and `Exact upper bounds and minimality proved; full recursive coqchk passed.`
+The only axiom is `FunctionalExtensionality.functional_extensionality_dep`.
+Logs are in `wait/build/coqchk.log` and `wait/build/report.log`.
+
+With the native Coq 8.18 toolchain already activated, the equivalent command
+is `make -C wait proof -j2`. See the [waiting-time guide](../wait/README.md)
+for the definition, waiting champion, and distinction between detecting a
+chosen state and deciding whole-machine quasihalting.
