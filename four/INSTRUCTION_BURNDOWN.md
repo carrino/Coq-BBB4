@@ -22,12 +22,20 @@ hard cohort, rather than the entire global instruction census.
 | Additional worker closure pilot | 15 | 28,617 |
 | S030 instruction tail | 1 | 28,616 |
 | Sparse boundary counter | 1 | 28,615 |
-| Counter with transient B0 | 1 | **28,614** |
+| Counter with transient B0 | 1 | 28,614 |
+| Shared unary-counter instruction proof | 2 | 28,612 |
+| Counter preserving arbitrary tape context | 4 | 28,608 |
+| Generic transient-B2 boundary counter | 5 | 28,603 |
+| Relabeled counter with transient A0 | 1 | 28,602 |
+| Nearby-table closure certificates | 8 | 28,594 |
+| Three-sentinel counter and its relabeling | 2 | **28,592** |
 
 Every registered batch passed full recursive `coqchk`, with zero skipped or
 reused audit modules. All-completion bounds and exact inventories are proved
 in Coq. The [first worker wave](INSTRUCTION_WAVE1.md) adds 24 instruction
-families and no new state coverage.
+families and no new state coverage. The [generalization wave](INSTRUCTION_GENERALIZATION.md)
+adds another 22: fourteen symbolic counter proofs and eight closure certificates.
+There are 61 recorded instruction proofs in total.
 
 The [baseline](research/instruction-baseline.json) freezes every remaining ID
 in compact base-17 form, its exact machine-text hash, and the historical
@@ -86,8 +94,8 @@ dependency closure. No discovery executable, old proof object or historical
 receipt is needed. Published reports stay frozen; current logs and receipts go
 below `four/build/` in its package directory.
 The reporting command writes the exact remaining list to
-`four/build/instruction-burndown/remaining.txt`. GitHub Actions runs both proof
-replays from source.
+`four/build/instruction-burndown/remaining.txt`. GitHub Actions runs all registered
+proof replays from source.
 
 The next steps are to expand the successful history pilot in bounded batches,
 classify the unsolved instruction targets, and extend the counter/phase proofs

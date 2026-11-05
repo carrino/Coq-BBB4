@@ -60,6 +60,15 @@ class InstructionWorklistTests(unittest.TestCase):
         self.assertEqual(row['state_package'], 'burn43-s071-far')
         self.assertEqual(row['proof_status'], 'open')
 
+    def test_neighbor_search_keeps_unresolved_attempts_without_proof_credit(self):
+        ledger = json.loads((ROOT / 'research/instruction-neighbor-search-ledger.json').read_text())
+        machines = {values[0] for values in ledger['rows']}
+        touched = [row for row in self.rows if row['machine'] in machines]
+        self.assertEqual(len(touched), len(machines))
+        self.assertTrue(all('neighbors:' in row['search_history'] for row in touched))
+        self.assertTrue(any(row['proof_status'] == 'open' for row in touched))
+        self.assertTrue(all(row['proof_theorem'] for row in touched if row['proof_status'] == 'proved'))
+
     def test_clean_replay_builds_inventory_and_tail_dependencies(self):
         required = {'Bootstrap', 'CertifiedBoard', 'StateOnlyCloseout', 'DualCloseout',
                     'OrbitCloseout', 'BoardManifest', 'OneStateReach', 'TotalCompletion'}

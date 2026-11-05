@@ -17,7 +17,12 @@ def command(name):
     drivers = {'instruction-tails': 'check_instruction_tails.py',
                'instruction-s030': 'check_instruction_s030.py',
                'instruction-sparse-return': 'check_instruction_sparse_return.py',
-               'instruction-sparse-twos': 'check_instruction_sparse_twos.py'}
+               'instruction-sparse-twos': 'check_instruction_sparse_twos.py',
+               'instruction-unary-pair': 'check_instruction_unary_pair.py',
+               'instruction-counter-context': 'check_instruction_counter_context.py',
+               'instruction-boundary-counter': 'check_instruction_boundary_counter.py',
+               'instruction-counter-conjugate': 'check_instruction_counter_conjugate.py',
+               'instruction-counter-three': 'check_instruction_counter_three.py'}
     if name not in drivers:
         raise ValueError('No reviewed replay driver for accepted batch: ' + name)
     return [drivers[name]]

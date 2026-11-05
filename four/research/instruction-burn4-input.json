@@ -1,0 +1,90 @@
+{
+  "baseline_report": "research/instruction-baseline.json",
+  "baseline_sha256": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+  "rows": [
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2LB3RA1LA_1RB1LA0RA1RA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2LB3RA0RB_1RB1LA3RA1RB",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2RB1LA2LB_2RB3RA0RA0LA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2LB3RA1LB_1RB1LA0RA1RA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2LA1LA2LB_2RB3RA0LB3LA",
+      "mode": "finite",
+      "size": 5
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2LB3RA0RB_1RB1LA0RA1RA",
+      "mode": "hist",
+      "size": 3
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 0,
+      "machine": "1LB2LB3RA0RA_1RB1LA3RA3LA",
+      "mode": "finite",
+      "size": 5
+    },
+    {
+      "anchor": 65536,
+      "bound": 65536,
+      "extra": 64,
+      "fuel": 32768,
+      "history": 5,
+      "machine": "1LB2LA1RA2LB_2RB3RA3RB0LA",
+      "mode": "hist",
+      "size": 3
+    }
+  ],
+  "scope": "Eight neighbor-search instruction candidates; proof credit requires full recursive kernel replay. The baseline-relative count uses the original historical cohort, not the current accepted ledger.",
+  "search_report": "research/instruction-burn4-search.json",
+  "search_sha256": "5f6907b294d1a0aeb500ebdb8b745e42b6e31c19f7551b359da5e6a5406c57a9",
+  "selected_rows": 8
+}

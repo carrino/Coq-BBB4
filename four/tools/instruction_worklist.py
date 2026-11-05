@@ -86,36 +86,38 @@ def load_rows():
             row['lane'] = 'retry_history' if all(s == 'timeout' for s in statuses) else 'refine_history'
             row['evidence'] = 'research/instruction-burn1-search.json'
 
-    wave = evidence('research/instruction-wave1-search-ledger.json')
     columns = ['machine', 'mode', 'bound', 'size', 'anchor', 'fuel', 'extra', 'history',
                'row_budget_seconds', 'status', 'seconds', 'worker']
-    if wave.get('schema_version') != 1 or wave.get('columns') != columns:
-        raise ValueError('Unknown worker search ledger schema')
-    for source in wave['sources']:
-        path = ROOT / source['path']
-        if sha(path) != source['sha256']:
-            raise ValueError('Worker search provenance differs')
-        pins[source['path']] = source['sha256']
-    attempted = {}
-    for values in wave['rows']:
-        if len(values) != len(columns):
-            raise ValueError('Incomplete worker search row')
-        item = dict(zip(columns, values))
-        if item['machine'] not in rows or item['status'] not in {'candidate', 'rejected', 'timeout', 'stack_overflow'}:
-            raise ValueError('Invalid worker search target or status')
-        attempted.setdefault(item['machine'], []).append(item)
-    for machine, attempts in attempted.items():
-        row = rows[machine]
-        recent = [item['status'] for item in attempts]
-        row['search_history'] += (';' if row['search_history'] else '') + 'wave1:' + ','.join(recent)
-        if row['proof_status'] == 'open' and row['lane'] in {'needs_triage', 'retry_history', 'refine_history'}:
-            if 'candidate' in recent:
-                row['lane'] = 'replay_candidate'
-            elif all(item['status'] == 'timeout' for item in attempts) and row['lane'] != 'refine_history':
-                row['lane'] = 'retry_history'
-            else:
-                row['lane'] = 'refine_history'
-            row['evidence'] = 'research/instruction-wave1-search-ledger.json'
+    for label, name in (('wave1', 'research/instruction-wave1-search-ledger.json'),
+                        ('neighbors', 'research/instruction-neighbor-search-ledger.json')):
+        wave = evidence(name)
+        if wave.get('schema_version') != 1 or wave.get('columns') != columns:
+            raise ValueError('Unknown worker search ledger schema')
+        for source in wave['sources']:
+            path = ROOT / source['path']
+            if sha(path) != source['sha256']:
+                raise ValueError('Worker search provenance differs')
+            pins[source['path']] = source['sha256']
+        attempted = {}
+        for values in wave['rows']:
+            if len(values) != len(columns):
+                raise ValueError('Incomplete worker search row')
+            item = dict(zip(columns, values))
+            if item['machine'] not in rows or item['status'] not in {'candidate', 'rejected', 'timeout', 'stack_overflow'}:
+                raise ValueError('Invalid worker search target or status')
+            attempted.setdefault(item['machine'], []).append(item)
+        for machine, attempts in attempted.items():
+            row = rows[machine]
+            recent = [item['status'] for item in attempts]
+            row['search_history'] += (';' if row['search_history'] else '') + label + ':' + ','.join(recent)
+            if row['proof_status'] == 'open' and row['lane'] in {'needs_triage', 'retry_history', 'refine_history'}:
+                if 'candidate' in recent:
+                    row['lane'] = 'replay_candidate'
+                elif all(item['status'] == 'timeout' for item in attempts) and row['lane'] != 'refine_history':
+                    row['lane'] = 'retry_history'
+                else:
+                    row['lane'] = 'refine_history'
+                row['evidence'] = name
 
     diagnostics = evidence('research/burn3-capacity-instruction-diagnostics.json')
     for entry in diagnostics['rows']:

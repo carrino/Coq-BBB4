@@ -1,0 +1,131 @@
+{
+  "actual_assumptions": [
+    "FunctionalExtensionality.functional_extensionality_dep"
+  ],
+  "audit_seconds": 42.207,
+  "checked_instruction_families": 1,
+  "checked_modules": 265,
+  "checked_state_families": 1,
+  "compile_seconds": {
+    "old-source/Regression.v": 0.766,
+    "old-source/TwosCounter.v": 1.619,
+    "proof/Assumptions.v": 1.368,
+    "proof/Board.v": 1.368,
+    "proof/ConjugateCounter.v": 0.868,
+    "proof/Inventory.v": 0.766,
+    "proof/Regression.v": 0.365
+  },
+  "descriptor": {
+    "board": "board",
+    "exact_inventory_theorem": "BBB24CounterConjugate.Inventory.inventory_exact",
+    "id": "instruction_counter_conjugate",
+    "instruction_bound": 1,
+    "inventories": [
+      {
+        "format": "rows",
+        "path": "research/instruction-counter-conjugate-machines.json"
+      }
+    ],
+    "load_paths": [
+      {
+        "namespace": "BBB24SparseTwos",
+        "path": "build/instruction-counter-conjugate/old-source"
+      },
+      {
+        "namespace": "BBB24CounterConjugate",
+        "path": "build/instruction-counter-conjugate/proof"
+      }
+    ],
+    "module": "BBB24CounterConjugate.Inventory",
+    "proof_source": "build/instruction-counter-conjugate/proof/Inventory.v",
+    "rows": 1,
+    "scope": "both",
+    "small_sound": "small_sound",
+    "sound": "sound",
+    "state_bound": 0,
+    "was_pending": "was_pending"
+  },
+  "exact_instruction_score": 1,
+  "inputs_sha256": {
+    "proof-sources/instruction-counter-conjugate/Board.v": "e1337b54d2ef0e878b2d09a6516cdc17278b2ebcbdc9e136efedca00ad89a467",
+    "proof-sources/instruction-counter-conjugate/ConjugateCounter.v": "07bdfd01324d6bfadc50be666e1fd83a75edda31d0e4d1a25470cacbfb7415ca",
+    "proof-sources/instruction-counter-conjugate/Inventory.v": "16716d09244b29831d855c24d2e6812d4c5c8c5b80df2b063f7ade897f380f12",
+    "proof-sources/instruction-counter-conjugate/Regression.v": "bbd11c189dc9e4edf1c2e4644eecad873f62a572631303c0f0d22e8f983293f7",
+    "proof-sources/instruction-sparse-twos/Regression.v": "0a75acecc3b79f883c30a80d48726cd54f1214ff640bdfd3d270b91dbf0e992c",
+    "proof-sources/instruction-sparse-twos/TwosCounter.v": "6886543be0b3d3a043948f1b2a5863e126bdb4050e15d592d76b51e156c6db7b",
+    "research/campaign-cohort.json": "5c8fe858b3a54ee06505f3b6278ab1e301e725c61ef9814e3cc4d7ad5e117f16",
+    "research/instruction-baseline.json": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+    "research/instruction-counter-conjugate-input.json": "9fb2378b048a93cf8a9af77e426fe674ee2c23177668a1f1bbf3edbf6d6574f5"
+  },
+  "inventory_sha256": "ff8938905f5c11c4a7d76bc495b80d28d3da9458e79df9039f487b0fe936c8b9",
+  "kernel_audit": "Full recursive stock coqchk, including old and new regression modules.",
+  "kernel_log_sha256": "d9afc43551d2211f425a6665d4e309b48f42be51d1cde22b70f127b4fda77c3d",
+  "kernel_receipt": "build/instruction-counter-conjugate/kernel-audit.json",
+  "kernel_receipt_sha256": "913a67d4b433c1d493ba4d7b2cb2feb165670f20cbc946a3385934d389b441ee",
+  "last_instruction_index": 0,
+  "new_instruction_families": 1,
+  "new_state_families": 0,
+  "object_sha256": {
+    "build/instruction-counter-conjugate/old-source/Regression.vo": "0ecf3900ae36adae6f5b95650801d5882b107b7824e7141bc4acdcaa2578471a",
+    "build/instruction-counter-conjugate/old-source/TwosCounter.vo": "335aafe3d01fd57c9365a415a38860639aab71c01dd37da7ab75885600595bb3",
+    "build/instruction-counter-conjugate/proof/Assumptions.vo": "44bc1406eba2b655da53b7767d4973deb609dc5cb8a5bece5072e421ccfdc0a2",
+    "build/instruction-counter-conjugate/proof/Board.vo": "b25bd41aa2be97bc73db2d40c3d8dc66e0fb1b5bd9d4a36f94993d800f524975",
+    "build/instruction-counter-conjugate/proof/ConjugateCounter.vo": "0a94af3558de7f06dfdde706e7e3af29313724bc5f3c2af0493aaa8b3d993489",
+    "build/instruction-counter-conjugate/proof/Inventory.vo": "dcf80848e3d3b03a22f2c88820660ee720d7da88720f632c642ae714b657eaab",
+    "build/instruction-counter-conjugate/proof/Regression.vo": "efaa2b7a090ea6b97b9849fd4cd7a3f2383aa05342753f0a8072cd94d64fc773"
+  },
+  "reused_modules": 0,
+  "scope": "One exact conjugate-counter instruction family; every completion covered.",
+  "source_sha256": {
+    "build/instruction-counter-conjugate/old-source/Regression.v": "0a75acecc3b79f883c30a80d48726cd54f1214ff640bdfd3d270b91dbf0e992c",
+    "build/instruction-counter-conjugate/old-source/TwosCounter.v": "6886543be0b3d3a043948f1b2a5863e126bdb4050e15d592d76b51e156c6db7b",
+    "build/instruction-counter-conjugate/proof/Assumptions.v": "14b902bd8e0fa15d7373cb748a0ff2fc77ca4ec1a4aeee06439cf8336f756955",
+    "build/instruction-counter-conjugate/proof/Board.v": "e1337b54d2ef0e878b2d09a6516cdc17278b2ebcbdc9e136efedca00ad89a467",
+    "build/instruction-counter-conjugate/proof/ConjugateCounter.v": "07bdfd01324d6bfadc50be666e1fd83a75edda31d0e4d1a25470cacbfb7415ca",
+    "build/instruction-counter-conjugate/proof/Inventory.v": "16716d09244b29831d855c24d2e6812d4c5c8c5b80df2b063f7ade897f380f12",
+    "build/instruction-counter-conjugate/proof/Regression.v": "bbd11c189dc9e4edf1c2e4644eecad873f62a572631303c0f0d22e8f983293f7",
+    "theories/AbstractCensus.v": "5e32a6a9fab49d8947169d58381046cc968dd5aa18a18e8b671c8c83180f60a2",
+    "theories/BellmanFord.v": "d7487f6de021acb2c7baf33f216053fee144cd99305f8eec825c6362111ff938",
+    "theories/BoardManifest.v": "ee34d205828c4980781b16c9f8460209326d5d0f342423bd1b714bcfa6dd82c3",
+    "theories/Bootstrap.v": "b66dcd5c34d43c7a8fa1f1439951b290b6b6d6a9a9786258fcadfc175ddbf1c1",
+    "theories/Bounds.v": "bf475559f516e9ec537f0fd4684dec45ae47feb433c20d280511a750889447bb",
+    "theories/CTape.v": "de393b8a5ca7c6471e2913725e5439cacfde58eaa82d39e9981d7e9aed70563e",
+    "theories/Census.v": "e5e8102721a883489af34c95800203947e35ba7fc38cda57d030c5f2e01c0f9b",
+    "theories/CensusUnion.v": "d4e178b18b2c8db7538161d74833c1998c0ed3bea8f27ef58b76741049026fab",
+    "theories/CertifiedBoard.v": "4dbdcb89ac4a903cbf950230b594eca818c342229b9d9801c69a5b66e7f0bbf7",
+    "theories/Checkers/Cycle.v": "92de321490a983b60d6ac9d2f97559753109d50d97d4f293c005afcfb9f17166",
+    "theories/Checkers/ExactClosure.v": "f0f04c3a838e49ba2cb2f0f3340011cae042920fe68c238f0b6e19bf8245b600",
+    "theories/Checkers/NGram.v": "af1fd4638d3e59274c77f7d1942d3166b9deced8ac458dccf800e204674761bf",
+    "theories/Checkers/RepWL.v": "4d81b6c888a13bda3b4b2a7ff8ef134b915696de7ba5590133120e35c58dd688",
+    "theories/Checkers/TCycler.v": "084af0ca7f33012bb53a887e65e1799288861224e9c825d8bcd20cb087900731",
+    "theories/Closeout.v": "56ca6f2d93f0521c1506d91af913e2fdc620faf1010e87e48c468f0ed92b742e",
+    "theories/Closure.v": "ac4d8c208938702326299ec2ce1f358a7f437dc4a6f405ab2d2b1bb4b8e12c92",
+    "theories/ClosureTr.v": "d84a8ebf38bdfa256c8ab3af89bb299c8a72febdaf0287f59e56f9de468f9bc6",
+    "theories/CycleCensus.v": "34cee3eda70be4e723816b27d19729aac003d6ad9793f836e618f0865e0efc11",
+    "theories/DualCloseout.v": "927e47c77c537ff99ea06a044df5b74b20d86da291d9e21c96a311addd1978c2",
+    "theories/FamilyTransport.v": "08a9435900fb92864e3741ad9db2c90fecd386cb727cb1b6da2aa42fa1b67a8d",
+    "theories/GTape.v": "f6a879375773e5fbfb1241fcdbc2a4e68526f2f18e8c5ed489f1a1abe64dccdd",
+    "theories/Instructions.v": "e5c899def2c78dd22a718253d44972bc7be08de377c5f51dc91ada8eccfdaadd",
+    "theories/Labels.v": "b720ee6feb3312111087522f844c237de80228dba7785bc80600ba946da0435e",
+    "theories/Mirror.v": "e402870ba1c3d527f31f808533f0c20fae4bcb7d5929b227af70c9cfecac6077",
+    "theories/NGramCensus.v": "e68db1c64118d1afd4471111efd53225dc1a3e01f5e60d538f20656a40f1b587",
+    "theories/OrbitCloseout.v": "f7005d5ca6ce0d3e64acdda425704eb31226192fc6bf2ae3eff71eb4be230556",
+    "theories/PattCount.v": "09704f3b1bc890a7eb665e6639a8f02d7296175964a1eabae5014e6626861637",
+    "theories/Pipeline.v": "39d410856efa102a8b7835523342ccc7fc404b6bf2474f492ef36df814e06dc6",
+    "theories/PosEnc.v": "3ead392024a5371945edbb2afc086df30ead4b1be8b2a6ef85760da90a0f0daa",
+    "theories/RankSearch.v": "0718798e0bfe380ad0b1950df7d85d0328e1cbee6a90665a1851f3854bb01d52",
+    "theories/Records.v": "995cf99fccb36f1fbbc54c6d9820ce259d9944ba973ae7db57ae7d94960e3e16",
+    "theories/RepWLCensus.v": "bb1f7e59a976509b551d2b734fa86e0b7e04fa74de4f8877d5dd2da88930eb90",
+    "theories/RepWLSearch.v": "a5bee0e13ec7d04c20e6026c164ccabfdc5515f7bc6580b21eb00ba14c57c1ab",
+    "theories/Shadow.v": "6c68cae389ad7b9198dba2bd2d30dc8403bfe6f51c439570dfa4610dd863e160",
+    "theories/Spec.v": "173d0425555e8d496742ace290695453840fb06f58caee42eb4a53afe0db1f2d",
+    "theories/StateOnlyCloseout.v": "afb65dbfc17f3eaa495a5648e6cf024137ec360d4d573b38a563e685c0dce5d2",
+    "theories/Statement.v": "ce3b64e04664a64e9e9398deda83bc05ea257689daf5ee4b1de17a3ae2fdca15",
+    "theories/StatementTr.v": "d24cad866f265739663332c11c9198bf9568c6f97bb7d795bb7d1bdc20776052",
+    "theories/Symmetry.v": "ff83de1ebfb0f8e210728e383ca1a413ddb99e19879e6caf95fb9822ced127e6",
+    "tools/check_campaign.py": "3621dcfb76d81cbe6330a454191894988e90ae2fcf7a19cdea75e98452634e29",
+    "tools/check_instruction_counter_conjugate.py": "89c2a4539ffb9b753f1246dac1c57e3665316484bcec619b13e5d0e52a551804",
+    "tools/instruction_residual.py": "a89ef638a08704dd07d821d8f4206c3306b246e9d0294010436b5d9f02a79577",
+    "tools/kernel_audit_cache_v3.py": "0323d125e53534efe41ce5c675ec3189537b6568cbf10fe057e32810835e9e0f"
+  }
+}

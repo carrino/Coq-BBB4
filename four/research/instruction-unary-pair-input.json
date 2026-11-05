@@ -1,0 +1,29 @@
+{
+  "baseline_report": "research/instruction-baseline.json",
+  "baseline_sha256": "800f71e09efd2c33b5218a79e6b40ad04664cd169fd33887c31399da67ec4f8d",
+  "instruction_bound": 0,
+  "original_input": "research/burn23-s004-s005-unary-proof-input.json",
+  "original_input_sha256": "e5fc8bead3f8aa792f624603af96ba702663257bbadaf12b780992b1fe4d42d3",
+  "original_sources_sha256": {
+    "proof-sources/burn23-s004-s005-unary/Regression.v": "b5d660c24238a53eae5d7100742224b13d42d6648eee1f00a0110850bc13c1e2",
+    "proof-sources/burn23-s004-s005-unary/UnaryPhases.v": "24deef53b40737d3367ea0a1aa8a7acf4ec766f3121e36b7a0be22d199de26a3"
+  },
+  "rows": [
+    {
+      "code": 3376288745,
+      "id": "tr24-3376288745",
+      "machine": "1LB0LA1LB1RB_3RB3RA0RB2LA"
+    },
+    {
+      "code": 3569389297,
+      "id": "tr24-3569389297",
+      "machine": "1LB0LA1LB1RB_3RB3RA2RB2LA"
+    }
+  ],
+  "state_bound": 0,
+  "templates_sha256": {
+    "proof-sources/instruction-unary-pair/Board.v": "dd208664f9f7386a01f9adba5716b20987e96d18153b158514ff19446230b44b",
+    "proof-sources/instruction-unary-pair/Regression.v": "dfe7e0da263da9c0a2000c65071b5026540979241caa51d855eadd16fe9c1b71",
+    "proof-sources/instruction-unary-pair/UnaryInstructions.v": "1dccde4cf36d8d74ec0ba7b8a0ee6befa63c4aa12c716bb5b3af3fa484afc279"
+  }
+}
