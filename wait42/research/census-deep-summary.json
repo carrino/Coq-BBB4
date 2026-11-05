@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "trust": "untrusted candidate survey",
+  "coverage_proved": false,
+  "kernel_credit": 0,
+  "legacy_holdout_lookup_enabled": false,
+  "cycle_hash_candidates_require_exact_replay": true,
+  "root": "all",
+  "max_nodes": 20000000,
+  "gas": 1030,
+  "seed_nodes": 4,
+  "virtual_root_expanded": 1,
+  "nodes_visited": 3995004,
+  "expanded_popped_nodes": 249692,
+  "expanded_nodes": 249693,
+  "halted_actual_completions": 249693,
+  "generated_children": 3995000,
+  "cycle_candidates": 1029749,
+  "translated_cycle_candidates": 2282976,
+  "ngram_candidates": 200064,
+  "unknown": 232523,
+  "pending": 0,
+  "edge_events": 0,
+  "full_nodes_visited": 3136096,
+  "ledger_rows": 3995005,
+  "budget_reached": false,
+  "tree_exhausted_untrusted": true,
+  "stack_accounting_ok": true,
+  "halt_family_semantics": "reached halt_slot must remain undefined; other undefined slots arbitrary",
+  "halted_completion_count_is_unweighted_family_count": true,
+  "candidate_bound_condition": "cutoff B >= anchor; exact Coq replay still required",
+  "family_semantics": "unknown and pending rows represent all completions, with TNF ptr retained",
+  "rungs": [
+    {
+      "n": 2,
+      "t": 100,
+      "candidates": 91492
+    },
+    {
+      "n": 3,
+      "t": 200,
+      "candidates": 53106
+    },
+    {
+      "n": 4,
+      "t": 400,
+      "candidates": 30674
+    },
+    {
+      "n": 6,
+      "t": 800,
+      "candidates": 24792
+    }
+  ],
+  "execution": {
+    "command": [
+      "wait42/build/census_probe",
+      "--max-nodes",
+      "20000000",
+      "--gas",
+      "1030",
+      "--rungs",
+      "2:100,3:200,4:400,6:800",
+      "--output",
+      "/tmp/bbb-wait42-deep/census"
+    ],
+    "exit_code": 0,
+    "seconds": 99.2,
+    "maxrss_kib": 9216
+  },
+  "source_sha256": {
+    "tools/census_ladder.c": "d22dcea2137b9cd30d3df8049cd5e47d38d012855b4f8472be62d5dbe5836a9f",
+    "wait42/tools/census_probe.c": "d2db985c27d58ce2ef42832bd132b9eca0b147490f2bceb50861445a9c12d0c0"
+  },
+  "output_sha256": {
+    "census.summary.json": "bff66031e82874f87d213475a86963f2fcbeb7cbfdeea9edfccb52b1cccb432c",
+    "census.frontier.tsv": "b31124294705b30acf18f9c62b097054d819661745c7b936c1f260ee0461e267",
+    "census.residual.tsv": "fa56f68edc24748969651185e11904f9fcf47bf23e4ba0606776d84137f957a6",
+    "census.ledger.tsv": "6ceb1ae854e1529286e1473f3c695ad28f657e6ccc69de21cd2089700e2743dd"
+  },
+  "notes": [
+    "Entire exploratory tree exhausted at these solver settings; no pending frontier.",
+    "Accepted cycle and n-gram leaves still require exact Coq replay.",
+    "This phase still requires old prefix liveness for n-grams; later tail-only ranks can improve it."
+  ]
+}

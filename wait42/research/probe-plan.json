@@ -1,0 +1,125 @@
+{
+  "build_command": "mkdir -p wait42/build && gcc -O2 -std=c11 -Wall -Wextra -Werror wait42/tools/census_probe.c -o wait42/build/census_probe",
+  "notes": [
+    "Implementation regressions used at most 1000 popped nodes. Subsequent complete exploratory passes are recorded separately in census-shallow-summary.json, census-deep-summary.json, and census-tail-summary.json.",
+    "--max-nodes and --gas are required; 0<=gas<=8192; default root all; default rungs none.",
+    "--rungs allows at most eight n:t pairs with 1<=n<=8 and 0<=t<=gas.",
+    "All-root scope explicitly records the empty-root None branch; single-root scope covers only the selected normalized subtree.",
+    "Every H pop records a halt completion family whose reached slot remains undefined, then expands all allowed defined children including the last hole.",
+    "halted_actual_completions counts unweighted terminal families, not all labelled table completions.",
+    "Cycle hash candidates and C translated-window candidates require exact Coq replay; side and excursion width are short exact-simulation metadata only.",
+    "Tail-only finite ngram candidates retain n,t,context count and a conservative contexts+1 candidate wait bound; supplied ranks/closure or search must still pass Ranked.v.",
+    "candidate_wait_upper is conditional on cutoff B>=anchor and is not a checked certificate.",
+    "Residual TSV contains unknown and pending families; all candidate ledger rows also await proof replay and receive zero current proof credit.",
+    "Frontier TSV retains the exact DFS pop order and unused-state ptr; it is saved data, not a verified resumable proof.",
+    "Legacy holdout lookup and all coarse QH-only pruning are disabled.",
+    "Byte-identical repeated pilots, accounting identities, full-machine presence, and last-hole expansion are tested.",
+    "Large-rung runtime is not bounded by max-nodes alone; measure runtime before increasing the node cap."
+  ],
+  "pilot": {
+    "budget_reached": true,
+    "candidate_bound_condition": "cutoff B >= anchor; exact Coq replay still required",
+    "coverage_proved": false,
+    "cycle_candidates": 294,
+    "cycle_hash_candidates_require_exact_replay": true,
+    "edge_events": 0,
+    "expanded_nodes": 66,
+    "expanded_popped_nodes": 65,
+    "family_semantics": "unknown and pending rows represent all completions, with TNF ptr retained",
+    "full_nodes_visited": 729,
+    "gas": 64,
+    "generated_children": 1028,
+    "halt_family_semantics": "reached halt_slot must remain undefined; other undefined slots arbitrary",
+    "halted_actual_completions": 66,
+    "halted_completion_count_is_unweighted_family_count": true,
+    "kernel_credit": 0,
+    "ledger_rows": 1001,
+    "legacy_holdout_lookup_enabled": false,
+    "max_nodes": 1000,
+    "ngram_candidates": 35,
+    "ngram_checker_source": "wait42/tools/ngram_tail.inc",
+    "ngram_tier": "tail_ngram",
+    "nodes_visited": 1000,
+    "pending": 32,
+    "root": "all",
+    "rungs": [
+      {
+        "candidates": 0,
+        "n": 1,
+        "t": 0
+      },
+      {
+        "candidates": 35,
+        "n": 2,
+        "t": 0
+      }
+    ],
+    "schema_version": 1,
+    "seed_nodes": 4,
+    "stack_accounting_ok": true,
+    "translated_cycle_candidates": 450,
+    "tree_exhausted_untrusted": false,
+    "trust": "untrusted candidate survey",
+    "unknown": 156,
+    "virtual_root_expanded": 1
+  },
+  "pilot_artifacts": {
+    "wait42/build/probe-pilot.frontier.tsv": {
+      "bytes": 1233,
+      "sha256": "086f77bf278b20ede38166a9c339d6977e10a03975e726f447206db0a53fba5a"
+    },
+    "wait42/build/probe-pilot.ledger.tsv": {
+      "bytes": 97318,
+      "sha256": "bcac13c81eb915131721845d680b3dd90983aaaa6904b05ae9e71f18a4d4c8ae"
+    },
+    "wait42/build/probe-pilot.residual.tsv": {
+      "bytes": 7161,
+      "sha256": "5322d02049d89eee8d2f5b55f9e46d000d57dba086dce8bdc25f9f5276e741b0"
+    },
+    "wait42/build/probe-pilot.summary.json": {
+      "bytes": 1260,
+      "sha256": "55b0023f8a0334a0ee343e72bd94c4e9b1ee2e3e6b779a8e9a6df1cf058458ae"
+    }
+  },
+  "pilot_command": "wait42/build/census_probe --max-nodes 1000 --gas 64 --rungs 1:0,2:0 --output wait42/build/probe-pilot",
+  "schema_version": 1,
+  "source_sha256": {
+    "tools/census_ladder.c": "d22dcea2137b9cd30d3df8049cd5e47d38d012855b4f8472be62d5dbe5836a9f",
+    "wait42/tools/census_probe.c": "39a7e6a202be61931c855cc904d4b51f8f589e3790db99d0a8fa85b295b6d13f",
+    "wait42/tools/ngram_tail.inc": "4d6908e6ce8d0c123b484044fa3c6f91080f0e0c49b7b8b1ee6ba1e039cbd3db",
+    "wait42/tools/test_census_probe.py": "4eaf78b453f463bc9a3f6c6009f56d9469399bfbabbbdf2b1118f54c9796b59f"
+  },
+  "tail_ngram_change": {
+    "behavioral_change": "Require q-avoiding-subgraph acyclicity only for states appearing in the final closed tail; do not require prefix-only states to recur.",
+    "coq_regression": {
+      "command": "PATH=/workspace/.opam/census/bin:$PATH coqc -Q theories BBB4 -Q wait42/theories BBBWait42 wait42/build/TailNGramRegression.v",
+      "inherited_axiom": "FunctionalExtensionality.functional_extensionality_dep",
+      "passed": true,
+      "source": "From Coq Require Import Arith Lia.\nFrom BBB4 Require Import BBB4_Statement.\nFrom BBBWait42 Require Import Spec Ranked.\nDefinition prefix_tail : TM := fun q s =>\n match q, s with\n | StA, S0 => Some (mkTrans S1 DR StB)\n | StB, S0 => Some (mkTrans S0 DR StB)\n | _, _ => None\n end.\nExample disappeared_prefix_checked :\n ngram_ranked_search prefix_tail 1 1 64 4 16 = true.\nProof. vm_compute. reflexivity. Qed.\nExample appearing_avoidance_cycle_rejected :\n ngram_ranked_search prefix_tail 1 0 64 4 16 = false.\nProof. vm_compute. reflexivity. Qed.\nTheorem disappeared_prefix_window : forall B, 1 <= B -> WindowBound prefix_tail B 16.\nProof.\n intros B HB. apply (ngram_ranked_search_sound prefix_tail 1 1 64 4 16 B);\n [exact HB|exact disappeared_prefix_checked].\nQed.\nPrint Assumptions disappeared_prefix_window.\n",
+      "source_sha256": "585eb4f9f909a990a0aab121cac01c1e818fd1dbf28c0a75c9c45ff584569b2f"
+    },
+    "full_sweep_run_for_this_change": true,
+    "function": "tail_ngram_check",
+    "legacy_function": "tools/census_ladder.c:ngram_check",
+    "native_regression": {
+      "anchor_0": {
+        "legacy_accepts": false,
+        "reason": "A appears in the anchor-0 closure, but B has a cycle avoiding A.",
+        "tail_accepts": false
+      },
+      "anchor_1": {
+        "legacy_accepts": false,
+        "tail_accepts": true
+      },
+      "machine": "1RB---_0RB---_------_------",
+      "n": 1
+    },
+    "source": "wait42/tools/ngram_tail.inc",
+    "tests_passed": 6,
+    "trust": "Untrusted C candidate gate; all positive rows require exact Coq replay.",
+    "unchanged": "Seed construction, donation-gated growth, closedness rebuild, and Kahn peeling.",
+    "full_sweep_summary": "wait42/research/census-tail-summary.json"
+  },
+  "test_command": "python3 -m unittest discover -s wait42/tools -p test_census_probe.py -v",
+  "trust": "untrusted bounded candidate survey; zero kernel or universal coverage credit"
+}

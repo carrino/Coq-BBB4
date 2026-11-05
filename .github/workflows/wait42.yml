@@ -1,0 +1,38 @@
+name: Four-state waiting lower bounds
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'wait42/**'
+      - 'theories/**'
+      - '_CoqProject'
+      - '.github/actions/setup-native-coq/**'
+      - '.github/workflows/wait42.yml'
+  pull_request:
+    paths:
+      - 'wait42/**'
+      - 'theories/**'
+      - '_CoqProject'
+      - '.github/actions/setup-native-coq/**'
+      - '.github/workflows/wait42.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bbb-wait42-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lower-bounds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-native-coq
+      - name: Check search tools
+        run: make -C wait42 test
+      - name: Prove and recursively audit foundations and lower bounds
+        run: opam exec -- make -C wait42 proof -j2

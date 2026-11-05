@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "trust": "untrusted candidate survey",
+  "coverage_proved": false,
+  "kernel_credit": 0,
+  "legacy_holdout_lookup_enabled": false,
+  "ngram_tier": "tail_ngram",
+  "ngram_checker_source": "wait42/tools/ngram_tail.inc",
+  "cycle_hash_candidates_require_exact_replay": true,
+  "root": "all",
+  "max_nodes": 20000000,
+  "gas": 1030,
+  "seed_nodes": 4,
+  "virtual_root_expanded": 1,
+  "nodes_visited": 3995004,
+  "expanded_popped_nodes": 249692,
+  "expanded_nodes": 249693,
+  "halted_actual_completions": 249693,
+  "generated_children": 3995000,
+  "cycle_candidates": 1029749,
+  "translated_cycle_candidates": 2282976,
+  "ngram_candidates": 211401,
+  "unknown": 221186,
+  "pending": 0,
+  "edge_events": 0,
+  "full_nodes_visited": 3136096,
+  "ledger_rows": 3995005,
+  "budget_reached": false,
+  "tree_exhausted_untrusted": true,
+  "stack_accounting_ok": true,
+  "halt_family_semantics": "reached halt_slot must remain undefined; other undefined slots arbitrary",
+  "halted_completion_count_is_unweighted_family_count": true,
+  "candidate_bound_condition": "cutoff B >= anchor; exact Coq replay still required",
+  "family_semantics": "unknown and pending rows represent all completions, with TNF ptr retained",
+  "rungs": [
+    {
+      "n": 2,
+      "t": 100,
+      "candidates": 99979
+    },
+    {
+      "n": 3,
+      "t": 200,
+      "candidates": 55202
+    },
+    {
+      "n": 4,
+      "t": 400,
+      "candidates": 31318
+    },
+    {
+      "n": 6,
+      "t": 800,
+      "candidates": 24902
+    }
+  ],
+  "execution": {
+    "command": [
+      "wait42/build/census_probe",
+      "--max-nodes",
+      "20000000",
+      "--gas",
+      "1030",
+      "--rungs",
+      "2:100,3:200,4:400,6:800",
+      "--output",
+      "/tmp/bbb-wait42-tail/census"
+    ],
+    "exit_code": 0,
+    "seconds": 94.82,
+    "maxrss_kib": 9216
+  },
+  "source_sha256": {
+    "tools/census_ladder.c": "d22dcea2137b9cd30d3df8049cd5e47d38d012855b4f8472be62d5dbe5836a9f",
+    "wait42/tools/census_probe.c": "39a7e6a202be61931c855cc904d4b51f8f589e3790db99d0a8fa85b295b6d13f",
+    "wait42/tools/ngram_tail.inc": "4d6908e6ce8d0c123b484044fa3c6f91080f0e0c49b7b8b1ee6ba1e039cbd3db"
+  },
+  "output_sha256": {
+    "census.summary.json": "2403f878c5645314743a7562c51c1466c71a8a70d0aa51ecc8d53124bc6dd726",
+    "census.frontier.tsv": "b31124294705b30acf18f9c62b097054d819661745c7b936c1f260ee0461e267",
+    "census.residual.tsv": "42b11b973e9628e12f40b3f7beb5d8976a797679d84c80a30d2a8d575a58a2c5",
+    "census.ledger.tsv": "852c450251505c76db255123e61d8a54c28db3e58a6fecbaec62b4d6fd3b9984"
+  },
+  "notes": [
+    "Entire exploratory tree exhausted at these solver settings; no pending frontier.",
+    "Every accepted cycle and n-gram leaf still needs exact Coq replay; zero kernel census credit.",
+    "Rows are normalized partial-table families, not a count of all labelled tables."
+  ],
+  "residual_distinct_machines": 221186
+}
