@@ -1,0 +1,6 @@
+-Q ../small/theories SmallBB
+-Q theories BBBWait
+theories/Spec.v
+theories/Checker.v
+theories/Recurrence.v
+theories/Values.v

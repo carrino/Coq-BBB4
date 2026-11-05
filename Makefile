@@ -1056,3 +1056,9 @@ _proof-tr-all-run:
 	@echo "functional_extensionality_dep and nothing else."
 	@echo "------------------------------------------------------------"
 .PHONY: proof-tr-all _proof-tr-all-run
+
+# State-based observation windows after the known BBB cutoff.
+proof-wait-small:
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) -C wait proof -j$(BUILD_JOBS)
+.PHONY: proof-wait-small

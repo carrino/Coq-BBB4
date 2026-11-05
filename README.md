@@ -46,6 +46,18 @@ global instruction value is proved. Build instructions are in the
 [scoreboard](https://github.com/carrino/Coq-BBB4/issues/261) records the completed
 burndown.
 
+## Waiting after the BBB cutoff
+
+The [waiting-time development](wait/README.md) proves **BBB_wait(1) = 0** and
+**BBB_wait(2) = 3** for state-based beeps. These are the least additional
+transitions after the known BBB cutoff needed to detect every state that
+will ever beep again. The observation window includes the configuration at
+the cutoff. The two-state waiting witness is `1RB0RB_1LA1LB`, targeting A.
+Run `make proof-wait-small BUILD_JOBS=2` for the exact claims and full recursive
+audit. The [formal statement](wait/theories/Spec.v) and
+[value proofs](wait/theories/Values.v) include both the upper bound and its
+minimality.
+
 ## What quasihalting means
 
 Machines start in state `A` on a two-way infinite tape filled with symbol `0`.
