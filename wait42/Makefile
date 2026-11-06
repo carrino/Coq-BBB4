@@ -4,7 +4,7 @@ COQ_PATHS = -Q ../theories BBB4 -Q theories BBBWait42
 FOUNDATION = theories/Spec.vo theories/Recurrence.vo theories/Transport.vo theories/Periodic.vo theories/Ranked.vo theories/Census.vo theories/Run.vo theories/Pilot.vo theories/Batch.vo theories/RankedCompletion.vo theories/RepeatedWord.vo theories/Resume.vo theories/ReplayPilot.vo theories/ReplayCoverage.vo
 WITNESSES = theories/LowerBounds.vo
 RESIDUAL_REPLAY = theories/ResidualReplay.vo theories/ResidualReplayMore.vo
-TIMING = theories/SweepResiduals.vo theories/ThreeStateCounter.vo theories/SweepGeneralResiduals.vo theories/ControlRankReplay/Tight.vo
+TIMING = theories/SweepResiduals.vo theories/ThreeStateCounter.vo theories/SweepGeneralResiduals.vo theories/ControlRankReplay/Tight.vo theories/PhaseRankReplay/Union.vo theories/PhaseRankTests.vo
 CORE = theories/BBB4_Spec.vo theories/BBBT4_Spec.vo theories/Census/TNF_QH.vo theories/CensusTr/TNF_QHTr.vo theories/Checkers/TCyclerN.vo theories/Checkers/NGram.vo theories/Checkers/RepWL.vo theories/Census/Deferred_Defs.vo
 
 all: dependencies Makefile.coq
@@ -55,12 +55,12 @@ proof-replay: foundation
 	@echo 'Periodic and n-gram samples plus 25 residual families recursively checked; complete census coverage remains open.'
 
 proof-timing: dependencies Makefile.coq
-	$(MAKE) -f Makefile.coq $(TIMING)
+	$(MAKE) -f Makefile.coq COQC="python3 tools/with_coq_stack.py coqc" $(TIMING)
 	@mkdir -p build
-	coqchk -silent -bytecode-compiler yes $(COQ_PATHS) BBBWait42.SweepResiduals BBBWait42.ThreeStateCounter BBBWait42.SweepGeneralResiduals BBBWait42.ControlRankReplay.Tight >build/timing-coqchk.log 2>&1
-	coqc -q $(COQ_PATHS) theories/TimingReport.v >build/timing-report.log 2>&1
+	python3 tools/with_coq_stack.py coqchk -silent -bytecode-compiler yes $(COQ_PATHS) BBBWait42.SweepResiduals BBBWait42.ThreeStateCounter BBBWait42.SweepGeneralResiduals BBBWait42.ControlRankReplay.Tight BBBWait42.PhaseRankReplay.Union BBBWait42.PhaseRankTests >build/timing-coqchk.log 2>&1
+	python3 tools/with_coq_stack.py coqc -q $(COQ_PATHS) theories/TimingReport.v >build/timing-report.log 2>&1
 	@cat build/timing-report.log
-	@echo '1,218 sweep families and 2,875 counter families recursively checked; universal waiting upper bound remains open.'
+	@echo '1,218 sweep families, 2,875 counter families, and 7,095 directional phase families recursively checked; universal waiting upper bound remains open.'
 
 build/scan: tools/scan.cpp
 	@mkdir -p build

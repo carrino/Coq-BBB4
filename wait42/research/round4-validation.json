@@ -1,0 +1,206 @@
+{
+  "scope": "state waiting bounds for exact indexed completion families; no universal census coverage claim",
+  "base_commit": "1af5c043705274517498f17073afabf6682c518e",
+  "source": {
+    "rows": 209857,
+    "sha256": "80cf46b7f7f251a6355221e6f170e3c57998b93905f6900334ba1720db7ec0eb"
+  },
+  "monotone_phases": {
+    "baseline_families": 5832,
+    "coarsened_families": 1263,
+    "distinct_new_families": 7095,
+    "cutoff": 32779478,
+    "proved_width": 98338534,
+    "width_formula": "3*B+100",
+    "theorem": "BBBWait42.PhaseRankReplay.Union.all_completions",
+    "index": "wait42/research/phase-rank-proved.tsv",
+    "index_sha256": "9e4488a707a6f13ab051d115d427c137d6ddb89046ff03ede2bdd6d51fa20cd4",
+    "method": "Checked control invariant and short anchor; target-specific phase directions, decreasing phase levels, at most two cyclic phases; conditional first-exit bounds preserve the supplied future target witness."
+  },
+  "identity_validation": {
+    "all_public_tables_match_three_fingerprinted_source_indices": true,
+    "new_index_unique": 7095,
+    "overlap_with_prior4093": 0,
+    "combined_unique_proof_index_rows": 11188,
+    "combined_index_sha256": "0881cab372c2343968f9219f181ce4a276d849c7b1ff61255f7dd57ce6996a53",
+    "current_remaining": 202762,
+    "bookkeeping_only": true,
+    "independent_root_review": {
+      "status": "PASSED",
+      "report": "/workspace/bbb-wait42-round4/root-identity-review.json",
+      "sha256": "bd5f764f0270c07ceb942618a449a15e231388531576597e31ab0e83071f6f8f",
+      "details": {
+        "checked_public_tables": 7095,
+        "source_hashes": [
+          "80cf46b7f7f251a6355221e6f170e3c57998b93905f6900334ba1720db7ec0eb",
+          "a5e78aae03bb4d8eec1c78cf7e2c6a8d442289f1c2b75e6b92ece5245f83bac9",
+          "8e4302e6c6683cd7280ad3634b42ffa1cd8064049a47fa82cbfc12c55f87ab9a"
+        ],
+        "all_three_indices_and_public_proof_index_match": true,
+        "combined_unique_index_rows": 11188,
+        "new_remaining": 202762
+      }
+    }
+  },
+  "prior_checkpoint": {
+    "families": 4093,
+    "validation": "wait42/research/round3-validation.json",
+    "index_git_ref": "1af5c043705274517498f17073afabf6682c518e",
+    "index_path": "wait42/research/proved-residuals.tsv",
+    "index_sha256": "3f2229909cbb3e0216f7f884c3f04a5a5117f2cd81e349ffaac104aff42bebaf"
+  },
+  "reduction": {
+    "trust": "exact identity bookkeeping; proof targets must be checked separately",
+    "source_sha256": "8e4302e6c6683cd7280ad3634b42ffa1cd8064049a47fa82cbfc12c55f87ab9a",
+    "source_rows": 213950,
+    "proof_indexes": [
+      {
+        "index": "proved-residuals.tsv",
+        "sha256": "0881cab372c2343968f9219f181ce4a276d849c7b1ff61255f7dd57ce6996a53",
+        "rows": 11188
+      }
+    ],
+    "unique_indexed_families": 11188,
+    "removed": 11188,
+    "remaining": 202762,
+    "pending_retained": 0,
+    "output_sha256": "ed0c1631a07f08d7b6916456062adf9dce5a82012e40b12255e2110d9ef8d045",
+    "formal_universal_coverage": false
+  },
+  "failure_retention": {
+    "trust": "UNTRUSTED search classifications; successful Coq gate needed for proof credit",
+    "source_rows": 209857,
+    "counts": {
+      "not_directional_scc_eligible": 199313,
+      "baseline_phase_nominated": 5832,
+      "coarsened_phase_nominated": 1263,
+      "no_admissible_two_cycle_phase_partition": 3449
+    },
+    "coarsening_counts": {
+      "nominated": 1263,
+      "rejected": 3449
+    },
+    "candidate_union": 7095,
+    "all_unselected_identities_retained": true,
+    "output_sha256": {
+      "full-source-outcomes-round4.tsv": "8920d26b8ca5f9067b51cc84069726383e58803311e41575017b18b809efa097",
+      "coarsening-outcomes.tsv": "c7b4e1f05eff509f63e54f22f7506175fd22c2d665545eb78c644091ec659251"
+    }
+  },
+  "native_resource_retry": {
+    "module": "Part000",
+    "initial_attempt": {
+      "returncode": 1,
+      "seconds": 3.576,
+      "stage": "native_compute compiler",
+      "observed_error": "Fatal error: exception Stack overflow; Native compiler exited with status 2",
+      "semantic_gate_verdict": null
+    },
+    "retry": {
+      "native_stack_mib": 64,
+      "address_space_limit_gib": 2,
+      "returncode": 0,
+      "seconds": 8.596,
+      "semantic_gate": "all256accepted"
+    },
+    "candidate_data_changed": false,
+    "evidence": "Recorded from the two actual coqc subprocess results; final Part000.compile.log is the successful retry."
+  },
+  "scratch_validation": {
+    "all_compiled_and_recursive_coqchk_passed": true,
+    "aggregate_audit_seconds": 27.902,
+    "source_hashes_unchanged": true,
+    "assumptions": [
+      "FunctionalExtensionality.functional_extensionality_dep"
+    ],
+    "native_stack_mib": 64,
+    "address_space_limit_gib": 2
+  },
+  "promoted_validation": {
+    "manual_compilation": "PASSED",
+    "recursive_coqchk": "PASSED",
+    "all36_sources_compiled": true,
+    "checked_roots": [
+      "BBBWait42.PhaseRankReplay.Union",
+      "BBBWait42.PhaseRankTests"
+    ],
+    "seconds": 300.392,
+    "maxrss_kib_children": 496884,
+    "sources_unchanged": true,
+    "assumptions": [
+      "FunctionalExtensionality.functional_extensionality_dep"
+    ],
+    "exact_commands_and_logs": "/workspace/bbb-wait42-round4/promoted-validation.json",
+    "validation_report_sha256": "51de8e843a98b75442b36635a7152f7aaace36063b04676d23836c12a09d4b88",
+    "proof_timing_command": "make -C wait42 proof-timing -j2",
+    "proof_timing_status": "PASSED",
+    "python_tests": {
+      "count": 82,
+      "status": "PASSED",
+      "seconds": 2.007
+    },
+    "proof_timing_exit_code": 0,
+    "integrated_recursive_coqchk": "PASSED",
+    "proof_timing_log": "/workspace/bbb-wait42-round4/proof-timing.log",
+    "proof_timing_log_sha256": "f1ab74ee99aa6883f987adb6e9663b9131d178e42d5a86149185cf067eeec022",
+    "integrated_audited_roots": [
+      "BBBWait42.SweepResiduals",
+      "BBBWait42.ThreeStateCounter",
+      "BBBWait42.SweepGeneralResiduals",
+      "BBBWait42.ControlRankReplay.Tight",
+      "BBBWait42.PhaseRankReplay.Union",
+      "BBBWait42.PhaseRankTests"
+    ]
+  },
+  "public_source_sha256": {
+    "All.v": "1165044115dff2e4064ec9405d57ce9dc2ff6b016a225dac72bb1b87ce3b12ca",
+    "Base.v": "9e62e75c1385ef075b5c01ecef3caf203f941f5dabd507d94185a809b29f69d1",
+    "ExtraAll.v": "1e46119a394156a962cfb59269bc9f935bc7210c08a1d7863f5556c0e5bbbd47",
+    "ExtraPart000.v": "c6b48f11a71cc0b36c25a77dab47b92da1fc053b14fc9396c9c909f26d657bb5",
+    "ExtraPart001.v": "12e93ca7ed380ba09ca70cbf7638e40bf84a401223d55214ce6c93494d96e6a1",
+    "ExtraPart002.v": "2bbfc775bc99069ae885b4e4356be29273aa7e6c747aafb9228ddcc9bbf04642",
+    "ExtraPart003.v": "2c41e5adfe6283fea282fc14313d4213381963748101783635c0af7255d44915",
+    "ExtraPart004.v": "66e73ed667147c8ef708a06f1b2845f024fbc36f132e3b95b9dd2660f4596a14",
+    "Part000.v": "4ac8e4348df5eabc7abec27cb09b04cbaeb75c23b555a38279f1773c13d5e7fd",
+    "Part001.v": "713f274c23b4a13074b0b3a6626e9559069ff60d10f188a25086a399c1859e9b",
+    "Part002.v": "4c53ff7bef20b6534658dbef5cb19c6abb3baefd3909b8b7ee6d2c4559cfb4b1",
+    "Part003.v": "7d710e02a611a7cf45018ff018824ff121491be4dd547796b888afce2badb6dc",
+    "Part004.v": "aff88f97d107660a09922a97cbab00d1f3c87eb4fb6e9c3d073b0ff60b75b667",
+    "Part005.v": "9ce55c7aa3c3f4eca9932e24ec00a7929c2aa6c6a974fd595daa38eed3aff9ff",
+    "Part006.v": "01d654b4771b3d22492c58e89174bcf43d3aa1326bf838707a1c6767aed83542",
+    "Part007.v": "0ed4c8ef6cfa7d9ac452ae24200169a666bbf65f5c33f71c4bd8f726a522c008",
+    "Part008.v": "c04597f784d5934a33b4a5d1c2ee309dfe654997ba6a930fe0c7362d84fc9ea8",
+    "Part009.v": "6500ba169c87912d070af3302721e7177e77703741b0246fc7aafb4a804858d7",
+    "Part010.v": "8205179d8be8fcc91b509930a4fb568d10a3c0c0b1895286df2fc1db000a6bf9",
+    "Part011.v": "945d1ddc787892712fbbeac1bd7c8312f30ec4e75012307802458b9e9d130e89",
+    "Part012.v": "91894b37acb48c9ff218d0940376c1086e5c4657e6c8d0525b50d54be943347e",
+    "Part013.v": "c2fcf20dec4af4fa35b93c688fa9cc9cb18b637041291908798078fc05a5de77",
+    "Part014.v": "695c5dc74b9a029071bd24abd0eea7727a0d52cf70edd76b6489360e2f61c478",
+    "Part015.v": "0351962558b1f05874c1dc80f4b23998fee274055af971e965337c828d186795",
+    "Part016.v": "02e44d3cedceafadde5c6034ede450a56f639af224ef1b47b9fb43897756b8ee",
+    "Part017.v": "cc6c89fd5883a24ae759c997e5afb4a1579b90b0af6c98cf79b62aef23907904",
+    "Part018.v": "e2fb1edfeb61856db1eab6acd7d50c9d3aa42b11c2549e596c27b40a358cbf0a",
+    "Part019.v": "cf44081f4029a407953471e3db540163bd2c2fc766abe79ff9d095cfc8736da6",
+    "Part020.v": "eb07d3416edf5ced0922d40b2e7a082a860cf01c62686145cd90ece13422a01b",
+    "Part021.v": "090ff7bd415465f60c16e01ea8fd0ab82c3242dafe4dd161700edac2a2dd07a2",
+    "Part022.v": "3c8d92aa9170be2b86cc1056e1df8767c8cc3ee81cf703282d27817a3440e2b4",
+    "Union.v": "4e2565ec2d0b0dcdcb5fc8d23dfe2cec6610e57d441289b451e17d98a1ba5b97"
+  },
+  "source_scripts_sha256": {
+    "discover.py": "6b1d5d33885cf6b20deff29618fc71ce081b30ad6d1750da5d369231c2a574eb",
+    "coarsen_extra.py": "69d67a53507f746bc4818c5111f8ce186996e4a670bed1c3444f7611b2fa7a33",
+    "render.py": "11cd8f03c6cbf57705534568c2a328ed99883120f49adb9e08880295ad390c69",
+    "render_extra.py": "329ac090a819fcc3b1f41eb2baaadd46e0075452814eb468ebc7b8e9c84f54c3",
+    "identity_audit.py": "e99fd02681058eea56b6158caa44dfbdc86fd50254fef5050c5f397412f53f86",
+    "retain_failures.py": "8b9a9b16ab2de9d15b4eff73ba8c0d0a1eb81ebdfed9ea0d20b9c89691f6afe0",
+    "compile.py": "88bdc4472954bad32184610139b8d5d6deeee3305ca4de2fc0a088da5ddb9bdf",
+    "prepare_public.py": "c489494b1ea7eeae898c26f3779ec9c88dcdb1e09d7ff11e340d7388123c3762"
+  },
+  "universal_coverage_proved": false,
+  "public_generic_sources_sha256": {
+    "wait42/theories/AheadShift.v": "c5d5a9dc4f1a75577ab53ef9a10e34126b84a27bed634e97514b7170c0b6c2d0",
+    "wait42/theories/MonotonePhase.v": "827ba4ed6160b6c4453e8c7b3a72b1c9c8f8db3b8ad0c43651c901fd3ca97843",
+    "wait42/theories/PhaseRank.v": "24f6e1988acc4a3c90777aecd8d46609c4a3ad999d44b4356bc37231afde62d9",
+    "wait42/theories/PhaseRankTests.v": "ce34e7f8ef9ff07fee769f5525fbf4aabdea34b4fcc3ce43ff347677812db2ee"
+  }
+}
