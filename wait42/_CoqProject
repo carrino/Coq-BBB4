@@ -13,3 +13,15 @@ theories/Ranked.v
 theories/Census.v
 theories/Run.v
 theories/Pilot.v
+theories/Batch.v
+theories/RankedCompletion.v
+theories/RepeatedWord.v
+theories/Resume.v
+theories/ResidualReplay.v
+theories/ResidualReplayMore.v
+theories/ReplayPilot.v
+theories/ReplayCoverage.v
+theories/Sweep.v
+theories/SweepResiduals.v
+theories/InvariantTimedRank.v
+theories/ThreeStateCounter.v

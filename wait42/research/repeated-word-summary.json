@@ -1,0 +1,173 @@
+{
+  "source": "/tmp/bbb-wait42-tail/census.residual.tsv",
+  "source_sha256": "42b11b973e9628e12f40b3f7beb5d8976a797679d84c80a30d2a8d575a58a2c5",
+  "source_rows": 221186,
+  "sample_method": "first1000 SHA256(kind TAB machine TAB ptr) ascending",
+  "sample_rows": 1000,
+  "source_index_min": 550,
+  "source_index_max": 220846,
+  "source_index_deciles": {
+    "4": 104,
+    "6": 101,
+    "7": 98,
+    "9": 111,
+    "3": 100,
+    "5": 95,
+    "8": 104,
+    "2": 94,
+    "1": 85,
+    "0": 108
+  },
+  "limits": {
+    "nodes": 1000,
+    "size": 64,
+    "L": [
+      3,
+      4
+    ],
+    "T": 2,
+    "anchors": [
+      0,
+      16,
+      64
+    ],
+    "attempt_wall_seconds": 5,
+    "scan_wall_seconds": 450,
+    "processes": 1
+  },
+  "wall_seconds": 20.315266688005067,
+  "cpu_seconds": 20.31226766,
+  "attempts": 5916,
+  "attempt_status_counts": {
+    "node-cap": 2479,
+    "avoiding-cycle": 3381,
+    "nominated": 25,
+    "open-successor": 18,
+    "size-cut": 13
+  },
+  "row_status_counts": {
+    "unproved-checker-rejection": 975,
+    "coq-proved-recursively-audited": 25
+  },
+  "nominations": 25,
+  "coq_checked": 25,
+  "unproved_rows": 975,
+  "replay_selected": 25,
+  "nominations_not_selected": 0,
+  "recursively_audited": 25,
+  "proof_checks": {
+    "first16_compile": {
+      "command": [
+        "coqc",
+        "-q",
+        "-Q",
+        "theories",
+        "BBB4",
+        "-Q",
+        "wait42/theories",
+        "BBBWait42",
+        "-Q",
+        "/tmp/wait42-repwl-round2",
+        "BBBWait42RepwlRound2",
+        "/tmp/wait42-repwl-round2/ReplayRound2.v"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 137.10819451502175,
+      "cpu_user_seconds": 136.652316,
+      "cpu_system_seconds": 0.23990299999999998,
+      "max_rss_kb": 517312
+    },
+    "first16_recursive_audit": {
+      "command": [
+        "coqchk",
+        "-silent",
+        "-bytecode-compiler",
+        "yes",
+        "-Q",
+        "theories",
+        "BBB4",
+        "-Q",
+        "wait42/theories",
+        "BBBWait42",
+        "-Q",
+        "/tmp/wait42-repwl-round2",
+        "BBBWait42RepwlRound2",
+        "BBBWait42RepwlRound2.ReplayRound2"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 119.36257610502071,
+      "cpu_user_seconds": 119.098124,
+      "cpu_system_seconds": 0.228078,
+      "max_rss_kb": 261252
+    },
+    "remaining9_compile": {
+      "command": [
+        "coqc",
+        "-q",
+        "-Q",
+        "theories",
+        "BBB4",
+        "-Q",
+        "wait42/theories",
+        "BBBWait42",
+        "-Q",
+        "/tmp/wait42-repwl-round2",
+        "BBBWait42RepwlRound2",
+        "/tmp/wait42-repwl-round2/ReplayRound2Rest.v"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 22.891309276019456,
+      "cpu_user_seconds": 22.059527,
+      "cpu_system_seconds": 0.764774,
+      "max_rss_kb": 536372
+    },
+    "remaining9_recursive_audit": {
+      "command": [
+        "coqchk",
+        "-silent",
+        "-bytecode-compiler",
+        "yes",
+        "-Q",
+        "theories",
+        "BBB4",
+        "-Q",
+        "wait42/theories",
+        "BBBWait42",
+        "-Q",
+        "/tmp/wait42-repwl-round2",
+        "BBBWait42RepwlRound2",
+        "BBBWait42RepwlRound2.ReplayRound2Rest"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 105.15917940001236,
+      "cpu_user_seconds": 104.902228,
+      "cpu_system_seconds": 0.22705,
+      "max_rss_kb": 255876
+    }
+  },
+  "proof_sources": {
+    "ReplayRound2": {
+      "sha256": "fa49a4b8e71525d143ef72412d139248c30ef83f4b9fcc38bb24e601e5219169",
+      "path": "/tmp/wait42-repwl-round2/ReplayRound2.v"
+    },
+    "ReplayRound2Rest": {
+      "sha256": "95171935e4e4dfb7a1674c6edcf8d8bfcbd455269db09d8f44c61294c6a4fe79",
+      "path": "/tmp/wait42-repwl-round2/ReplayRound2Rest.v"
+    }
+  },
+  "remaining_obligation": "975 sampled rows remain unproved; no coverage claim about the other220186 residual rows.",
+  "attempt_timeouts": 0,
+  "unattempted_rows": 0,
+  "assumptions_report": "/tmp/wait42-repwl-round2/assumptions.log",
+  "assumptions": [
+    "FunctionalExtensionality.functional_extensionality_dep"
+  ],
+  "assumptions_reports": 25,
+  "proof_index": "wait42/research/repeated-word-proved.tsv",
+  "proof_index_sha256": "9f0b34c5353a8729a1b5aaf61510ddee10f69885e222d559125ccd6531b4b295",
+  "portable_proof_sources": {
+    "wait42/theories/ResidualReplay.v": "8cd1b777a82ae0abed52c51bfed50fd6751dcc27e238166c8939e55b53be8ade",
+    "wait42/theories/ResidualReplayMore.v": "95171935e4e4dfb7a1674c6edcf8d8bfcbd455269db09d8f44c61294c6a4fe79"
+  },
+  "portable_replay": "make -C wait42 proof-replay; both portable modules use native_compute, followed by full recursive coqchk"
+}

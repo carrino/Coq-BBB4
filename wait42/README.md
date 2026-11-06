@@ -56,6 +56,31 @@ not an exhaustive census of four-state machines.
   ranks, giving waiting certificates from finite abstract closures.
 - [Census.v](theories/Census.v) reuses the existing TNF expansion and queue
   machinery with new waiting obligations for every accepted leaf.
+- [Batch.v](theories/Batch.v) replays periodic certificates for state and
+  instruction windows, including every completion of a partial table.
+  [RankedCompletion.v](theories/RankedCompletion.v) supplies the corresponding
+  nonhalting and completion guarantees for finite n-gram certificates.
+- [RepeatedWord.v](theories/RepeatedWord.v) proves numerical waiting bounds
+  from finite repeated-word graphs. [ResidualReplay.v](theories/ResidualReplay.v)
+  and [ResidualReplayMore.v](theories/ResidualReplayMore.v) check 25 concrete
+  holdouts; [the index](research/repeated-word-proved.tsv) names their theorems.
+- [Resume.v](theories/Resume.v) removes only checked leaves from a frontier
+  and preserves all other completion obligations. [ReplayPilot.v](theories/ReplayPilot.v)
+  reduces the 391-node pilot frontier to 21 pending subtree roots and 29 prior
+  unknown nodes. Its coverage theorem explicitly requires proofs for those
+  remaining families. This pilot and the full exploratory worklist are separate
+  coverage stages.
+  [ReplayCoverage.v](theories/ReplayCoverage.v) reuses that frontier at any proposed
+  waiting width of at least 4,096, so harder residuals can use the larger record
+  bound while the easy leaves keep their small certificates.
+- [Sweep.v](theories/Sweep.v) bounds directional sweeps using the blank tape's
+  finite support after B steps. [SweepResiduals.v](theories/SweepResiduals.v)
+  checks 745 current residual families with state waiting width B+2 for B≥6.
+- [InvariantTimedRank.v](theories/InvariantTimedRank.v) bounds a growing rank
+  at the cutoff using a step-closed invariant and a separate growth potential.
+  [ThreeStateCounter.v](theories/ThreeStateCounter.v) applies it to
+  `0RB---_0LC0RB_1LD1RD_1RB0LD`, proving state waiting width B+1 for B≥2.
+  Both results cover every completion of the partial machine tables.
 
 The old score census and its 5,156 deferred rows do not by themselves cover this
 new quantity. Qualitative recurrence leaves also need quantitative certificates.
@@ -68,6 +93,8 @@ Activate the repository's native Coq 8.18 environment, then run:
 ```sh
 make -C wait42 proof-foundation -j2  # definitions, solvers, and census contracts
 make -C wait42 proof -j2             # additionally replay and audit lower bounds
+make -C wait42 proof-replay -j2      # 204 periodic, 10 n-gram, and 25 holdout proofs
+make -C wait42 proof-timing -j2      # 745 sweeps and one three-state counter
 make -C wait42 test                  # untrusted search-tool regression checks
 make -C wait42 search                # state sweep of 432 historical candidates
 ```
@@ -82,3 +109,14 @@ Search output lives under `wait42/build/`, with source hashes and explicit
 simulation limits. A missing observation at a finite cap means unresolved, not
 permanent silence. A search solver's result has zero kernel proof credit until
 its certificate is replayed in Coq.
+
+The replay target uses small frozen samples, including all 124 periodic
+certificates missed by a deeper search pass. Each accepted certificate is
+recomputed by Coq and recursively checked. Rejections, timeouts, and malformed
+reports cannot discharge a proof obligation. Passing the sample target does
+not establish exhaustive census coverage.
+
+The timing target proves bounds for a further 746 distinct families from the
+merged residual worklist. Their windows at the BBB cutoff are at most 32,779,480
+steps, below the current state waiting lower bound of 225,592,668. The census
+still needs coverage assembly; these are not a proof of its universal upper bound.

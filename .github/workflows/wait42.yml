@@ -36,3 +36,7 @@ jobs:
         run: make -C wait42 test
       - name: Prove and recursively audit foundations and lower bounds
         run: opam exec -- make -C wait42 proof -j2
+      - name: Replay periodic and n-gram certificate samples
+        run: opam exec -- make -C wait42 proof-replay -j2
+      - name: Prove quantitative sweep and counter bounds
+        run: opam exec -- make -C wait42 proof-timing -j2

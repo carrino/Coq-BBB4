@@ -1,0 +1,11 @@
+index	kind	machine	ptr	halt_slot	anchor	period	side	ngram_n	ngram_t	contexts	candidate_wait_upper	excursion_width	edge_event	full	trust
+87557	tail_ngram_candidate	0RB0RD_1LA1RC_1LB0RC_---1RB	4	-1	100	-1	none	2	100	14	15	-1	0	0	untrusted
+2019253	tail_ngram_candidate	1RB0LD_0LC1LD_1LD1LC_0RA1LB	4	-1	100	-1	none	2	100	27	28	-1	0	1	untrusted
+3154501	tail_ngram_candidate	1RB1RD_0RC---_1LC0LA_0RA1RC	4	-1	200	-1	none	3	200	59	60	-1	0	0	untrusted
+3548540	tail_ngram_candidate	1RB0RD_1RC1RD_1LA0RA_1LA1LC	4	-1	200	-1	none	3	200	47	48	-1	0	1	untrusted
+3828053	tail_ngram_candidate	1RB0RC_1RC---_1LD0RC_0LA1RA	4	-1	400	-1	none	4	400	36	37	-1	0	0	untrusted
+1004667	tail_ngram_candidate	0RB1LC_1RC1RC_1RD0LC_0LA1RA	4	-1	400	-1	none	4	400	16	17	-1	0	1	untrusted
+3424608	tail_ngram_candidate	1RB1LD_1RC---_0LA1RD_1RB0LD	4	-1	800	-1	none	6	800	19	20	-1	0	0	untrusted
+791128	tail_ngram_candidate	0RB1LB_1RC1LB_0LB1RD_0LA0RD	4	-1	800	-1	none	6	800	31	32	-1	0	1	untrusted
+3449346	tail_ngram_candidate	1RB1LB_1RC0RB_1LA0LD_---1LC	4	-1	1600	-1	none	8	1600	82	83	-1	0	0	untrusted
+2173235	tail_ngram_candidate	1RB1RC_0LC1RC_1LA0RD_1LB0RC	4	-1	1600	-1	none	8	1600	73	74	-1	0	1	untrusted
