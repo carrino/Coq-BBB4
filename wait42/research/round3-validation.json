@@ -1,0 +1,127 @@
+{
+  "scope": "state waiting bounds for indexed completion families; universal upper bound remains open",
+  "base_commit": "14eedcd7e0dc37a1681e25fa7e79f13e3f258395",
+  "source": {
+    "rows": 213204,
+    "sha256": "a5e78aae03bb4d8eec1c78cf7e2c6a8d442289f1c2b75e6b92ece5245f83bac9"
+  },
+  "mixed_sweeps": {
+    "families": 473,
+    "width": "B + 2 for B >= 6",
+    "at_cutoff_width": 32779480,
+    "cutoff": 32779478,
+    "theorem": "BBBWait42.SweepGeneralResiduals.all_completions"
+  },
+  "control_ranks": {
+    "families": 2874,
+    "cutoff": 32779478,
+    "proved_width": 98338439,
+    "theorem": "BBBWait42.ControlRankReplay.Tight.all_completions",
+    "partial_tables": 761,
+    "full_tables": 2113,
+    "discovery_seconds": 44.704,
+    "counts_by_rejection": {
+      "no_closed_control_tail": 14962,
+      "target_no_decreasing_rank": 195368
+    },
+    "index": "wait42/research/control-rank-proved.tsv",
+    "index_sha256": "b14efa1bef84f9de13bfab53a770d161d97149fceaf7b71f58c751935fdea6f7"
+  },
+  "identity_validation": {
+    "source_sha256": "a5e78aae03bb4d8eec1c78cf7e2c6a8d442289f1c2b75e6b92ece5245f83bac9",
+    "source_rows": 213204,
+    "control_case_identities": 2874,
+    "mixed_sweep_case_identities": 473,
+    "overlap": 0,
+    "new_distinct_families": 3347,
+    "combined_unique_proof_index_rows": 4093,
+    "current_remaining": 209857,
+    "all_public_Coq_tables_match_fingerprinted_sources": true
+  },
+  "reduction": {
+    "trust": "exact identity bookkeeping; proof targets must be checked separately",
+    "source_sha256": "8e4302e6c6683cd7280ad3634b42ffa1cd8064049a47fa82cbfc12c55f87ab9a",
+    "source_rows": 213950,
+    "proof_indexes": [
+      {
+        "index": "proved-residuals.tsv",
+        "sha256": "3f2229909cbb3e0216f7f884c3f04a5a5117f2cd81e349ffaac104aff42bebaf",
+        "rows": 4093
+      }
+    ],
+    "unique_indexed_families": 4093,
+    "removed": 4093,
+    "remaining": 209857,
+    "pending_retained": 0,
+    "output_sha256": "80cf46b7f7f251a6355221e6f170e3c57998b93905f6900334ba1720db7ec0eb",
+    "formal_universal_coverage": false
+  },
+  "validation": {
+    "command": "make -C wait42 proof-timing -j2",
+    "status": "PASSED",
+    "recursive_coqchk": "PASSED",
+    "audited_roots": [
+      "BBBWait42.SweepResiduals",
+      "BBBWait42.ThreeStateCounter",
+      "BBBWait42.SweepGeneralResiduals",
+      "BBBWait42.ControlRankReplay.Tight"
+    ],
+    "assumptions": [
+      "FunctionalExtensionality.functional_extensionality_dep"
+    ],
+    "python_tests": 74,
+    "python_status": "PASSED",
+    "identity_review": "All public Coq machine tables, pointers and source indices matched to frozen worklists; all sets disjoint",
+    "bookkeeping_review_fixes": [
+      "Hash and parse the same immutable byte snapshot",
+      "Strict TSV parsing and single-line fields prevent malformed quotes from swallowing unknown rows"
+    ]
+  },
+  "portable_nominator": {
+    "path": "wait42/tools/probe_control_ranks.py",
+    "sha256": "9796b84fb1bf6e5e04fbf8f2e704559480f57a612325fffc8a475e0bfb17c80f",
+    "full_nomination_reproduction_seconds": 49.486,
+    "all_nomination_certificates_and_outcomes_match": true,
+    "final_strict_parser_validation": {
+      "strict_parser_rows": 213204,
+      "identities_and_indices_match_frozen_discovery_outcomes": true,
+      "snapshot_sha256": "a5e78aae03bb4d8eec1c78cf7e2c6a8d442289f1c2b75e6b92ece5245f83bac9",
+      "nomination_algorithm_source_unchanged": true,
+      "parser_seconds": 1.732,
+      "tool_sha256": "9796b84fb1bf6e5e04fbf8f2e704559480f57a612325fffc8a475e0bfb17c80f",
+      "test_sha256": "79fb8bacbfaa8a8c963b423c8007d28d453b3a4d33d888681da4b5a5a32769ee",
+      "tests_passed": 13,
+      "maximum_input_bytes": 134217728,
+      "snapshot_hash_binds_parsed_bytes": true
+    }
+  },
+  "next_diagnostic": {
+    "proof_status": "UNPROVED; retained on worklist",
+    "novel_at_most_two_directional_phases": 5832,
+    "one_phase": 85,
+    "two_phases": 5747,
+    "three_phases_additional": 4712,
+    "maximum_anchor": 6,
+    "disjoint_from_current_proofs": true
+  },
+  "proof_sources_sha256": {
+    "wait42/theories/SweepGeneral.v": "8c11879af2f8bf512b1e4d555799e59a67aa1e610ba5b9df1cc96d0a8ebc8cdc",
+    "wait42/theories/SweepGeneralResiduals.v": "e2fd66fd6ca2d2aaf79fb64fae6deb03a19a797903498c62f8a5eba3a21daa6c",
+    "wait42/theories/ControlRank.v": "7eb5c9386bbcb90bd7c7643d4dbb310c84140223f99d702021976b45214bbfe0",
+    "wait42/theories/ControlRankReplay/All.v": "42f8c90123f5da74daeb0bbf67072b24854044427eae00e993bba55e26cf7632",
+    "wait42/theories/ControlRankReplay/Base.v": "2b7e66aee46cafebb01bbeabbe7d5767548ca9f30bd3cf97ee28e04424ef0f59",
+    "wait42/theories/ControlRankReplay/Part000.v": "b1b8cf0778824ec0117ef7fc9d9c5c4b9a0a8cebeb6a74c2c8114a49dd33bb73",
+    "wait42/theories/ControlRankReplay/Part001.v": "97ac7ef6277c37c79e1e7bc84bcfca7018a58f7b2f170189fc1bc540e39505e6",
+    "wait42/theories/ControlRankReplay/Part002.v": "06ab8388194150568d220be45d87ed21ddacbe8aedf4929d657d088628c1d11c",
+    "wait42/theories/ControlRankReplay/Part003.v": "b352685e2291ea8e1d3789e13e70cd802e2c821ce783888de1b518fc66c4e3d3",
+    "wait42/theories/ControlRankReplay/Part004.v": "6606dd4f136f0bc1b63e6244bad80107f51157068b0e1d6d88dcbbc68a6f0b63",
+    "wait42/theories/ControlRankReplay/Part005.v": "9f86cce17e4c111ba12959f301441a1f36fe0028936b50047ef70953434a729d",
+    "wait42/theories/ControlRankReplay/Part006.v": "fbe7390461f6e3f06e7acf02706d43311c6479d01e496f3acc3919da37c104e0",
+    "wait42/theories/ControlRankReplay/Part007.v": "a8469d2e3e8e9cd9f53dc5bb41602e0f6777ca704dee35c92ebcb7bd096ea969",
+    "wait42/theories/ControlRankReplay/Part008.v": "c41a228ad470e66d59aa12d4b43bc01f01508b2b2b5ccd7e33a91e6bfeccdb90",
+    "wait42/theories/ControlRankReplay/Part009.v": "c7e34fe10e053c05794eec2de3db27be897fe444a6233a9f187597099cac8deb",
+    "wait42/theories/ControlRankReplay/Part010.v": "2e577d07ee37a51845930d42c0b049f155dba43c9cf193a06d432a2ddca10f12",
+    "wait42/theories/ControlRankReplay/Part011.v": "0ed4b2145c0e75546a890d22a2536b321adaa9b4878cad9023818f0125562823",
+    "wait42/theories/ControlRankReplay/Tight.v": "74df9a599abfffaf67118027636ad11c0475f6e51928b3e1fe4d0052031a232c"
+  }
+}

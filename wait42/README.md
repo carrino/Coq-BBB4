@@ -81,6 +81,15 @@ not an exhaustive census of four-state machines.
   [ThreeStateCounter.v](theories/ThreeStateCounter.v) applies it to
   `0RB---_0LC0RB_1LD1RD_1RB0LD`, proving state waiting width B+1 for B≥2.
   Both results cover every completion of the partial machine tables.
+- [SweepGeneral.v](theories/SweepGeneral.v) also handles scans through zeros.
+  A future beep is required: scanning into blank tape may instead escape forever.
+  [SweepGeneralResiduals.v](theories/SweepGeneralResiduals.v) checks another
+  473 families with state waiting width B+2 for B≥6.
+- [ControlRank.v](theories/ControlRank.v) checks count-and-control certificates:
+  a short anchor, closed control invariant, descending ranks for each target,
+  and a numerical bound. [ControlRankReplay/Tight.v](theories/ControlRankReplay/Tight.v)
+  proves a waiting bound of 98,338,439 at cutoff 32,779,478 for all 2,874 indexed
+  counter families and every completion of their partial tables.
 
 The old score census and its 5,156 deferred rows do not by themselves cover this
 new quantity. Qualitative recurrence leaves also need quantitative certificates.
@@ -94,7 +103,7 @@ Activate the repository's native Coq 8.18 environment, then run:
 make -C wait42 proof-foundation -j2  # definitions, solvers, and census contracts
 make -C wait42 proof -j2             # additionally replay and audit lower bounds
 make -C wait42 proof-replay -j2      # 204 periodic, 10 n-gram, and 25 holdout proofs
-make -C wait42 proof-timing -j2      # 745 sweeps and one three-state counter
+make -C wait42 proof-timing -j2      # 1,218 sweeps and 2,875 counter families
 make -C wait42 test                  # untrusted search-tool regression checks
 make -C wait42 search                # state sweep of 432 historical candidates
 ```
@@ -116,7 +125,16 @@ recomputed by Coq and recursively checked. Rejections, timeouts, and malformed
 reports cannot discharge a proof obligation. Passing the sample target does
 not establish exhaustive census coverage.
 
-The timing target proves bounds for a further 746 distinct families from the
-merged residual worklist. Their windows at the BBB cutoff are at most 32,779,480
-steps, below the current state waiting lower bound of 225,592,668. The census
-still needs coverage assembly; these are not a proof of its universal upper bound.
+The timing target proves bounds for 4,093 distinct families from the merged
+213,950-row residual worklist. Their windows at the BBB cutoff are at most
+98,338,439 steps, below the current state waiting lower bound of 225,592,668.
+The [proof index](research/proved-residuals.tsv) records each exact table and
+unused-state pointer with its theorem. The scoreboard gives the command to
+regenerate the remaining 209,857-family list. The census still needs coverage
+assembly; these family proofs do not establish its universal upper bound.
+
+`tools/probe_control_ranks.py --input <residual.tsv> --output <directory>`
+searches a chosen residual snapshot for new count/control certificates. Its
+manifest records the input hash, every rejection, and quantitative candidate
+bounds. Nomination alone earns no proof credit; the checked-in batch statements
+are independently replayed by `proof-timing`.
