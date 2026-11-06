@@ -30,6 +30,7 @@ lower bounds are not sufficient decision cutoffs yet.
 | Growing counter with three active states | 1 distinct current residual family; width B+1 at every B≥2 |
 | Sweeps through either symbol | 473 more families; conditional width B+2 at every B≥6 |
 | Checked count-and-control certificates | 2,874 more families; width 98,338,439 at cutoff 32,779,478 |
+| Composed monotone scanning phases | 7,095 more families; width 98,338,534; promoted modules recursively checked |
 | Certificate-based frontier filtering | Soundness proved; rejected nodes remain explicit |
 | Universal upper bound at the current record | Not proved |
 
@@ -48,8 +49,10 @@ pilot.
 
 ## Exploratory burndown
 
-These are **untrusted search results**, not counts of completed Coq proofs.
-Each pass traversed 3,995,004 normalized tree nodes, including 3,136,096 full
+The initial census passes are **untrusted search results**, not completed
+Coq proofs. Later replay rows subtract exact identities backed by independently
+checked family theorems; they still do not establish complete census coverage.
+Each search pass traversed 3,995,004 normalized tree nodes, including 3,136,096 full
 tables, with no pending frontier or tape-edge failures. Rows represent
 partial-table families; they are not weighted counts of all labelled machines.
 
@@ -62,8 +65,9 @@ partial-table families; they are not weighted counts of all labelled machines.
 | Preserve both passes | Verify identical family sets, then retain certificates from either pass | **213,950** | 60.0 s to merge |
 | Replay sweep and counter proofs | Remove 745 checked sweeps and one checked three-state counter | **213,204** | See timing validation below |
 | Generalized sweeps and count/control ranks | Remove 473 + 2,874 disjoint checked families | **209,857** | 44.7 s for counter discovery; every result replayed |
+| Composed monotone phases | Remove 5,832 + 1,263 disjoint checked families | **202,762** | 300.4 s promoted compilation and recursive audit |
 
-The last pass also emitted:
+The tail-rank search pass also emitted:
 
 - 249,693 halting-completion families;
 - 1,029,749 cycle candidates;
@@ -122,11 +126,36 @@ their value at the cutoff supplies the numerical waiting bound. The aggregate
 **98,338,439** for every indexed completion. The sweep batch has width
 **32,779,480** at the same cutoff.
 
-The combined [proof index](research/proved-residuals.tsv) contains **4,093**
-unique identities from the 213,950-row merged snapshot. Exact subtraction leaves
-**209,857**, with zero pending research nodes. All new certificate batches and
-their generic soundness theorems passed recursive kernel checking; the remaining
-full-census assembly obligation is unchanged. See [round-three validation](research/round3-validation.json).
+The round-three checkpoint contained **4,093** unique identities from the
+213,950-row merged snapshot, leaving **209,857**. Its exact proof index is
+retained at Git ref `1af5c043`, path `wait42/research/proved-residuals.tsv`, with
+the original hash and validation in [round-three validation](research/round3-validation.json).
+
+The new phase batch closes **7,095 more distinct families**: 5,832 original
+at-most-two-phase certificates and 1,263 additional certificates obtained by
+merging compatible monotone phases. Each target's phase assignment, internal
+direction, exit progress and cyclic-phase budget are checked. A conditional
+first-exit theorem keeps the original future-beep witness available after each
+phase. The resulting width is **3*B+100**, or **98,338,534** at the BBB cutoff.
+This argument handles growing scan lengths without assuming a finite maximum
+return gap over the entire run.
+
+The promoted [Union.all_completions](theories/PhaseRankReplay/Union.v) covers
+all 7,095 entries and every completion of their partial tables. All 36 promoted
+sources compiled, and the union plus its regression module passed recursive
+checking in 28.6 s. The initial native-compiler stack failure is retained in the
+validation record; the unchanged certificates passed with a 64 MiB child stack.
+The final combined `proof-timing` target also passed for all 11,188 indexed families.
+
+The current [combined proof index](research/proved-residuals.tsv) has **11,188**
+unique identities, with no overlap between the preceding 4,093 and new 7,095.
+Exact subtraction from the original merged snapshot leaves **202,762**, with
+zero pending research nodes. The [phase index](research/phase-rank-proved.tsv)
+and [round-four validation](research/round4-validation.json) retain source
+identities, hashes, resource failures and validation scope. The remaining rows
+include 199,313 not eligible for the directional SCC diagnostic and 3,449 for
+which no admissible two-cycle phase partition was found. They remain explicit
+obligations; this bookkeeping is not formal universal census coverage.
 
 The historical 5,156 state holdouts are not the new universe. A separate sweep
 of 432 historical rare-fire candidates produced the improved state witness;
@@ -174,10 +203,9 @@ indexed statements. Overlapping proof indexes remove a family only once.
 1. Replay emitted cycle and rank certificates with the proved checkers and
    preserve every rejection as an explicit obligation.
 2. Add repeated-word and counter timing certificates for the residual families.
-   The count/control checker now settles 2,874 additional families. A graph
-   diagnostic found 5,832 further candidates with at most two directional
-   scanning phases per target. They remain **unproved and on the worklist**;
-   the next task is a quantitative theorem for composing those phases.
+   The count/control and composed-phase checkers now settle additional
+   families. The remaining 3,449 directional candidates need stronger phase
+   composition or another certificate; all other failures also remain explicit.
 3. Apply symmetry and blank-prefix transport with the correct cutoff shifts.
 4. Assemble a universal upper bound matching a concrete lower-bound witness.
 
@@ -185,9 +213,13 @@ Validation uses Coq 8.18.0, recursive `coqchk`, and search/replay boundary tests
 The replay target passed for 204 periodic, 10 n-gram, and 25 sampled holdout
 families. The strengthened pilot passed a separate full recursive audit in
 6m55s. The expanded timing target passed for all 4,093 indexed families,
-including the narrower counter bound. All 74 tool tests pass.
+including the narrower counter bound. All 74 tool tests passed at that
+checkpoint. The current 7,095 phase families passed the separate promoted-module
+audit. The expanded combined timing target passed for all 11,188 indexed
+families, and all 82 current tool tests pass.
 [Replay validation](research/replay-validation.json) and
-[timing validation](research/round3-validation.json) distinguish compilation
+[round-three validation](research/round3-validation.json) and
+[round-four validation](research/round4-validation.json) distinguish compilation
 from independent recursive audits.
 The only assumption in the semantic results is the repository's existing
 `FunctionalExtensionality.functional_extensionality_dep`. Existing BBB proof
