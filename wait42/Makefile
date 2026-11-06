@@ -1,7 +1,7 @@
 .PHONY: all foundation lower-bounds dependencies proof proof-foundation proof-replay proof-timing search test clean
 
 COQ_PATHS = -Q ../theories BBB4 -Q theories BBBWait42
-FOUNDATION = theories/Spec.vo theories/Recurrence.vo theories/Transport.vo theories/Periodic.vo theories/Ranked.vo theories/Census.vo theories/Run.vo theories/Pilot.vo theories/Batch.vo theories/RankedCompletion.vo theories/RepeatedWord.vo theories/Resume.vo theories/ReplayPilot.vo theories/ReplayCoverage.vo
+FOUNDATION = theories/FirstVisit.vo theories/Spec.vo theories/Recurrence.vo theories/Transport.vo theories/Periodic.vo theories/Ranked.vo theories/Census.vo theories/Run.vo theories/Pilot.vo theories/Batch.vo theories/RankedCompletion.vo theories/RepeatedWord.vo theories/Resume.vo theories/ReplayPilot.vo theories/ReplayCoverage.vo
 WITNESSES = theories/LowerBounds.vo
 RESIDUAL_REPLAY = theories/ResidualReplay.vo theories/ResidualReplayMore.vo
 TIMING = theories/SweepResiduals.vo theories/ThreeStateCounter.vo theories/SweepGeneralResiduals.vo theories/ControlRankReplay/Tight.vo theories/PhaseRankReplay/Union.vo theories/PhaseRankTests.vo
@@ -26,14 +26,14 @@ Makefile.coq: _CoqProject
 proof-foundation: foundation
 	@mkdir -p build
 	@echo 'Recursively auditing the four-state waiting definitions and census machinery...'
-	@coqchk -silent -bytecode-compiler yes $(COQ_PATHS) BBBWait42.ReplayCoverage BBBWait42.Recurrence BBBWait42.Transport >build/foundation-coqchk.log 2>&1 \
+	@coqchk -silent -bytecode-compiler yes $(COQ_PATHS) BBBWait42.ReplayCoverage BBBWait42.Recurrence BBBWait42.FirstVisit BBBWait42.Transport >build/foundation-coqchk.log 2>&1 \
 	  || { cat build/foundation-coqchk.log; exit 1; }
 	@echo 'Four-state waiting foundation checked. No universal waiting upper bound is claimed.'
 
 proof: all
 	@mkdir -p build
 	@echo 'Recursively auditing waiting foundations and finite lower-bound witnesses...'
-	@coqchk -silent -bytecode-compiler yes $(COQ_PATHS) BBBWait42.ReplayCoverage BBBWait42.Recurrence BBBWait42.Transport BBBWait42.LowerBounds >build/coqchk.log 2>&1 \
+	@coqchk -silent -bytecode-compiler yes $(COQ_PATHS) BBBWait42.ReplayCoverage BBBWait42.Recurrence BBBWait42.FirstVisit BBBWait42.Transport BBBWait42.LowerBounds >build/coqchk.log 2>&1 \
 	  || { cat build/coqchk.log; exit 1; }
 	@coqc -q $(COQ_PATHS) theories/Report.v >build/report.log 2>&1 \
 	  || { cat build/report.log; exit 1; }

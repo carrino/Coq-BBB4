@@ -2,6 +2,7 @@
 -Q theories BBBWait42
 theories/Spec.v
 theories/Recurrence.v
+theories/FirstVisit.v
 theories/Transport.v
 theories/BinaryScan.v
 theories/Witness.v

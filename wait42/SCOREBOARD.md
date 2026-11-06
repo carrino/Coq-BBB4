@@ -17,6 +17,7 @@ lower bounds are not sufficient decision cutoffs yet.
 | Component | Status |
 | --- | --- |
 | State and instruction definitions, uniqueness, decision rules | Compiled and recursively checked |
+| First visits precede BBB; never seen before BBB implies never seen | [State and instruction reductions](theories/FirstVisit.v), conditional on the global BBB statement |
 | Reflection, state relabeling, nonhalting completion, shifted tails | Compiled and recursively checked |
 | Translated-cycle bound P−1 after the cycle anchor | Compiled and recursively checked |
 | Finite abstract rank bounds, including the final rank+1 step | Compiled and recursively checked |
