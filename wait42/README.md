@@ -48,6 +48,13 @@ not an exhaustive census of four-state machines.
 - [Spec.v](theories/Spec.v) defines the waiting and total-horizon statements on
   the existing four-state binary machine model.
 - [Recurrence.v](theories/Recurrence.v) proves the whole-machine decision rule.
+- [FirstVisit.v](theories/FirstVisit.v) proves that every state or instruction
+  ever reached has already appeared strictly before the state BBB bound. Stop
+  on the first observation to turn it into a last visit in a machine of the
+  same size. Thus a target never observed before BBB is never observed at all.
+  This does not bound the return gaps of previously visited targets.
+  The lemmas take the existing global BBB statement as a hypothesis; the
+  first-visit reductions themselves add no axioms.
 - [Transport.v](theories/Transport.v) handles reflection, non-start state swaps,
   nonhalting completions, and correctly shifted cutoffs for equivalent tails.
 - [BinaryScan.v](theories/BinaryScan.v) checks finite witnesses using binary
