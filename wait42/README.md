@@ -73,6 +73,14 @@ not an exhaustive census of four-state machines.
   [ReplayCoverage.v](theories/ReplayCoverage.v) reuses that frontier at any proposed
   waiting width of at least 4,096, so harder residuals can use the larger record
   bound while the easy leaves keep their small certificates.
+- [Sweep.v](theories/Sweep.v) bounds directional sweeps using the blank tape's
+  finite support after B steps. [SweepResiduals.v](theories/SweepResiduals.v)
+  checks 745 current residual families with state waiting width B+2 for B≥6.
+- [InvariantTimedRank.v](theories/InvariantTimedRank.v) bounds a growing rank
+  at the cutoff using a step-closed invariant and a separate growth potential.
+  [ThreeStateCounter.v](theories/ThreeStateCounter.v) applies it to
+  `0RB---_0LC0RB_1LD1RD_1RB0LD`, proving state waiting width B+1 for B≥2.
+  Both results cover every completion of the partial machine tables.
 
 The old score census and its 5,156 deferred rows do not by themselves cover this
 new quantity. Qualitative recurrence leaves also need quantitative certificates.
@@ -86,6 +94,7 @@ Activate the repository's native Coq 8.18 environment, then run:
 make -C wait42 proof-foundation -j2  # definitions, solvers, and census contracts
 make -C wait42 proof -j2             # additionally replay and audit lower bounds
 make -C wait42 proof-replay -j2      # 204 periodic, 10 n-gram, and 25 holdout proofs
+make -C wait42 proof-timing -j2      # 745 sweeps and one three-state counter
 make -C wait42 test                  # untrusted search-tool regression checks
 make -C wait42 search                # state sweep of 432 historical candidates
 ```
@@ -106,3 +115,8 @@ certificates missed by a deeper search pass. Each accepted certificate is
 recomputed by Coq and recursively checked. Rejections, timeouts, and malformed
 reports cannot discharge a proof obligation. Passing the sample target does
 not establish exhaustive census coverage.
+
+The timing target proves bounds for a further 746 distinct families from the
+merged residual worklist. Their windows at the BBB cutoff are at most 32,779,480
+steps, below the current state waiting lower bound of 225,592,668. The census
+still needs coverage assembly; these are not a proof of its universal upper bound.

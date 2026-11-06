@@ -1,0 +1,77 @@
+{
+  "scope": "state waiting bounds for selected residual completion families; universal census coverage remains open",
+  "source": {
+    "reproduce": "wait42/build/census-union.residual.tsv",
+    "sha256": "8e4302e6c6683cd7280ad3634b42ffa1cd8064049a47fa82cbfc12c55f87ab9a",
+    "rows": 213950
+  },
+  "sweep": {
+    "families": 745,
+    "index": "wait42/research/sweep-proved.tsv",
+    "index_sha256": "5bbaac775a8987f08604f020c2e7fd9dd5b621e0dba897981a1aa2ab3781d437",
+    "source_index_base": 0,
+    "max_anchor": 6,
+    "width": "B + 2 for B >= 6",
+    "cutoff": 32779478,
+    "cutoff_width": 32779480,
+    "theorem": "BBBWait42.SweepResiduals.all_completions",
+    "exact_count_theorem": "BBBWait42.SweepResiduals.exact_case_count",
+    "all_completions": true,
+    "nomination": "enumerate unordered pairs of states with S1 self-transitions and S0 cross-transitions; simulate up to 128 steps to find the first entry into a pair; every accepted table and anchor is rechecked in Coq"
+  },
+  "counter": {
+    "families": 1,
+    "machine": "0RB---_0LC0RB_1LD1RD_1RB0LD",
+    "pointer": 4,
+    "source_index": 53,
+    "width": "B + 1 for B >= 2",
+    "cutoff": 32779478,
+    "cutoff_width": 32779479,
+    "theorem": "BBBWait42.ThreeStateCounter.counter_cutoff_window",
+    "all_completions": true,
+    "method": "total nonblank count grows by at most one per step; target-specific count plus control potentials descend while avoiding the target inside the B/C/D invariant"
+  },
+  "identity_check": {
+    "unique_sweep_identities": 745,
+    "counter_disjoint_from_sweeps": true,
+    "source_indices_and_tables_match": true
+  },
+  "residual_after_exact_identity_subtraction": {
+    "rows": 213204,
+    "pending": 0,
+    "sha256": "a5e78aae03bb4d8eec1c78cf7e2c6a8d442289f1c2b75e6b92ece5245f83bac9",
+    "other_sample_proofs_subtracted": false,
+    "formal_universal_coverage": false
+  },
+  "validation": {
+    "command": "make -C wait42 proof-timing -j2",
+    "status": "PASSED",
+    "recursive_coqchk": "PASSED",
+    "audited_roots": [
+      "BBBWait42.SweepResiduals",
+      "BBBWait42.ThreeStateCounter"
+    ],
+    "assumptions": [
+      "FunctionalExtensionality.functional_extensionality_dep"
+    ],
+    "sweep_checker_regressions": [
+      "preserving sweep accepted",
+      "unreached pair rejected",
+      "missing transition rejected",
+      "nonclosing pair rejected",
+      "halted anchor rejected"
+    ],
+    "invariant_rank_regressions": [
+      "off-invariant transitions may violate global descent and growth",
+      "future beep supplies continuation without NonHalt",
+      "halting after the next beep",
+      "final rank plus one step required"
+    ]
+  },
+  "proof_sources_sha256": {
+    "wait42/theories/Sweep.v": "df2fe687ae3fe84cf46323541f3be91ad539f1e1d37fc1d858a41698f43423b4",
+    "wait42/theories/SweepResiduals.v": "01e2ce797fb87c95ec7f4b9447005e8ec1eb0c70280e9209ca1a6fc5e79e903c",
+    "wait42/theories/InvariantTimedRank.v": "24a0c470d189eec582002e198dd35a6bdc1b9b40d286d47c99d5b9fb596819a8",
+    "wait42/theories/ThreeStateCounter.v": "be1161ef044fc1a55c304ec419e2d283944e3d31908497edb707d30e47a50449"
+  }
+}

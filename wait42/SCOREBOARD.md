@@ -26,6 +26,8 @@ lower bounds are not sufficient decision cutoffs yet.
 | Periodic certificate replay | 204 families: 80 stratified samples plus 124 recovered certificates |
 | Finite n-gram replay | 10 samples across widths 2, 3, 4, 6, and 8; completion bounds |
 | Repeated-word holdout proofs | 1 initial holdout plus 25 from a 1,000-family sample |
+| Quantitative directional sweeps | 745 current residual families; width B+2 at every B≥6 |
+| Growing counter with three active states | 1 distinct current residual family; width B+1 at every B≥2 |
 | Certificate-based frontier filtering | Soundness proved; rejected nodes remain explicit |
 | Universal upper bound at the current record | Not proved |
 
@@ -56,6 +58,7 @@ partial-table families; they are not weighted counts of all labelled machines.
 | Tail ranks | Same depth; require recurrence only for states in the abstract tail | **221,186** | 94.8 s |
 | Deeper tail ranks | 4,096 steps; add n-gram width 8 at anchor 1,600 | 214,074 | 413.4 s |
 | Preserve both passes | Verify identical family sets, then retain certificates from either pass | **213,950** | 60.0 s to merge |
+| Replay sweep and counter proofs | Remove 745 checked sweeps and one checked three-state counter | **213,204** | See timing validation below |
 
 The last pass also emitted:
 
@@ -85,6 +88,23 @@ windows range from 148 to 871 steps, after anchors 0 or 64. The independent
 initial holdout has a window of 456. See the
 [proof index](research/repeated-word-proved.tsv) and
 [experiment summary](research/repeated-word-summary.json).
+
+The latest timing batch checks **746 distinct families in the merged 213,950-row
+worklist**. Every completion of the 745 entries in
+[SweepResiduals.v](theories/SweepResiduals.v) has state waiting width B+2 for B≥6.
+The proof uses finite tape support to bound scans; it allows expanding runs
+whose return gaps are unbounded over time. A separate three-state counter,
+`0RB---_0LC0RB_1LD1RD_1RB0LD`, has width B+1 for B≥2, proved by a descending
+nonblank-count-plus-control rank inside a closed invariant.
+
+At the BBB cutoff these widths are **32,779,480** and **32,779,479**. Both fit
+under the current state waiting record. Subtracting exactly these distinct
+identities leaves **213,204** research holdouts. Earlier samples are not
+subtracted again, and this count still is not formal universal census coverage.
+The [sweep index](research/sweep-proved.tsv) and
+[timing validation](research/timing-validation.json) record the source and proof
+identities. Run `make -C wait42 proof-timing -j2` to compile and recursively check
+all 746 families and print their theorem statements.
 
 The historical 5,156 state holdouts are not the new universe. A separate sweep
 of 432 historical rare-fire candidates produced the improved state witness;
@@ -121,8 +141,8 @@ hashes; no search output is trusted by a theorem.
 1. Replay emitted cycle and rank certificates with the proved checkers and
    preserve every rejection as an explicit obligation.
 2. Add repeated-word and counter timing certificates for the residual families.
-   Unbounded counter measures need quantitative first-return arguments at the
-   fixed cutoff, beyond the finite-rank solver.
+   The first growing counter is now checked. Generalize its invariant and
+   control-potential certificate to the remaining counter families.
 3. Apply symmetry and blank-prefix transport with the correct cutoff shifts.
 4. Assemble a universal upper bound matching a concrete lower-bound witness.
 

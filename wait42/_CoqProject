@@ -21,3 +21,7 @@ theories/ResidualReplay.v
 theories/ResidualReplayMore.v
 theories/ReplayPilot.v
 theories/ReplayCoverage.v
+theories/Sweep.v
+theories/SweepResiduals.v
+theories/InvariantTimedRank.v
+theories/ThreeStateCounter.v
