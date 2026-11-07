@@ -40,3 +40,7 @@ jobs:
         run: opam exec -- make -C wait42 proof-replay -j2
       - name: Prove quantitative sweep and counter bounds
         run: opam exec -- make -C wait42 proof-timing -j2
+      - name: Replay and recursively audit an observation batch
+        run: opam exec -- make -C wait42 proof-observations BUILD_JOBS=1 OBSERVATION_MAX_BATCHES=1 OBSERVATION_STATE=build/observation-ci
+      - name: Verify observation receipts without scheduling more work
+        run: opam exec -- make -C wait42 proof-observations BUILD_JOBS=2 OBSERVATION_MAX_BATCHES=0 OBSERVATION_STATE=build/observation-ci

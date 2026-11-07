@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "input": "observation-weekend.tsv",
+  "input_sha256": "6e1fc3a5c879e94a64820d3b7c157a21e86766f6484e1cbc61c26df76aa52667",
+  "rows": 16384,
+  "cutoff": 32779478,
+  "upper_width": 225592668,
+  "default_batch_size": 16,
+  "status": "Untrusted nominations selected for independent Coq replay; no batch proof credit yet",
+  "source_worklist": {
+    "rows": 202762,
+    "sha256": "ed0c1631a07f08d7b6916456062adf9dce5a82012e40b12255e2110d9ef8d045"
+  },
+  "selection": {
+    "snapshot_rows": 141782,
+    "eligible_rows": 131821,
+    "maximum_observed_extra_steps": 65536,
+    "maximum_observed_tape_span": 16384,
+    "order": "ascending SHA256(machine TAB ptr)",
+    "selected_status_counts": {
+      "all-states-observed": 16043,
+      "observed-total-closed-tail": 341
+    }
+  },
+  "observation_snapshot_sha256": [
+    {
+      "label": "worker0.jsonl",
+      "bytes": 15178,
+      "sha256": "b9c3c6ed413632e57619ac3a86f05f26723ca46ad6dab2ea6eb5886a1a08609a"
+    },
+    {
+      "label": "worker1.jsonl",
+      "bytes": 15185,
+      "sha256": "ff5c68a732026cd4e593e839647ab13928a6b4cfc63de15ef63ac9481da9584a"
+    },
+    {
+      "label": "run000-worker0.jsonl",
+      "bytes": 11155499,
+      "sha256": "9e5cffc99853bab674376fa19297ac53dfdf74377450a378540918663deb04b0"
+    },
+    {
+      "label": "run000-worker1.jsonl",
+      "bytes": 11201447,
+      "sha256": "488ffc2b7a6ee778245d8201699fba44f42b69f0788d66dfb97e5855cc8ff69a"
+    },
+    {
+      "label": "run000-worker2.jsonl",
+      "bytes": 11184736,
+      "sha256": "8b54520c392a790b92807080e9e8dd133c7032a8a8c7c1f320f62b1cde50e2fd"
+    }
+  ]
+}
