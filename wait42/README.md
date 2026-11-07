@@ -107,10 +107,30 @@ not an exhaustive census of four-state machines.
   witness. [PhaseRankReplay/Union.v](theories/PhaseRankReplay/Union.v) proves
   width 98,338,534 at cutoff 32,779,478 for 7,095 additional indexed families
   and every completion, including 1,263 coarsened phase certificates.
+- [FiniteObservation.v](theories/FiniteObservation.v) replays finite observation
+  windows from the blank tape. Its `observation_batch_completion` theorem covers
+  every completion when all states are observed, or when an observed total,
+  closed tail excludes all missing states. It also checks each local width fits
+  the proposed global width.
 
 The old score census and its 5,156 deferred rows do not by themselves cover this
 new quantity. Qualitative recurrence leaves also need quantitative certificates.
 [CENSUS_PLAN.md](CENSUS_PLAN.md) documents the inventory and coverage requirements.
+
+## Contribute an observation proof run
+
+An eight-core Linux or WSL machine can independently replay a fixed batch of
+16,384 successful observation candidates in Coq:
+
+```sh
+make -C wait42 proof-observations BUILD_JOBS=8
+```
+
+The runner saves audited batches and resumes with the same command. See
+[VERIFYING_OBSERVATIONS.md](VERIFYING_OBSERVATIONS.md) for setup, a one-batch
+smoke run, resource controls, and the distinction between individual family
+proofs and the unfinished universal census. The input list is a set of
+**nominations**, not a claim that all 16,384 proofs have already been replayed.
 
 ## Build and search
 

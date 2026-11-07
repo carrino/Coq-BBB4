@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "scope": "16-case pilot and generic checker validation; the 16,384-case nominated batch and universal census remain unfinished",
+  "toolchain": "The Coq Proof Assistant, version 8.18.0\ncompiled with OCaml 4.14.2",
+  "input_sha256": "6e1fc3a5c879e94a64820d3b7c157a21e86766f6484e1cbc61c26df76aa52667",
+  "generic": {
+    "source_sha256": "fc55f65cc5357e7b0bcbdeb45c51ad15a5385515ef1592e49751d01c71a7d8c8",
+    "tests_sha256": "e70106b25ee47af4738f644fc9ff1f25faae6d52be7a35900f0a33eb327ab73e",
+    "recursive_audit_exit_code": 0,
+    "recursive_audit_seconds": 29.895
+  },
+  "pilot": {
+    "rows": 16,
+    "source_indices": [
+      7988,
+      189314,
+      159291,
+      133653,
+      101820,
+      27658,
+      56814,
+      107886,
+      131990,
+      58982,
+      35951,
+      120965,
+      154409,
+      75280,
+      39851,
+      121281
+    ],
+    "cutoff": 32779478,
+    "upper_width": 225592668,
+    "compile_seconds": 78.152022,
+    "recursive_audit_seconds": 304.909291,
+    "compile_plus_audit_seconds": 383.061313,
+    "compile_peak_rss_kib": 626248,
+    "recursive_audit_peak_rss_kib": 267940,
+    "compile_exit_code": 0,
+    "recursive_audit_exit_code": 0,
+    "cpu_affinity": [
+      0
+    ],
+    "address_space_limit_gib": 2,
+    "compile_log_sha256": "e2d5ce37b2c50f0f895507a2f6c33ae2cb63bcc817b07d0227dbc612910eed79",
+    "recursive_audit_log_sha256": "10effe6ccf164612f1e62bf826858bc4c2e745c7619b5899ba88cc1d3c4dc101"
+  },
+  "estimate": {
+    "batches": 1024,
+    "workers": 8,
+    "hours_at_pilot_rate": 13.62,
+    "qualification": "One measured batch; not a full-run timing guarantee."
+  },
+  "runner_validation": {
+    "runner_sha256": "51db86b060e69d1adfa315726a8831bc2bf4e0d2b3cc90892ae02696dee76de5",
+    "python_tests": 101,
+    "python_test_status": "passed",
+    "python_test_seconds": 83.019,
+    "production_make_smoke": {
+      "families": 16,
+      "compile_seconds": 94.307,
+      "recursive_audit_seconds": 304.539,
+      "compile_exit_code": 0,
+      "recursive_audit_exit_code": 0,
+      "assumptions": [
+        "FunctionalExtensionality.functional_extensionality_dep"
+      ],
+      "source_sha256": "251d2630ada4030678bb0b04bfc4f5bc01c07253293550a23cb37a72382504cf",
+      "compile_log_sha256": "51efbf8c0be45322e98487fa53f4242923cd34855b6f4b95a04816aaad28b033",
+      "recursive_audit_log_sha256": "945829c33d03d4a73776075386f8018a82a9d302728e087e7ec660c53ab849a4"
+    },
+    "resume_with_jobs_changed_1_to_8": {
+      "checked_cases": 16,
+      "resumed_cases": 16,
+      "new_batches_launched": 0,
+      "pending_cases": 16368,
+      "status": "PARTIAL"
+    },
+    "qualification": "Both checks replay the same 16 families."
+  }
+}
