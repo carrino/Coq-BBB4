@@ -29,6 +29,13 @@ hardware, memory bandwidth and individual machines affect the actual runtime.
 The [pilot validation record](research/observation-runner-validation.json)
 records the toolchain, timings and audit log hashes.
 
+A completed eight-worker desktop run subsequently took **18 hours 58 minutes**
+for all 16,384 families, with zero failures. Its source, receipt and log archive
+was checked against the published runner and frozen input; see the
+[desktop validation record](research/observation-desktop-validation.json).
+This full-run measurement is a better planning reference than the single-batch
+estimate. Dependency preparation adds time.
+
 ## Run
 
 From the repository root, with the native Coq environment active:
@@ -109,6 +116,22 @@ means this selected input finished; it does not mean the full census is proved.
 A scheduling limit gives `PARTIAL`, Ctrl-C gives `INTERRUPTED`, and a failed
 proof or audit gives `FAILED`.
 
+To share a compact review archive, run this from the repository root:
+
+```sh
+(
+  cd wait42/build/observation-proof &&
+  tar -czf ~/bbb-wait42-desktop-receipts.tar.gz \
+    manifest.json summary.json progress.json \
+    Part*.v Part*.receipt.json Part*.compile.log Part*.audit.log
+)
+```
+
+Upload the resulting archive. It contains the proof sources, receipts and logs.
+Keep the complete output directory, including compiled objects, for resume.
+The archive supports review of the recorded audit; it does not replace a fresh
+kernel audit.
+
 Keep the output directory for replay and aggregation. It contains
 `manifest.json`, plus `Part000000.v`, `.vo`, `.compile.log`, `.audit.log` and
 `.receipt.json` files for each batch. If a batch fails, share its receipt and
@@ -120,6 +143,22 @@ To verify saved receipts without launching another proof batch:
 ```sh
 make -C wait42 proof-observations BUILD_JOBS=8 OBSERVATION_MAX_BATCHES=0
 ```
+
+## Reproduce the proof index
+
+The reviewed desktop batch is indexed by its frozen input order: data rows
+0–15 use `Part000000.all_completions`, rows 16–31 use
+`Part000001.all_completions`, and so on in the `BBBWait42Observation` namespace.
+After proving the batch, regenerate the index with:
+
+```sh
+python3 wait42/tools/index_observation_proofs.py
+```
+
+The script checks the input and resulting index hashes against the desktop
+validation record before writing `wait42/build/observation-desktop-proved.tsv`.
+It performs bookkeeping only and does not run Coq. The generated index can be
+passed to `reduce_residuals.py` alongside the existing timing proof index.
 
 ## What the proof checks
 

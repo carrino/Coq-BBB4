@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "status": "RECEIPT_ARCHIVE_REVIEWED",
+  "review_date": "2026-11-08",
+  "archive": {
+    "sha256": "5e0193c8699cf902530fe8dc51723ac6a727408bbd174635d551dd1e6df1d3aa",
+    "bytes": 617603,
+    "files": 4099,
+    "uncompressed_bytes": 6106687
+  },
+  "identity": "ba22d40097ddd0c633008e5e22c2d67e8b2c0d19abd8a8d282a73b499fdfebf1",
+  "published_runner_commit": "6bd9150ac680c792e6dea23e702fa7268589fef5",
+  "runner_sha256": "51db86b060e69d1adfa315726a8831bc2bf4e0d2b3cc90892ae02696dee76de5",
+  "input_sha256": "6e1fc3a5c879e94a64820d3b7c157a21e86766f6484e1cbc61c26df76aa52667",
+  "spec_sha256": "23ce2cfbdbc3848bec19d1cb4cd9571e878166f837ce356a7f48b1e6a1e85add",
+  "repository_dependency_source_hashes_checked": 24,
+  "generated_dependency_probe_hash_checked": true,
+  "cases": 16384,
+  "batches": 1024,
+  "failed_batches": 0,
+  "pending_cases": 0,
+  "recorded_successful_compilations": 1024,
+  "recorded_successful_full_recursive_audits": 1024,
+  "generated_sources_match_frozen_worklist": true,
+  "source_and_log_hashes_checked": 3072,
+  "assumptions": [
+    "FunctionalExtensionality.functional_extensionality_dep"
+  ],
+  "coq_version": "The Coq Proof Assistant, version 8.18.0\ncompiled with OCaml 4.14.2",
+  "reported_elapsed_seconds": 68284.754,
+  "compile_timings": {
+    "sum_wall_seconds": 212062.586,
+    "median_wall_seconds": 212.157,
+    "min_wall_seconds": 104.711,
+    "max_wall_seconds": 284.25
+  },
+  "audit_timings": {
+    "sum_wall_seconds": 333194.51,
+    "median_wall_seconds": 321.856,
+    "min_wall_seconds": 256.851,
+    "max_wall_seconds": 432.109
+  },
+  "proof_index": {
+    "path": "wait42/build/observation-desktop-proved.tsv",
+    "sha256": "23a0789c8f6aa6684537f2a80911d02bfad01dd666942b7903bce47d424a8fb3",
+    "rows": 16384,
+    "overlap_with_existing_index": 0,
+    "prior_index_rows": 11188,
+    "combined_distinct_families": 27572,
+    "remaining_of_213950_family_worklist": 186378,
+    "batch_size": 16,
+    "derived_from": "wait42/research/observation-weekend.tsv",
+    "generator": "wait42/tools/index_observation_proofs.py",
+    "stored_in_git": false
+  },
+  "compiled_objects_included": false,
+  "compiled_object_hashes_independently_verified": false,
+  "fresh_kernel_reaudit_performed_during_archive_review": false,
+  "universal_coverage_proved": false,
+  "scope": "Consistency review of a desktop kernel-audit record. All source/log hashes, rendered sources, case identities and recorded full-recursive audit commands match. The archive omits compiled objects and tool binaries; this review does not rerun Coq or independently authenticate process execution. The full census is not assembled.",
+  "reported_command": "opam exec --switch=census -- make -C wait42 proof-observations BUILD_JOBS=8",
+  "terminal_summary": {
+    "schema_version": 1,
+    "identity": "ba22d40097ddd0c633008e5e22c2d67e8b2c0d19abd8a8d282a73b499fdfebf1",
+    "state": "completed",
+    "coverage_proved": false,
+    "total_families": 16384,
+    "total_batches": 1024,
+    "checked_families": 16384,
+    "checked_batches": 1024,
+    "failed_batches": 0,
+    "pending_batches": 0,
+    "running_batches": 0,
+    "launched_this_run": 1024,
+    "seconds": 68284.754,
+    "notes": "No universal bound or census coverage is claimed.",
+    "status": "COMPLETE",
+    "checked_cases": 16384,
+    "resumed_cases": 0,
+    "pending_cases": 0,
+    "failed_cases": 0
+  }
+}
