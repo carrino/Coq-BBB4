@@ -32,6 +32,7 @@ lower bounds are not sufficient decision cutoffs yet.
 | Sweeps through either symbol | 473 more families; conditional width B+2 at every B≥6 |
 | Checked count-and-control certificates | 2,874 more families; width 98,338,439 at cutoff 32,779,478 |
 | Composed monotone scanning phases | 7,095 more families; width 98,338,534; promoted modules recursively checked |
+| Finite observation desktop replay | 16,384 more families; 1,024 successful recursive audits recorded; source/receipt/log archive reviewed |
 | Certificate-based frontier filtering | Soundness proved; rejected nodes remain explicit |
 | Universal upper bound at the current record | Not proved |
 
@@ -47,6 +48,38 @@ completion obligation and makes no unconditional universal bound claim.
 [replay_pilot_coverage_at_width](theories/ReplayCoverage.v) permits the remaining
 families to be discharged at any larger proposed width without recomputing the
 pilot.
+
+## Completed desktop observation replay
+
+The eight-worker desktop run completed all **16,384 families** in the frozen
+[observation batch](research/observation-weekend.tsv): 1,024 checked batches,
+zero failures and zero pending cases. The replay took **68,284.754 seconds
+(18 hours 58 minutes)**, excluding dependency preparation.
+
+The uploaded archive was reviewed against the published runner and frozen
+worklist. All 1,024 generated sources matched exactly, all 3,072 included
+source/log hashes matched their receipts, and every receipt recorded successful
+compilation and full recursive `coqchk`. All 24 repository dependency source
+hashes matched the published sources. Functional extensionality was the only
+reported assumption. This was a review of the desktop audit evidence; compiled
+objects were not uploaded and Coq was not rerun during the archive review.
+The [validation record](research/observation-desktop-validation.json) records
+the evidence hashes and scope.
+
+The frozen [observation worklist](research/observation-weekend.tsv) maps to
+**16,384 unique machine/pointer identities**, with zero overlap with the
+previous 11,188-family [timing proof index](research/proved-residuals.tsv).
+Together the two sets name **27,572 distinct families** from the 213,950-row
+merged worklist, leaving a bookkeeping remainder of **186,378**. The observation
+index can be [regenerated](VERIFYING_OBSERVATIONS.md#reproduce-the-proof-index)
+from the frozen row order. It names
+`BBBWait42Observation.PartXXXXXX.all_completions` theorems generated
+by `make -C wait42 proof-observations`; `proof-timing` continues to build the
+separate 11,188-family timing index.
+
+These family proofs do not establish exhaustive census coverage. Earlier easy
+search leaves still need replay and the complete coverage theorem still needs
+assembly. No missing cloud-run receipts are included in these counts.
 
 ## Exploratory burndown
 
@@ -67,6 +100,7 @@ partial-table families; they are not weighted counts of all labelled machines.
 | Replay sweep and counter proofs | Remove 745 checked sweeps and one checked three-state counter | **213,204** | See timing validation below |
 | Generalized sweeps and count/control ranks | Remove 473 + 2,874 disjoint checked families | **209,857** | 44.7 s for counter discovery; every result replayed |
 | Composed monotone phases | Remove 5,832 + 1,263 disjoint checked families | **202,762** | 300.4 s promoted compilation and recursive audit |
+| Desktop finite observation replay | Remove 16,384 disjoint families with reviewed desktop audit records | **186,378** | 18 h 58 min on eight workers |
 
 The tail-rank search pass also emitted:
 
@@ -148,12 +182,12 @@ checking in 28.6 s. The initial native-compiler stack failure is retained in the
 validation record; the unchanged certificates passed with a 64 MiB child stack.
 The final combined `proof-timing` target also passed for all 11,188 indexed families.
 
-The current [combined proof index](research/proved-residuals.tsv) has **11,188**
+The round-four [combined timing proof index](research/proved-residuals.tsv) has **11,188**
 unique identities, with no overlap between the preceding 4,093 and new 7,095.
-Exact subtraction from the original merged snapshot leaves **202,762**, with
+Exact subtraction at that checkpoint left **202,762**, with
 zero pending research nodes. The [phase index](research/phase-rank-proved.tsv)
 and [round-four validation](research/round4-validation.json) retain source
-identities, hashes, resource failures and validation scope. The remaining rows
+identities, hashes, resource failures and validation scope. That checkpoint's remaining rows
 include 199,313 not eligible for the directional SCC diagnostic and 3,449 for
 which no admissible two-cycle phase partition was found. They remain explicit
 obligations; this bookkeeping is not formal universal census coverage.
@@ -179,10 +213,13 @@ python3 wait42/tools/merge_census_residuals.py \
   --verify-ledgers wait42/build/census.ledger.tsv wait42/build/census-deeper.ledger.tsv \
   --output wait42/build/census-union
 make -C wait42 proof-timing -j2
+make -C wait42 proof-observations BUILD_JOBS=8
+python3 wait42/tools/index_observation_proofs.py
 python3 wait42/tools/reduce_residuals.py \
   --input wait42/build/census-union.residual.tsv \
   --source-sha256 8e4302e6c6683cd7280ad3634b42ffa1cd8064049a47fa82cbfc12c55f87ab9a \
   --proof-index wait42/research/proved-residuals.tsv \
+  --proof-index wait42/build/observation-desktop-proved.tsv \
   --output wait42/build/census-union-remaining.residual.tsv
 ```
 
@@ -196,7 +233,7 @@ hashes; no search output is trusted by a theorem.
 
 The reducer hashes and parses one immutable snapshot, matches both the machine
 and pointer, rejects malformed or missing identities, and preserves pending
-subtrees. It does bookkeeping only; the preceding proof target checks the
+subtrees. It does bookkeeping only; the preceding proof targets check the
 indexed statements. Overlapping proof indexes remove a family only once.
 
 ## Next work
