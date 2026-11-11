@@ -70,13 +70,23 @@ that analyze the transition table. See the [definitions and proofs](wait/README.
 | `(2,2)` | [**9** (+3)](wait/theories/Decision.v) | [**17** (+9)](wait/theories/Decision.v) | `1RB0RB_1LA1LB` (A) | `1RB0LB_1LA0RA` (B1) |
 | `(3,2)` | [**93** (+38)](wait/theories/Decision32.v) | [**228** (+173)](wait/theories/Decision32.v) | `1RB1LA_1RC1LB_1LA0RB` (A) | `1RB0LC_1LC0RA_1LA1LB` (C1) |
 | `(2,3)` | [**91** (+32)](wait/theories/Decision23.v) | [**760** (+693)](wait/theories/Decision23.v) | `1RB2LA1RA_1LB1LA2RB` (B) | `1RB2LA1RA_1LA2RA2RB` (B1) |
+| `(4,2)`† | [**≥258,372,146** (+≥225,592,668)](wait42/theories/WitnessRecord.v) | [**≥487,181,856** (+≥454,402,378)](wait42/theories/LowerBounds.v) | `1RB1RC_1LA0LA_0RD0RC_1LD1LA` (B) | `1RB0LD_1RC1RB_1LA1LC_0RC1LA` (D0) |
 
-Waiting champions maximize the delay to the first post-cutoff beep; they can
-be different from the BBB champions above. For example, the two-state
+† **Proved lower bounds; exact maxima remain open.** The four-state witnesses
+and their first post-BBB beeps are already formalized. A subsequent instruction
+scan of 16,384 selected families, with a cap of 500,000,000 steps, found no larger
+wait: 9,987 families produced candidate upper-bound certificates, while 6,397
+reached the cap unresolved. This is supporting simulation evidence for a
+selected sample, not an exhaustive upper-bound check; unresolved instructions
+may still beep later. See the [scan record](wait42/research/instruction-scan-validation.json)
+and [proof scoreboard](wait42/SCOREBOARD.md).
+
+Waiting records measure the delay to the first post-cutoff beep; their witnesses
+can be different from the BBB champions above. For example, the two-state
 instruction witness is silent in B1 at indices 8–16 and beeps at 17.
 All programs in this table start by moving right.
 
-Build and recursively audit all eight waiting values and the corresponding
+Build and recursively audit the eight exact small-machine waiting values and their
 decision horizons with `make proof-wait-all BUILD_JOBS=2`. Use
 `make proof-wait-small BUILD_JOBS=2` for just the one- and two-state binary cases.
 

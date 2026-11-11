@@ -8,6 +8,15 @@ bounds below are proved in Coq and passed full recursive kernel checking.
 | State | [225,592,668](theories/WitnessRecord.v) | [258,372,146](theories/WitnessRecord.v) | `1RB1RC_1LA0LA_0RD0RC_1LD1LA` | B |
 | Instruction | [454,402,378](theories/Examples.v) | [487,181,856](theories/LowerBounds.v) | `1RB0LD_1RC1RB_1LA1LC_0RC1LA` | D0 |
 
+**Simulation evidence:** an instruction scan of 16,384 selected families,
+with a cap of 500,000,000 steps, found no larger wait. It nominated 9,987
+family upper bounds and left 6,397 families unresolved at the cap. The
+[scan record](research/instruction-scan-validation.json) supports the current
+record on this sample; it does not establish an exhaustive upper bound.
+Missing instructions may still beep later. The lower-bound witnesses above
+are already formalized; proving maximality needs more than replaying the
+successful scan nominations.
+
 Both start at the existing BBB cutoff 32,779,478. The uniform waiting guarantee
 applies to each choice of one designated beeping state or instruction. These
 lower bounds are not sufficient decision cutoffs yet.

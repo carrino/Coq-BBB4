@@ -35,6 +35,14 @@ See [SCOREBOARD.md](SCOREBOARD.md) for proof status and the census frontier.
 | State | 258,372,146 | 225,592,668 | `1RB1RC_1LA0LA_0RD0RC_1LD1LA` | B |
 | Instruction | 487,181,856 | 454,402,378 | `1RB0LD_1RC1RB_1LA1LC_0RC1LA` | D0 |
 
+**Status: both lower bounds are proved in Coq; exact maxima remain open.**
+The instruction scan of 16,384 selected families, with a cap of 500,000,000
+steps, found no larger wait. It produced 9,987 candidate upper-bound
+certificates and left 6,397 families unresolved at the cap. This supports the
+current record on that sample; it does not establish an exhaustive upper bound,
+and missing instructions may still beep later. See the
+[scan validation record](research/instruction-scan-validation.json).
+
 The [champion-pattern note](research/champion-patterns.md) explains the state
 bursts and isolated instruction beeps, with transition-derived recurrences and
 a clear distinction from the finite Coq lower-bound proofs.
