@@ -44,3 +44,7 @@ jobs:
         run: opam exec -- make -C wait42 proof-observations BUILD_JOBS=1 OBSERVATION_MAX_BATCHES=1 OBSERVATION_STATE=build/observation-ci
       - name: Verify observation receipts without scheduling more work
         run: opam exec -- make -C wait42 proof-observations BUILD_JOBS=2 OBSERVATION_MAX_BATCHES=0 OBSERVATION_STATE=build/observation-ci
+      - name: Replay and recursively audit an instruction observation batch
+        run: opam exec -- make -C wait42 proof-instruction-observations BUILD_JOBS=1 OBSERVATION_MAX_BATCHES=1 INSTRUCTION_OBSERVATION_STATE=build/instruction-observation-ci
+      - name: Verify instruction receipts without scheduling more work
+        run: opam exec -- make -C wait42 proof-instruction-observations BUILD_JOBS=2 OBSERVATION_MAX_BATCHES=0 INSTRUCTION_OBSERVATION_STATE=build/instruction-observation-ci

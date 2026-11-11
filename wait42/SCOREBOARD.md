@@ -8,6 +8,15 @@ bounds below are proved in Coq and passed full recursive kernel checking.
 | State | [225,592,668](theories/WitnessRecord.v) | [258,372,146](theories/WitnessRecord.v) | `1RB1RC_1LA0LA_0RD0RC_1LD1LA` | B |
 | Instruction | [454,402,378](theories/Examples.v) | [487,181,856](theories/LowerBounds.v) | `1RB0LD_1RC1RB_1LA1LC_0RC1LA` | D0 |
 
+**Simulation evidence:** an instruction scan of 16,384 selected families,
+with a cap of 500,000,000 steps, found no larger wait. It nominated 9,987
+family upper bounds and left 6,397 families unresolved at the cap. The
+[scan record](research/instruction-scan-validation.json) supports the current
+record on this sample; it does not establish an exhaustive upper bound.
+Missing instructions may still beep later. The lower-bound witnesses above
+are already formalized; proving maximality needs more than replaying the
+successful scan nominations.
+
 Both start at the existing BBB cutoff 32,779,478. The uniform waiting guarantee
 applies to each choice of one designated beeping state or instruction. These
 lower bounds are not sufficient decision cutoffs yet.
@@ -80,6 +89,30 @@ separate 11,188-family timing index.
 These family proofs do not establish exhaustive census coverage. Earlier easy
 search leaves still need replay and the complete coverage theorem still needs
 assembly. No missing cloud-run receipts are included in these counts.
+
+## Instruction observation sample
+
+The desktop scan of the same 16,384 state-selected families nominated **9,987**
+instruction observation bounds in 2,245.720 seconds. All eight worker files
+match the merged results; the source hashes, canonical alias map and summary
+were verified. The [validation record](research/instruction-scan-validation.json)
+records this research evidence with zero scan proof credit.
+
+| Instruction sample queue | Families | Status |
+| --- | ---: | --- |
+| Local observation width ≤65,536 | 9,480 | Frozen input for independent Coq replay |
+| Longer observations | 507 | Separate nominated queue |
+| Scan cap reached | 6,397 | Unresolved; missing visits do not prove silence |
+
+The [instruction replay command](VERIFYING_INSTRUCTION_OBSERVATIONS.md) uses
+cutoff 32,779,478 and common width 454,402,378. Its generic completion theorem
+has compiled and passed recursive kernel checking. Selected family proofs
+require the separate replay; scan nominations alone are not counted as proofs.
+The [initial pilot](research/instruction-runner-validation.json) checked the
+first 16 families in 333.642 seconds and two additional closed-tail examples,
+for 18 distinct family checks. The complete 9,480-family run remains pending.
+This is a state-selected sample, not an exhaustive instruction census, and
+its counts are not subtracted from the state burndown below.
 
 ## Exploratory burndown
 

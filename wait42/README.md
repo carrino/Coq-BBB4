@@ -35,6 +35,14 @@ See [SCOREBOARD.md](SCOREBOARD.md) for proof status and the census frontier.
 | State | 258,372,146 | 225,592,668 | `1RB1RC_1LA0LA_0RD0RC_1LD1LA` | B |
 | Instruction | 487,181,856 | 454,402,378 | `1RB0LD_1RC1RB_1LA1LC_0RC1LA` | D0 |
 
+**Status: both lower bounds are proved in Coq; exact maxima remain open.**
+The instruction scan of 16,384 selected families, with a cap of 500,000,000
+steps, found no larger wait. It produced 9,987 candidate upper-bound
+certificates and left 6,397 families unresolved at the cap. This supports the
+current record on that sample; it does not establish an exhaustive upper bound,
+and missing instructions may still beep later. See the
+[scan validation record](research/instruction-scan-validation.json).
+
 The [champion-pattern note](research/champion-patterns.md) explains the state
 bursts and isolated instruction beeps, with transition-derived recurrences and
 a clear distinction from the finite Coq lower-bound proofs.
@@ -112,6 +120,10 @@ not an exhaustive census of four-state machines.
   every completion when all states are observed, or when an observed total,
   closed tail excludes all missing states. It also checks each local width fits
   the proposed global width.
+- [FiniteInstructionObservation.v](theories/FiniteInstructionObservation.v)
+  provides the instruction counterpart: all eight slots are observed, or both
+  slots of every state in a total, closed tail are observed. Its completion
+  theorem independently checks instruction waiting windows for partial tables.
 
 The old score census and its 5,156 deferred rows do not by themselves cover this
 new quantity. Qualitative recurrence leaves also need quantitative certificates.
@@ -131,6 +143,18 @@ The runner saves audited batches and resumes with the same command. See
 smoke run, resource controls, and the distinction between individual family
 proofs and the unfinished universal census. The input list is a set of
 **nominations**, not a claim that all 16,384 proofs have already been replayed.
+
+For instruction waiting, replay the 9,480 short nominations from the desktop
+scan with a separate command and output directory:
+
+```sh
+make -C wait42 proof-instruction-observations BUILD_JOBS=8
+```
+
+See [VERIFYING_INSTRUCTION_OBSERVATIONS.md](VERIFYING_INSTRUCTION_OBSERVATIONS.md)
+for resume instructions and scope. Another 507 longer nominations and 6,397
+scan holdouts remain explicit. This sample does not cover the full instruction
+census, and the state proof receipts are unchanged.
 
 ## Build and search
 

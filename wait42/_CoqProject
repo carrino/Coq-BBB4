@@ -82,3 +82,5 @@ theories/PhaseRankReplay/ExtraAll.v
 theories/PhaseRankReplay/Union.v
 theories/FiniteObservation.v
 theories/FiniteObservationTests.v
+theories/FiniteInstructionObservation.v
+theories/FiniteInstructionObservationTests.v
