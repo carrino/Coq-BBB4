@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "input": "instruction-observations.tsv",
+  "input_sha256": "dd7c9f5c0684c7f150b8f1804cc338e943eb32fab71f04fcbdbba8959b9389b4",
+  "rows": 9480,
+  "cutoff": 32779478,
+  "upper_width": 454402378,
+  "default_batch_size": 16,
+  "beep_mode": "instruction",
+  "tail_invariant": "total-state-mask-with-both-symbols-observed",
+  "status": "Untrusted nominations for independent Coq replay; no batch proof credit",
+  "archive_sha256": "8c0ddcb7c3bbc3a1a7efdf8e505a21f9e61410958a29eabf5930a743fb292c4d",
+  "maximum_local_width": 65536
+}

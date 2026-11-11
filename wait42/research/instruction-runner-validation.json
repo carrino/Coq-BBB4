@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "coverage_proved": false,
+  "status": "Pilot checks passed; full 9480-family replay not performed here",
+  "distinct_families_checked": 18,
+  "toolchain": "The Coq Proof Assistant, version 8.18.0\ncompiled with OCaml 4.14.2",
+  "state_runner_unchanged_sha256": "51db86b060e69d1adfa315726a8831bc2bf4e0d2b3cc90892ae02696dee76de5",
+  "instruction_runner_sha256": "5489dbf21dcba8f3ef09075c5820d777d1d06742345d6c445ecd50ecf0fba48b",
+  "instruction_checker_sha256": "38e8dcf6d0294ad65a6118acb86a848a28653430443d8a31ade0ea08e690367e",
+  "python_regressions": {
+    "existing_and_instruction_runner_tests": 110,
+    "preparation_tests": 4,
+    "status": "passed"
+  },
+  "first_batch": {
+    "status": "compiled and full recursive kernel audit passed",
+    "families": 16,
+    "frozen_input_data_row_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "source_indices": [
+      7988,
+      27658,
+      56814,
+      107886,
+      58982,
+      35951,
+      120965,
+      39851,
+      121281,
+      117350,
+      79577,
+      76657,
+      63992,
+      39870,
+      32711,
+      154178
+    ],
+    "input_sha256": "dd7c9f5c0684c7f150b8f1804cc338e943eb32fab71f04fcbdbba8959b9389b4",
+    "compile_seconds": 64.188,
+    "audit_seconds": 269.041,
+    "axioms": [
+      "FunctionalExtensionality.functional_extensionality_dep"
+    ],
+    "artifacts": {
+      "audit_log": {
+        "bytes": 134,
+        "sha256": "945829c33d03d4a73776075386f8018a82a9d302728e087e7ec660c53ab849a4"
+      },
+      "compile_log": {
+        "bytes": 225,
+        "sha256": "51efbf8c0be45322e98487fa53f4242923cd34855b6f4b95a04816aaad28b033"
+      },
+      "source": {
+        "bytes": 3590,
+        "sha256": "47d1423093bd77ba2b64f571f76899ab4289688372d1c3a7ec33faa526d2dd40"
+      },
+      "vo": {
+        "bytes": 36697,
+        "sha256": "51e25c3f7ca1c3920c920d9565956c38b88c3245144c6e7187f6d873481d3141"
+      }
+    },
+    "resume": {
+      "workers": 8,
+      "resumed_cases": 16,
+      "launched_batches": 0,
+      "failed_cases": 0
+    }
+  },
+  "tail_examples": {
+    "status": "compiled and full recursive kernel audit passed",
+    "families": 2,
+    "frozen_input_data_row_indices": [
+      61,
+      84
+    ],
+    "source_indices": [
+      63720,
+      7598
+    ],
+    "input_sha256": "b1c9f492e741c1ce0ffa4c169d257fbd5fe5aef40f3aa2d0f8ccbc9756c5963a",
+    "compile_seconds": 10.243,
+    "audit_seconds": 55.886,
+    "axioms": [
+      "FunctionalExtensionality.functional_extensionality_dep"
+    ],
+    "artifacts": {
+      "audit_log": {
+        "bytes": 134,
+        "sha256": "945829c33d03d4a73776075386f8018a82a9d302728e087e7ec660c53ab849a4"
+      },
+      "compile_log": {
+        "bytes": 225,
+        "sha256": "51efbf8c0be45322e98487fa53f4242923cd34855b6f4b95a04816aaad28b033"
+      },
+      "source": {
+        "bytes": 1604,
+        "sha256": "63d618f9dc42b3275b724ed9546247dbf08cfe7a53b97e7f020dbb57c60e1ce5"
+      },
+      "vo": {
+        "bytes": 29860,
+        "sha256": "d83268d143fb0bfa78c147140fbb8596d1630d5bf0507101d376e590538b6128"
+      }
+    },
+    "resume": {
+      "workers": 8,
+      "resumed_cases": 2,
+      "launched_batches": 0,
+      "failed_cases": 0
+    }
+  }
+}

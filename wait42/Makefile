@@ -1,7 +1,7 @@
-.PHONY: all foundation lower-bounds dependencies proof proof-foundation proof-replay proof-timing search test clean observation-dependencies proof-observations
+.PHONY: all foundation lower-bounds dependencies proof proof-foundation proof-replay proof-timing search test clean observation-dependencies proof-observations instruction-observation-dependencies proof-instruction-observations
 
 COQ_PATHS = -Q ../theories BBB4 -Q theories BBBWait42
-FOUNDATION = theories/FiniteObservation.vo theories/FiniteObservationTests.vo theories/FirstVisit.vo theories/Spec.vo theories/Recurrence.vo theories/Transport.vo theories/Periodic.vo theories/Ranked.vo theories/Census.vo theories/Run.vo theories/Pilot.vo theories/Batch.vo theories/RankedCompletion.vo theories/RepeatedWord.vo theories/Resume.vo theories/ReplayPilot.vo theories/ReplayCoverage.vo
+FOUNDATION = theories/FiniteInstructionObservation.vo theories/FiniteInstructionObservationTests.vo theories/FiniteObservation.vo theories/FiniteObservationTests.vo theories/FirstVisit.vo theories/Spec.vo theories/Recurrence.vo theories/Transport.vo theories/Periodic.vo theories/Ranked.vo theories/Census.vo theories/Run.vo theories/Pilot.vo theories/Batch.vo theories/RankedCompletion.vo theories/RepeatedWord.vo theories/Resume.vo theories/ReplayPilot.vo theories/ReplayCoverage.vo
 WITNESSES = theories/LowerBounds.vo
 RESIDUAL_REPLAY = theories/ResidualReplay.vo theories/ResidualReplayMore.vo
 TIMING = theories/SweepResiduals.vo theories/ThreeStateCounter.vo theories/SweepGeneralResiduals.vo theories/ControlRankReplay/Tight.vo theories/PhaseRankReplay/Union.vo theories/PhaseRankTests.vo
@@ -26,14 +26,14 @@ Makefile.coq: _CoqProject
 proof-foundation: foundation
 	@mkdir -p build
 	@echo 'Recursively auditing the four-state waiting definitions and census machinery...'
-	@coqchk -silent -bytecode-compiler yes $(COQ_PATHS) BBBWait42.ReplayCoverage BBBWait42.Recurrence BBBWait42.FiniteObservationTests BBBWait42.FirstVisit BBBWait42.Transport >build/foundation-coqchk.log 2>&1 \
+	@coqchk -silent -bytecode-compiler yes $(COQ_PATHS) BBBWait42.ReplayCoverage BBBWait42.Recurrence BBBWait42.FiniteObservationTests BBBWait42.FiniteInstructionObservationTests BBBWait42.FirstVisit BBBWait42.Transport >build/foundation-coqchk.log 2>&1 \
 	  || { cat build/foundation-coqchk.log; exit 1; }
 	@echo 'Four-state waiting foundation checked. No universal waiting upper bound is claimed.'
 
 proof: all
 	@mkdir -p build
 	@echo 'Recursively auditing waiting foundations and finite lower-bound witnesses...'
-	@coqchk -silent -bytecode-compiler yes $(COQ_PATHS) BBBWait42.ReplayCoverage BBBWait42.Recurrence BBBWait42.FiniteObservationTests BBBWait42.FirstVisit BBBWait42.Transport BBBWait42.LowerBounds >build/coqchk.log 2>&1 \
+	@coqchk -silent -bytecode-compiler yes $(COQ_PATHS) BBBWait42.ReplayCoverage BBBWait42.Recurrence BBBWait42.FiniteObservationTests BBBWait42.FiniteInstructionObservationTests BBBWait42.FirstVisit BBBWait42.Transport BBBWait42.LowerBounds >build/coqchk.log 2>&1 \
 	  || { cat build/coqchk.log; exit 1; }
 	@coqc -q $(COQ_PATHS) theories/Report.v >build/report.log 2>&1 \
 	  || { cat build/report.log; exit 1; }
@@ -71,6 +71,8 @@ OBSERVATION_TIMEOUT ?= 3600
 OBSERVATION_MAX_HOURS ?= 48
 OBSERVATION_MAX_BATCHES ?=
 OBSERVATION_DISK_RESERVE_GIB ?= 2
+INSTRUCTION_OBSERVATION_SPEC ?= research/instruction-observations.json
+INSTRUCTION_OBSERVATION_STATE ?= build/instruction-observation-proof
 
 observation-dependencies: dependencies Makefile.coq
 	$(MAKE) -f Makefile.coq -j"$(BUILD_JOBS)" COQC="python3 tools/with_coq_stack.py coqc" theories/FiniteObservation.vo theories/FiniteObservationTests.vo
@@ -78,6 +80,16 @@ observation-dependencies: dependencies Makefile.coq
 proof-observations: observation-dependencies
 	python3 tools/replay_observations.py --spec "$(OBSERVATION_SPEC)" \
 	  --output "$(OBSERVATION_STATE)" --jobs "$(BUILD_JOBS)" --resume \
+	  --memory-gib "$(OBSERVATION_MEMORY_GIB)" --timeout "$(OBSERVATION_TIMEOUT)" \
+	  --max-hours "$(OBSERVATION_MAX_HOURS)" --disk-reserve-gib "$(OBSERVATION_DISK_RESERVE_GIB)" \
+	  $(if $(OBSERVATION_MAX_BATCHES),--max-batches "$(OBSERVATION_MAX_BATCHES)",)
+
+instruction-observation-dependencies: dependencies Makefile.coq
+	$(MAKE) -f Makefile.coq -j"$(BUILD_JOBS)" COQC="python3 tools/with_coq_stack.py coqc" theories/FiniteInstructionObservation.vo theories/FiniteInstructionObservationTests.vo
+
+proof-instruction-observations: instruction-observation-dependencies
+	python3 tools/replay_instruction_observations.py --spec "$(INSTRUCTION_OBSERVATION_SPEC)" \
+	  --output "$(INSTRUCTION_OBSERVATION_STATE)" --jobs "$(BUILD_JOBS)" --resume \
 	  --memory-gib "$(OBSERVATION_MEMORY_GIB)" --timeout "$(OBSERVATION_TIMEOUT)" \
 	  --max-hours "$(OBSERVATION_MAX_HOURS)" --disk-reserve-gib "$(OBSERVATION_DISK_RESERVE_GIB)" \
 	  $(if $(OBSERVATION_MAX_BATCHES),--max-batches "$(OBSERVATION_MAX_BATCHES)",)

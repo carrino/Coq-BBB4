@@ -81,6 +81,30 @@ These family proofs do not establish exhaustive census coverage. Earlier easy
 search leaves still need replay and the complete coverage theorem still needs
 assembly. No missing cloud-run receipts are included in these counts.
 
+## Instruction observation sample
+
+The desktop scan of the same 16,384 state-selected families nominated **9,987**
+instruction observation bounds in 2,245.720 seconds. All eight worker files
+match the merged results; the source hashes, canonical alias map and summary
+were verified. The [validation record](research/instruction-scan-validation.json)
+records this research evidence with zero scan proof credit.
+
+| Instruction sample queue | Families | Status |
+| --- | ---: | --- |
+| Local observation width ≤65,536 | 9,480 | Frozen input for independent Coq replay |
+| Longer observations | 507 | Separate nominated queue |
+| Scan cap reached | 6,397 | Unresolved; missing visits do not prove silence |
+
+The [instruction replay command](VERIFYING_INSTRUCTION_OBSERVATIONS.md) uses
+cutoff 32,779,478 and common width 454,402,378. Its generic completion theorem
+has compiled and passed recursive kernel checking. Selected family proofs
+require the separate replay; scan nominations alone are not counted as proofs.
+The [initial pilot](research/instruction-runner-validation.json) checked the
+first 16 families in 333.642 seconds and two additional closed-tail examples,
+for 18 distinct family checks. The complete 9,480-family run remains pending.
+This is a state-selected sample, not an exhaustive instruction census, and
+its counts are not subtracted from the state burndown below.
+
 ## Exploratory burndown
 
 The initial census passes are **untrusted search results**, not completed

@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "proof_credit": 0,
+  "coverage_proved": false,
+  "scope": "Instruction scan of the 16384 state-selected families only; not an instruction census",
+  "archive_sha256": "8c0ddcb7c3bbc3a1a7efdf8e505a21f9e61410958a29eabf5930a743fb292c4d",
+  "source_sha256": "6e1fc3a5c879e94a64820d3b7c157a21e86766f6484e1cbc61c26df76aa52667",
+  "scanner_source_sha256": "5da58012cd93a8f82002bb470e67f6b814459bf248caf122668bb9f2224d2ef2",
+  "driver_sha256": "234968112600a41d666e6724444605a5bd420515fa77cc5d739c5e464ff2d4b8",
+  "binary_sha256": "15d30093a37bd8b42ebca9897476d04c91f62ed8c691e5258e3f7d6260737047",
+  "summary": {
+    "proof_credit": 0,
+    "canonical_candidates": 16384,
+    "seconds": 2245.72,
+    "outcomes": {
+      "cap": 6397,
+      "closed-control-mask": 9987
+    },
+    "state_record": {
+      "horizon": 32827944,
+      "extra_wait": 48466,
+      "machine": "0RB0LC_1LD1RA_1LA1RC_1RD1RC",
+      "target_index": 3
+    },
+    "state_control_mask_candidates": 16384,
+    "instruction_record": {
+      "horizon": 425726748,
+      "extra_wait": 392947270,
+      "machine": "1RB0RC_1LD0RA_1LC0LD_1RB1LD",
+      "target_index": 0
+    },
+    "instruction_control_mask_candidates": 9987
+  },
+  "checks": [
+    "archive hash and safe member layout",
+    "worker/results exact agreement",
+    "source and scanner hashes",
+    "canonical alias coverage",
+    "recomputed summary",
+    "observed transitions defined",
+    "total closed state invariant",
+    "original table coordinates restored; one-step endpoint extension"
+  ],
+  "fast_nominations": 9480,
+  "slow_nominations": 507,
+  "scan_holdouts": 6397,
+  "fast_all_eight": 9229,
+  "fast_total_tail": 251,
+  "artifacts": {
+    "instruction-observations.tsv": {
+      "bytes": 413369,
+      "sha256": "dd7c9f5c0684c7f150b8f1804cc338e943eb32fab71f04fcbdbba8959b9389b4"
+    },
+    "instruction-observations-slow.tsv": {
+      "bytes": 23480,
+      "sha256": "254873c2d26c5618c4ede14766e28c4f67f5d56d89137efb742e99a5593f890b"
+    },
+    "instruction-scan-holdouts.tsv": {
+      "bytes": 247895,
+      "sha256": "b1e7c9f308f48afefd7a8e19eda94979153b8813f1876bf2df29ae437ddd45e2"
+    }
+  }
+}
